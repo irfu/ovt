@@ -56,6 +56,7 @@ import vtk.rendering.jogl.vtkJoglCanvasComponent;
 import vtk.rendering.jogl.vtkJoglPanelComponent;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -81,6 +82,11 @@ public class test {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
         // build VTK Pipeline
+                
+                String file="images/ovt.gif";
+                java.net.URL url = OVTCore.class.getClassLoader().getSystemResource(file);
+        if (url == null) System.out.println("File not found ("+file+")");
+        
                 // create sphere geometry
                 vtkSphereSource sphere = new vtkSphereSource();
                 sphere.SetRadius(1.0);
