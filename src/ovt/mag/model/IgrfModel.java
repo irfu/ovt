@@ -29,7 +29,7 @@ import ovt.mag.model.GandHcoefs;
  
 public class IgrfModel extends AbstractMagModel {
 
-  protected String igrfDatFile=OVTCore.getOVTHomeDir()+File.separator+"mdata"+File.separator+"igrf.d";
+  protected String igrfDatFileName=OVTCore.getMdataDir()+"igrf.d";
   public final static int ERROR_YEAR = -10000;
   protected int year = ERROR_YEAR;
   
@@ -206,13 +206,13 @@ public class IgrfModel extends AbstractMagModel {
   }
   
   // Initializing GH coefs for year #yy
-  public static void initHashTable(String DatFile,int yy)
+  public static void initHashTable(File DatFile,int yy)
   throws /*FileNotFoundException,*/ IOException{
      if(!ghTable.containsKey(new Integer(yy)))
         initHashTable(DatFile,yy,false);
   }
   
-  public static void initHashTable(String DatFile,int yy,boolean initH)
+  public static void initHashTable(File DatFile,int yy,boolean initH)
   throws IOException{
      int i,j,neededCol,m_idx=-1,n_idx=-1;
      char ghMarker='\0';
@@ -333,6 +333,7 @@ public class IgrfModel extends AbstractMagModel {
      float w1a=0.0F,w2a=0.0F,gg,hh;
 
      try {
+       File igrfDatFile = Utils.findFile(igrfDatFileName);
         if(isaddCol==false)      // Starting for the first time
            initHashTable(igrfDatFile,0,true);
       
@@ -431,12 +432,6 @@ public class IgrfModel extends AbstractMagModel {
      Eccrr[0]=(lx-gANDh.getGcoefs(1,1)*tmp2d)/(3.0*h0);
      Eccrr[1]=(ly-gANDh.getHcoefs(1,1)*tmp2d)/(3.0*h0);
      Eccrr[2]=(lz-gANDh.getGcoefs(1,0)*tmp2d)/(3.0*h0);
-
-/*     //Just for checking
-    System.out.println("****Year: "+yearf);
-     for(i=0;i<3;++i)
-        System.out.println(" "+i+"Eccr: "+Eccrr[i]+" Eccdx: "+Eccdx[i]+" Eccdy: "+Eccdy[i]+" Eccdz: "+Eccdz[i]);
-*/
   }
 
 /*  //******************************************************
