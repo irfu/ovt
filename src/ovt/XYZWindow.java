@@ -35,23 +35,15 @@ package ovt;
 //import ovt.*;
 import ovt.gui.*;
 import ovt.util.*;
-import ovt.event.*;
-import ovt.object.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import vtk.*;
 
-import java.beans.*;
-
 import java.awt.*;
 import java.awt.event.*;
-import java.util.*;
 import java.io.IOException;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
 
 
 
@@ -94,7 +86,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   public XYZWindow() {
     super("Orbit Visualization Tool " + OVTCore.VERSION + " (Build "+OVTCore.BUILD+")" );
     try {
-      setIconImage (Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getSystemResource("images/ovt.gif")));
+      setIconImage (Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getResource("images/ovt.gif")));
     } catch (NullPointerException npe) { Log.err("FileNotFound: images/ovt.gif"); }
 
     // avoid crush on some win 95 computers
