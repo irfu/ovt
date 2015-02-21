@@ -93,7 +93,11 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     // load sats
     for (int i=0; i<4; i++) {
         String satName = "Cluster "+(i+1);
-        File orbitFile = new File(OVTCore.getOrbitDataDir()+"Cluster"+(i+1)+".ltof" );
+        File orbitFile = Utils.findFile(OVTCore.getOrbitDataDir()+"Cluster"+(i+1)+".ltof" );
+        if (orbitFile==null) {
+            System.out.println("[ FAILED ] (" + orbitFile + ")");
+            continue;
+        }
         System.out.print(Utils.addSpaces(satName, 16) + "\t");
         try {
             ClusterSat sat = new ClusterSat(sats.getCore());

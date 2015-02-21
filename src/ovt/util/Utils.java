@@ -588,8 +588,20 @@ public class Utils extends Object {
     
     /** Returns URL of the resource */
     public static java.net.URL findResource(String file) throws FileNotFoundException {
-        java.net.URL url = OVTCore.class.getClassLoader().getSystemResource(file);
+        java.net.URL url = OVTCore.class.getClassLoader().getResource(file);
         if (url == null) throw new FileNotFoundException("File not found ("+file+")");
         return url;
+    }
+    
+    public static File findFile(String fileName) {
+        File file;
+        file = new File(OVTCore.getUserDir() + fileName);
+        if (!file.exists() | file.isDirectory()) file = null;
+        if (file==null) {
+            ClassLoader classLoader = OVTCore.class.getClassLoader();
+            file = new File(classLoader.getResource(fileName).getFile());
+            if (!file.exists() | file.isDirectory()) file = null;
+        }
+        return file;
     }
 }
