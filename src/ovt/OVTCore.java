@@ -209,11 +209,10 @@ GUIPropertyEditorListener {
     /* Load properties from {@link #ovtPropertiesFile } */
     
     private static synchronized void loadGlobalSettings() throws IOException {
-        //Log.log("Loading Global settings ...", 3);
-        FileInputStream in = new FileInputStream(getConfDir() + globalSettingsFileName);
-        globalProperties.load(in);
-        //globalProperties.list(System.out);
-        in.close();
+      File confFile = Utils.findFile(getConfDir()+globalSettingsFileName);
+      FileInputStream in = new FileInputStream(confFile);
+      globalProperties.load(in);
+      in.close();
     }
     
     public synchronized void saveSettings() throws IOException {
