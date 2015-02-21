@@ -32,7 +32,6 @@ Khotyaintsev
 
 package ovt;
 
-//import ovt.*;
 import ovt.gui.*;
 import ovt.util.*;
 import ovt.interfaces.*;
@@ -42,7 +41,6 @@ import vtk.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
-
 import javax.swing.*;
 
 
