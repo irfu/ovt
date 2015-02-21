@@ -112,7 +112,7 @@ GUIPropertyEditorListener {
     protected boolean isInitialized = false;
     
     public static String ovtHomeDir = System.getProperty("ovt.home", ".") + File.separator;
-    public static String ovtUserDir = System.getProperty("ovt.user", ".") + File.separator;
+    public static String ovtUserDir = System.getProperty("user.home") + File.separator + ".ovt" + File.separator + VERSION + File.separator;
     
     public static final String ovtHomePage ="http://ovt.irfu.se/";
     
@@ -175,8 +175,8 @@ GUIPropertyEditorListener {
         return getOVTHomeDir() + "mdata" + File.separator;
     }
     
-    public static String getOrbitDataDir(){
-        return getOVTHomeDir() + "odata" + File.separator;
+    public static final String getOrbitDataDir(){
+        return "odata" + File.separator;
     }
     
     public static String getConfDir(){
@@ -485,7 +485,8 @@ GUIPropertyEditorListener {
     }
     // for JNI methods
     static {
-        //System.loadLibrary("ovt-"+System.getProperty("ovt.version"));
+        System.loadLibrary("ovt-"+VERSION);
+        System.loadLibrary("jawt");
     }
     
     /** Detect OS type and return true if OS=windows */
