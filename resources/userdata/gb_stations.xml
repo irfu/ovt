@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<GroundBasedStations name="Ground based stations">
+  <GroundBasedStations name="SuperDARN radars : N Hemisphere">
+    <GroundBasedStation name="Goose_Bay" longitude="-60" type="Radar" latitude="53" visible="Hide" />
+    <GroundBasedStation name="Kapuskasing" longitude="-82.32" type="Radar" latitude="49.39" visible="Hide" />
+    <GroundBasedStation name="Saskatoon" longitude="-106.53" type="Radar" latitude="52.6" visible="Hide" />
+    <GroundBasedStation name="Stokkseyri" longitude="-22.02" type="Radar" latitude="63.86" visible="Hide" />
+    <GroundBasedStation name="Pykkvibaer" longitude="-20.54" type="Radar" latitude="63.77" visible="Hide" />
+    <GroundBasedStation name="Hankasalmi" longitude="26.61" type="Radar" latitude="62.32" visible="Hide" />
+    <GroundBasedStation name="King_Salmon" longitude="-156.66" type="Radar" latitude="58.69" visible="Hide" />
+    <GroundBasedStation name="Prince_George" longitude="-122.8" type="Radar" latitude="53.98" visible="Hide" />
+    <GroundBasedStation name="Kodiak" longitude="-152.38" type="Radar" latitude="57.8" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="SuperDARN radars : S Hemisphere">
+    <GroundBasedStation name="Halley" longitude="-26.63" type="Radar" latitude="-75.52" visible="Hide" />
+    <GroundBasedStation name="Sanae" longitude="-2.85" type="Radar" latitude="-71.68" visible="Hide" />
+    <GroundBasedStation name="Syowa" longitude="39.58" type="Radar" latitude="-69" visible="Hide" />
+    <GroundBasedStation name="Syowa_East" longitude="39.58" type="Radar" latitude="-69" visible="Hide" />
+    <GroundBasedStation name="TIGER_Tasmania" longitude="147.23" type="Radar" latitude="-43.38" visible="Hide" />
+    <GroundBasedStation name="Kerguelen" longitude="70.14" type="Radar" latitude="-49.22" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="CANOPUS Magnetometer">
+    <GroundBasedStation name="BACK" longitude="265.83" type="Magnetometer" latitude="57.72" visible="Hide" />
+    <GroundBasedStation name="CONT" longitude="248.75" type="Magnetometer" latitude="65.75" visible="Hide" />
+    <GroundBasedStation name="DAWS" longitude="220.89" type="Magnetometer" latitude="64.05" visible="Hide" />
+    <GroundBasedStation name="ESKI" longitude="265.95" type="Magnetometer" latitude="61.11" visible="Hide" />
+    <GroundBasedStation name="FCHU" longitude="265.92" type="Magnetometer" latitude="58.76" visible="Hide" />
+    <GroundBasedStation name="MCMU" longitude="248.79" type="Magnetometer" latitude="56.66" visible="Hide" />
+    <GroundBasedStation name="FSIM" longitude="238.77" type="Magnetometer" latitude="61.76" visible="Hide" />
+    <GroundBasedStation name="FSMI" longitude="248.05" type="Magnetometer" latitude="60.02" visible="Hide" />
+    <GroundBasedStation name="GILL" longitude="265.36" type="Magnetometer" latitude="56.38" visible="Hide" />
+    <GroundBasedStation name="ISLL" longitude="265.34" type="Magnetometer" latitude="53.86" visible="Hide" />
+    <GroundBasedStation name="PINA" longitude="263.96" type="Magnetometer" latitude="50.2" visible="Hide" />
+    <GroundBasedStation name="RABB" longitude="256.32" type="Magnetometer" latitude="58.22" visible="Hide" />
+    <GroundBasedStation name="RANK" longitude="267.89" type="Magnetometer" latitude="62.82" visible="Hide" />
+    <GroundBasedStation name="TALO" longitude="266.45" type="Magnetometer" latitude="69.54" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="IMAGE Magnetometer">
+    <GroundBasedStation name="NAL" longitude="11.95" type="Magnetometer" latitude="78.92" visible="Hide" />
+    <GroundBasedStation name="LYR" longitude="15.82" type="Magnetometer" latitude="78.2" visible="Hide" />
+    <GroundBasedStation name="HOR" longitude="15.6" type="Magnetometer" latitude="77" visible="Hide" />
+    <GroundBasedStation name="BJN" longitude="19.2" type="Magnetometer" latitude="74.5" visible="Hide" />
+    <GroundBasedStation name="SOR" longitude="22.22" type="Magnetometer" latitude="70.54" visible="Hide" />
+    <GroundBasedStation name="MAS" longitude="23.7" type="Magnetometer" latitude="69.46" visible="Hide" />
+    <GroundBasedStation name="ABK" longitude="18.82" type="Magnetometer" latitude="68.35" visible="Hide" />
+    <GroundBasedStation name="MUO" longitude="23.53" type="Magnetometer" latitude="68.02" visible="Hide" />
+    <GroundBasedStation name="PEL" longitude="24.08" type="Magnetometer" latitude="66.9" visible="Hide" />
+    <GroundBasedStation name="OUJ" longitude="27.23" type="Magnetometer" latitude="64.52" visible="Hide" />
+    <GroundBasedStation name="UPP" longitude="17.6" type="Magnetometer" latitude="59.8" visible="Hide" />
+    <GroundBasedStation name="LYK" longitude="18.76" type="Magnetometer" latitude="64.2" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="Greenland Magnetometer"> 
+    <GroundBasedStation name="AMK" longitude="322.37" type="Magnetometer" latitude="65.6" visible="Hide" />
+    <GroundBasedStation name="NAQ" longitude="314.56" type="Magnetometer" latitude="61.167" visible="Hide" />
+    <GroundBasedStation name="NRD" longitude="343.33" type="Magnetometer" latitude="81.6" visible="Hide" />
+    <GroundBasedStation name="FHB" longitude="310.32" type="Magnetometer" latitude="62" visible="Hide" />
+    <GroundBasedStation name="GDH" longitude="306.467" type="Magnetometer" latitude="69.25" visible="Hide" />
+    <GroundBasedStation name="GHB" longitude="308.27" type="Magnetometer" latitude="64.17" visible="Hide" />
+    <GroundBasedStation name="SCO" longitude="338.03" type="Magnetometer" latitude="70.48" visible="Hide" />
+    <GroundBasedStation name="SKT" longitude="307.1" type="Magnetometer" latitude="65.42" visible="Hide" />
+    <GroundBasedStation name="STF" longitude="309.28" type="Magnetometer" latitude="67.02" visible="Hide" />
+    <GroundBasedStation name="SVS" longitude="294.9" type="Magnetometer" latitude="76.02" visible="Hide" />
+    <GroundBasedStation name="THL" longitude="290.77" type="Magnetometer" latitude="77.47" visible="Hide" />
+    <GroundBasedStation name="UMQ" longitude="307.87" type="Magnetometer" latitude="70.68" visible="Hide" />
+    <GroundBasedStation name="DNB" longitude="339.78" type="Magnetometer" latitude="74.3" visible="Hide" />
+    <GroundBasedStation name="UPN" longitude="303.85" type="Magnetometer" latitude="72.78" visible="Hide" />
+    <GroundBasedStation name="ATU" longitude="306.43" type="Magnetometer" latitude="67.93" visible="Hide" />
+    <GroundBasedStation name="DNB" longitude="339.78" type="Magnetometer" latitude="74.3" visible="Hide" />
+    <GroundBasedStation name="DMH" longitude="341.37" type="Magnetometer" latitude="76.77" visible="Hide" />
+    <GroundBasedStation name="KUV" longitude="302.82" type="Magnetometer" latitude="74.57" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="MAGIC/Greenland">
+    <GroundBasedStation name="MCE" longitude="326.1" type="Magnetometer" latitude="72.4" visible="Hide" />
+    <GroundBasedStation name="MCG" longitude="321.65" type="Magnetometer" latitude="72.6" visible="Hide" />
+    <GroundBasedStation name="MCN" longitude="322.38" type="Magnetometer" latitude="73.93" visible="Hide" />
+    <GroundBasedStation name="MCR" longitude="313.71" type="Magnetometer" latitude="66.48" visible="Hide" />
+    <GroundBasedStation name="MCW" longitude="317.41" type="Magnetometer" latitude="72" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="MACCS magnetometer">
+    <GroundBasedStation name="CDC" longitude="283.4" type="Magnetometer" latitude="64.2" visible="Hide" />
+    <GroundBasedStation name="CY" longitude="291.4" type="Magnetometer" latitude="70.5" visible="Hide" />
+    <GroundBasedStation name="CHC" longitude="276.8" type="Magnetometer" latitude="64.1" visible="Hide" />
+    <GroundBasedStation name="GHC" longitude="264.1" type="Magnetometer" latitude="68.6" visible="Hide" />
+    <GroundBasedStation name="IGC" longitude="278.2" type="Magnetometer" latitude="69.3" visible="Hide" />
+    <GroundBasedStation name="PGC" longitude="294.2" type="Magnetometer" latitude="66.1" visible="Hide" />
+    <GroundBasedStation name="PBC" longitude="270.3" type="Magnetometer" latitude="68.5" visible="Hide" />
+    <GroundBasedStation name="RPB" longitude="273.8" type="Magnetometer" latitude="66.5" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="Russian Magentometers">
+    <GroundBasedStation name="DIK" longitude="80.4" type="Magnetometer" latitude="73.5" visible="Hide" />
+    <GroundBasedStation name="HIS" longitude="58.05" type="Magnetometer" latitude="80.62" visible="Hide" />
+    <GroundBasedStation name="TIX" longitude="129" type="Magnetometer" latitude="71.58" visible="Hide" />
+    <GroundBasedStation name="VYZ" longitude="76.98" type="Magnetometer" latitude="79.48" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="Incoherent Scatter">
+    <GroundBasedStations name="EISCAT">
+      <GroundBasedStation name="Tromso" longitude="19.219" type="Radar" latitude="69.585" visible="Hide" />
+      <GroundBasedStation name="Kiruna" longitude="20.435" type="Radar" latitude="67.861" visible="Hide" />
+      <GroundBasedStation name="Sodankyla" longitude="26.627" type="Radar" latitude="67.364" visible="Hide" />
+      <GroundBasedStation name="Longyearbyen" longitude="16.029" type="Radar" latitude="78.153" visible="Hide" />
+    </GroundBasedStations>
+    <GroundBasedStation name="Arecibo" longitude="293.25" type="Radar" latitude="18.35" visible="Hide" />
+    <GroundBasedStation name="Jicamarca" longitude="284" type="Radar" latitude="-12" visible="Hide" />
+    <GroundBasedStation name="Kharkov" longitude="36.2" type="Radar" latitude="50" visible="Hide" />
+    <GroundBasedStation name="Millstone_Hill" longitude="288.508" type="Radar" latitude="42.62" visible="Hide" />
+    <GroundBasedStation name="Sondre_Stromfjord" longitude="309.05" type="Radar" latitude="66.99" visible="Hide" />
+  </GroundBasedStations>
+  <GroundBasedStations name="Other Coherent Radars">
+    <GroundBasedStations name="STARE">
+      <GroundBasedStation name="Hankasalmi" longitude="26.85" type="Radar" latitude="62.25" visible="Hide" />
+      <GroundBasedStation name="Midtsandan" longitude="10.73" type="Radar" latitude="63.6" visible="Hide" />
+    </GroundBasedStations>
+  </GroundBasedStations>
+  <GroundBasedStations name="AGONET : various instruments">
+    <GroundBasedStation name="B1" longitude="336.63" type="Unknown" latitude="-77.58" visible="Hide" />
+    <GroundBasedStation name="B2" longitude="339.6" type="Unknown" latitude="-80.75" visible="Hide" />
+    <GroundBasedStation name="B3" longitude="3" type="Unknown" latitude="-81.5" visible="Hide" />
+    <GroundBasedStation name="B4" longitude="335" type="Unknown" latitude="-84" visible="Hide" />
+    <GroundBasedStation name="I1" longitude="164.12" type="Unknown" latitude="-74.07" visible="Hide" />
+    <GroundBasedStation name="J1" longitude="39.5" type="Unknown" latitude="-70" visible="Hide" />
+    <GroundBasedStation name="Belgrano" longitude="325.38" type="Unknown" latitude="-77.87" visible="Hide" />
+    <GroundBasedStation name="P1" longitude="129.61" type="Unknown" latitude="-83.86" visible="Hide" />
+    <GroundBasedStation name="P2" longitude="313.62" type="Unknown" latitude="-85.67" visible="Hide" />
+    <GroundBasedStation name="P3" longitude="28.58" type="Unknown" latitude="-82.76" visible="Hide" />
+    <GroundBasedStation name="P4" longitude="96.76" type="Unknown" latitude="-82.01" visible="Hide" />
+    <GroundBasedStation name="P5" longitude="123.51" type="Unknown" latitude="-77.23" visible="Hide" />
+    <GroundBasedStation name="P6" longitude="127.87" type="Unknown" latitude="-71.07" visible="Hide" />
+    <GroundBasedStation name="TNB" longitude="164.12" type="Unknown" latitude="-74.69" visible="Hide" />
+  </GroundBasedStations>
+</GroundBasedStations>
+
