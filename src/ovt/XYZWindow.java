@@ -61,7 +61,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     }
 
   protected OVTCore core;
-  protected SplashWindow splashWindow;
+  private SplashWindow splashWindow;
 
   // VTK stuff
   protected VisualizationPanel renPanel;
@@ -73,7 +73,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   protected XYZMenuBar menuBar;
   protected JSplitPane splitPane;
   
-  private ToolBarContainer toolBarContainer;
+  private final ToolBarContainer toolBarContainer;
   
   protected HTMLBrowser htmlBrowser;
   
@@ -95,9 +95,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     // -----------   set window size ----------
     boolean pack = false;
     try{
-      setSize(
-        new Integer(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)).intValue(),
-        new Integer(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT)).intValue()
+      setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
+        Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))
       );
     } catch(NumberFormatException e2){ 
         pack = true;
@@ -119,8 +118,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     int width = 600;
     int height = 600;
     try{
-      width = new Integer(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH)).intValue();
-      height = new Integer(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT)).intValue();
+      width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
+      height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
     } catch(NumberFormatException ignore){  }
     
     renPanel.setSize(width, height);
@@ -153,7 +152,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     treePanel = new TreePanel(getCore());
     int treePanelWidth = treePanel.getPreferredSize().width;
     try{
-      treePanelWidth = new Integer(OVTCore.getGlobalSetting(SETTING_TREE_PANEL_WIDTH)).intValue();
+      treePanelWidth = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_TREE_PANEL_WIDTH));
     } catch(NumberFormatException ignore){  }
 
     if (treePanelWidth != 0) treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
@@ -198,6 +197,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     htmlBrowser = new HTMLBrowser(core);
     
     addWindowListener(new WindowAdapter() {
+      @Override
       public void windowClosing(WindowEvent e) {
           quit();
       }
@@ -227,12 +227,15 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     
   }
   
-  
-
-  
-  public OVTCore getCore()
+  /**
+   *
+   * @return OVTCore instance
+   */
+    @Override
+  public final OVTCore getCore()
   { return core; }
 
+    @Override
   public void actionPerformed(ActionEvent e) {
   }
 
@@ -296,17 +299,13 @@ public void quit() {
   private boolean quitConfirmed() {
         Object[] options = {"Yes", "No"};
         int n = JOptionPane.showOptionDialog(this,"Do you really want to exit?", "Exit", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE,null,options,"No");
-        if (n == JOptionPane.YES_OPTION) {
-            return true;
-        } else {
-            return false;
-        }
+      return n == JOptionPane.YES_OPTION;
   }
 
   /** 
    * Main method. Here we launch OVT
+   * @param arg
    */
-
   public static void main(String[] arg) {
     XYZWindow XYZwin = new XYZWindow();
     XYZwin.start();
@@ -316,7 +315,7 @@ public void quit() {
     return htmlBrowser;
   }
 
-  protected void addOriginActor() {
+  protected final void addOriginActor() {
     vtkVectorText atext = new vtkVectorText();
         atext.SetText(". (0, 0, 0)");
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
@@ -360,7 +359,7 @@ class SplashWindow extends JWindow {
     JLabel imageLabel;
     public SplashWindow() {
         super();
-        java.net.URL url = OVTCore.class.getClassLoader().getSystemResource("images/splash.gif");
+        java.net.URL url = OVTCore.class.getClassLoader().getResource("images/splash.gif");
         if (url == null) { Log.err("FileNotFound: images/splash.gif");return;}
         
         imageLabel = new JLabel(new ImageIcon(url));
@@ -384,8 +383,8 @@ class SplashWindow extends JWindow {
         
         JLayeredPane layeredPane = new JLayeredPane();
             layeredPane.setPreferredSize(imageLabel.getPreferredSize());
-            layeredPane.add(imageLabel, new Integer(0), 1);
-            layeredPane.add(label, new Integer(1), 0);
+            layeredPane.add(imageLabel, 0, 1);
+            layeredPane.add(label, 1, 0);
             layeredPane.add(copyrightLabel, new Integer(2));
         
         setSize(imageLabel.getPreferredSize());
