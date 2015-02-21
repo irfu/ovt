@@ -34,14 +34,10 @@ package ovt.object;
 
 import ovt.*;
 import ovt.gui.Style;
-import ovt.mag.*;
 import ovt.util.*;
-import ovt.event.*;
 import ovt.beans.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
-
-import vtk.*;
 
 import java.io.*;
 import java.awt.event.*;
@@ -66,12 +62,15 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
     /** if <CODE>true</CODE> it is not possible to rename, remove*/
     private boolean isRootNode = false;
     private static final String xml_file = OVTCore.getUserdataDir()+"gb_stations.xml";
+    private final File gbStationsFile;
     
     public GroundStations(OVTCore core) {
         super(core, "Ground based stations", "images/gb_stations.gif", true); // VisualObject constructor
                     // ^-> to OVTObject::setName();
         setParent(core);
         isRootNode = true;
+        gbStationsFile = Utils.findFile(xml_file);
+
         try {
             load();
         }
@@ -86,11 +85,13 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
     public GroundStations(GroundStations groundStations) {
         super(groundStations.getCore(), "Ground based stations", "images/gb_stations.gif", true); // VisualObject constructor
         setParent(groundStations);
+        gbStationsFile = Utils.findFile(xml_file);
     }
     
     public GroundStations(OVTCore core, String name) {
         super(core, name, "images/gb_stations.gif", true); // VisualObject constructor
         setParent(core);
+        gbStationsFile = Utils.findFile(xml_file);
     }
 
     
@@ -152,76 +153,15 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
      * @throws IOException
      */    
     public void save() throws IOException {
-        GroundbasedStationsDOM.save(this, xml_file);
+        GroundbasedStationsDOM.save(this, gbStationsFile.toString());
     }
 
     /** Loads groung stations properties from config
      * @throws IOException
      */    
    public void load() throws IOException {
-        GroundbasedStationsDOM.load(xml_file, this);
+        GroundbasedStationsDOM.load(gbStationsFile.toString(), this);
    }
-/*
-// plain text file reader
- public void load() throws IOException {
-        BufferedReader f = new BufferedReader(
-                new FileReader(getCore().getConfDir() + "gstats.conf"));
-        int typ = GroundStation.UNKNOWN; // unknown
-        while (f.ready()) {
-            String newline = f.readLine();
-            System.out.println(newline);
-            if (newline == null) break;
-            StringTokenizer st = new StringTokenizer(newline, " ");
-            if (newline.equalsIgnoreCase("Radars")) {
-                typ = GroundStation.RADAR;
-                continue;
-            } else if (newline.equalsIgnoreCase("Magnetometers")) {
-                typ = GroundStation.MAGNETOMETER;
-                continue;
-            }
-            
-            try {
-                String name = st.nextToken();
-                double lat  = new Double(st.nextToken()).doubleValue();
-                double lon  = new Double(st.nextToken()).doubleValue();
-                GroundStation gs = new GroundStation(this, name);
-                gs.setType(typ);
-                gs.setLatitude(lat);
-                gs.setLongitude(lon);
-                addChild(gs);
-            }
-            catch(Exception e)
-            {
-                f.close();
-                return;
-            }
-        }
-        f.close();
-    }*/
-    
-/*   
-   
-    public void timeChanged(TimeEvent evt) {
-        Enumeration e = getChildren().elements();
-        while (e.hasMoreElements()) {
-            try {
-                ((TimeChangeListener)(e.nextElement())).timeChanged(evt);
-            } catch (ClassCastException e2) {
-                System.out.println("this ground station doesn't care about time..");
-            }
-        }
-    }
-    
-    public void coordinateSystemChanged(CoordinateSystemEvent evt) {
-        Enumeration e = getChildren().elements();
-        while (e.hasMoreElements()) {
-            try {
-                ((CoordinateSystemChangeListener)(e.nextElement())).coordinateSystemChanged(evt);
-            } catch (ClassCastException e2) {
-                System.out.println("this ground station doesn't care about cs..");
-            }
-        }
-    } */
     
     public Descriptors getDescriptors() {
         

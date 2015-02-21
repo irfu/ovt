@@ -43,8 +43,6 @@ Khotyaintsev
 package ovt.util;
 
 import java.io.*;
-import java.lang.Math.*;
-
 
 import ovt.*;
 
@@ -82,10 +80,15 @@ public class CGMC {
     double lat,lon,flat,flon;
     int ilat,ilon;
     String fn = path+typ+"_"+year+".dat";
-System.out.println("CGMC: Reading file \""+fn+"\"");
+    System.out.println("CGMC: Reading file \""+fn+"\"");
+    File pFile = Utils.findFile(fn);
+    if (pFile == null) {
+      System.out.println("Cannot load: " +  fn);
+      return;
+    }
     ElectPotFileReader f;
     try{
-      f = new ElectPotFileReader(fn);
+      f = new ElectPotFileReader(pFile);
     }catch(IOException e){
 System.out.println("CGMC: newFiles(\""+path+"\","+year+") - start");
       try {
@@ -95,7 +98,7 @@ System.out.println("CGMC: newFiles() - finish");
 System.out.println(getClass().getName() + " -> " + e2.toString());
         throw new IOException(e2.toString());
       }
-      f = new ElectPotFileReader(fn);
+      f = new ElectPotFileReader(pFile);
     }
     lat1 = f.GetNumber();
     nlat = (int)f.GetNumber();

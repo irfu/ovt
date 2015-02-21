@@ -49,14 +49,14 @@ public class ElectPotFileReader {
 
   public ElectPotFileReader(){ isopen = false; }
 
-  public ElectPotFileReader(String fn) throws IOException {
+  public ElectPotFileReader(File fn) throws IOException {
     isopen = false; 
     Open(fn); 
   }
 
   protected void finalize(){ Close(); }
 
-  public void Open(String fn) throws IOException {
+  public void Open(File fn) throws IOException {
     Close();
     try {
       fr = new FileReader(fn);

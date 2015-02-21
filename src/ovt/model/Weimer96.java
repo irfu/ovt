@@ -22,6 +22,7 @@ import java.io.*;
 import java.lang.Math.*;
 import ovt.util.ElectPotFileReader;
 import ovt.OVTCore;
+import ovt.util.Utils;
 
 public class Weimer96 {
 
@@ -36,13 +37,18 @@ public class Weimer96 {
 
   private boolean initialized = false;
 
-  private void cWeimer96(String _path){
+  private void cWeimer96(String filePath){
     Coef = new double[2][9][4];
     Cn = new double[4][2][5][2][9][4];
     pi = Math.PI;
     //load coefficients for Weimer96, this can be done once.
     try {
-      ReadCoef(_path+"w96.dat");
+      File coefFile = Utils.findFile(filePath+"w96.dat");
+      if (coefFile == null) {
+          System.out.println("Cannot load: " +  filePath+"w96.dat");
+          return;
+      }
+      ReadCoef(coefFile);
       initialized = true;
     } catch(IOException e){
       System.out.println(getClass().getName() + " -> " + e.toString());
@@ -129,7 +135,7 @@ the desired values of Bt, IMF clock angle, Dipole tilt angle, and SW Vel.
 
 
 
-  private void ReadCoef(String fn) throws IOException {
+  private void ReadCoef(File fn) throws IOException {
 /*
 Read in the data file with the model coeficients
 */
