@@ -160,19 +160,19 @@ GUIPropertyEditorListener {
     }
     
     public static String getDocsDir(){
-        return getOVTHomeDir() + "docs" + File.separator;
+        return "docs" + File.separator;
     }
     
     public static String getImagesDir(){
-        return getOVTHomeDir() + "images" + File.separator;
+        return "images" + File.separator;
     }
     
     public static String getUserdataDir(){
-        return getUserDir() + "userdata" + File.separator;
+        return "userdata" + File.separator;
     }
     
     public static String getMdataDir(){
-        return getOVTHomeDir() + "mdata" + File.separator;
+        return "mdata" + File.separator;
     }
     
     public static final String getOrbitDataDir(){
@@ -180,7 +180,7 @@ GUIPropertyEditorListener {
     }
     
     public static String getConfDir(){
-        return getUserDir() + "conf" + File.separator;
+        return "conf" + File.separator;
     }
     
     public RenPanel getRenPanel() { return renPanel;  }
