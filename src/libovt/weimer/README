@@ -1,0 +1,48 @@
+30.11.2000
+Grzegorz Juchnikowski
+
+This is an upgrade to OVT2G containing model of electrical potential
+over polar regions by Weimer'96.
+
+In ovt2g5upd.zip:
+
+ovt/models/Weimer96.java
+ovt/object/GjElectPot.java
+ovt/object/editor/GjElectPotPropertyEditor.java
+ovt/util/CGMC.java
+ovt/util/MyFileReader.java
+images/elpot.gif
+userdata/w96.dat
+cgmc.for
+cgmc.def
+cgmc.dll
+cgmc2.c
+cgmc3.h
+cgmc4.c
+f2c.h
+ovt_util_CGMC.h
+
+Files: cgmc.def, cgmc2.c, cgmc3.h, cgmc4.c, f2c.h, and ovt_util_CGMC.h
+are sources to compile to cgmc.dll.  I used Borland C++ 5.
+File cgmc2.c is result of translation of cgmc.for with use of f2c 
+under Linux.  There are the following manual corrections in cgmc2.c:
+  1) added function  fill_commons(),
+  2) #ifdef __cplusplus / ....    (in two places).
+File cgmc4.c contains function DllEntryPoint(), which is specific for
+Windows and should be redesigned for the Unix version.
+This dll produces data files needed for recalculations of coordinates:
+geo <---> corr.geo-mag.  Once calculated, files are placed on userdata/
+for farther use.  
+
+The property editor is a demo only.  It should be redesigned.
+It should contain the following entries:
+- IMF (Bz,By)            (changed to getIMF())
+- Dipole tilt angle      (changed to getDipoleTilt())
+- Solar wind velocity
+- Elect.field izolines resolution step in kV (as in the demo).
+All places, where these data are used in file GjElectPot.java
+are marked with "//$$$".
+
+The file elpot.gif contains menu icon for Weimer model.  It can
+be changed if needed.
+

@@ -1,0 +1,68 @@
+#
+# Makefile to build OVT shared libs & bins.
+#
+# $Id: Makefile.in,v 2.17 2009/10/27 15:01:15 yuri Exp $
+#
+
+SHELL = @SHELL@
+RM = @RM@
+
+.SUFFIXES: .c .h
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+
+CC = @CC@
+
+SHLIB_CFLAGS = @SHLIB_CFLAGS@
+SHLIB_BUILD_FLAGS = @SHLIB_BUILD_FLAGS@
+
+CFLAGS = @CFLAGS@
+CC_FLAGS = ${SHLIB_CFLAGS} ${CFLAGS} -DUNIX
+
+srcdir        = @srcdir@
+VPATH         = @srcdir@
+JAVA_INCLUDES = @JAVA_INCLUDES@
+JAVA_INCLUDES_OS = @JAVA_INCLUDES_OS@
+INSTALLDIR = ../lib
+
+OVTVERSION = @ovtversion@
+
+OBJS = utils.o tsyg96.o tsyg2001.o magpack.o 
+
+USATOBJS = usat/cnstinit.o usat/deep.o usat/fmod2p_2.o usat/getsatpos.o usat/matan2.o usat/mjd.o usat/sdp4.o usat/sgp4.o usat/thetag.o
+
+WEIMEROBJ = weimer/cgmc2.o weimer/cgmc4.o
+
+all:
+	if test "x@PLATFORM@" = "xdarwin"; then archs="i386 x86_64 ppc";\
+	for arch in $$archs;do\
+		echo "Building $$arch";\
+		$(MAKE) clean-objs;\
+		CC_FLAGS_XTRA="-mmacosx-version-min=10.4 -arch $$arch" \
+		$(MAKE) @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@;\
+		[ ! -e @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@ ] && exit 1;\
+		mkdir -p arch/$$arch && mv @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@ arch/$$arch/;\
+	done;\
+	echo "Creating universal library @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@ ...";\
+	lipo -create arch/*/@SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@ -output @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@;\
+	echo "Done.";\
+	else $(MAKE) @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@;\
+	fi
+
+.c.o:
+	${CC} ${CC_FLAGS_XTRA} ${CC_FLAGS} -c ${JAVA_INCLUDES} ${JAVA_INCLUDES_OS} $< -o $@
+
+@SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@: $(OBJS) $(USATOBJS) $(WEIMEROBJ)
+	${CC}  ${CC_FLAGS_XTRA} ${SHLIB_BUILD_FLAGS} ${OBJS} $(USATOBJS) $(WEIMEROBJ) -o $@
+
+
+install:
+	@echo "Installing OVT shared library ..."
+	${INSTALL} -m 555 @SHLIB_PREFIX@ovt-${OVTVERSION}@JAVA_SHLIB_SUFFIX@ @libdir@
+
+clean: clean-objs
+	${RM} -rf arch
+	
+clean-objs:
+	${RM} -f config.* *.o *@JAVA_SHLIB_SUFFIX@  usat/*.o  weimer/*.o

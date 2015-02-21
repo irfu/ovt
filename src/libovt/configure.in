@@ -1,0 +1,399 @@
+#
+# $Id: configure.in,v 1.31 2009/10/27 14:56:13 yuri Exp $
+#
+
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(configure.in)
+#AM_INIT_AUTOMAKE(OVT,2.1)
+#AC_CONFIG_HEADER(platform.h)
+
+AC_CANONICAL_HOST
+
+# set OVT vession
+ovtversion=2.3
+AC_SUBST(ovtversion)
+
+BUILD_DIR=`pwd`
+AC_SUBST(BUILD_DIR)
+
+if test "$prefix" = "NONE" ; then
+	prefix=/usr/local
+fi
+
+case $host_cpu in
+    sparc*)	CPUARCH=sparc;;
+    i*86)	CPUARCH=i386;;
+    amd64|x86_64|X86_64)	CPUARCH=amd64;;
+    *)	ARCH=no;
+esac
+AC_SUBST(ARCH)
+
+case $host_os in
+    solaris*)	PLATFORM=solaris;;
+    linux-*)	PLATFORM=linux;;
+    freebsd*)	PLATFORM=freebsd;;
+    darwin*)	PLATFORM=darwin;;
+    *)	PLATFORM=unsupported;;
+esac
+AC_SUBST(PLATFORM)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_CHECK_PROGS(RM,rm)
+AC_SUBST(RM)
+AC_PROG_INSTALL
+
+JAVA_BIN_PREF=bin
+JAVA_INC_PREF=include
+
+dnl Checks for libraries.
+case $PLATFORM in
+    linux*)
+	CFLAGS="-O3"
+	SHLIB_CFLAGS="-fPIC"
+	SHLIB_LD_LIBS=""
+	SHLIB_PREFIX="lib"
+	SHLIB_SUFFIX=".so"
+	SHLIB_BUILD_FLAGS="-shared"
+	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	;;
+    freebsd*)
+	CFLAGS="-O3"
+	SHLIB_CFLAGS="-fPIC"
+	SHLIB_LD_LIBS=""
+	SHLIB_PREFIX="lib"
+	SHLIB_SUFFIX=".so"
+#	SHLIB_LINK_FLAGS="-shared"
+	SHLIB_BUILD_FLAGS="-shared"
+	JNI_MD_H_SUBDIR="freebsd"
+	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	;;
+    solaris*)
+	SHLIB_CFLAGS="-KPIC"
+	SHLIB_LD_LIBS='${LIBS}'
+	SHLIB_PREFIX="lib"
+	SHLIB_SUFFIX=".so"
+	SHLIB_BUILD_FLAGS='-G'
+#	SHLIB_LINK_FLAGS='-R ${LIB_RUNTIME_DIR}'
+	if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
+	SHLIB_BUILD_FLAGS='-Wl,-G'
+	fi
+	if test `$CC -V 2>&1 | grep -c Forte` != 0 ; then
+		CFLAGS='-fast'
+	fi
+	if test `$CC -V 2>&1 | grep -c WorkShop` != 0 ; then
+		CFLAGS='-fast'
+	fi
+	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	;;
+	darwin*)
+	CFLAGS="-O3"
+	SHLIB_CFLAGS="-fPIC -fno-common -framework JavaVM"
+	SHLIB_LD_LIBS=""
+	SHLIB_PREFIX="lib"
+	SHLIB_SUFFIX=".dylib"
+	SHLIB_BUILD_FLAGS="-dynamiclib -framework JavaVM"
+	JAVA_BIN_PREF=Commands
+	JAVA_INC_PREF=Headers
+	JAVA_SHLIB_SUFFIX=".jnilib"
+	;;
+    cygwin*)
+    	CFLAGS="-O3"
+	SHLIB_CFLAGS="-fPIC"
+	SHLIB_LD_LIBS=""
+	SHLIB_PREFIX=""
+	SHLIB_SUFFIX=".dll"
+	SHLIB_BUILD_FLAGS="-shared"
+	;;
+esac
+if test "x$JNI_MD_H_SUBDIR" = "x" ; then
+	JNI_MD_H_SUBDIR=$PLATFORM
+fi
+#export SHLIB_SUFFIX
+AC_SUBST(SHLIB_CFLAGS)
+AC_SUBST(SHLIB_PREFIX)
+AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(JAVA_SHLIB_SUFFIX)
+AC_SUBST(SHLIB_BUILD_FLAGS)
+
+# If we're running gcc, then change the C flags for compiling shared
+# libraries to the right flags for gcc, instead of those for the
+# standard manufacturer compiler.
+if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
+  SHLIB_CFLAGS="-fPIC"
+fi
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+AC_MSG_CHECKING(install path of JDK)
+AC_ARG_WITH(jdk,
+AC_HELP_STRING(
+[--with-jdk=DIR],[where JDK is installed]),
+	[ ac_cv_java_home=${with_jdk} ],
+	[ if test "x$PLATFORM" = "xdarwin" ; then
+		ac_cv_java_home=/System/Library/Frameworks/JavaVM.framework
+	else
+		IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/java; then
+      ac_cv_prog_java="$ac_dir/java"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  ac_cv_java_home=`echo $ac_cv_prog_java | sed 's+/bin/java$++'`
+fi])
+AC_MSG_RESULT($ac_cv_java_home)
+JAVA_HOME=$ac_cv_java_home
+AC_SUBST(JAVA_HOME)
+
+JAVABIN=$JAVA_HOME/$JAVA_BIN_PREF/java
+AC_SUBST(JAVABIN)
+
+
+if test ! -f $ac_cv_java_home/$JAVA_INC_PREF/jni.h; then
+  AC_MSG_ERROR(wrong JDK install path. please use ./configure --with-jdk=DIR)	
+fi
+
+ac_java_bin="$ac_cv_java_home/$JAVA_BIN_PREF"
+#AC_PATH_PROG(ac_cv_java, java, no, $ac_java_bin)
+#JAVA=$ac_cv_java
+#AC_SUBST(JAVA)
+
+unset JAVA_COMPILER
+unset CLASSPATH
+
+AC_CACHE_CHECK(version of JDK, ac_cv_jdk_version,
+[ac_cv_jdk_version=`($JAVABIN -version 2>&1) | sed -n '/.*java.* version *"\(.*\)".*/s//\1/p'`])
+case "$ac_cv_jdk_version" in
+1.1|1.2*)
+	AC_MSG_ERROR(Java >=1.3.x is needed)
+	;;
+1.3*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/include"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/include/$PLATFORM"
+	JAVA_LIBS_OS=""
+	;;
+1.4*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/include"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/include/$JNI_MD_H_SUBDIR"
+	JAVA_LIBS_OS=""
+	;;	
+1.5*|1.6*|1.7*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/$JAVA_INC_PREF"
+	if test "x$PLATFORM" = "xdarwin" ; then
+		JAVA_INCLUDES_OS=
+		JAVA_LIBS_OS=
+	else
+		JAVA_INCLUDES_OS="-I$ac_cv_java_home/$JAVA_INC_PREF/$JNI_MD_H_SUBDIR"
+		JAVA_LIBS_OS="-I$ac_cv_java_home/jre/lib/$CPUARCH:$ac_cv_java_home/jre/lib/$CPUARCH/xawt"
+	fi
+	;;	
+*)
+	AC_MSG_ERROR(unrecognized JDK version:$ac_cv_jdk_version)
+	;;
+esac
+
+AC_SUBST(JAVA_INCLUDES)
+AC_SUBST(JAVA_INCLUDES_OS)
+AC_SUBST(JAVA_LIBS_OS)
+	
+AC_MSG_CHECKING(if we target for a specific JRE)
+AC_ARG_WITH(target-jre,
+AC_HELP_STRING(
+[--with-java-target=V.V],[target JRE version (1.4,1.5,1.6,etc.)]),
+	[ ac_cv_target_jre=${with_target_jre} ])
+if test "x$ac_cv_target_jre" = "x"; then
+	AC_MSG_RESULT(no)
+	JAVACFLAGS=
+else
+	case $ac_cv_target_jre in
+		1.1|1.2|1.3|1.4|1.5|1.6) AC_MSG_RESULT($ac_cv_target_jre);
+		JAVACFLAGS="-source $ac_cv_target_jre -target $ac_cv_target_jre";;
+	*) AC_MSG_ERROR(invalid target JRE version)
+	esac
+fi
+AC_SUBST(JAVACFLAGS)
+
+AC_PATH_PROG(ac_cv_javac, javac, no, $ac_java_bin)
+JAVAC=$ac_cv_javac
+
+AC_MSG_CHECKING([whether to use jikes])
+# build with jikes by default
+
+AC_ARG_WITH(jikes,
+AC_HELP_STRING(
+[--with-jikes=/path/to/jikes],[specify jikes location (by default configure searches for jikes in PATH)]),
+ac_cv_with_jikes=$with_jikes, ac_cv_with_jikes=yes)
+
+if test "x$ac_cv_with_jikes" != "xno"; then
+    AC_MSG_RESULT(yes)
+    # if --with-jikes was not supplied ($ac_cv_with_jikes == yes)
+    if test "x$ac_cv_with_jikes" = "xyes"
+    then
+        AC_PATH_PROG(ac_cv_jikes, jikes, no, $ac_java_bin $PATH)
+        JIKES=$ac_cv_jikes
+    else 
+        AC_CHECK_FILE($ac_cv_with_jikes,
+        [JIKES=$ac_cv_with_jikes], [JIKES=no])
+    fi
+    
+    if test "x$JIKES" != "xno"; then
+        AC_CHECK_FILE($JAVA_HOME/jre/lib/rt.jar,
+        [JAVAC=$JIKES' '-bootclasspath' '$JAVA_HOME/jre/lib/rt.jar' '-nowarn])
+    fi
+else
+	AC_MSG_RESULT(no)
+fi
+AC_SUBST(JAVAC)
+
+AC_PATH_PROG(ac_cv_javah, javah, no, $ac_java_bin $PATH)
+JAVAH=$ac_cv_javah
+AC_SUBST(JAVAH)
+
+AC_PATH_PROG(ac_cv_jar, jar, no, $ac_java_bin $PATH)
+JAR=$ac_cv_jar
+if test "x$JAR" = "xno" ; then
+	AC_MSG_RESULT([jar can not be found. Please make shure jar is in the PATH 
+	and restart configure.])
+	exit 1
+fi
+AC_SUBST(JAR)
+
+AC_PATH_PROG(ac_cv_javadoc, javadoc, no, $ac_java_bin $PATH)
+JAVADOC=$ac_cv_javadoc
+if test "x$JAVADOC" = "xno" ; then
+	AC_MSG_RESULT([javadoc is not found. If you whant to generate API docs - please make shure javadoc is in the PATH 
+	and restart configure.])
+fi
+AC_SUBST(JAVADOC)
+
+
+# VTK
+
+AC_ARG_WITH(vtk-classpath,
+AC_HELP_STRING(
+[--with-vtk-classpath=CP],[should point to vtk.jar or to the directory where 'vtk/vtkActor.class' can be found]),
+[ac_cv_with_vtk_classpath="$withval"])
+
+ac_vtk_dirlist="$BUILD_DIR/lib /usr/local/lib /usr/local/lib/vtk /usr/lib /usr/lib/vtk /opt/lib/vtk /usr/X11R6/lib /usr/X11R6/lib/vtk"
+if test "$prefix" != "/usr/local" ; then
+		ac_vtk_dirlist="$prefix/lib $prefix/lib/vtk $ac_vtk_dirlist"
+	fi
+AC_MSG_NOTICE([checking VTK classes])
+
+if test "x$ac_cv_with_vtk_classpath" != "x" 
+then
+	AC_MSG_CHECKING([weather $ac_cv_with_vtk_classpath is a jar])
+	if test -f $ac_cv_with_vtk_classpath ; then
+		AC_MSG_RESULT(yes)
+		VTK_CLASSPATH=$ac_cv_with_vtk_classpath
+	else
+		AC_MSG_RESULT(no)
+		AC_MSG_CHECKING([weather $ac_cv_with_vtk_classpath/vtk contains VTK classes])
+		if test -f $ac_cv_with_vtk_classpath/vtk/vtkActor.class ; then
+			AC_MSG_RESULT(yes)
+			VTK_CLASSPATH=$ac_cv_with_vtk_classpath
+		else
+			AC_MSG_RESULT(no)
+			AC_MSG_ERROR(invalid value $ac_cv_with_vtk_classpath for vtk-classpath)
+		fi
+	fi
+fi
+
+
+if test "x$VTK_CLASSPATH" = "x" 
+then
+	ac_vtk_jar_dirlist="/usr/local/share/java/classes /usr/local/lib/vtk/java /usr/lib/vtk/java /opt/lib/vtk/java"
+	if test "$prefix" != "/usr/local" ; then
+		ac_vtk_jar_dirlist="$prefix/share/java/classes $ac_vtk_jar_dirlist $prefix/lib/java"
+	fi
+	for vtk_dir in $ac_vtk_jar_dirlist
+	do
+		AC_MSG_CHECKING([for VTK classes jar (vtk.jar) in $vtk_dir])
+		if test -f $vtk_dir'/vtk.jar'; then
+			AC_MSG_RESULT(yes)
+			VTK_CLASSPATH=$vtk_dir'/vtk.jar'
+			break
+		else
+			AC_MSG_RESULT(no)
+		fi 
+	done
+fi
+
+if test "x$VTK_CLASSPATH" = "x" 
+then
+	AC_MSG_ERROR([VTK classes not found. Please use ./configure --with-vtk-classpath=CP])
+fi
+AC_SUBST(VTK_CLASSPATH)
+
+AC_ARG_WITH(vtk-libs,
+AC_HELP_STRING(
+[--with-vtk-libs=DIR],[where VTK libraries are installed]),
+ac_vtk_lib_dir=$withval,ac_vtk_lib=none)
+
+ac_vtk_lib=$SHLIB_PREFIX'vtkCommonJava'$SHLIB_SUFFIX
+if test "x$ac_vtk_lib_dir" != "xnone" 
+then
+	ac_vtk_lib_dirlist=$ac_vtk_lib_dir' '$ac_vtk_dirlist
+fi
+
+for vtk_dir in $ac_vtk_lib_dirlist
+do
+	AC_MSG_CHECKING([for VTK libraries in $vtk_dir ])
+	if test -f $vtk_dir'/'$ac_vtk_lib; then
+		AC_MSG_RESULT(yes)
+		if test "x$VTK_LIBS" = "x" ; then
+			VTK_LIBS=$vtk_dir
+			break
+		fi
+	else
+		AC_MSG_RESULT(no)
+	fi 
+done
+
+if test "x$VTK_LIBS" = "x" ; then
+	AC_MSG_RESULT([VTK libraries not found. please use ./configure --with-vtk-libs=DIR
+	if you want to run OVT.])
+#	exit 1
+fi
+
+AC_SUBST(VTK_LIBS)
+
+# KDE
+kde_default_bindirs="/usr/bin /usr/local/bin /opt/local/bin /usr/X11R6/bin /opt/kde/bin /opt/kde3/bin /usr/kd
+e/bin /usr/local/kde/bin"
+AC_PATH_PROG(ac_cv_kdeconfig, kde-config, no, $kde_default_bindirs $PATH)
+if test "$ac_cv_kdeconfig" != "no" ; then
+	kde_prefix=$($ac_cv_kdeconfig --prefix)
+fi
+AC_SUBST(kde_prefix)
+
+if test "x$PLATFORM" = "xdarwin" ; then
+	LD_LIBRARY_PATH=DYLD_LIBRARY_PATH
+else
+	LD_LIBRARY_PATH=LD_LIBRARY_PATH
+fi
+AC_SUBST(LD_LIBRARY_PATH)
+	
+## set BEANINFO_JAVA_FILES
+#RAWFILES=`find ovt -name \*BeanInfo.java`
+#for i in $RAWFILES; do
+#	BEANINFO_JAVA_FILES=$BEANINFO_JAVA_FILES" "$i
+##done	
+#echo $BEANINFO_JAVA_FILES
+#AC_SUBST(BEANINFO_JAVA_FILES)
+
+AC_OUTPUT(Makefile 
+addons/Makefile
+addons/ovt.desktop
+bin/checktle
+bin/ovt
+src/Makefile
+)
+
+chmod 555 bin/ovt
+chmod 555 bin/checktle
