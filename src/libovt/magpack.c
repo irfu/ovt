@@ -89,32 +89,32 @@ int minY,maxY;    // Years limits
 
 
 /* --------------------------------------------------------------------
-/*  integration of ordinary differential equations
-/*  bulirsch-stoer method
-/*  see: numerical recipes , w. press, p 566. 1986.
-/*  input:
-/*    y(ndim)  initial values at x
-/*    ndim     number of dependent variables (maximum 9)
-/*    x       independent variable (time)
-/*    htry     step size (can be quite big)
-/*    eps      maximum permissible error for y()
-/*    hmin     minimum step (signal with error=2)
-/*  output:
-/*    y        updated at new x
-/*    x       new value  (=x + htry ! not necessarily)
-/*    hnext    recomended value for the next step
-/*    error .ne. 0 signals user defined error in SUBROUTINE right()
-/*                 or hmin in bsstep()
-/* -----------------------------------------------------------------
-/*  user has to supply a routine for right hand side derivatives:
-/*  SUBROUTINE right (x,y,dydx,error)
-/*  REAL*8 x,yy(10),dydx(10)
-/* ----------------------------------------------------------------- */
+    integration of ordinary differential equations
+    bulirsch-stoer method
+    see: numerical recipes , w. press, p 566. 1986.
+    input:
+      y(ndim)  initial values at x
+      ndim     number of dependent variables (maximum 9)
+      x       independent variable (time)
+      htry     step size (can be quite big)
+      eps      maximum permissible error for y()
+      hmin     minimum step (signal with error=2)
+    output:
+      y        updated at new x
+      x       new value  (=x + htry ! not necessarily)
+      hnext    recomended value for the next step
+      error .ne. 0 signals user defined error in SUBROUTINE right()
+                   or hmin in bsstep()
+   -----------------------------------------------------------------
+    user has to supply a routine for right hand side derivatives:
+    SUBROUTINE right (x,y,dydx,error)
+    REAL*8 x,yy(10),dydx(10)
+   ----------------------------------------------------------------- */
 
 
 
 
-bsstep(y, ndim, x, htry, eps, hmin, hnext, right, error)
+int bsstep(y, ndim, x, htry, eps, hmin, hnext, right, error)
 double  *y;
 int ndim;
 double  *x, htry, eps, hmin, *hnext;
@@ -200,7 +200,7 @@ int *error;
    -------------------------------------------------------- */
 
 
-car_sph(rv, rkm, lat, longi, idir)
+int car_sph(rv, rkm, lat, longi, idir)
 double  *rv, *rkm, *lat, *longi;
 int idir;
 {
@@ -3749,7 +3749,7 @@ int tc;    /* tc=1 transpose c before use */
 }
 
 
-gsm_gse_ar(mjd, coord, dir, npoint, xyz, flag)
+void gsm_gse_ar(mjd, coord, dir, npoint, xyz, flag)
 double  mjd;
 int coord;  /* GSE  or GSEQ or GEI  */
 int dir;   /* +1 from gsm to gse(q) -1 reverse */
