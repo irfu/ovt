@@ -109,7 +109,7 @@ public ElectPot(OVTCore core) {
         e2.printStackTrace();
   }
 
-  w96 = new Weimer96(core);
+  w96 = new Weimer96();
   g2c = new CGMC(core,"g2c");
   c2g = new CGMC(core,"c2g");
 }

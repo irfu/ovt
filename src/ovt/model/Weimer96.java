@@ -19,9 +19,7 @@
 package ovt.model;
 
 import java.io.*;
-import java.lang.Math.*;
 import ovt.util.ElectPotFileReader;
-import ovt.OVTCore;
 import ovt.util.Utils;
 
 public class Weimer96 {
@@ -59,7 +57,7 @@ public class Weimer96 {
   public Weimer96(String _path){ cWeimer96(_path); }
 
   //this constructor is used in OVT
-  public Weimer96(OVTCore core){ cWeimer96(core.getUserdataDir()); }
+  public Weimer96(){ cWeimer96(ovt.OVTCore.getUserdataDir()); }
 
 
   public double EpotVal(double gLAT, double gMLT){
@@ -139,7 +137,7 @@ the desired values of Bt, IMF clock angle, Dipole tilt angle, and SW Vel.
 /*
 Read in the data file with the model coeficients
 */
-System.out.println("Weimer96: loading file \""+fn+"\"");
+//System.out.println("Weimer96: loading file \""+fn+"\"");
     ElectPotFileReader f = new ElectPotFileReader(fn);
     int i,l,k,n,m,ii,ll,kk,nn,mm,mlimit,klimit,ilimit,ic;
 
