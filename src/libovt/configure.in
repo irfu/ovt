@@ -10,7 +10,7 @@ AC_INIT(configure.in)
 AC_CANONICAL_HOST
 
 # set OVT vession
-ovtversion=2.3
+ovtversion=3.0
 AC_SUBST(ovtversion)
 
 BUILD_DIR=`pwd`

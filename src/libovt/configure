@@ -1865,7 +1865,7 @@ case $host_os in *\ *) host_os=`echo "$host_os" | sed 's/ /-/g'`;; esac
 
 
 # set OVT vession
-ovtversion=2.3
+ovtversion=3.0
 
 
 BUILD_DIR=`pwd`

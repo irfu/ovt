@@ -64,15 +64,14 @@ import javax.swing.*;
 public class OVTCore extends OVTObject implements
 GUIPropertyEditorListener {
     
-    public static final String VERSION = "2.3";
-    public static final String RELEASE_DAY = "October 2009";
+    public static final String VERSION = "3.0";
+    public static final String RELEASE_DAY = "March 2015";
     public static final int BUILD = 4;
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "DefaultSettingsFile";
     public static final Properties globalProperties = new Properties();
     public static int DEBUG = 0;
     
-    private vtkRenderWindow renWin = null;
     private vtkRenderer renderer = null;
     /**
      * @see #setRenderAction(Renderable)
@@ -84,7 +83,7 @@ GUIPropertyEditorListener {
      */
     // protected Properties properties = new Properties();
     
-    private XYZWindow XYZwin;
+    private final XYZWindow XYZwin;
     //protected int coordSystem = Const.GSM; // XYZ -  GSM, GSE, GEI, ..
     
     private static boolean guiPresent = false;
