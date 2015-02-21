@@ -9,17 +9,13 @@ package ovt;
 import ovt.graphics.*;
 import ovt.event.*;
 import ovt.interfaces.*;
-import ovt.object.*;
 import ovt.util.Utils;
 
 import vtk.*;
 
-import java.beans.*;
 import java.util.*;
-
 import java.io.*;
 import java.awt.*;
-import java.awt.print.*;
 import java.awt.event.*;
 
 
@@ -30,14 +26,15 @@ import java.awt.event.*;
  */
 public class VisualizationPanel extends vtkPanel implements RenPanel {
     
-    private XYZWindow xyzWindow;
+    private final XYZWindow xyzWindow;
     private Dimension oldSize = new Dimension();
 
-    /** Returns Image from vtkRenderWindow */
+    /** Returns Image from vtkRenderWindow
+   * @return Image from vtkRenderWindow*/
     public Image getImage() {
         String tmpDir = System.getProperty("java.io.tmpdir");
         if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataDir();
-        String tempFile = Utils.getRandomFilename(tmpDir, ".bmp");;
+        String tempFile = Utils.getRandomFilename(tmpDir, ".bmp");
         //tempFile = "xyz.bmp";
 
         // write to temporary bmp file
@@ -70,22 +67,24 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
             }
         }
     }
-    
-    /** Utility field used by bound properties. */
-    protected CameraChangeSupport cameraChangeSupport = new CameraChangeSupport (this);
+
+    private final CameraChangeSupport cameraChangeSupport;
     
     /** Creates new VisualizationPanel */
     public VisualizationPanel(XYZWindow xyzWindow) {
         super();
+    this.cameraChangeSupport = new CameraChangeSupport (this);
         this.xyzWindow = xyzWindow;
     }
     
+    @Override
     public void mouseReleased(MouseEvent e) {
         super.mouseReleased(e);
         fireCameraChange(new CameraEvent());
         //System.out.println("Mouse released!!!!");
     }
     
+    @Override
     public void mouseEntered(MouseEvent e) {
         // DO NOTHING here! 
         // no requestFocus() anyMore!
@@ -103,6 +102,7 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
         cameraChangeSupport.removeCameraChangeListener (l);
     }
     
+    @Override
     public synchronized void Render() {
         checkSizeChanged(); // if size changed -> reposition label
         cam = ren.GetActiveCamera();
@@ -122,12 +122,16 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
         return xyzWindow;
     }
     
-    /** Returns the light, which is copuled to camera */
+    /** Returns the light, which is copuled to camera
+   * @return vtkLight */
+    @Override
     public vtkLight getCameraLight() {
         return lgt;
     }
     
-    /** Overriding method, because otherwise it always returns getSize() */
+    /** Overriding method, because otherwise it always returns getSize()
+   * @return  Dimension*/
+    @Override
     public Dimension getMinimumSize() {
         return new Dimension(0,0);
     }
@@ -145,10 +149,12 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
 
 class CameraChangeSupport {
     
-    private Vector listeners = new Vector();
-    private Object source = null;
+    private final Vector listeners;
+    private Object source;
     
     CameraChangeSupport(Object source) {
+    this.source = null;
+    this.listeners = new Vector();
         this.source = source;
     }
     
