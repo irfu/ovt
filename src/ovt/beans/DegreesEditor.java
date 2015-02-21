@@ -33,7 +33,7 @@ public class DegreesEditor extends TextFieldEditor {
         return (int) val;
     }
     
-    public String getAsText() { //359°60'60"
+    public String getAsText() { //359d60'60"
         Double dbl = (Double)getValue();
         return Degrees.fromdouble(dbl.doubleValue());
     }
