@@ -371,7 +371,7 @@ class SplashWindow extends JWindow {
             labelSize = label.getPreferredSize();
             label.setBounds(imageLabel.getPreferredSize().width-labelSize.width-80, 255, labelSize.width, labelSize.height);
             
-        JLabel copyrightLabel = new JLabel("Copyright (c) OVT Team, 2000-2009");
+        JLabel copyrightLabel = new JLabel("Copyright (c) OVT Team, 2000-2015");
             copyrightLabel.setFont(new Font("Arial", Font.PLAIN, 10));
             copyrightLabel.setForeground(Color.white);
             labelSize = copyrightLabel.getPreferredSize();
@@ -387,8 +387,6 @@ class SplashWindow extends JWindow {
         
         setSize(imageLabel.getPreferredSize());
         getContentPane().add(layeredPane, BorderLayout.CENTER);
-        //getContentPane().add(imageLabel, BorderLayout.CENTER);
-        //getContentPane().add(new JLabel("Thank you, oh MAN!"), BorderLayout.NORTH);
         pack();
         
         // center splash window
@@ -397,12 +395,4 @@ class SplashWindow extends JWindow {
         setLocation(scrnSize.width/2 - windowSize.width/2,
                  scrnSize.height/2 - windowSize.height/2);
     }
-    
-    
-/*
-    public void paint(Graphics g) {
-        imageLabel.paint(g);
-        label.paint(g);
-    }*/
-    
 }

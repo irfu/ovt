@@ -30,9 +30,6 @@ Khotyaintsev
  
 =========================================================================*/
 
-/* $Id: OVTCore.java,v 2.25 2009/10/08 20:53:40 yuri Exp $
- * $Source: /stor/devel/ovt2g/ovt/OVTCore.java,v $
- */
 package ovt;
 
 import ovt.gui.*;
@@ -49,7 +46,6 @@ import vtk.*;
 
 import java.beans.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 import java.io.*;
 import javax.swing.*;
@@ -61,7 +57,7 @@ import javax.swing.*;
  * @see ...
  */
 
-public class OVTCore extends OVTObject implements
+public final class OVTCore extends OVTObject implements
 GUIPropertyEditorListener {
     
     public static final String VERSION = "3.0";
@@ -126,6 +122,7 @@ GUIPropertyEditorListener {
      * java compiler forget about the Servlet part of OVT
      * and compile OVT Core without complaining with missing
      * classes.
+   * @param renPanel
      */
     public OVTCore(RenPanel renPanel) {
         this.XYZwin = null;
@@ -209,9 +206,9 @@ GUIPropertyEditorListener {
     
     private static synchronized void loadGlobalSettings() throws IOException {
       File confFile = Utils.findFile(getConfDir()+globalSettingsFileName);
-      FileInputStream in = new FileInputStream(confFile);
-      globalProperties.load(in);
-      in.close();
+      try (FileInputStream in = new FileInputStream(confFile)) {
+        globalProperties.load(in);
+      }
     }
     
     public synchronized void saveSettings() throws IOException {
@@ -219,9 +216,9 @@ GUIPropertyEditorListener {
     }
     
     public static synchronized void saveGlobalSettings() throws IOException {
-        FileOutputStream out = new FileOutputStream(getConfDir() + globalSettingsFileName);
+      try (FileOutputStream out = new FileOutputStream(getConfDir() + globalSettingsFileName)) {
         globalProperties.save(out, "OVT properties file.");
-        out.close();
+      }
     }
     
     public static String getGlobalSetting(String key) {
@@ -368,11 +365,10 @@ GUIPropertyEditorListener {
 	
 	// load time settings
 	try{
-          double startMjd = new
-	  	Double(OVTCore.getGlobalSetting("startMjd")).doubleValue();	  
-	  double intervalMjd = new Double(OVTCore.getGlobalSetting("intervalMjd")).doubleValue();
-	  double stepMjd = new Double(OVTCore.getGlobalSetting("stepMjd")).doubleValue();
-	  double currentMjd = new Double(OVTCore.getGlobalSetting("currentMjd")).doubleValue();
+          double startMjd = Double.parseDouble(OVTCore.getGlobalSetting("startMjd"));	  
+	  double intervalMjd = Double.parseDouble(OVTCore.getGlobalSetting("intervalMjd"));
+	  double stepMjd = Double.parseDouble(OVTCore.getGlobalSetting("stepMjd"));
+	  double currentMjd = Double.parseDouble(OVTCore.getGlobalSetting("currentMjd"));
 	  timeSettings.setTimeSet(new TimeSet(startMjd, intervalMjd, stepMjd, currentMjd));
         } catch(Exception ignore){}
         
@@ -385,18 +381,21 @@ GUIPropertyEditorListener {
         return getTimeSettings().getCurrentMjd(); //getTimeSet().
     }
     
-    /** Returns current CS*/
+    /** Returns current C
+   * @return current CS*/
     public int getCS() {
         return getCoordinateSystem().getCoordinateSystem();
     }
     
-    /** Returns current CS*/
+    /** Returns current C
+   * @return polar CS*/
     public int getPolarCS() {
         return getCoordinateSystem().getPolarCoordinateSystem();
     }
     
     
-    /** Returns true if everything is initialized. Is used for GUI to check if it is necesarry to plot smthng.*/
+    /** Returns true if everything is initialized. Is used for GUI to check if it is necesarry to plot smthng
+   * @return true if everything is initialized*/
     public boolean isInitialized()
     { return isInitialized; }
     
@@ -404,12 +403,16 @@ GUIPropertyEditorListener {
     public static boolean isGuiPresent() {
         return guiPresent;
     }
-    
-    
-    // this method is a part of GUIPropertyEditorListener
-    // this listener is added to all editors, to render after
-    // user changes some paramiters
-    public void editingFinished(GUIPropertyEditorEvent evt) {
+
+  /**
+   * this method is a part of GUIPropertyEditorListener
+   * this listener is added to all editors, to render after
+   * user changes some of the parameters
+   * 
+   * @param evt
+   */
+    @Override
+      public void editingFinished(GUIPropertyEditorEvent evt) {
         Render();
     }
     
@@ -426,8 +429,8 @@ GUIPropertyEditorListener {
     /** Method to be used when informing user about the error occured
      *When in GUI produces a popup window with <CODE>msghead</CODE>
      *as window title and <CODE>msg</CODE> as message.
-     * @param msg Error message
-     * @param msghead Error title
+   * @param title Message title
+   * @param e Exceprion
      */
     public void sendErrorMessage(String title, Exception e) {
         if (isGuiPresent() == true){
@@ -449,8 +452,8 @@ GUIPropertyEditorListener {
     /** Method to be used when informing user about the warning
      *When in GUI produces a popup window with <CODE>msghead</CODE>
      *as window title and <CODE>msg</CODE> as message.
+     * @param title message title
      * @param msg Warning message
-     * @param msghead Warning title
      */
     public void sendWarningMessage(String title, String msg) {
         if (isGuiPresent() == true){
@@ -487,11 +490,11 @@ GUIPropertyEditorListener {
         System.loadLibrary("jawt");
     }
     
-    /** Detect OS type and return true if OS=windows */
+    /** Detect OS type
+    * @return  true if OS=windows*/
     public static boolean isUnderWindows() {
         String osName = System.getProperty("os.name");
-        if (osName.toLowerCase().indexOf("win") != -1) return true;
-        return false;
+        return osName.toLowerCase().contains("win");
     }
     
 /** Getter for property backgroundColor.
@@ -510,26 +513,7 @@ GUIPropertyEditorListener {
         float[] rgb = Utils.getRGB(backgroundColor);
         renderer.SetBackground(rgb[0], rgb[1], rgb[2]);
         propertyChangeSupport.firePropertyChange ("backgroundColor", oldBackgroundColor, backgroundColor);
-    }
-    
-    /* This is a DEAD DUCK ;-)    DEL-DEL-DEL !!!!
-     *
-     if removeAutoObjects == true all objects which are not stationary in OVT will be removed 
-     * These are objects like: DataModule, etc. They are listed in Settings.autoClasses.
-
-    public static void removeAllAutoObjects(OVTObject parent_obj) {
-        Children children = parent_obj.getChildren();
-        if (children == null) return;
-        Enumeration e = children.elements();
-        while (e.hasMoreElements()) {
-            OVTObject obj = (OVTObject)e.nextElement();
-            if (Settings.getAutoClasses().contains(obj.getClass().getName()))
-                obj.removeSelf();
-            else 
-                removeAllAutoObjects(obj);
-        }
-    }
-     */    
+    }  
     
     
     public void hideAllVisibleObjects() {
@@ -552,10 +536,10 @@ GUIPropertyEditorListener {
         return server;
     }
     /** Setter for property server.
-     * @param server New value of property server.
+     * @param serverMode New value of property server.
      */
-    public static void setServer(boolean srv) {
-        server = srv;
+    public static void setServer(boolean serverMode) {
+        server = serverMode;
     }
     
     public void setAsText(PropertyPath pp, String value)
@@ -585,7 +569,7 @@ GUIPropertyEditorListener {
         // find the object!
         Log.log("getEditor . property='" + propertyName + "' object='" + objectPath + "'", 7);
         
-        DescriptorsSource propertyHolder = null;
+        DescriptorsSource propertyHolder;
             propertyHolder = obj.getObject(objectPath);     // try to get object from children
             //DBG*/System.out.println("Object found in children: " + propertyHolder);
         
@@ -598,6 +582,7 @@ GUIPropertyEditorListener {
     }
     
     
+    @Override
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
@@ -628,12 +613,9 @@ GUIPropertyEditorListener {
     
     
     public XYZWindow getXYZWin() { return XYZwin; }
-    
-    /** Returns CoordinateSystems */
     public CoordinateSystem getCoordinateSystem() { return coordinateSystem; }
     public MagProps getMagProps() { return magProps; }
     public Camera getCamera() { return camera; }
-    
     public BowShock getBowShock() { return bowShock; }
     public MagTangent getMagTangent() { return magTangent; }
     public Magnetopause getMagnetopause() { return magnetopause; }
@@ -652,7 +634,8 @@ GUIPropertyEditorListener {
         getChildren().fireChildrenChanged();
     }
     
-    /** for XML */
+    /** for XML
+   * @return FieldlineMapper[] */
     public FieldlineMapper[] getFieldlineMappers() {
         // search for FieldlineMapper objects in children
         Vector vect = new Vector();
@@ -666,7 +649,8 @@ GUIPropertyEditorListener {
         return res;
     }
     
-    /** for XML */
+    /** for XML
+   * @param mappers */
     public void setFieldlineMappers(FieldlineMapper[] mappers) {
         // remove all FieldlineMappers
         Enumeration e = getChildren().elements();
