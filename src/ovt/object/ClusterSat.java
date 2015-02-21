@@ -33,21 +33,12 @@ Khotyaintsev
 package ovt.object;
 
 import ovt.*;
-import ovt.gui.*;
-import ovt.mag.*;
 import ovt.util.*;
-import ovt.event.*;
 import ovt.datatype.*;
-import ovt.interfaces.*;
 
 import java.io.*;
-import java.util.*;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import java.beans.*;
-import java.lang.Runtime;
-
 
 public class ClusterSat extends LTOFSat {
 
