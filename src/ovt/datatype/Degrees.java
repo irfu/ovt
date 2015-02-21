@@ -33,7 +33,7 @@ Khotyaintsev
 /*
  * Degrees.java
  *
- * Created on 13 Март 2001 г., 10:47
+ * Created on 13 пїЅпїЅпїЅпїЅ 2001 пїЅ., 10:47
  */
 
 
@@ -97,7 +97,7 @@ public class Degrees {
         return sb.toString();
     }
     
-    /** Converts String representation of degrees (123° 45' 67") to double */
+    /** Converts String representation of degrees (123m 45' 67") to double */
     static public double todouble(String svalue) throws IllegalArgumentException {
         double val;
         int sign = 1;
