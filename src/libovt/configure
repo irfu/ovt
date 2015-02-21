@@ -584,25 +584,10 @@ PACKAGE_URL=
 ac_unique_file="configure.in"
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-LD_LIBRARY_PATH
-kde_prefix
-ac_cv_kdeconfig
-VTK_LIBS
-VTK_CLASSPATH
-JAVADOC
-ac_cv_javadoc
-JAR
-ac_cv_jar
-JAVAH
-ac_cv_javah
-JAVAC
-ac_cv_jikes
-ac_cv_javac
 JAVACFLAGS
 JAVA_LIBS_OS
 JAVA_INCLUDES_OS
 JAVA_INCLUDES
-JAVABIN
 JAVA_HOME
 SHLIB_BUILD_FLAGS
 JAVA_SHLIB_SUFFIX
@@ -675,9 +660,6 @@ ac_user_opts='
 enable_option_checking
 with_jdk
 with_target_jre
-with_jikes
-with_vtk_classpath
-with_vtk_libs
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1299,12 +1281,6 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-jdk=DIR          where JDK is installed
   --with-java-target=V.V  target JRE version (1.4,1.5,1.6,etc.)
-  --with-jikes=/path/to/jikes
-                          specify jikes location (by default configure
-                          searches for jikes in PATH)
-  --with-vtk-classpath=CP should point to vtk.jar or to the directory where
-                          'vtk/vtkActor.class' can be found
-  --with-vtk-libs=DIR     where VTK libraries are installed
 
 Some influential environment variables:
   CC          C compiler command
@@ -2846,62 +2822,43 @@ JAVA_BIN_PREF=bin
 JAVA_INC_PREF=include
 
 case $PLATFORM in
-    linux*)
-	CFLAGS="-O3"
-	SHLIB_CFLAGS="-fPIC"
-	SHLIB_LD_LIBS=""
-	SHLIB_PREFIX="lib"
-	SHLIB_SUFFIX=".so"
-	SHLIB_BUILD_FLAGS="-shared"
-	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	linux*)
+		CFLAGS="-O3"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".so"
+		SHLIB_BUILD_FLAGS="-shared"
+		JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
 	;;
     freebsd*)
-	CFLAGS="-O3"
-	SHLIB_CFLAGS="-fPIC"
-	SHLIB_LD_LIBS=""
-	SHLIB_PREFIX="lib"
-	SHLIB_SUFFIX=".so"
-#	SHLIB_LINK_FLAGS="-shared"
-	SHLIB_BUILD_FLAGS="-shared"
-	JNI_MD_H_SUBDIR="freebsd"
-	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
-	;;
-    solaris*)
-	SHLIB_CFLAGS="-KPIC"
-	SHLIB_LD_LIBS='${LIBS}'
-	SHLIB_PREFIX="lib"
-	SHLIB_SUFFIX=".so"
-	SHLIB_BUILD_FLAGS='-G'
-#	SHLIB_LINK_FLAGS='-R ${LIB_RUNTIME_DIR}'
-	if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
-	SHLIB_BUILD_FLAGS='-Wl,-G'
-	fi
-	if test `$CC -V 2>&1 | grep -c Forte` != 0 ; then
-		CFLAGS='-fast'
-	fi
-	if test `$CC -V 2>&1 | grep -c WorkShop` != 0 ; then
-		CFLAGS='-fast'
-	fi
-	JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+		CFLAGS="-O3"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".so"
+		SHLIB_BUILD_FLAGS="-shared"
+		JNI_MD_H_SUBDIR="freebsd"
+		JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
 	;;
 	darwin*)
-	CFLAGS="-O3"
-	SHLIB_CFLAGS="-fPIC -fno-common -framework JavaVM"
-	SHLIB_LD_LIBS=""
-	SHLIB_PREFIX="lib"
-	SHLIB_SUFFIX=".dylib"
-	SHLIB_BUILD_FLAGS="-dynamiclib -framework JavaVM"
-	JAVA_BIN_PREF=Commands
-	JAVA_INC_PREF=Headers
-	JAVA_SHLIB_SUFFIX=".jnilib"
+		CFLAGS="-O3 -mmacosx-version-min=10.8"
+		SHLIB_CFLAGS="-fPIC -fno-common"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".dylib"
+		SHLIB_BUILD_FLAGS="-dynamiclib"
+		#JAVA_BIN_PREF=Commands
+		#JAVA_INC_PREF=Headers
+		JAVA_SHLIB_SUFFIX=".jnilib"
 	;;
     cygwin*)
     	CFLAGS="-O3"
-	SHLIB_CFLAGS="-fPIC"
-	SHLIB_LD_LIBS=""
-	SHLIB_PREFIX=""
-	SHLIB_SUFFIX=".dll"
-	SHLIB_BUILD_FLAGS="-shared"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX=""
+		SHLIB_SUFFIX=".dll"
+		SHLIB_BUILD_FLAGS="-shared"
 	;;
 esac
 if test "x$JNI_MD_H_SUBDIR" = "x" ; then
@@ -3032,19 +2989,9 @@ fi
 $as_echo "$ac_cv_java_home" >&6; }
 JAVA_HOME=$ac_cv_java_home
 
-
 JAVABIN=$JAVA_HOME/$JAVA_BIN_PREF/java
 
-
-
-if test ! -f $ac_cv_java_home/$JAVA_INC_PREF/jni.h; then
-  as_fn_error $? "wrong JDK install path. please use ./configure --with-jdk=DIR" "$LINENO" 5
-fi
-
 ac_java_bin="$ac_cv_java_home/$JAVA_BIN_PREF"
-#AC_PATH_PROG(ac_cv_java, java, no, $ac_java_bin)
-#JAVA=$ac_cv_java
-#AC_SUBST(JAVA)
 
 unset JAVA_COMPILER
 unset CLASSPATH
@@ -3072,20 +3019,32 @@ case "$ac_cv_jdk_version" in
 	JAVA_INCLUDES_OS="-I$ac_cv_java_home/include/$JNI_MD_H_SUBDIR"
 	JAVA_LIBS_OS=""
 	;;
-1.5*|1.6*|1.7*)
+1.5*|1.6*)
 	JAVA_INCLUDES="-I$ac_cv_java_home/$JAVA_INC_PREF"
 	if test "x$PLATFORM" = "xdarwin" ; then
 		JAVA_INCLUDES_OS=
 		JAVA_LIBS_OS=
+		SHLIB_CFLAGS="-fPIC -fno-common -framework JavaVM"
+		SHLIB_BUILD_FLAGS="-dynamiclib -framework JavaVM"
 	else
 		JAVA_INCLUDES_OS="-I$ac_cv_java_home/$JAVA_INC_PREF/$JNI_MD_H_SUBDIR"
 		JAVA_LIBS_OS="-I$ac_cv_java_home/jre/lib/$CPUARCH:$ac_cv_java_home/jre/lib/$CPUARCH/xawt"
 	fi
 	;;
+1.7*|1.8*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/$JAVA_INC_PREF"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/$JAVA_INC_PREF/$JNI_MD_H_SUBDIR"
+	JAVA_LIBS_OS="-I$ac_cv_java_home/jre/lib/$CPUARCH:$ac_cv_java_home/jre/lib/$CPUARCH/xawt"
+	;;
 *)
-	as_fn_error $? "unrecognized JDK version:$ac_cv_jdk_version" "$LINENO" 5
+	as_fn_error $? "unrecognized JDK version ($JAVABIN):$ac_cv_jdk_version" "$LINENO" 5
 	;;
 esac
+
+if test ! -f $ac_cv_java_home/$JAVA_INC_PREF/jni.h; then
+  as_fn_error $? "wrong JDK install path ($ac_cv_java_home/$JAVA_INC_PREF/). please use ./configure --with-jdk=DIR" "$LINENO" 5
+fi
+
 
 
 
@@ -3105,7 +3064,7 @@ $as_echo "no" >&6; }
 	JAVACFLAGS=
 else
 	case $ac_cv_target_jre in
-		1.1|1.2|1.3|1.4|1.5|1.6) { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target_jre" >&5
+		1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8) { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_target_jre" >&5
 $as_echo "$ac_cv_target_jre" >&6; };
 		JAVACFLAGS="-source $ac_cv_target_jre -target $ac_cv_target_jre";;
 	*) as_fn_error $? "invalid target JRE version" "$LINENO" 5
@@ -3113,488 +3072,7 @@ $as_echo "$ac_cv_target_jre" >&6; };
 fi
 
 
-# Extract the first word of "javac", so it can be a program name with args.
-set dummy javac; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_javac+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_javac in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_javac="$ac_cv_javac" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $ac_java_bin
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_javac="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_javac" && ac_cv_path_ac_cv_javac="no"
-  ;;
-esac
-fi
-ac_cv_javac=$ac_cv_path_ac_cv_javac
-if test -n "$ac_cv_javac"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_javac" >&5
-$as_echo "$ac_cv_javac" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-JAVAC=$ac_cv_javac
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking whether to use jikes" >&5
-$as_echo_n "checking whether to use jikes... " >&6; }
-# build with jikes by default
-
-
-# Check whether --with-jikes was given.
-if test "${with_jikes+set}" = set; then :
-  withval=$with_jikes; ac_cv_with_jikes=$with_jikes
-else
-  ac_cv_with_jikes=yes
-fi
-
-
-if test "x$ac_cv_with_jikes" != "xno"; then
-    { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-    # if --with-jikes was not supplied ($ac_cv_with_jikes == yes)
-    if test "x$ac_cv_with_jikes" = "xyes"
-    then
-        # Extract the first word of "jikes", so it can be a program name with args.
-set dummy jikes; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_jikes+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_jikes in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_jikes="$ac_cv_jikes" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $ac_java_bin $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_jikes="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_jikes" && ac_cv_path_ac_cv_jikes="no"
-  ;;
-esac
-fi
-ac_cv_jikes=$ac_cv_path_ac_cv_jikes
-if test -n "$ac_cv_jikes"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_jikes" >&5
-$as_echo "$ac_cv_jikes" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-        JIKES=$ac_cv_jikes
-    else
-        as_ac_File=`$as_echo "ac_cv_file_$ac_cv_with_jikes" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_cv_with_jikes" >&5
-$as_echo_n "checking for $ac_cv_with_jikes... " >&6; }
-if eval \${$as_ac_File+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "$ac_cv_with_jikes"; then
-  eval "$as_ac_File=yes"
-else
-  eval "$as_ac_File=no"
-fi
-fi
-eval ac_res=\$$as_ac_File
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
-  JIKES=$ac_cv_with_jikes
-else
-  JIKES=no
-fi
-
-    fi
-
-    if test "x$JIKES" != "xno"; then
-        as_ac_File=`$as_echo "ac_cv_file_$JAVA_HOME/jre/lib/rt.jar" | $as_tr_sh`
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $JAVA_HOME/jre/lib/rt.jar" >&5
-$as_echo_n "checking for $JAVA_HOME/jre/lib/rt.jar... " >&6; }
-if eval \${$as_ac_File+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  test "$cross_compiling" = yes &&
-  as_fn_error $? "cannot check for file existence when cross compiling" "$LINENO" 5
-if test -r "$JAVA_HOME/jre/lib/rt.jar"; then
-  eval "$as_ac_File=yes"
-else
-  eval "$as_ac_File=no"
-fi
-fi
-eval ac_res=\$$as_ac_File
-	       { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_res" >&5
-$as_echo "$ac_res" >&6; }
-if eval test \"x\$"$as_ac_File"\" = x"yes"; then :
-  JAVAC=$JIKES' '-bootclasspath' '$JAVA_HOME/jre/lib/rt.jar' '-nowarn
-fi
-
-    fi
-else
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-# Extract the first word of "javah", so it can be a program name with args.
-set dummy javah; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_javah+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_javah in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_javah="$ac_cv_javah" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $ac_java_bin $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_javah="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_javah" && ac_cv_path_ac_cv_javah="no"
-  ;;
-esac
-fi
-ac_cv_javah=$ac_cv_path_ac_cv_javah
-if test -n "$ac_cv_javah"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_javah" >&5
-$as_echo "$ac_cv_javah" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-JAVAH=$ac_cv_javah
-
-
-# Extract the first word of "jar", so it can be a program name with args.
-set dummy jar; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_jar+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_jar in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_jar="$ac_cv_jar" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $ac_java_bin $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_jar="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_jar" && ac_cv_path_ac_cv_jar="no"
-  ;;
-esac
-fi
-ac_cv_jar=$ac_cv_path_ac_cv_jar
-if test -n "$ac_cv_jar"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_jar" >&5
-$as_echo "$ac_cv_jar" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-JAR=$ac_cv_jar
-if test "x$JAR" = "xno" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: jar can not be found. Please make shure jar is in the PATH
-	and restart configure." >&5
-$as_echo "jar can not be found. Please make shure jar is in the PATH
-	and restart configure." >&6; }
-	exit 1
-fi
-
-
-# Extract the first word of "javadoc", so it can be a program name with args.
-set dummy javadoc; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_javadoc+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_javadoc in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_javadoc="$ac_cv_javadoc" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $ac_java_bin $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_javadoc="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_javadoc" && ac_cv_path_ac_cv_javadoc="no"
-  ;;
-esac
-fi
-ac_cv_javadoc=$ac_cv_path_ac_cv_javadoc
-if test -n "$ac_cv_javadoc"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_javadoc" >&5
-$as_echo "$ac_cv_javadoc" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-JAVADOC=$ac_cv_javadoc
-if test "x$JAVADOC" = "xno" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: javadoc is not found. If you whant to generate API docs - please make shure javadoc is in the PATH
-	and restart configure." >&5
-$as_echo "javadoc is not found. If you whant to generate API docs - please make shure javadoc is in the PATH
-	and restart configure." >&6; }
-fi
-
-
-
-# VTK
-
-
-# Check whether --with-vtk-classpath was given.
-if test "${with_vtk_classpath+set}" = set; then :
-  withval=$with_vtk_classpath; ac_cv_with_vtk_classpath="$withval"
-fi
-
-
-ac_vtk_dirlist="$BUILD_DIR/lib /usr/local/lib /usr/local/lib/vtk /usr/lib /usr/lib/vtk /opt/lib/vtk /usr/X11R6/lib /usr/X11R6/lib/vtk"
-if test "$prefix" != "/usr/local" ; then
-		ac_vtk_dirlist="$prefix/lib $prefix/lib/vtk $ac_vtk_dirlist"
-	fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking VTK classes" >&5
-$as_echo "$as_me: checking VTK classes" >&6;}
-
-if test "x$ac_cv_with_vtk_classpath" != "x"
-then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking weather $ac_cv_with_vtk_classpath is a jar" >&5
-$as_echo_n "checking weather $ac_cv_with_vtk_classpath is a jar... " >&6; }
-	if test -f $ac_cv_with_vtk_classpath ; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-		VTK_CLASSPATH=$ac_cv_with_vtk_classpath
-	else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking weather $ac_cv_with_vtk_classpath/vtk contains VTK classes" >&5
-$as_echo_n "checking weather $ac_cv_with_vtk_classpath/vtk contains VTK classes... " >&6; }
-		if test -f $ac_cv_with_vtk_classpath/vtk/vtkActor.class ; then
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-			VTK_CLASSPATH=$ac_cv_with_vtk_classpath
-		else
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-			as_fn_error $? "invalid value $ac_cv_with_vtk_classpath for vtk-classpath" "$LINENO" 5
-		fi
-	fi
-fi
-
-
-if test "x$VTK_CLASSPATH" = "x"
-then
-	ac_vtk_jar_dirlist="/usr/local/share/java/classes /usr/local/lib/vtk/java /usr/lib/vtk/java /opt/lib/vtk/java"
-	if test "$prefix" != "/usr/local" ; then
-		ac_vtk_jar_dirlist="$prefix/share/java/classes $ac_vtk_jar_dirlist $prefix/lib/java"
-	fi
-	for vtk_dir in $ac_vtk_jar_dirlist
-	do
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for VTK classes jar (vtk.jar) in $vtk_dir" >&5
-$as_echo_n "checking for VTK classes jar (vtk.jar) in $vtk_dir... " >&6; }
-		if test -f $vtk_dir'/vtk.jar'; then
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-			VTK_CLASSPATH=$vtk_dir'/vtk.jar'
-			break
-		else
-			{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-		fi
-	done
-fi
-
-if test "x$VTK_CLASSPATH" = "x"
-then
-	as_fn_error $? "VTK classes not found. Please use ./configure --with-vtk-classpath=CP" "$LINENO" 5
-fi
-
-
-
-# Check whether --with-vtk-libs was given.
-if test "${with_vtk_libs+set}" = set; then :
-  withval=$with_vtk_libs; ac_vtk_lib_dir=$withval
-else
-  ac_vtk_lib=none
-fi
-
-
-ac_vtk_lib=$SHLIB_PREFIX'vtkCommonJava'$SHLIB_SUFFIX
-if test "x$ac_vtk_lib_dir" != "xnone"
-then
-	ac_vtk_lib_dirlist=$ac_vtk_lib_dir' '$ac_vtk_dirlist
-fi
-
-for vtk_dir in $ac_vtk_lib_dirlist
-do
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for VTK libraries in $vtk_dir " >&5
-$as_echo_n "checking for VTK libraries in $vtk_dir ... " >&6; }
-	if test -f $vtk_dir'/'$ac_vtk_lib; then
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-		if test "x$VTK_LIBS" = "x" ; then
-			VTK_LIBS=$vtk_dir
-			break
-		fi
-	else
-		{ $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-	fi
-done
-
-if test "x$VTK_LIBS" = "x" ; then
-	{ $as_echo "$as_me:${as_lineno-$LINENO}: result: VTK libraries not found. please use ./configure --with-vtk-libs=DIR
-	if you want to run OVT." >&5
-$as_echo "VTK libraries not found. please use ./configure --with-vtk-libs=DIR
-	if you want to run OVT." >&6; }
-#	exit 1
-fi
-
-
-
-# KDE
-kde_default_bindirs="/usr/bin /usr/local/bin /opt/local/bin /usr/X11R6/bin /opt/kde/bin /opt/kde3/bin /usr/kd
-e/bin /usr/local/kde/bin"
-# Extract the first word of "kde-config", so it can be a program name with args.
-set dummy kde-config; ac_word=$2
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for $ac_word" >&5
-$as_echo_n "checking for $ac_word... " >&6; }
-if ${ac_cv_path_ac_cv_kdeconfig+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  case $ac_cv_kdeconfig in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_ac_cv_kdeconfig="$ac_cv_kdeconfig" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-for as_dir in $kde_default_bindirs $PATH
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-    for ac_exec_ext in '' $ac_executable_extensions; do
-  if as_fn_executable_p "$as_dir/$ac_word$ac_exec_ext"; then
-    ac_cv_path_ac_cv_kdeconfig="$as_dir/$ac_word$ac_exec_ext"
-    $as_echo "$as_me:${as_lineno-$LINENO}: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-  done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_ac_cv_kdeconfig" && ac_cv_path_ac_cv_kdeconfig="no"
-  ;;
-esac
-fi
-ac_cv_kdeconfig=$ac_cv_path_ac_cv_kdeconfig
-if test -n "$ac_cv_kdeconfig"; then
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_kdeconfig" >&5
-$as_echo "$ac_cv_kdeconfig" >&6; }
-else
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: no" >&5
-$as_echo "no" >&6; }
-fi
-
-
-if test "$ac_cv_kdeconfig" != "no" ; then
-	kde_prefix=$($ac_cv_kdeconfig --prefix)
-fi
-
-
-if test "x$PLATFORM" = "xdarwin" ; then
-	LD_LIBRARY_PATH=DYLD_LIBRARY_PATH
-else
-	LD_LIBRARY_PATH=LD_LIBRARY_PATH
-fi
-
-
-## set BEANINFO_JAVA_FILES
-#RAWFILES=`find ovt -name \*BeanInfo.java`
-#for i in $RAWFILES; do
-#	BEANINFO_JAVA_FILES=$BEANINFO_JAVA_FILES" "$i
-##done
-#echo $BEANINFO_JAVA_FILES
-#AC_SUBST(BEANINFO_JAVA_FILES)
-
-ac_config_files="$ac_config_files Makefile addons/Makefile addons/ovt.desktop bin/checktle bin/ovt src/Makefile"
+ac_config_files="$ac_config_files Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -4303,11 +3781,6 @@ for ac_config_target in $ac_config_targets
 do
   case $ac_config_target in
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
-    "addons/Makefile") CONFIG_FILES="$CONFIG_FILES addons/Makefile" ;;
-    "addons/ovt.desktop") CONFIG_FILES="$CONFIG_FILES addons/ovt.desktop" ;;
-    "bin/checktle") CONFIG_FILES="$CONFIG_FILES bin/checktle" ;;
-    "bin/ovt") CONFIG_FILES="$CONFIG_FILES bin/ovt" ;;
-    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
 
   *) as_fn_error $? "invalid argument: \`$ac_config_target'" "$LINENO" 5;;
   esac
@@ -4763,5 +4236,3 @@ $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
 
-chmod 555 bin/ovt
-chmod 555 bin/checktle
