@@ -40,8 +40,6 @@ package ovt.object.vtk;
 
 import vtk.*;
 
-import java.lang.*;
-
 /** 
  *
  * @author  ko
@@ -91,7 +89,7 @@ public class ProgrammableEarthSource {
             x = getRadius() * Math.sin(theta) * Math.cos(phi);
             y = getRadius() * Math.sin(theta) * Math.sin(phi);
             points.InsertNextPoint(x, y, z);
-            if ((mm==0) || (pp==0)) visible = true; else visible = false;
+            visible = (mm==0) || (pp==0);
             scalars.InsertNextValue((visible) ? 1 : 0);
           }
         }
