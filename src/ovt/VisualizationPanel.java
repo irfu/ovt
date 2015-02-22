@@ -106,13 +106,6 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
     public synchronized void Render() {
         checkSizeChanged(); // if size changed -> reposition label
         cam = ren.GetActiveCamera();
-        
-        //getRenderer().ResetCameraClippingRange(-1000,1000,-1000,1000,-1000,1000);
-        //getRenderer().ResetCameraClippingRange();
-        //cam.ComputeViewPlaneNormal();
-        //cam.SetClippingRange(0.01, 1000.01);
-        //System.out.println("Reset camera clipping");
-        
         lgt.SetPosition(cam.GetPosition());
         lgt.SetFocalPoint(cam.GetFocalPoint());
         super.Render();
@@ -149,48 +142,38 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
 
 class CameraChangeSupport {
     
-    private final Vector listeners;
+    private final ArrayList<CameraChangeListener> listeners;
     private Object source;
     
     CameraChangeSupport(Object source) {
     this.source = null;
-    this.listeners = new Vector();
+    this.listeners = new ArrayList<>();
         this.source = source;
     }
     
     public void addCameraChangeListener (CameraChangeListener listener) {
-        listeners.addElement(listener);
+        listeners.add(listener);
     }
     
     public void removeCameraChangeListener (CameraChangeListener listener) {
-        listeners.removeElement(listener);
+        listeners.remove(listeners.indexOf(listener));
     }
     
     public void fireCameraChange(CameraEvent evt) {
-        Enumeration e = listeners.elements();
-        fireCameraChange(evt, e);
+        Iterator<CameraChangeListener> it = listeners.iterator();
+        fireCameraChange(evt, it);
     }
     
   /** Deliver event evt to all elements of enumeration e */
-    public static void fireCameraChange(CameraEvent evt, Enumeration e) {
+    public static void fireCameraChange(CameraEvent evt, Iterator<CameraChangeListener> it) {
         CameraChangeListener cameraListener;
-        while (e.hasMoreElements()) {
+        while (it.hasNext()) {
             try {
-                cameraListener = ((CameraChangeListener)(e.nextElement()));
-                if (OVTCore.DEBUG > 0) {
-                    try {
-                        System.out.println("TimeChangeEvent ->" + ((NamedObject)cameraListener).getName());
-                    } catch (ClassCastException e2) {}
-                }
+                cameraListener = ((CameraChangeListener)(it.next()));
                 cameraListener.cameraChanged(evt);
             } catch (ClassCastException e2) {}
         }
     }
-  /**
-   * public void fireTimeChange(String property, Object oldValue, Object newValue, Vector timeMap) {
-   * TimeEvent evt = new TimeEvent(source, property, oldValue, newValue, timeMap);
-   * fireTimeChange(evt);
-   * }*/
     
     public boolean hasListener(CameraChangeListener listener) {
         return listeners.contains(listener);
