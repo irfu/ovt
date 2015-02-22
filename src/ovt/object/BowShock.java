@@ -146,11 +146,10 @@ protected void validate() {
 		
 	vtkStructuredGridGeometryFilter gfilter = new vtkStructuredGridGeometryFilter();
 			gfilter.SetInputData(sgrid);
-			gfilter.SetExtent(0,sizex,0,sizey,0,0);
-                        
+			gfilter.SetExtent(0,sizex,0,sizey,0,0);                
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-			mapper.SetInputData(gfilter.GetOutput());
+			mapper.SetInputConnection(gfilter.GetOutputPort());
 		
         actor = new vtkActor();
         	actor.SetMapper(mapper);
