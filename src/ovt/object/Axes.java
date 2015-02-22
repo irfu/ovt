@@ -42,9 +42,7 @@ import vtk.*;
 
 import ovt.*;
 import ovt.beans.*;
-import ovt.util.*;
 import ovt.event.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import java.beans.*;
@@ -54,7 +52,7 @@ import java.beans.*;
  * @author  ko
  * @version 
  */
-public class Axes extends VisualObject {
+public final class Axes extends VisualObject {
 
   /** The size of the actor for scale=1 */
   protected double normalActorSize = 1;
@@ -66,7 +64,8 @@ public class Axes extends VisualObject {
   protected String[] axeTitle = {"x", "y", "z"};
   protected static final int[][] axeTitlePosition = { {1, 0, 0}, {0, 1, 0}, {0, 0, 1} };
   
-  /** Creates new Axes */
+  /** Creates new Axes
+   * @param core */
   public Axes(OVTCore core) {
     super(core, "Axes", "images/axes.gif");
     
@@ -74,11 +73,11 @@ public class Axes extends VisualObject {
       axes.SetOrigin(0, 0, 0);      
     
     vtkTubeFilter tubeFilter = new vtkTubeFilter();
-    tubeFilter.SetInputData(axes.GetOutput());
+    tubeFilter.SetInputConnection(axes.GetOutputPort());
     tubeFilter.SetRadius(0.01);
     
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-    mapper.SetInputData(tubeFilter.GetOutput());
+    mapper.SetInputConnection(tubeFilter.GetOutputPort());
     
     actor = new vtkActor();
     actor.SetMapper(mapper);
@@ -93,7 +92,7 @@ public class Axes extends VisualObject {
       atext = new vtkVectorText();
         atext.SetText(axeTitle[i]);
       mapper = new vtkPolyDataMapper();
-        mapper.SetInputData(atext.GetOutput());
+        mapper.SetInputConnection(atext.GetOutputPort());
       axeTitleActor[i] = new vtkFollower();
         axeTitleActor[i].SetMapper(mapper);
         axeTitleActor[i].SetCamera(getRenderer().GetActiveCamera());
@@ -102,24 +101,6 @@ public class Axes extends VisualObject {
     setScale(scale);
     setVisible(true);
   }
-  
-  /** Returns the length of one axe
-   * @return Value of property length.
-   */
-  /*public double getLength() {
-    return length;
-  }*/
-  /** Setter for property length.
-   * @param length New value of property length.
-   *
-   * @throws PropertyVetoException
-   */
-  /*public void setLength(double length) throws java.beans.PropertyVetoException {
-    double oldLength = this.length;
-    vetoableChangeSupport.fireVetoableChange("length", new Double (oldLength), new Double (length));
-    this.length = length;
-    propertyChangeSupport.firePropertyChange ("length", new Double (oldLength), new Double (length));
-  }*/
   
   public double getScale() {
         return scale;
@@ -138,7 +119,7 @@ public class Axes extends VisualObject {
               axeTitleActor[i].SetPosition(x);
             }
         }
-        firePropertyChange("scale", new Double(oldScale), new Double(scale));
+        firePropertyChange("scale", oldScale, scale);
   }
   
   public void show() {
@@ -151,6 +132,7 @@ public class Axes extends VisualObject {
     getRenderer().RemoveActor(actor);
   }
 
+  @Override
   public void setVisible(boolean visible) {
     if (visible != isVisible()) {
       if (visible) show();
@@ -159,6 +141,7 @@ public class Axes extends VisualObject {
     }
   }
   
+  @Override
   public Descriptors getDescriptors() {
     if (descriptors == null) {
         try {
