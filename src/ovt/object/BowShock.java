@@ -239,19 +239,15 @@ public void setOpacity(double opacity) {
         menu.setFont(Style.getMenuFont());
     JMenuItem item = new JMenuItem("SWP...");
         item.setFont(Style.getMenuFont());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                    getMagProps().activityEditors[MagProps.SWP].setVisible(true);
-            }
-        });
+        item.addActionListener((ActionEvent evt) -> {
+          getMagProps().activityEditors[MagProps.SWP].setVisible(true);
+    });
         menu.add(item);
     item = new JMenuItem("Mach Number...");
         item.setFont(Style.getMenuFont());
-        item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                    getMagProps().activityEditors[MagProps.MACHNUMBER].setVisible(true);
-            }
-        });
+        item.addActionListener((ActionEvent evt) -> {
+          getMagProps().activityEditors[MagProps.MACHNUMBER].setVisible(true);
+    });
         menu.add(item);
     return new JMenuItem[] { menu };
 }
@@ -270,10 +266,8 @@ public void setOpacity(double opacity) {
                 new String[]{ "Wireframe", "Surface"}
             );
             // Render each time user changes time by means of gui
-            representationEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
-                public void editingFinished(GUIPropertyEditorEvent evt) {
-                    Render();
-                }
+            representationEditor.addGUIPropertyEditorListener((GUIPropertyEditorEvent evt) -> {
+              Render();
             });
             pd.setPropertyEditor(representationEditor);
             descriptors.put(pd);
@@ -287,10 +281,8 @@ public void setOpacity(double opacity) {
             SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05, 
                 new double[]{0,.25,.5,.75,1}, new String[]{"0%","25%","50%","75%","100%"});
             addPropertyChangeListener("opacity", sliderEditor);
-            sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
-                public void editingFinished(GUIPropertyEditorEvent evt) {
-                    Render();
-                }
+            sliderEditor.addGUIPropertyEditorListener((GUIPropertyEditorEvent evt) -> {
+              Render();
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
