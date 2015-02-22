@@ -56,7 +56,6 @@ import vtk.rendering.jogl.vtkJoglCanvasComponent;
 import vtk.rendering.jogl.vtkJoglPanelComponent;
 import java.awt.*;
 import java.awt.event.*;
-import java.io.FileNotFoundException;
 
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
