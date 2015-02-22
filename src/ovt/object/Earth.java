@@ -39,21 +39,16 @@ Khotyaintsev
 package ovt.object;
 
 import ovt.*;
-import ovt.mag.*;
 import ovt.gui.*;
 import ovt.util.*;
 import ovt.event.*;
 import ovt.beans.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
-import ovt.object.editor.*;
-import ovt.object.vtk.ProgrammableEarthSource;
 
 import vtk.*;
 
 import java.io.*;
-import java.lang.*;
-import java.util.*;
 import java.beans.*;
 import javax.swing.*;
 import java.awt.event.*;
@@ -117,19 +112,23 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
   
   private void initTextures() {
     texture[0] = new vtkTexture();
-    
-    String[] textureFiles = { "", "earth_BnW.pnm", "earth_normal.pnm", "earth8km2000x1000.pnm" };
-    for (int i=1; i<4; i++) {
-        vtkPNMReader pnmReader = new vtkPNMReader();
-            pnmReader.SetFileName(OVTCore.getOVTHomeDir()+"textures"+File.separator+textureFiles[i]);
-         texture[i] = new vtkTexture();
-         texture[i].SetInputData(pnmReader.GetOutput());
-         if (i != HIGH_RESOLUTION_TEXTURE) texture[i].InterpolateOn();
+
+    String[] textureFiles = {"", "earth_BnW.pnm", "earth_normal.pnm", "earth8km2000x1000.pnm"};
+    for (int i = 1; i < 4; i++) {
+      vtkPNMReader pnmReader = new vtkPNMReader();
+      File f = Utils.findFile("textures" + File.separator + textureFiles[i]);
+      pnmReader.SetFileName(f.getPath());
+      texture[i] = new vtkTexture();
+      texture[i].SetInputConnection(pnmReader.GetOutputPort());
+      if (i != HIGH_RESOLUTION_TEXTURE) {
+        texture[i].InterpolateOn();
       }
+    }
   }
 
   
-protected void validate() {
+  @Override
+  protected void validate() {
     Log.log("Recalculating Earth ...", 5);
 
       // create actor  
@@ -141,7 +140,7 @@ protected void validate() {
 
       // map to graphics library
     vtkPolyDataMapper earthMapper = new vtkPolyDataMapper();
-      earthMapper.SetInputData(tss.GetOutput());
+      earthMapper.SetInputConnection(tss.GetOutputPort());
 
     // actor coordinates geometry, properties, transformation
     actor = new vtkActor();
@@ -158,12 +157,14 @@ protected void validate() {
     super.validate();
   }
 
+  @Override
   public void setVisible(boolean visible) {
     super.setVisible(visible);
     earthGrid.setVisible(visible);
     coastLine.setVisible(visible);
   }
   
+  @Override
   protected void show() {
     super.show();
     rotate();
@@ -174,12 +175,14 @@ protected void validate() {
     actor.SetUserMatrix(m3x3.getVTKMatrix()); 
   }
   
+  @Override
   public void timeChanged(TimeEvent evt) {
     if (isVisible()) rotate(); 
     earthGrid.timeChanged(evt);
     coastLine.timeChanged(evt);
   }
 
+  @Override
   public void coordinateSystemChanged(CoordinateSystemEvent evt) {
     
     if (isVisible()) rotate();
@@ -226,10 +229,12 @@ protected void validate() {
     
     this.textureType = textureType;
     if (actor != null) actor.SetTexture(texture[textureType]);
-    propertyChangeSupport.firePropertyChange ("textureType", new Integer (oldtextureType), new Integer (textureType));
+    propertyChangeSupport.firePropertyChange ("textureType", oldtextureType, textureType);
   }
   
-  /** Is needed for Camera, returns { 0, 0, 0}. */
+  /** Is needed for Camera, returns { 0, 0, 0}.
+   * @return  */
+  @Override
   public double[] getPosition() {
       return zero_zero_zero;
   }
@@ -259,7 +264,7 @@ protected void validate() {
       return new JMenuItem[]{ menu1, menu2, null, item1 };
   }  
 
-  /** for XML */
+  /* for XML */
   public EarthGrid getEarthGrid() { return earthGrid; }
   public CoastLine getCoastLine() { return coastLine; }
   
