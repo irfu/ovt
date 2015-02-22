@@ -59,7 +59,7 @@ import java.awt.event.*;
  * @author  root
  * @version 
  */
-public class Earth extends SingleActorObject implements TimeChangeListener, 
+public final class Earth extends SingleActorObject implements TimeChangeListener, 
                       CoordinateSystemChangeListener, MenuItemsSource, PositionSource  {
 
   public static final int NO_TEXTURE                = 0;
@@ -83,12 +83,13 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
   public CoastLine coastLine;
 
   
-  /** Creates new Earth */
+  /** Creates new Earth
+   * @param core */
   public Earth(OVTCore core) {
     super(core, "The Earth", "images/globe.gif");
     setColor(java.awt.Color.white);
     Log.log("Earth :: init ... ", 5);
-    Descriptors descriptors = super.getDescriptors();
+    Descriptors descriptorsTmp = super.getDescriptors();
     try {
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("textureType", this);
         pd.setDisplayName("textureType");
@@ -96,7 +97,7 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
         textureTypeEditor = new MenuPropertyEditor(pd, tags);
         addPropertyChangeListener("textureType", textureTypeEditor);
         pd.setPropertyEditor(textureTypeEditor);
-        descriptors.put(pd);
+        descriptorsTmp.put(pd);
     } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
@@ -111,14 +112,14 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
   }
   
   private void initTextures() {
-    texture[0] = new vtkTexture();
-
     String[] textureFiles = {"", "earth_BnW.pnm", "earth_normal.pnm", "earth8km2000x1000.pnm"};
+    texture[0] = new vtkTexture();
     for (int i = 1; i < 4; i++) {
-      vtkPNMReader pnmReader = new vtkPNMReader();
-      File f = Utils.findFile("textures" + File.separator + textureFiles[i]);
-      pnmReader.SetFileName(f.getPath());
       texture[i] = new vtkTexture();
+      File f = Utils.findFile("textures" + File.separator + textureFiles[i]);
+      if (f == null) continue;
+      vtkPNMReader pnmReader = new vtkPNMReader();
+      pnmReader.SetFileName(f.getPath());
       texture[i].SetInputConnection(pnmReader.GetOutputPort());
       if (i != HIGH_RESOLUTION_TEXTURE) {
         texture[i].InterpolateOn();
@@ -130,29 +131,29 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
   @Override
   protected void validate() {
     Log.log("Recalculating Earth ...", 5);
-
-      // create actor  
+    
       // create sphere geometry
     vtkTexturedSphereSource tss = new vtkTexturedSphereSource();
       tss.SetRadius(1.0);
       tss.SetThetaResolution(40);
       tss.SetPhiResolution(40);
 
+      // scale the texture
+    vtk.vtkTransformTextureCoords trans = new vtk.vtkTransformTextureCoords();
+      trans.SetInputConnection(tss.GetOutputPort());
+      trans.SetScale(.25, 1, 1);
       // map to graphics library
     vtkPolyDataMapper earthMapper = new vtkPolyDataMapper();
-      earthMapper.SetInputConnection(tss.GetOutputPort());
+      earthMapper.SetInputConnection(trans.GetOutputPort());
 
     // actor coordinates geometry, properties, transformation
     actor = new vtkActor();
-      actor.SetMapper(earthMapper);
-      float[] rgb = ovt.util.Utils.getRGB(getColor());
-      actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-
-    // load in the texture map
-        
+    actor.SetMapper(earthMapper);
+    float[] rgb = ovt.util.Utils.getRGB(getColor());
+    actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
     // avoid BUS ERROR bug in OpenGL. This should be fixed in future
     if (!OVTCore.isServer()) {
-            actor.SetTexture(texture[getTextureType()]);
+      actor.SetTexture(texture[getTextureType()]);
     }
     super.validate();
   }
@@ -240,17 +241,16 @@ public class Earth extends SingleActorObject implements TimeChangeListener,
   }
   
   
+  @Override
   public JMenuItem[] getMenuItems() {
       JMenuItem item1 = new JMenuItem("Look at");
         item1.setFont(ovt.gui.Style.getMenuFont());
         item1.setEnabled(isEnabled());
-        item1.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent evt) {
-                if (!isVisible()) setVisible(true);
-                getCore().getCamera().setViewTo(Earth.this);
-                getCore().Render();
-            }
-        });
+        item1.addActionListener((ActionEvent evt) -> {
+          if (!isVisible()) setVisible(true);
+          getCore().getCamera().setViewTo(Earth.this);
+          getCore().Render();
+      });
      
       JMenu menu1 = new JMenu("Grid");
           menu1.setFont(ovt.gui.Style.getMenuFont());
