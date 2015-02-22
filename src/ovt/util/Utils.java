@@ -594,14 +594,25 @@ public class Utils extends Object {
     }
     
     public static File findFile(String fileName) {
-        File file;
-        file = new File(OVTCore.getUserDir() + fileName);
-        if (!file.exists() | file.isDirectory()) file = null;
-        if (file==null) {
-            ClassLoader classLoader = OVTCore.class.getClassLoader();
-            file = new File(classLoader.getResource(fileName).getFile());
-            if (!file.exists() | file.isDirectory()) file = null;
-        }
-        return file;
+    if (fileName==null) {
+      return null;
     }
+    File file;
+    file = new File(OVTCore.getUserDir() + fileName);
+    if (!file.exists() | file.isDirectory()) {
+      file = null;
+    }
+    if (file == null) {
+      ClassLoader classLoader = OVTCore.class.getClassLoader();
+      java.net.URL fn = classLoader.getResource(fileName);
+      if (fn == null) {
+        return null;
+      }
+      file = new File(fn.getFile());
+      if (!file.exists() | file.isDirectory()) {
+        file = null;
+      }
+    }
+    return file;
+  }
 }
