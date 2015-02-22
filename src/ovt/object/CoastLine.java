@@ -119,7 +119,8 @@ protected void validate() {
 	// Here we go!
 
     try {
-        ContinentsReader cr = new ContinentsReader(OVTCore.getMdataDir()+"coastline.dat");
+      File f = Utils.findFile(OVTCore.getMdataDir()+"coastline.dat");
+        ContinentsReader cr = new ContinentsReader(f);
         vtkPolyDataMapper mapper = new vtkPolyDataMapper();
             mapper.SetInputData(cr.GetOutput());
     
@@ -193,10 +194,10 @@ public void setPrefferedVisibility(boolean prefferedVisibility) throws IllegalAr
 }
 
 class ContinentsReader {
-    String file;
+    File file;
     vtkPolyData profile = new vtkPolyData();
 
-ContinentsReader(String file) throws IOException {
+ContinentsReader(File file) throws IOException {
     this.file = file;
     Log.log("Loading continents from " + file + " ...", 0);  
     vtkCellArray lines = new vtkCellArray();
