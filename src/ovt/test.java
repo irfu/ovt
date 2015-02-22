@@ -80,13 +80,7 @@ public class test {
         final boolean usePanel = false;
         final boolean windowResizable = true;
         SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-        // build VTK Pipeline
-                
-                String file="images/ovt.gif";
-                java.net.URL url = OVTCore.class.getClassLoader().getSystemResource(file);
-        if (url == null) System.out.println("File not found ("+file+")");
-        
+            public void run() {        
                 // create sphere geometry
                 vtkSphereSource sphere = new vtkSphereSource();
                 sphere.SetRadius(1.0);
