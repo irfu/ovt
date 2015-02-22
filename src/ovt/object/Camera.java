@@ -309,7 +309,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             addPropertyChangeListener(customizer);
             
             // listen to VisualizationPanel camera change
-            VisualizationPanel vp =  getCore().getXYZWin().getVisualizationPanel();
+            RenPanel vp =  getCore().getXYZWin().getVisualizationPanel();
             vp.addCameraChangeListener(this);
         }
     }
