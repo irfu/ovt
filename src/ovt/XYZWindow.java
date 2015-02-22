@@ -42,6 +42,8 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*;
+import vtk.rendering.jogl.vtkAbstractJoglComponent;
+import vtk.rendering.jogl.vtkJoglCanvasComponent;
 
 
 
@@ -62,7 +64,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   private SplashWindow splashWindow;
 
   // VTK stuff
-  protected VisualizationPanel renPanel;
+  protected final JOGLVisPanel renPanel;
   protected vtkRenderer ren;
   // GUI
   public static StatusLine statusLine = new StatusLine();
@@ -106,8 +108,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 //------- create the vtkPanel ----------
     addNotify();
-    renPanel = new VisualizationPanel(this);
+    //renPanel = new VisualizationPanel(this);
+    renPanel = new JOGLVisPanel();
     addOriginActor();
+    vtkAbstractJoglComponent.attachOrientationAxes(renPanel);
 
 //------- create the OVTCore ----------
     core = new OVTCore(this);
@@ -178,16 +182,14 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     
     Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension windowSize = getSize();
-    /*setLocation(scrnSize.width/2 - windowSize.width/2, 
-                 scrnSize.height/2 - windowSize.height/2);*/
     setLocation(scrnSize.width/2 - windowSize.width/2, scrnSize.height/2 - windowSize.height/2);
     splashWindow.dispose();
     
     getTreePanel().expandClusterNode();
     
     setVisible(true);
-    //polarWindow.setVisible(true);
-    //getCore().start(); 
+    renPanel.resetCamera();
+    renPanel.getComponent().requestFocus();
     
   }
   
@@ -226,7 +228,7 @@ public void quit() {
     getCore().sendErrorMessage("Error Saving Settings", e2);
   }
   // save VisualizationPanel's size
-  Dimension d = renPanel.getSize();
+  Dimension d = renPanel.getComponent().getSize();
   if (isResizable()) {
     OVTCore.setGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH, ""+d.width);
     OVTCore.setGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT, ""+d.height);
@@ -283,13 +285,13 @@ public void quit() {
     vtkVectorText atext = new vtkVectorText();
     atext.SetText(". (0, 0, 0)");
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-    mapper.SetInputData(atext.GetOutput());
+    mapper.SetInputConnection(atext.GetOutputPort());
     vtkFollower actor = new vtkFollower();
     actor.SetMapper(mapper);
     actor.SetScale(0.02);
     actor.AddPosition(0, 0, 0);
     actor.SetCamera(getRenderer().GetActiveCamera());
-    actor.GetProperty().SetColor(0, 0, 0);
+    actor.GetProperty().SetColor(1, 0, 0);
     getRenderer().AddActor(actor);
   }
   
@@ -305,7 +307,7 @@ public void quit() {
     return windowResizable;
   }
 
-  public VisualizationPanel getVisualizationPanel() {
+  public RenPanel getVisualizationPanel() {
     return renPanel;
   }
   
