@@ -141,20 +141,20 @@ protected vtkActor createActor(int l, int dx) {
     }
 
     vtkPolyDataMapper gridMapper = new vtkPolyDataMapper();
-    gridMapper.SetInputData(plane.GetOutput());
+    gridMapper.SetInputConnection(plane.GetOutputPort());
 
-    vtkActor actor = new vtkActor();
-        actor.SetMapper(gridMapper);
-        actor.GetProperty().SetRepresentation(this.representation);
+    vtkActor actorTmp = new vtkActor();
+        actorTmp.SetMapper(gridMapper);
+        actorTmp.GetProperty().SetRepresentation(this.representation);
         float[] rgb = ovt.util.Utils.getRGB(getColor());
-        actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-        actor.GetProperty().SetOpacity(this.opacity);	
+        actorTmp.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+        actorTmp.GetProperty().SetOpacity(this.opacity);	
     //actor.GetProperty().SetAmbientColor (0, 0, 0);
     //actor.GetProperty().SetSpecularColor(0, 0, 0);
     //actor.GetProperty().SetDiffuseColor (0, 0, 0);
-        actor.SetScale((double)parent.getCellSize());
-    setActorPosition(actor, getPosition() * parent.getCellSize());
-    return actor;
+        actorTmp.SetScale((double)parent.getCellSize());
+    setActorPosition(actorTmp, getPosition() * parent.getCellSize());
+    return actorTmp;
 }
 
 protected vtkActor getActor() {
