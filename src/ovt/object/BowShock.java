@@ -40,14 +40,11 @@ import ovt.event.*;
 import ovt.beans.*;
 import ovt.beans.editor.*;
 import ovt.util.*;
-import ovt.object.editor.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import vtk.*;
 
-import java.lang.Math;
-import java.util.*;
 import java.beans.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -69,12 +66,12 @@ public class BowShock extends SingleActorObject implements
   /** Holds value of property opacity. */
   private double opacity = 0.1;
   
-  private int[] activityDependsOn = { MagProps.SWP, MagProps.MACHNUMBER };
+  private final int[] activityDependsOn = { MagProps.SWP, MagProps.MACHNUMBER };
   /** Holds Characteristics of this object */
-  private Characteristics characteristics = new Characteristics(-1);
+  private final Characteristics characteristics = new Characteristics(-1);
   
   /** Holds value of property customizerVisible. */
-  private boolean customizerVisible = false;
+  private final boolean customizerVisible = false;
 
 public BowShock(OVTCore core) { 
   super(core, "BowShock", "images/bowshock.gif");
@@ -84,14 +81,16 @@ public BowShock(OVTCore core) {
 }
 
 
-protected void show() {
+  @Override
+  protected void show() {
   super.show();
   setRepresentation(getRepresentation()); 
   rotate();
 }
 
 
-protected void validate() {
+  @Override
+  protected void validate() {
         Log.log("Recalculating BowShock ...", 5);
 	// create actor
 	// Here we go!
@@ -197,10 +196,11 @@ public void setOpacity(double opacity) {
     double oldOpacity = this.opacity;
     this.opacity = opacity;
     if (actor != null) actor.GetProperty().SetOpacity(opacity);
-    firePropertyChange ("opacity", new Double (oldOpacity), new Double (opacity));
+    firePropertyChange ("opacity", oldOpacity, opacity);
 }
 
-public void timeChanged(TimeEvent evt) {
+  @Override
+  public void timeChanged(TimeEvent evt) {
   // check if SWP and MachNumber Changed
   Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
   if (!characteristics.equals(newCh)) {
@@ -213,11 +213,13 @@ public void timeChanged(TimeEvent evt) {
   } else if (isVisible()) rotate();
 }
 
-public void coordinateSystemChanged(CoordinateSystemEvent evt) {
+  @Override
+  public void coordinateSystemChanged(CoordinateSystemEvent evt) {
   if (isVisible()) rotate();
 }
 
-public void magPropsChanged(MagPropsEvent evt) {
+  @Override
+  public void magPropsChanged(MagPropsEvent evt) {
   // check if SWP and MachNumber Changed
   if (Vect.contains(activityDependsOn, evt.whatChanged())) { // if data, bowshock depens on changed
     Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
@@ -231,7 +233,8 @@ public void magPropsChanged(MagPropsEvent evt) {
   }
 }
 
-public JMenuItem[] getMenuItems() {
+  @Override
+  public JMenuItem[] getMenuItems() {
     JMenu menu = new JMenu("Depends on");
         menu.setFont(Style.getMenuFont());
     JMenuItem item = new JMenuItem("SWP...");
@@ -253,7 +256,8 @@ public JMenuItem[] getMenuItems() {
     return new JMenuItem[] { menu };
 }
 
-public Descriptors getDescriptors() {
+  @Override
+  public Descriptors getDescriptors() {
     if (descriptors == null) {
         descriptors = super.getDescriptors();
         try {
@@ -292,7 +296,6 @@ public Descriptors getDescriptors() {
             descriptors.put(pd);
             
         } catch (IntrospectionException e2) {
-            e2.printStackTrace();
             System.exit(-1);
         }
     }
