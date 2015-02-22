@@ -149,7 +149,7 @@ protected void validate() {
                         
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-			mapper.SetInputData(gfilter.GetOutput());
+			mapper.SetInputConnection(gfilter.GetOutputPort());
 		
         actor = new vtkActor();
         	actor.SetMapper(mapper);
