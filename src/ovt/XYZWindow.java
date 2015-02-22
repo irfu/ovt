@@ -110,42 +110,28 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     addOriginActor();
 
 //------- create the OVTCore ----------
-    //core = new OVTCore(renPanel.getRenderWindow(), renPanel.getRenderer());
     core = new OVTCore(this);
-
     int width = 600;
     int height = 600;
     try{
       width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
       height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
     } catch(NumberFormatException ignore){  }
-    
     renPanel.setSize(width, height);
-    //renPanel.setMinimumSize(new Dimension(0,0));
-    //System.out.println("renPanel.minsize="+renPanel.getMinimumSize());
-    //System.out.println("renPanel.preffsize="+renPanel.getPreferredSize());
-    //System.out.println("renPanel.maxsize="+renPanel.getMaximumSize());
     
-    //renPanel.re
     // set the renderer
     ren = renPanel.getRenderer();
     float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
     ren.SetBackground(rgb[0], rgb[1], rgb[2]);
     
-
-
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-
     menuBar = new XYZMenuBar(getCore(), this);
     setJMenuBar(menuBar);
 
 // ------- Set ContentPane Layout
     Container contentPane = getContentPane();
-    
     contentPane.setLayout(new BorderLayout());
-    //contentPane.setLayout(new FlowLayout(FlowLayout.LEFT, 0, 0));
-    //contentPane.setLayout(new BoxLayout(contentPane, BoxLayout.Y_AXIS));
-  
+    
 //-------- create the tree panel -----
     treePanel = new TreePanel(getCore());
     int treePanelWidth = treePanel.getPreferredSize().width;
@@ -155,43 +141,25 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     if (treePanelWidth != 0) treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
     treePanel.setMinimumSize(new Dimension(160, 10));
-    //System.out.println("treePanel.minsize="+treePanel.getMinimumSize());
-    //System.out.println("treePanel.preffsize="+treePanel.getPreferredSize());
-    //System.out.println("treePanel.maxsize="+treePanel.getMaximumSize());
-  
+    
 //--------Create a split pane with the two scroll panes in it
     splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,windowResizable);
     splitPane.setLeftComponent(treePanel);
-    splitPane.setRightComponent(renPanel);
+    splitPane.setRightComponent(renPanel.getComponent());
     splitPane.setOneTouchExpandable(windowResizable);
     splitPane.setDividerSize(6);
-
     if (treePanelWidth == 0) {
-        //splitPane.setDividerLocation(0);
         renPanel.setSize(width - treePanel.getPreferredSize().width, height);
     }
-    
     contentPane.add(splitPane, BorderLayout.CENTER);
-    
-    //System.out.println("splitPane.minsize="+splitPane.getMinimumSize());
-    //System.out.println("splitPane.preffsize="+splitPane.getPreferredSize());
-    //System.out.println("splitPane.maxsize="+splitPane.getMaximumSize());
     
 // ------------- add toolbars -----------  
     toolBarContainer = new ToolBarContainer(core, this);
-    
     // sets width and computes and sets height for this width
     toolBarContainer.setPreferredWidth(splitPane.getPreferredSize().width);
-    
-    //toolBarContainer.updatePreferredSize();
     contentPane.add(toolBarContainer, BorderLayout.SOUTH); 
     
-    // add Status Line
-    //contentPane.add(statusLine, BorderLayout.NORTH);
-    
-    //  enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
-        // create Help Window
+    // create Help Window
     htmlBrowser = new HTMLBrowser(core);
     
     addWindowListener(new WindowAdapter() {
@@ -201,9 +169,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
       }
     });
     
-
     if (pack) pack(); // pack if no settings are present
-    
     if (!windowResizable) setResizable(windowResizable);
 }
 
@@ -315,16 +281,16 @@ public void quit() {
 
   protected final void addOriginActor() {
     vtkVectorText atext = new vtkVectorText();
-        atext.SetText(". (0, 0, 0)");
+    atext.SetText(". (0, 0, 0)");
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-        mapper.SetInputData(atext.GetOutput());
+    mapper.SetInputData(atext.GetOutput());
     vtkFollower actor = new vtkFollower();
-        actor.SetMapper(mapper);
-        actor.SetScale(0.02);
-        actor.AddPosition(0, 0, 0);
-        actor.SetCamera(getRenderer().GetActiveCamera());
-        actor.GetProperty().SetColor(0, 0, 0);
-        getRenderer().AddActor(actor);
+    actor.SetMapper(mapper);
+    actor.SetScale(0.02);
+    actor.AddPosition(0, 0, 0);
+    actor.SetCamera(getRenderer().GetActiveCamera());
+    actor.GetProperty().SetColor(0, 0, 0);
+    getRenderer().AddActor(actor);
   }
   
   /* 
@@ -350,7 +316,6 @@ public void quit() {
   public TreePanel getTreePanel() {
         return treePanel;
   }
-  
 }
 
 class SplashWindow extends JWindow {
