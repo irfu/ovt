@@ -21,5 +21,6 @@ public interface RenPanel extends Renderable {
     
     public vtkRenderer getRenderer();
     
+    public void addCameraChangeListener(CameraChangeListener l);
 }
 
