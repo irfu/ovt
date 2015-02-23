@@ -1,7 +1,10 @@
-git clone ...
+git clone VTK (to get VTK6.2), maybe we switch to release later.
+git clone OVT ...
 cd ovt
 mkdir VTKBuild
 cd VTKBuild
 cmake /path/to/VTK
 #Enable Java and JOGL in VTK
 make
+start Netbeans
+Open Project -> Navigate to OVT
