@@ -1,0 +1,7 @@
+git clone ...
+cd ovt
+mkdir VTKBuild
+cd VTKBuild
+cmake /path/to/VTK
+#Enable Java and JOGL in VTK
+make
