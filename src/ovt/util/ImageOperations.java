@@ -152,7 +152,7 @@ public class ImageOperations {
         outputLabel.setVisible(true);
         /*********/
         
-        VisualizationPanel visualPanel = core.getXYZWin().getVisualizationPanel();
+        ovt.interfaces.RenPanel visualPanel = core.getXYZWin().getVisualizationPanel();
 
         try {
             //if (true) throw new NoClassDefFoundError();

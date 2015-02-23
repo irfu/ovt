@@ -6,6 +6,7 @@
 
 package ovt.interfaces;
 
+import java.awt.Image;
 import vtk.vtkLight;
 import vtk.vtkRenderer;
 
@@ -22,5 +23,11 @@ public interface RenPanel extends Renderable {
     public vtkRenderer getRenderer();
     
     public void addCameraChangeListener(CameraChangeListener l);
+    
+    public Image getImage();
+    
+    public int getWidth();
+    
+    public int getHeight();
 }
 
