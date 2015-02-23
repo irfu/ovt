@@ -3,7 +3,7 @@ git clone OVT ...
 cd ovt
 mkdir VTKBuild
 cd VTKBuild
-cmake /path/to/VTK
+ccmake /path/to/VTK
 #Enable Java and JOGL in VTK
 make
 start Netbeans
