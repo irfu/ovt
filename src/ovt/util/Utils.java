@@ -352,15 +352,15 @@ public class Utils extends Object {
    * @param 4x3 array
    * @return vector of max differences in coordinates {xi,yi,zi}
    */
-    public static double[] maxDifffer(double[][] pos){
+    public static double[] maxDiffer(double[][] pos){
         double[] min = new double[3]; // min position (minx, miny, minz)
         double[] max = new double[3]; // max position (maxx, maxy, maxz)
         int i,j;
         
-        for (j=0; j<3; j++) {
-            min[j] = pos[0][j]; // take position of 1-static sat as minimum.
-            max[j] = pos[0][j]; // take position of 1-static sat as max.
-            for (i=1; i<4; i++) {
+        for (j=0; j<3; j++) { 
+            min[j] = pos[0][j]; // take position of 1-static sat as initial min value.
+            max[j] = pos[0][j]; // take position of 1-static sat as initial max value.
+            for (i=1; i<4; i++) { // Iterate over the remaining satellites to find the true min & max values. 
                 max[j] = Math.max(pos[i][j], max[j]);
                 min[j] = Math.min(pos[i][j], min[j]);
             }
@@ -384,6 +384,24 @@ public class Utils extends Object {
         return xyz;
     }
     
+    
+    /**
+     * @author Erik P G Johansson
+     * Calculate distance between two coordinates in an arbitrary orthonormal
+     * coordinate system, with arbitrary unit (and not necessarily 3D).
+     * 
+     * @param pos1
+     * @param pos2
+     * @return Distance between cordinates pos1 and pos2.
+     */
+    public static double distance(double[] pos1, double[] pos2) {
+        double s = 0;
+        for (int i=0; i<pos1.length; i++) {
+            final double d = pos2[i]- pos1[i];
+            s += d*d;
+        }
+        return Math.sqrt(s);
+    }
     
 /** Returns R, Delta, Alpha in degrees
  *       r*cos(delta)*cos(phi) = x

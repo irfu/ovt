@@ -71,16 +71,34 @@ public class ImageOperations {
         else if (filename.endsWith(".pnm"))
             writer = new vtkPNMWriter();
         
-        else throw new IllegalArgumentException("The grafics format is not supported"); // No known formats were selected.
+        else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
         
         //toFront(); // Places this window at the top of the stacking order and
         //shows it in front of any other windows.
         
         vtkWindowToImageFilter windowToImageFilter = new vtkWindowToImageFilter();
-        windowToImageFilter.SetInput(renderWindow);
+        // ---- Experimental code below /EJ ---------------------------------------------------------------        
+        // The original code never produces a file, never produces any error message.
+        // This is experimental code to try and fix that.  /Erik P G Johansson
+        //renderWindow.Render();
+        windowToImageFilter.SetInput(renderWindow);   // Original code
+        //windowToImageFilter.Update();
+        //windowToImageFilter.SetInputConnection(renderWindow.);
         
-        writer.SetInputData(windowToImageFilter.GetOutput());
-        writer.SetFileName(filename);
+        //windowToImageFilter.ReadFrontBufferOn();
+        //windowToImageFilter.ReadFrontBufferOff();
+        //windowToImageFilter.SetInputBufferTypeToRGB();
+        //windowToImageFilter.SetMagnification(1);
+        //renderWindow.Render();
+        //windowToImageFilter.Modified();
+        //windowToImageFilter.Modified();
+        //writer.SetInputData(windowToImageFilter.GetOutput());   // Original code
+        writer.SetInputConnection(windowToImageFilter.GetOutputPort());
+        writer.SetFileName(filename);   // Original code
+        //renderWindow.Render();
+        //windowToImageFilter.Modified();
+        // ---- Experimental code above ---------------------------------------------------------------
+        
         writer.Write();
         
     }

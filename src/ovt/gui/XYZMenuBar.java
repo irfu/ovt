@@ -73,6 +73,9 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
 	menu.setFont(font);
         
 	menuItem = new JMenuItem("Export Image...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_E, ActionEvent.CTRL_MASK));  // Set accelerator Ctrl-E.
+
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
