@@ -611,26 +611,29 @@ public class Utils extends Object {
         return url;
     }
     
+    /** Return instance of File based on argument. fileName is interpreted as
+     * a relative path under the user's OVT config directory, or URL depending
+     * on what works. */
     public static File findFile(String fileName) {
-    if (fileName==null) {
-      return null;
+        if (fileName == null) {
+            return null;
+        }
+        File file;
+        file = new File(OVTCore.getUserDir() + fileName);
+        if (!file.exists() | file.isDirectory()) {
+            file = null;
+        }
+        if (file == null) {
+            ClassLoader classLoader = OVTCore.class.getClassLoader();
+            java.net.URL fn = classLoader.getResource(fileName);
+            if (fn == null) {
+                return null;
+            }
+            file = new File(fn.getFile());
+            if (!file.exists() | file.isDirectory()) {
+                file = null;
+            }
+        }
+        return file;
     }
-    File file;
-    file = new File(OVTCore.getUserDir() + fileName);
-    if (!file.exists() | file.isDirectory()) {
-      file = null;
-    }
-    if (file == null) {
-      ClassLoader classLoader = OVTCore.class.getClassLoader();
-      java.net.URL fn = classLoader.getResource(fileName);
-      if (fn == null) {
-        return null;
-      }
-      file = new File(fn.getFile());
-      if (!file.exists() | file.isDirectory()) {
-        file = null;
-      }
-    }
-    return file;
-  }
 }

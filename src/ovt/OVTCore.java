@@ -205,22 +205,23 @@ GUIPropertyEditorListener {
     /* Load properties from {@link #ovtPropertiesFile } */
     
     private static synchronized void loadGlobalSettings() throws IOException {
-      File confFile = Utils.findFile(getConfDir()+globalSettingsFileName);
-      try (FileInputStream in = new FileInputStream(confFile)) {
-        globalProperties.load(in);
-      }
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);
+        try (FileInputStream in = new FileInputStream(confFile)) {
+            globalProperties.load(in);
+        }
     }
-    
+
     public synchronized void saveSettings() throws IOException {
         groundStations.save();
     }
-    
+
     public static synchronized void saveGlobalSettings() throws IOException {
-      try (FileOutputStream out = new FileOutputStream(getConfDir() + globalSettingsFileName)) {
-        globalProperties.save(out, "OVT properties file.");
-      }
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);
+        try (FileOutputStream out = new FileOutputStream(confFile)) {
+            globalProperties.save(out, "OVT properties file.");
+        }
     }
-    
+
     public static String getGlobalSetting(String key) {
         return globalProperties.getProperty(key);
     }
