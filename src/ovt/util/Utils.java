@@ -612,15 +612,19 @@ public class Utils extends Object {
     }
     
     /** Return instance of File based on argument. fileName is interpreted as
-     * a relative path under the user's OVT config directory, or URL depending
-     * on what works. */
-    public static File findFile(String fileName) {
+     * a relative path to a file under the user's OVT config directory, or URL
+     * depending on what works.
+     * @param returnNullForNonexistentFile determine whether to return a File object
+     * also for non-existent files (non-directories).
+     * NOTE: Disabled for now due to implementation issues. Always "true".
+     */
+    public static File findFile(String fileName, boolean returnNullForNonexistentFile) {
         if (fileName == null) {
             return null;
         }
-        File file;
-        file = new File(OVTCore.getUserDir() + fileName);
+        File file = new File(OVTCore.getUserDir() + fileName);
         if (!file.exists() | file.isDirectory()) {
+        //if ((returnNullForNonexistentFile & !file.exists()) | file.isDirectory()) {
             file = null;
         }
         if (file == null) {
@@ -631,9 +635,18 @@ public class Utils extends Object {
             }
             file = new File(fn.getFile());
             if (!file.exists() | file.isDirectory()) {
+            //if ((returnNullForNonexistentFile & !file.exists()) | file.isDirectory()) {
                 file = null;
             }
         }
         return file;
+    }
+    
+    /** Will only return a File object for something that exists,
+     * otherwise null. Hence there is no need for the caller to check if a
+     * non-null return File object refers to an existing file. Implemented for
+     * backward compatibility with other code. */
+    public static File findFile(String fileName) {
+        return findFile(fileName, true);
     }
 }

@@ -202,12 +202,15 @@ GUIPropertyEditorListener {
         return transCollection.getTrans(mjd);
     }
     
-    /* Load properties from {@link #ovtPropertiesFile } */
-    
+    /** Load properties from {@link #ovtPropertiesFile }
+     */
     private static synchronized void loadGlobalSettings() throws IOException {
-        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);
-        try (FileInputStream in = new FileInputStream(confFile)) {
-            globalProperties.load(in);
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
+        if (confFile != null) {
+            // NOTE: new FileInputStream(confFile)) will throw exception if confFile == null.
+            try (FileInputStream in = new FileInputStream(confFile)) {
+                globalProperties.load(in);
+            }
         }
     }
 
@@ -216,9 +219,15 @@ GUIPropertyEditorListener {
     }
 
     public static synchronized void saveGlobalSettings() throws IOException {
-        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);
-        try (FileOutputStream out = new FileOutputStream(confFile)) {
-            globalProperties.save(out, "OVT properties file.");
+        /* NOTE: Utils.findFile will return null if it can not locate an already
+        existing file, i.e. it will NOT suggest a path to a new config file if
+        none already exists. */
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
+        
+        if (confFile != null) {
+            try (FileOutputStream out = new FileOutputStream(confFile)) {
+                globalProperties.save(out, "OVT properties file.");
+            }
         }
     }
 
