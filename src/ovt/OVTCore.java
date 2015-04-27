@@ -206,11 +206,12 @@ GUIPropertyEditorListener {
      */
     private static synchronized void loadGlobalSettings() throws IOException {
         File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
-        if (confFile != null) {
-            // NOTE: new FileInputStream(confFile)) will throw exception if confFile == null.
-            try (FileInputStream in = new FileInputStream(confFile)) {
-                globalProperties.load(in);
-            }
+        // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
+        if (confFile == null) {
+            throw new IOException("Can not find a global settings file to read.");
+        }
+        try (FileInputStream in = new FileInputStream(confFile)) {
+            globalProperties.load(in);
         }
     }
 
@@ -219,15 +220,17 @@ GUIPropertyEditorListener {
     }
 
     public static synchronized void saveGlobalSettings() throws IOException {
-        /* NOTE: Utils.findFile will return null if it can not locate an already
-        existing file, i.e. it will NOT suggest a path to a new config file if
-        none already exists. */
+        /* NOTE: Utils.findFile will return null if it can NOT locate an already
+        existing file, i.e. it will NOT suggest a path to a new config file (to
+        create) if none already exists. Therefore, if no old config file exists, 
+        no new one will be created. */
         File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
         
-        if (confFile != null) {
-            try (FileOutputStream out = new FileOutputStream(confFile)) {
-                globalProperties.save(out, "OVT properties file.");
-            }
+        if (confFile == null) {
+            throw new IOException("Can not find a global settings file to overwrite. ");
+        }
+        try (FileOutputStream out = new FileOutputStream(confFile)) {
+            globalProperties.save(out, "OVT properties file.");
         }
     }
 
