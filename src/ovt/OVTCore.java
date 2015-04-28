@@ -106,8 +106,7 @@ GUIPropertyEditorListener {
     
     protected boolean isInitialized = false;
     
-    public static String ovtHomeDir = System.getProperty("ovt.home", ".") + File.separator;
-    public static String ovtUserDir = System.getProperty("user.home") + File.separator + ".ovt" + File.separator + VERSION + File.separator;
+    public static String ovtUserDir;
     
     public static final String ovtHomePage ="http://ovt.irfu.se/";
     
@@ -145,10 +144,6 @@ GUIPropertyEditorListener {
         
         isInitialized = true;
         guiPresent = true;
-    }
-    
-    public static String getOVTHomeDir(){
-        return ovtHomeDir;
     }
     
     public static String getUserDir(){
@@ -262,6 +257,27 @@ GUIPropertyEditorListener {
             } catch (IOException e) {
                 sendErrorMessage("Error Loading Global Settings", e);
             }
+        }
+        
+        String osName;
+        osName = System.getProperty("os.name").toLowerCase();
+        boolean isMacOs = osName.startsWith("mac os x");
+        if (isMacOs) 
+        {
+          ovtUserDir = System.getProperty("user.home") + File.separator + 
+                  "Library" + File.separator + "ovt" + File.separator + 
+                  VERSION + File.separator;
+        } else {
+          ovtUserDir = System.getProperty("user.home") + File.separator + 
+                  ".ovt" + File.separator + VERSION + File.separator;
+        }
+        File userDir = new File(ovtUserDir);
+        if (!userDir.exists()) {
+          if (userDir.mkdirs()) {
+            Log.log("Created:" + ovtUserDir,3);
+          } else {
+            Log.log("Failed to create:" + ovtUserDir,3);
+          }
         }
         
         Log.log("Creating MagProps ...", 3);
