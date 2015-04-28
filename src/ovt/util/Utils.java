@@ -496,6 +496,12 @@ public class Utils extends Object {
             return res;
     }
     
+public static <T> T[] concat(T[] first, T[] second) {
+  T[] result = Arrays.copyOf(first, first.length + second.length);
+  System.arraycopy(second, 0, result, first.length, second.length);
+  return result;
+}
+    
 /**
  * Method to copy a file from a source to a
  * destination specifying if
@@ -633,6 +639,44 @@ public class Utils extends Object {
             if (!file.exists() | file.isDirectory()) {
                 file = null;
             }
+        }
+        return file;
+    }
+    
+    /** Return instance of File based on argument. fileName is interpreted as
+     * a URL to a dir in OVT installadion directory.
+     * @param dirName
+     * @return  */
+    public static File findSysDir(String dirName) {
+        if (dirName == null) {
+            return null;
+        }
+        
+        ClassLoader classLoader = OVTCore.class.getClassLoader();
+        java.net.URL fn = classLoader.getResource(dirName);
+        if (fn == null) {
+            return null;
+        }
+        File file;
+        file = new File(fn.getFile());
+        if (!file.exists() | !file.isDirectory()) {
+            file = null;
+        }
+        return file;
+    }
+    
+    /** Return instance of File based on argument. dirName is interpreted as
+     * a relative path under the user's OVT config directory.
+     * @param dirName
+     * @return File */
+    public static File findUserDir(String dirName) {
+        if (dirName == null) {
+            return null;
+        }
+        File file;
+        file = new File(OVTCore.getUserDir() + dirName);
+        if (!file.exists() | !file.isDirectory()) {
+            file = null;
         }
         return file;
     }
