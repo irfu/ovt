@@ -125,7 +125,7 @@ public class ImportSatelliteWizard extends JDialog {
         JLabel fileLabel = new JLabel("Orbit file:");
         fileLabel.setFont(Style.getLabelFont());
         
-        JLabel satNameLabel = new JLabel("Satellte name:");
+        JLabel satNameLabel = new JLabel("Satellite name:");
         satNameLabel.setFont(Style.getLabelFont());
         // adjust fileLabel size
         fileLabel.setMaximumSize(satNameLabel.getPreferredSize());

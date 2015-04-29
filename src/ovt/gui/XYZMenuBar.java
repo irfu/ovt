@@ -36,7 +36,6 @@ import ovt.*;
 import ovt.mag.*;
 import ovt.util.*;
 import ovt.object.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import java.awt.*;
@@ -45,7 +44,6 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.io.*;
-import java.util.*;
 
 
 public class XYZMenuBar extends JMenuBar {
@@ -73,6 +71,9 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
 	menu.setFont(font);
         
 	menuItem = new JMenuItem("Export Image...");
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+            KeyEvent.VK_E, ActionEvent.CTRL_MASK));  // Set accelerator Ctrl-E.
+
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -347,50 +348,65 @@ private JMenu createSatsMenu() {
 
 /** Each  JMenuItem is a JCheckBoxMenuItem with a satellite's name, 
  * is checked if sat is added to  {@link ovt.object.Sats Sats}.
+   * @return JMenuItem[]
  */
 public JMenuItem[] createSatsList() {
-    File[] files = new File(OVTCore.getOrbitDataDir()).listFiles( new FilenameFilter() {
-         public boolean accept(File dir, String file) {
-            return file.endsWith(".tle") || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
-         }
-     });
-
-     JMenuItem[] items = new JMenuItem[files.length];
+  File[] files = null;
+  FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle") || 
+          (file.endsWith(".ltof") && !file.startsWith("Cluster"));
+  // First check odata in user home
+  File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
+  if (userOrbitDir!=null)
+    files = userOrbitDir.listFiles(filter);
+  // Then check the system level odata
+  File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
+  if (sysOrbitDir!=null){
+    File[] sysFiles = sysOrbitDir.listFiles(filter);
+    if (files==null) 
+      files = sysFiles;
+    else 
+      files = Utils.concat(files, sysFiles);
+  }
+    
+    JMenuItem[] items = null;
+    if (files==null) {
+      return items;
+    } else {
+      items = new JMenuItem[files.length];
+    }
      
-     ActionListener actionListener = new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                JCheckBoxMenuItem item = (JCheckBoxMenuItem)evt.getSource();
-                String satname = item.getText();
-                if (item.isSelected()) { // create Sat and add it to OVTCore.Sats
-                    
-                    try {
-                        Sat sat;
-                        // check if TLE file exists
-                        File file = new File(OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satname)+".tle");
-                        if (file.exists())
-                            sat = new TLESat(getCore());
-                        else { // check if LTOF file exists
-                            file =  new File(OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satname)+".ltof");
-                            if (file.exists())
-                                sat = new LTOFSat(getCore());
-                            else
-                                throw new IOException("Orbit file "+OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satname)+".tle/.ltof not found");
-                        }
-                        sat.setName(satname);
-                        sat.setOrbitFile(file);
-                        core.getSats().addSat(sat);
-                        core.getSats().getChildren().fireChildAdded(sat);
-                    } catch (IOException e2) {
-                        core.sendErrorMessage(e2);
-                    }
-                } else {                 // remove Sat from OVTCore.Sats
-                    Sat sat = (Sat)core.getSats().getChildren().getChild(satname);
-                    core.getSats().removeSat(sat);
-                    core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
-                }
-                core.Render();
-            }
-        };
+     ActionListener actionListener = (ActionEvent evt) -> {
+       JCheckBoxMenuItem item = (JCheckBoxMenuItem)evt.getSource();
+       String satname = item.getText();
+       if (item.isSelected()) { // create Sat and add it to OVTCore.Sats
+         
+         try {
+           Sat sat;
+           // check if TLE file exists
+           String satName = OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satname);
+           File file = Utils.findFile(satName+".tle");
+           if (file==null) {
+             // check if LTOF file exists
+             file =  Utils.findFile(satName+".ltof");
+             if (file==null)
+               throw new IOException("Orbit file "+satName+".tle/.ltof not found");
+             else
+               sat = new LTOFSat(getCore());
+           } else sat = new TLESat(getCore());
+           sat.setName(satname);
+           sat.setOrbitFile(file);
+           core.getSats().addSat(sat);
+           core.getSats().getChildren().fireChildAdded(sat);
+         } catch (IOException e2) {
+           core.sendErrorMessage(e2);
+         }
+       } else {                 // remove Sat from OVTCore.Sats
+         Sat sat = (Sat)core.getSats().getChildren().getChild(satname);
+         core.getSats().removeSat(sat);
+         core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
+       }
+       core.Render();
+    };
 
      for (int i=0; i<files.length; i++) { 
          String filename = files[i].getName();

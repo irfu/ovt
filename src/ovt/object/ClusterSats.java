@@ -75,7 +75,7 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     try {
       BasicPropertyDescriptor pd = new BasicPropertyDescriptor("configurationWindowVisible", this);
       pd.setDisplayName("Cluster Configuration");
-      WindowPropertyEditor editor = new WindowPropertyEditor(pd, new String[]{"show configuration", "hide configuration"});
+      WindowPropertyEditor editor = new WindowPropertyEditor(pd, new String[]{"Show configuration", "Hide configuration"});
       editor.setModal(false);
       
       if (!OVTCore.isServer()) {
@@ -124,13 +124,13 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
   }
   /** Returns ClusterSat by it's number 1..4 . legacy method*/
   public ClusterSat get(int number) {
-    if (number>4 || number<1) throw new IllegalArgumentException("Invalid number of Cluster Satellite - "+number);
+    if (number>4 || number<1) throw new IllegalArgumentException("Invalid number of Cluster Satellites - "+number);
     return sats[number-1];
   }
   
   /** Returns ClusterSat by it's number 0..3 ;-) */
   public ClusterSat getClusterSat(int number) {
-    if (number>3 || number<0) throw new ArrayIndexOutOfBoundsException("Invalid number of Cluster Satellite ("+number+"). Use numbers 0..3");
+    if (number>3 || number<0) throw new ArrayIndexOutOfBoundsException("Invalid number of Cluster Satellites ("+number+"). Use numbers 0..3");
     return sats[number];
   }
   

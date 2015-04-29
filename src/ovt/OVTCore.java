@@ -106,8 +106,7 @@ GUIPropertyEditorListener {
     
     protected boolean isInitialized = false;
     
-    public static String ovtHomeDir = System.getProperty("ovt.home", ".") + File.separator;
-    public static String ovtUserDir = System.getProperty("user.home") + File.separator + ".ovt" + File.separator + VERSION + File.separator;
+    public static String ovtUserDir;
     
     public static final String ovtHomePage ="http://ovt.irfu.se/";
     
@@ -145,10 +144,6 @@ GUIPropertyEditorListener {
         
         isInitialized = true;
         guiPresent = true;
-    }
-    
-    public static String getOVTHomeDir(){
-        return ovtHomeDir;
     }
     
     public static String getUserDir(){
@@ -202,25 +197,38 @@ GUIPropertyEditorListener {
         return transCollection.getTrans(mjd);
     }
     
-    /* Load properties from {@link #ovtPropertiesFile } */
-    
+    /** Load properties from {@link #ovtPropertiesFile }
+     */
     private static synchronized void loadGlobalSettings() throws IOException {
-      File confFile = Utils.findFile(getConfDir()+globalSettingsFileName);
-      try (FileInputStream in = new FileInputStream(confFile)) {
-        globalProperties.load(in);
-      }
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
+        // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
+        if (confFile == null) {
+            throw new IOException("Can not find a global settings file to read.");
+        }
+        try (FileInputStream in = new FileInputStream(confFile)) {
+            globalProperties.load(in);
+        }
     }
-    
+
     public synchronized void saveSettings() throws IOException {
         groundStations.save();
     }
-    
+
     public static synchronized void saveGlobalSettings() throws IOException {
-      try (FileOutputStream out = new FileOutputStream(getConfDir() + globalSettingsFileName)) {
-        globalProperties.save(out, "OVT properties file.");
-      }
+        /* NOTE: Utils.findFile will return null if it can NOT locate an already
+        existing file, i.e. it will NOT suggest a path to a new config file (to
+        create) if none already exists. Therefore, if no old config file exists, 
+        no new one will be created. */
+        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
+        
+        if (confFile == null) {
+            throw new IOException("Can not find a global settings file to overwrite. ");
+        }
+        try (FileOutputStream out = new FileOutputStream(confFile)) {
+            globalProperties.save(out, "OVT properties file.");
+        }
     }
-    
+
     public static String getGlobalSetting(String key) {
         return globalProperties.getProperty(key);
     }
@@ -249,6 +257,27 @@ GUIPropertyEditorListener {
             } catch (IOException e) {
                 sendErrorMessage("Error Loading Global Settings", e);
             }
+        }
+        
+        String osName;
+        osName = System.getProperty("os.name").toLowerCase();
+        boolean isMacOs = osName.startsWith("mac os x");
+        if (isMacOs) 
+        {
+          ovtUserDir = System.getProperty("user.home") + File.separator + 
+                  "Library" + File.separator + "ovt" + File.separator + 
+                  VERSION + File.separator;
+        } else {
+          ovtUserDir = System.getProperty("user.home") + File.separator + 
+                  ".ovt" + File.separator + VERSION + File.separator;
+        }
+        File userDir = new File(ovtUserDir);
+        if (!userDir.exists()) {
+          if (userDir.mkdirs()) {
+            Log.log("Created:" + ovtUserDir,3);
+          } else {
+            Log.log("Failed to create:" + ovtUserDir,3);
+          }
         }
         
         Log.log("Creating MagProps ...", 3);

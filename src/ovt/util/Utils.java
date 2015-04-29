@@ -352,15 +352,15 @@ public class Utils extends Object {
    * @param 4x3 array
    * @return vector of max differences in coordinates {xi,yi,zi}
    */
-    public static double[] maxDifffer(double[][] pos){
+    public static double[] maxDiffer(double[][] pos){
         double[] min = new double[3]; // min position (minx, miny, minz)
         double[] max = new double[3]; // max position (maxx, maxy, maxz)
         int i,j;
         
-        for (j=0; j<3; j++) {
-            min[j] = pos[0][j]; // take position of 1-static sat as minimum.
-            max[j] = pos[0][j]; // take position of 1-static sat as max.
-            for (i=1; i<4; i++) {
+        for (j=0; j<3; j++) { 
+            min[j] = pos[0][j]; // take position of 1-static sat as initial min value.
+            max[j] = pos[0][j]; // take position of 1-static sat as initial max value.
+            for (i=1; i<4; i++) { // Iterate over the remaining satellites to find the true min & max values. 
                 max[j] = Math.max(pos[i][j], max[j]);
                 min[j] = Math.min(pos[i][j], min[j]);
             }
@@ -384,6 +384,24 @@ public class Utils extends Object {
         return xyz;
     }
     
+    
+    /**
+     * @author Erik P G Johansson
+     * Calculate distance between two coordinates in an arbitrary orthonormal
+     * coordinate system, with arbitrary unit (and not necessarily 3D).
+     * 
+     * @param pos1
+     * @param pos2
+     * @return Distance between cordinates pos1 and pos2.
+     */
+    public static double distance(double[] pos1, double[] pos2) {
+        double s = 0;
+        for (int i=0; i<pos1.length; i++) {
+            final double d = pos2[i]- pos1[i];
+            s += d*d;
+        }
+        return Math.sqrt(s);
+    }
     
 /** Returns R, Delta, Alpha in degrees
  *       r*cos(delta)*cos(phi) = x
@@ -477,6 +495,12 @@ public class Utils extends Object {
         else
             return res;
     }
+    
+public static <T> T[] concat(T[] first, T[] second) {
+  T[] result = Arrays.copyOf(first, first.length + second.length);
+  System.arraycopy(second, 0, result, first.length, second.length);
+  return result;
+}
     
 /**
  * Method to copy a file from a source to a
@@ -593,26 +617,106 @@ public class Utils extends Object {
         return url;
     }
     
+    
+    
+    /** Return instance of File based on argument. fileName is interpreted as
+     * either of two relative paths depending on what works.
+     * @param returnNullForNonexistentFile determine whether to return a File object
+     * also for non-existent files (non-directories).
+     * NOTE: Disabled for now due to implementation issues. Always "true".
+     */
+    /*public static File findFile(String fileName, boolean returnNullForNonexistentFile) {
+        if (fileName == null) {
+            return null;
+        }
+        File file = new File(OVTCore.getUserDir() + fileName);
+        if (!file.exists() | file.isDirectory()) {
+            file = null;
+        //}
+        //if (file == null) {
+            ClassLoader classLoader = OVTCore.class.getClassLoader();
+            java.net.URL fn = classLoader.getResource(fileName);
+            if (fn == null) {
+                return null;
+            }
+            file = new File(fn.getFile());
+            if (!file.exists() | file.isDirectory()) {
+                file = null;
+            }
+        }
+        return file;
+    }//*/
+
+    /** Will only return a File object for something that exists,
+     * otherwise null. Hence there is no need for the caller to check if a
+     * non-null return File object refers to an existing file. Implemented for
+     * backward compatibility with other code. */
+    /*public static File findFile(String fileName) {
+        return findFile(fileName, true);
+    }*/
+    
+    
+    /** Will only return a File object for something that exists,
+     * otherwise null. Hence there is no need for the caller to check if a
+     * non-null return File object refers to an existing file. */
+    /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
-    if (fileName==null) {
-      return null;
+        if (fileName == null) {
+            return null;
+        }
+        File file = new File(OVTCore.getUserDir() + fileName);
+        if (!file.exists() | file.isDirectory()) {
+            file = null;
+        }
+        if (file == null) {
+            ClassLoader classLoader = OVTCore.class.getClassLoader();
+            java.net.URL fn = classLoader.getResource(fileName);
+            if (fn == null) {
+                return null;
+            }
+            file = new File(fn.getFile());
+            if (!file.exists() | file.isDirectory()) {
+                file = null;
+            }
+        }
+        return file;
     }
-    File file;
-    file = new File(OVTCore.getUserDir() + fileName);
-    if (!file.exists() | file.isDirectory()) {
-      file = null;
+    
+    /** Return instance of File based on argument. fileName is interpreted as
+     * a URL to a dir in OVT installadion directory.
+     * @param dirName
+     * @return  */
+    public static File findSysDir(String dirName) {
+        if (dirName == null) {
+            return null;
+        }
+        
+        ClassLoader classLoader = OVTCore.class.getClassLoader();
+        java.net.URL fn = classLoader.getResource(dirName);
+        if (fn == null) {
+            return null;
+        }
+        File file;
+        file = new File(fn.getFile());
+        if (!file.exists() | !file.isDirectory()) {
+            file = null;
+        }
+        return file;
     }
-    if (file == null) {
-      ClassLoader classLoader = OVTCore.class.getClassLoader();
-      java.net.URL fn = classLoader.getResource(fileName);
-      if (fn == null) {
-        return null;
-      }
-      file = new File(fn.getFile());
-      if (!file.exists() | file.isDirectory()) {
-        file = null;
-      }
+    
+    /** Return instance of File based on argument. dirName is interpreted as
+     * a relative path under the user's OVT config directory.
+     * @param dirName
+     * @return File */
+    public static File findUserDir(String dirName) {
+        if (dirName == null) {
+            return null;
+        }
+        File file;
+        file = new File(OVTCore.getUserDir() + dirName);
+        if (!file.exists() | !file.isDirectory()) {
+            file = null;
+        }
+        return file;
     }
-    return file;
-  }
 }

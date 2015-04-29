@@ -6,7 +6,7 @@
   Version:   $Revision: 2.15 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -48,7 +48,7 @@ import vtk.rendering.jogl.vtkJoglCanvasComponent;
 
 
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
-    
+
     static {
         if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
             for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
@@ -72,127 +72,161 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   public boolean windowResizable = true;
   protected XYZMenuBar menuBar;
   protected JSplitPane splitPane;
-  
+
   private final ToolBarContainer toolBarContainer;
-  
+
   protected HTMLBrowser htmlBrowser;
-  
+
   public static final String SETTING_VISUALIZATION_PANEL_WIDTH = "VisualizationPanel.width";
   public static final String SETTING_VISUALIZATION_PANEL_HEIGHT = "VisualizationPanel.height";
   private static final String SETTING_TREE_PANEL_WIDTH = "TreePanel.width";
   private static final String SETTING_XYZWINDOW_WIDTH  = "XYZWindow.width";
   private static final String SETTING_XYZWINDOW_HEIGHT = "XYZWindow.height";
-  
-  public XYZWindow() {
-    super("Orbit Visualization Tool " + OVTCore.VERSION + " (Build "+OVTCore.BUILD+")" );
-    try {
-      setIconImage (Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getResource("images/ovt.gif")));
-    } catch (NullPointerException npe) { Log.err("FileNotFound: images/ovt.gif"); }
 
-    // avoid crush on some win 95 computers
-    if (System.getProperty("os.name").equalsIgnoreCase("Windows 98")) windowResizable = false;
+    public XYZWindow() {
+        super("Orbit Visualization Tool " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
+        try {
+            setIconImage(Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getResource("images/ovt.gif")));
+        } catch (NullPointerException npe) {
+            Log.err("FileNotFound: images/ovt.gif");
+        }
 
-    // -----------   set window size ----------
-    boolean pack = false;
-    try{
-      setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
-        Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))
-      );
-    } catch(NumberFormatException e2){ 
-        pack = true;
-    }
-    
-    // show splashscreen
-    splashWindow = new SplashWindow();
-    splashWindow.setVisible(true);
+        // Avoid crash on some Win 95 computers.
+        if (System.getProperty("os.name").equalsIgnoreCase("Windows 98")) {
+            windowResizable = false;
+        }
+
+
+        // -----------   set window size ----------
+        /*boolean pack = false;
+        try {
+            setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
+                    Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))             // NOTE: this.setSize
+            );
+        } catch (NumberFormatException e2) {
+            pack = true;
+        }*/
+
+        // show splashscreen
+        splashWindow = new SplashWindow();
+        splashWindow.setVisible(true);
 
 //------- create the vtkPanel ----------
-    addNotify();
-    //renPanel = new VisualizationPanel(this);
-    renPanel = new JOGLVisPanel();
-    addOriginActor();
-    vtkAbstractJoglComponent.attachOrientationAxes(renPanel);
+    /* Javadoc for <java.awt.Frame.this>.addNotify():
+        "Makes this Frame displayable by connecting it to a native screen
+         resource. Making a frame displayable will cause any of its children
+         to be made displayable. This method is called internally by the toolkit
+         and should not be called directly by programs." */
+        addNotify();
+
+        //renPanel = new VisualizationPanel(this);
+        renPanel = new JOGLVisPanel();
+        addOriginActor();
+        vtkAbstractJoglComponent.attachOrientationAxes(renPanel);
 
 //------- create the OVTCore ----------
-    core = new OVTCore(this);
-    int width = 600;
-    int height = 600;
-    try{
-      width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
-      height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
-    } catch(NumberFormatException ignore){  }
-    renPanel.setSize(width, height);
-    
-    // set the renderer
-    ren = renPanel.getRenderer();
-    float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
-    ren.SetBackground(rgb[0], rgb[1], rgb[2]);
-    
-    JPopupMenu.setDefaultLightWeightPopupEnabled(false);
-    menuBar = new XYZMenuBar(getCore(), this);
-    setJMenuBar(menuBar);
+        /* NOTE: This loads "GlobalSettings" (static in OVTCore class).
+        One must therefore call OVTCore.getGlobalSetting(..) AFTER this command.
+        NOTE: OVTCore(..) makes use of <XYZWindow.this>.renPanel. Therefore
+        renPanel has to have been set BEFORE this command.
+        (NOTE: This is why one should not leak "this" form within a constructor.) */        
+        core = new OVTCore(this);
 
+        int width = 600;
+        int height = 600;
+        try {
+            width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
+            height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
+        } catch (NumberFormatException ignore) { }
+        renPanel.setSize(width, height);             // NOTE: renPanel.setSize seems unnecessary.
+
+        // set the renderer
+        ren = renPanel.getRenderer();
+        float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
+        ren.SetBackground(rgb[0], rgb[1], rgb[2]);
+
+        JPopupMenu.setDefaultLightWeightPopupEnabled(false);
+        menuBar = new XYZMenuBar(getCore(), this);
+        setJMenuBar(menuBar);
+
+// ----------- Set window size ----------
+        boolean pack = false;
+        try {
+            setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
+                    Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))
+            );
+        } catch (NumberFormatException e2) {
+            pack = true;
+        }//*/
+        
+        
 // ------- Set ContentPane Layout
-    Container contentPane = getContentPane();
-    contentPane.setLayout(new BorderLayout());
-    
-//-------- create the tree panel -----
-    treePanel = new TreePanel(getCore());
-    int treePanelWidth = treePanel.getPreferredSize().width;
-    try{
-      treePanelWidth = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_TREE_PANEL_WIDTH));
-    } catch(NumberFormatException ignore){  }
+        Container contentPane = getContentPane();
+        contentPane.setLayout(new BorderLayout());
 
-    if (treePanelWidth != 0) treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
-    treePanel.setMinimumSize(new Dimension(160, 10));
-    
+//-------- create the tree panel -----
+        treePanel = new TreePanel(getCore());
+        int treePanelWidth = treePanel.getPreferredSize().width;
+        try {
+            treePanelWidth = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_TREE_PANEL_WIDTH));
+        } catch (NumberFormatException ignore) { }
+
+        if (treePanelWidth != 0) {
+            treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
+        }
+        treePanel.setMinimumSize(new Dimension(160, 10));
+
 //--------Create a split pane with the two scroll panes in it
-    splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,windowResizable);
-    splitPane.setLeftComponent(treePanel);
-    splitPane.setRightComponent(renPanel.getComponent());
-    splitPane.setOneTouchExpandable(windowResizable);
-    splitPane.setDividerSize(6);
-    if (treePanelWidth == 0) {
-        renPanel.setSize(width - treePanel.getPreferredSize().width, height);
+        splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, windowResizable);
+        splitPane.setLeftComponent(treePanel);
+        splitPane.setRightComponent(renPanel.getComponent());
+        splitPane.setOneTouchExpandable(windowResizable);
+        splitPane.setDividerSize(6);
+        if (treePanelWidth == 0) {
+            renPanel.setSize(width - treePanel.getPreferredSize().width, height);     // NOTE: renPanel.setSize seems unnecessary.
+        }
+        contentPane.add(splitPane, BorderLayout.CENTER);
+
+// ------------- add toolbars -----------
+        toolBarContainer = new ToolBarContainer(core, this);
+        // sets width and computes and sets height for this width
+        toolBarContainer.setPreferredWidth(splitPane.getPreferredSize().width);
+        contentPane.add(toolBarContainer, BorderLayout.SOUTH);
+
+        // create Help Window
+        htmlBrowser = new HTMLBrowser(core);
+
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                quit();
+            }
+        });
+
+        if (pack) {
+            pack(); // pack if no settings are present
+        }
+        if (!windowResizable) {
+            setResizable(windowResizable);
+        }
     }
-    contentPane.add(splitPane, BorderLayout.CENTER);
-    
-// ------------- add toolbars -----------  
-    toolBarContainer = new ToolBarContainer(core, this);
-    // sets width and computes and sets height for this width
-    toolBarContainer.setPreferredWidth(splitPane.getPreferredSize().width);
-    contentPane.add(toolBarContainer, BorderLayout.SOUTH); 
-    
-    // create Help Window
-    htmlBrowser = new HTMLBrowser(core);
-    
-    addWindowListener(new WindowAdapter() {
-      @Override
-      public void windowClosing(WindowEvent e) {
-          quit();
-      }
-    });
-    
-    if (pack) pack(); // pack if no settings are present
-    if (!windowResizable) setResizable(windowResizable);
-}
 
   public void start() {
     //refreshGUI();
-    
+
     Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension windowSize = getSize();
-    setLocation(scrnSize.width/2 - windowSize.width/2, scrnSize.height/2 - windowSize.height/2);
+    //setLocation(scrnSize.width/2 - windowSize.width/2, scrnSize.height/2 - windowSize.height/2);
+    setLocation(scrnSize.width/10, scrnSize.height/2 - windowSize.height/2);   // DEBUG
     splashWindow.dispose();
-    
+
     getTreePanel().expandClusterNode();
-    
+
     setVisible(true);
     renPanel.resetCamera();
     renPanel.getComponent().requestFocus();
-    
   }
-  
+
   /**
    *
    * @return OVTCore instance
@@ -206,22 +240,22 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   }
 
 
-  public void Render() { 
-      renPanel.Render(); 
+  public void Render() {
+      renPanel.Render();
   }
 
-  public vtkRenderer getRenderer() { 
-    return renPanel.getRenderer(); 
+  public vtkRenderer getRenderer() {
+    return renPanel.getRenderer();
   }
-   
-  public vtkRenderWindow getRenderWindow() { 
-    return renPanel.getRenderWindow(); 
+
+  public vtkRenderWindow getRenderWindow() {
+    return renPanel.getRenderWindow();
   }
 
 
   /** Is executed when the window closes */
 public void quit() {
-    
+
   try {
     getCore().saveSettings();
   } catch (IOException e2) {
@@ -236,7 +270,7 @@ public void quit() {
   OVTCore.setGlobalSetting(SETTING_TREE_PANEL_WIDTH, ""+treePanel.getWidth());
   OVTCore.setGlobalSetting(SETTING_XYZWINDOW_WIDTH, ""+getWidth());
   OVTCore.setGlobalSetting(SETTING_XYZWINDOW_HEIGHT, ""+getHeight());
-  
+
   OVTCore.setGlobalSetting("startMjd", ""+getCore().getTimeSettings().getTimeSet().getStartMjd());
   OVTCore.setGlobalSetting("intervalMjd", ""+getCore().getTimeSettings().getTimeSet().getIntervalMjd());
   OVTCore.setGlobalSetting("stepMjd", ""+getCore().getTimeSettings().getTimeSet().getStepMjd());
@@ -255,7 +289,7 @@ public void quit() {
   }
 
 /**
- * Returns <code>true</code> if user pressed <code>Yes</code> 
+ * Returns <code>true</code> if user pressed <code>Yes</code>
  * else <code>false</code>.
  * @param none
  * @return see upp!
@@ -268,13 +302,14 @@ public void quit() {
       return n == JOptionPane.YES_OPTION;
   }
 
-  /** 
+  /**
    * Main method. Here we launch OVT
    * @param arg
    */
   public static void main(String[] arg) {
     XYZWindow XYZwin = new XYZWindow();
     XYZwin.start();
+    //XYZwin.quit();   // DEBUG
   }
 
   public HTMLBrowser getHTMLBrowser() {
@@ -294,8 +329,8 @@ public void quit() {
     actor.GetProperty().SetColor(1, 0, 0);
     getRenderer().AddActor(actor);
   }
-  
-  /* 
+
+  /*
   public void setRenWinSize(int width, int height) {
     renPanel.setSize(width, height);
     treePanel.setSize((int)treePanel.getSize().width,height+50);
@@ -310,11 +345,11 @@ public void quit() {
   public RenPanel getVisualizationPanel() {
     return renPanel;
   }
-  
+
   public XYZMenuBar getXYZMenuBar() {
     return menuBar;
   }
-  
+
   public TreePanel getTreePanel() {
         return treePanel;
   }
@@ -326,18 +361,18 @@ class SplashWindow extends JWindow {
         super();
         java.net.URL url = OVTCore.class.getClassLoader().getResource("images/splash.gif");
         if (url == null) { Log.err("FileNotFound: images/splash.gif");return;}
-        
+
         imageLabel = new JLabel(new ImageIcon(url));
             imageLabel.setBorder(BorderFactory.createRaisedBevelBorder());
             Dimension labelSize = imageLabel.getPreferredSize();
             imageLabel.setBounds(0, 0, labelSize.width, labelSize.height);
-        
+
         JLabel label = new JLabel("Version " + OVTCore.VERSION + ", " + OVTCore.RELEASE_DAY );
             label.setFont(new Font("Arial", Font.PLAIN, 12));
             label.setForeground(Color.yellow);
             labelSize = label.getPreferredSize();
             label.setBounds(imageLabel.getPreferredSize().width-labelSize.width-80, 255, labelSize.width, labelSize.height);
-            
+
         JLabel copyrightLabel = new JLabel("Copyright (c) OVT Team, 2000-2015");
             copyrightLabel.setFont(new Font("Arial", Font.PLAIN, 10));
             copyrightLabel.setForeground(Color.white);
@@ -345,17 +380,17 @@ class SplashWindow extends JWindow {
             copyrightLabel.setBounds(
                 imageLabel.getPreferredSize().width - labelSize.width - 81,
                 290, labelSize.width, labelSize.height);
-        
+
         JLayeredPane layeredPane = new JLayeredPane();
             layeredPane.setPreferredSize(imageLabel.getPreferredSize());
             layeredPane.add(imageLabel, 0, 1);
             layeredPane.add(label, 1, 0);
             layeredPane.add(copyrightLabel, new Integer(2));
-        
+
         setSize(imageLabel.getPreferredSize());
         getContentPane().add(layeredPane, BorderLayout.CENTER);
         pack();
-        
+
         // center splash window
         Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension windowSize = getSize();

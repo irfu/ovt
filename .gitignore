@@ -1,6 +1,7 @@
 /build/
 VTKBuild/
-
 nbproject/private/private.properties
 /dist/
 nbproject/private/private.xml
+
+nbproject/private/private.properties
