@@ -119,9 +119,9 @@ public class TLESorter extends Object {
                   double time1 = ((TwoLines)o1).getTime();
                   double time2 = ((TwoLines)o2).getTime();
                   if (time1 == time2) return 0;
-                  // assume that if the time > Y1960 it is 20'throws sentury
-                  // if time < 1960 it is 21 sentury
-                  // so if time1 and time 2 are in the different senturies - the result is oposit to normal
+                  // assume that if the time > Y1960 it is 20'throws century
+                  // if time < 1960 it is 21 century
+                  // so if time1 and time 2 are in the different centuries - the result is opposite to normal
                   if (time1 > Y1960 && time2 < Y1960) return -1;
                   if (time1 < Y1960 && time2 > Y1960) return 1;
                   
@@ -141,7 +141,7 @@ public class TLESorter extends Object {
             long dup_lines_count = 0;
             while (e.hasMoreElements()) {
                 TwoLines tl = (TwoLines)e.nextElement();
-                // eliminate dupplicate lines
+                // eliminate duplicate lines
                 if (prev_tl == null) { // this is the first written line
                     out.write(tl.getLine1()+"\n");
                     out.write(tl.getLine2()+"\n");

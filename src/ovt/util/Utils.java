@@ -656,9 +656,11 @@ public static <T> T[] concat(T[] first, T[] second) {
     }*/
     
     
-    /** Will only return a File object for something that exists,
-     * otherwise null. Hence there is no need for the caller to check if a
-     * non-null return File object refers to an existing file. */
+    /** Will only return a File object for a file (non-directory) that already
+     * exists, otherwise null. Hence there is no need for the caller to check if a
+     * non-null return File object refers to an existing file.
+     * The function is therefore also NOT suited for suggesting where to create a new file.
+     */
     /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
         if (fileName == null) {

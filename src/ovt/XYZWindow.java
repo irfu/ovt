@@ -96,17 +96,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             windowResizable = false;
         }
 
-
-        // -----------   set window size ----------
-        /*boolean pack = false;
-        try {
-            setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
-                    Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))             // NOTE: this.setSize
-            );
-        } catch (NumberFormatException e2) {
-            pack = true;
-        }*/
-
         // show splashscreen
         splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
@@ -216,8 +205,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
     Dimension windowSize = getSize();
-    //setLocation(scrnSize.width/2 - windowSize.width/2, scrnSize.height/2 - windowSize.height/2);
-    setLocation(scrnSize.width/10, scrnSize.height/2 - windowSize.height/2);   // DEBUG
+    setLocation(scrnSize.width/2 - windowSize.width/2, scrnSize.height/2 - windowSize.height/2);
+    //setLocation(scrnSize.width/100, scrnSize.height/2 - windowSize.height/2);   // DEBUG: Set initial position, for debugging purposes.
     splashWindow.dispose();
 
     getTreePanel().expandClusterNode();

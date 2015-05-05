@@ -201,12 +201,15 @@ GUIPropertyEditorListener {
      */
     private static synchronized void loadGlobalSettings() throws IOException {
         File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
-        // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
-        if (confFile == null) {
-            throw new IOException("Can not find a global settings file to read.");
-        }
-        try (FileInputStream in = new FileInputStream(confFile)) {
-            globalProperties.load(in);
+        
+        if (confFile != null) {
+            
+            // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
+            try (FileInputStream in = new FileInputStream(confFile)) {
+                if (confFile != null) {
+                    globalProperties.load(in);
+                }
+            }
         }
     }
 
@@ -216,14 +219,17 @@ GUIPropertyEditorListener {
 
     public static synchronized void saveGlobalSettings() throws IOException {
         /* NOTE: Utils.findFile will return null if it can NOT locate an already
-        existing file, i.e. it will NOT suggest a path to a new config file (to
-        create) if none already exists. Therefore, if no old config file exists, 
-        no new one will be created. */
-        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
-        
-        if (confFile == null) {
+        existing file, i.e. it will NOT suggest a path for where to create a new
+        config file if none already exists. Therefore, then, if no old config file
+        exists, no new one will be created. */
+        //File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
+        /*if (confFile == null) {
             throw new IOException("Can not find a global settings file to overwrite. ");
-        }
+        }*/
+        
+        /* Try saving to user directory, otherwise do not save at all. */
+        File confFile = new File(OVTCore.getUserDir() + getConfDir() + globalSettingsFileName);
+
         try (FileOutputStream out = new FileOutputStream(confFile)) {
             globalProperties.save(out, "OVT properties file.");
         }
@@ -250,15 +256,6 @@ GUIPropertyEditorListener {
             setIcon(new ImageIcon(Utils.findResource("images/ovt.gif")));
 	} catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
         
-        // load global settings
-        if (globalProperties.size() == 0) {
-            try {
-                loadGlobalSettings();
-            } catch (IOException e) {
-                sendErrorMessage("Error Loading Global Settings", e);
-            }
-        }
-        
         String osName;
         osName = System.getProperty("os.name").toLowerCase();
         boolean isMacOs = osName.startsWith("mac os x");
@@ -278,6 +275,28 @@ GUIPropertyEditorListener {
           } else {
             Log.log("Failed to create:" + ovtUserDir,3);
           }
+        }
+        
+        File userConfDir = new File(ovtUserDir + getConfDir());   // Must create this directory in order to be able to save ovt.conf there.
+        if (!userConfDir.exists()) {
+          if (userConfDir.mkdirs()) {
+            Log.log("Created:" + userConfDir.getAbsolutePath(),3);
+          } else {
+            Log.log("Failed to create:" + userConfDir.getAbsolutePath(),3);
+          }
+        }
+
+        
+        
+        /* Load global settings
+           NOTE: This code indirectly uses ovtUserDir which therefore has to
+           have been previously initialized. */
+        if (globalProperties.size() == 0) {
+            try {
+                loadGlobalSettings();
+            } catch (IOException e) {
+                sendErrorMessage("Error Loading Global Settings", e);
+            }
         }
         
         Log.log("Creating MagProps ...", 3);
@@ -486,15 +505,15 @@ GUIPropertyEditorListener {
      */
     public void sendWarningMessage(String title, String msg) {
         if (isGuiPresent() == true){
-            javax.swing.JOptionPane.showMessageDialog(null, title, title,
+            javax.swing.JOptionPane.showMessageDialog(null, title + ": " + msg, title,
             javax.swing.JOptionPane.WARNING_MESSAGE);
         } else {
-            System.out.println(title + ":" + msg);
+            System.out.println(title + ": " + msg);
         }
     }
     
     public void sendWarningMessage(String title, Exception e) {
-        sendWarningMessage(title,e.getMessage());
+        sendWarningMessage(title, e.getMessage());
     }
     
     public static void sendMessage(String msghead, String msg) {
