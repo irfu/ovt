@@ -12,9 +12,14 @@ extern "C" {
  * Method:    tsyganenko2001JNI
  * Signature: ([DDDDDDDD[D)V
  */
+ // I edited it anyway FKJN 5 May 2015
+ JNIEXPORT void JNICALL Java_ovt_mag_model_Tsyganenko2001_tsyganenko2001JNI
+   (JNIEnv *env,jobject obj,jdoubleArray jgsm, jdoubleArray jBv, jdouble jtilt,jdouble jswp,jdouble jdst,jdouble jByImf,jdouble jBzImf,jdouble jG1,jdouble jG2);
+
+/*
 JNIEXPORT void JNICALL Java_ovt_mag_model_Tsyganenko2001_tsyganenko2001JNI
   (JNIEnv *, jclass, jdoubleArray, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdouble, jdoubleArray);
-
+*/
 #ifdef __cplusplus
 }
 #endif

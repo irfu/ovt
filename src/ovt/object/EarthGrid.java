@@ -60,47 +60,47 @@ import javax.swing.*;
 /**
  * Visualizes parallel-meridian grid on the {@link ovt.object.Earth Earth} surface.
  * @author  ko
- * @version 
+ * @version
  */
 
-public class EarthGrid extends ovt.object.SingleActorObject implements TimeChangeListener, 
+public class EarthGrid extends ovt.object.SingleActorObject implements TimeChangeListener,
                       CoordinateSystemChangeListener, MenuItemsSource {
 
 /** Holds value of property prefferedVisibility. */
 private boolean prefferedVisibility = false;
 public EarthGridLabels labels;
 
-                         
+
 /** Creates new EarthGrid */
 public EarthGrid(Earth earth) {
     super(earth.getCore(), "EarthGrid");
     setParent(earth);
     showInTree(false);
     setColor(Color.white);
-    
+
     labels = new EarthGridLabels(this);
-    
+
     Descriptors descriptors = super.getDescriptors();
     descriptors.remove("visible"); // remove "Show/Hide" descriptor
     try {
-      
+
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("prefferedVisibility", this);
         pd.setDisplayName(getName());
-        
+
         BasicPropertyEditor editor = new MenuPropertyEditor(pd, MenuPropertyEditor.SWITCH);
             editor.setTags(new String[]{"On", "Off"});
             editor.setValues(new Object[]{new Boolean(true), new Boolean(false)});
         addPropertyChangeListener("prefferedVisibility", editor);
         pd.setPropertyEditor(editor);
         descriptors.put(pd);
-        
+
     } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
     }
-        
+
 }
-   
+
 protected void show() {
   super.show();
   rotate();
@@ -122,7 +122,7 @@ public boolean parentIsVisible() {
     //try {
         return ((VisualObject)getParent()).isVisible();
     //} catch (NullPointerException e2) { return false;
-    //} 
+    //}
 }
 
 protected void validate() {
@@ -134,7 +134,7 @@ protected void validate() {
     vtkPoints points;
     vtkPolyData circle;
     double[] r;
-    
+
     double dAngle = 1;
     int cellSize = (int)(360./dAngle);
     // create meridians
@@ -155,7 +155,7 @@ protected void validate() {
     }
     // parallels
     for (int delta=-80; delta!=90; delta+=10) {
-        
+
         points = new vtkPoints();
         lines = new vtkCellArray();
         lines.InsertNextCell(cellSize);
@@ -170,19 +170,22 @@ protected void validate() {
             circle.SetLines(lines);
         appendPolyData.AddInputData(circle);
     }
-      
+
     vtkTubeFilter tubeFilter = new vtkTubeFilter();
-        tubeFilter.SetInputData(appendPolyData.GetOutput());
+        //tubeFilter.SetInputData(appendPolyData.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+        tubeFilter.SetInputConnection(appendPolyData.GetOutputPort());
         tubeFilter.SetRadius(0.001);
         tubeFilter.SetNumberOfSides(2);
     // create slid surface
-      
-    
-    
+
+
+
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-      mapper.SetInputData(tubeFilter.GetOutput());      
-      //mapper.SetInput(appendPolyData.GetOutput());   
-      
+
+      //mapper.SetInputData(tubeFilter.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+      mapper.SetInputConnection(tubeFilter.GetOutputPort());
+      //mapper.SetInput(appendPolyData.GetOutput());
+
      actor = new vtkActor();
         actor.SetMapper(mapper);
         float[] rgb = ovt.util.Utils.getRGB(getColor());
@@ -203,36 +206,36 @@ protected void validate() {
       earthSource.setRadius(1);
       earthSource.setPhiResolution(5);
       earthSource.setThetaResolution(5);
-      
+
     vtkPolyData polyData = earthSource.GetOutput();
-    
+
     vtkThresholdPoints thresholdPoints = new vtkThresholdPoints();
-      thresholdPoints.SetInput(polyData);  
+      thresholdPoints.SetInput(polyData);
       thresholdPoints.ThresholdBetween(1, 1);
- 
+
     //vtkTubeFilter tubeFilter = new vtkTubeFilter();
         //tubeFilter.SetInput(thresholdPoints.GetOutput());
        // tubeFilter.SetRadius(0.01);
     // create slid surface
-      
-    
-    // Grid 
-    
+
+
+    // Grid
+
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
       //mapper.SetInput(polyData);
-      mapper.SetInput(thresholdPoints.GetOutput());      
-      
+      mapper.SetInput(thresholdPoints.GetOutput());
+
      actor = new vtkActor();
         actor.SetMapper(mapper);
         float[] rgb = ovt.util.Utils.getRGB(getColor());
         actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-       
+
     super.validate();
 }*/
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).trans_matrix(getPolarCS(), getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
+    actor.SetUserMatrix(m3x3.getVTKMatrix());
 }
 
 public void timeChanged(TimeEvent evt) {
@@ -261,7 +264,7 @@ public void setPrefferedVisibility(boolean prefferedVisibility) {
     boolean oldPrefferedVisibility = this.prefferedVisibility;
     if (oldPrefferedVisibility == prefferedVisibility) return; // nothing have changed
     this.prefferedVisibility = prefferedVisibility;
-    
+
     if (prefferedVisibility == true) {
         if (parentIsVisible()) setVisible(true); // show only if the parent is visible
     } else {

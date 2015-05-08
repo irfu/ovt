@@ -23,8 +23,8 @@
 #define MIN(a,b) ( (a) > (b) ) ? (b) : (a)
 #define TPI      6.28318531
 #define RE       6371.2
-#define RAD      57.295779513 
-#define DIPMOM   -30483.03 
+#define RAD      57.295779513
+#define DIPMOM   -30483.03
 #define MIN_NUMBER      1e-30
 
 //real
@@ -40,10 +40,10 @@ double Gh[144];   /* IGRF coefficients array        */
 int Nmax = 10;     /* maximum no of harmonics in igrf */
 
 //
-int IntModel = 0;  
-int ExtModel = 0;  
+int IntModel = 0;
+int ExtModel = 0;
 float TILTf,SWPf,DSTf,BYIMFf,BZIMFf,G1f,G2f;  //  for Tsyg96() and Tsyg2001()
-int isMPClipping = 0; 
+int isMPClipping = 0;
 double Swp, Imf_z ; //for Shue97getR()
 
 
@@ -62,7 +62,7 @@ double   ss[MXX], xx[MXX], yy[MXX], zz[MXX];
 
 //////////////////////////////////////////////////////////////////////////////////
 //
-//.Author  Serg Redko 
+//.Author  Serg Redko
 //
 
 // storage 'g' & 'h' coef. for specific year
@@ -72,11 +72,11 @@ struct GandHcoefs {
    float **Hcoefs;
 };
 
-// start field line calculations since 1980 
-#define BASEYEAR   1980 
+// start field line calculations since 1980
+#define BASEYEAR   1980
 
 // LINELEN must be more then max line length in the file igrf.d !!!
-#define LINELEN   180 
+#define LINELEN   180
 
 // storage 'g' & 'h' coef. for various years
 struct GandHcoefs **ghTable;
@@ -86,6 +86,51 @@ int isaddCol = 0; // false
 int minY,maxY;    // Years limits
 
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+
+// DECLARE ALL FUNCTIONS FKJN 04May 2015
+
+int mmid(double *y, double *dydx,int ndim,double xs,double htot,int nstep,double *yout, int (*right)(), int *error);
+//mmid(           ysav,       dysav,      ndim,     xsav,     h,      *l1,         yseq,    right, error);
+int tsyg87(double  *gsm,double kp,double sint,double cost,double *bex);
+int tsyg89(double  *gsm,double kp,double sint,double cost,double *bv);
+void tsyg95(double gsm[3],double psw,double dstindex,double aeindex,double imf[3],double tiltr,double bex[3]);//comment out? FKJN
+void tsyg96(double  *gsm, double *bv);
+void tsyg2001(double  *gsm,double *bv);
+int traceigrf(double  *geo, double alt,int where,double  *foot);
+void sunmjd(double  mjd,double *sunv);
+int setmodel(double  mjd,double model,int icor);
+int gei_geo(double  *gei,double *geo,double mjd,int ic);
+int geo_gma(int flag,double  *geo,double *gma,int idir);
+int normf(double  *vec,double norm);
+int rzextr(int iest,double  xest,double *yest,double *yz,double *dy,int ndim,int nuse);
+int setigrf(double  year);
+int setgsm(double  mjd);
+int igrf(double  *geo,double *bv);
+int crossn (double  *a,double *b,double *c);
+void difv(double a[3],double b[3],double c[3]);
+int n_foot_ns(double  mjd,int icor,double  xlim,double *rv,double alt,double *foot,int idir);
+int magbv(double  *rv,double *bv);
+int foot_ns(double mjd,double model,int icor,double  xlim,double *rv,double alt,double *foot,int idir);
+int tracelin(double rv[3],double alt,double step,int is,double xlim,double *xx,double *yy,double *zz,double *ss,int mx,int *n);
+int traceline(double rv[3],double alt,double step,int is, double  xlim, double *xx,double *yy,double *zz,double *ss,double *bx,double  *by,double *bz,  int mx, int *n);
+
+// from utils.c
+int sun_vect(struct julian *jday,double geocentric[3]);
+void mjd2jul(double *mjd,struct julian *jday,int dir);
+int tsyganenko2001_(float *gsm, float *ps, float *pdyn, float *dst,float *byimf, float *bzimf, float *g1, float *g2, float *bv);
+int tsyganenko96_(float *gsm, float *ps, float *pdyn, float *dst,
+	 float *byimf, float *bzimf, float *bv);
+
+
+
+//char tempstr[80];
+//char Mdirectory[80];
+char igrf_cPath[80];
+char igrfPath[80];
 
 
 /* --------------------------------------------------------------------
@@ -185,11 +230,11 @@ int *error;
 }
 
 
-/* -------------------------------------------------------- 
+/* --------------------------------------------------------
    FUNCTION:
-       transforms cartesian (idir = 1) to 
+       transforms cartesian (idir = 1) to
        spherical or vice versa when (idir =-1)
-   input: 
+   input:
          rv(3) geocentric vector (re)
          idir = +1 cartesian to spherical
                 -1 spherical to cartesian
@@ -237,20 +282,20 @@ int idir;
 //.Name      n_lastline
 //
 //.Descr     called by Java_ovt_mag_Trace_lastlineJNI
-//           new lastline function 
+//           new lastline function
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 /******************************************************************
  FUNCTION:
-  first closed field line starting from rv(3) in the direcion dir(3) 
+  first closed field line starting from rv(3) in the direcion dir(3)
   mjd,model,rv(3)  =  standard variables
-  dir(3):  search direction from rv(3) 
+  dir(3):  search direction from rv(3)
   alt (km) altitude of required footprint
   foot(3) :  footprint position (re)
-    idir= 1 north 
+    idir= 1 north
         =-1 south
   epst = tolerance (re) for determination of the origin of last closed rv(3)
 ******************************************************************/
@@ -332,7 +377,7 @@ double  epst;
         rfoot = absv(foot);
         if (rfoot < rmin) {
             for (d1 = rv, d2 = gsr; d1 < rv + 3; )
-                for (i = 0; i < 3; ++i) 
+                for (i = 0; i < 3; ++i)
                     *d1++ = *d2++;
                         /* tolerance proportional to gyroradius of 1 keV proton */
                         magbv(rv,bv);
@@ -359,12 +404,12 @@ double  epst;
 
 /******************************************************************
  FUNCTION:
-  first closed field line starting from rv(3) in the direcion dir(3) 
+  first closed field line starting from rv(3) in the direcion dir(3)
   mjd,model,rv(3)  =  standard variables
-  dir(3):  search direction from rv(3) 
+  dir(3):  search direction from rv(3)
   alt (km) altitude of required footprint
   foot(3) :  footprint position (re)
-    idir= 1 north 
+    idir= 1 north
         =-1 south
   epst = tolerance (re) for determination of the origin of last closed rv(3)
 ******************************************************************/
@@ -446,7 +491,7 @@ double  epst;
         rfoot = absv(foot);
         if (rfoot < rmin) {
             for (d1 = rv, d2 = gsr; d1 < rv + 3; )
-                for (i = 0; i < 3; ++i) 
+                for (i = 0; i < 3; ++i)
                     *d1++ = *d2++;
                         /* tolerance proportional to gyroradius of 1 keV proton */
                         magbv(rv,bv);
@@ -463,7 +508,7 @@ double  epst;
 }
 
 
-com_read (fo, str)
+int com_read (fo, str)
 FILE *fo;
 char    *str;
 {
@@ -519,7 +564,7 @@ char    *str;
 
 
 /************************************************************************
-   compute corrected magnetic coordinates at the reference altitude alt 
+   compute corrected magnetic coordinates at the reference altitude alt
    input:
       mjd:     modified julian day (use fdate() to find mjd! )
       geo(3):  geographic position (cartesian) in units of re=6371.2 km
@@ -532,7 +577,7 @@ char    *str;
 *************************************************************************/
 
 
-corrgma(mjd, geo, alt, mlat, mlong, mlt, ell)
+int corrgma(mjd, geo, alt, mlat, mlong, mlt, ell)
 double  mjd, *geo, alt, *mlat, *mlong, *mlt, *ell;
 {
     /* Initialized data */
@@ -607,7 +652,7 @@ double  mjd, *geo, alt, *mlat, *mlong, *mlt, *ell;
 
 /* vector product c =  a x b */
 
- cross(a, b, c)
+int cross(a, b, c)
 double  *a, *b, *c;
 {
     /* Function Body */
@@ -622,7 +667,7 @@ double  *a, *b, *c;
 
 /* normalized vector product */
 
- crossn (a, b, c)
+int crossn (a, b, c)
 double  *a, *b, *c;
 {
     /* Local variables */
@@ -645,7 +690,7 @@ double  *a, *b, *c;
 
 
 
-difv(a,b,c)
+void difv(a,b,c)
 double a[3],b[3],c[3];
 /* vector difference a-b=c */
 {
@@ -711,19 +756,19 @@ double  mjd;
 }
 
 
-/* ------------------------------------------------------------ 
-   FUNCTION: 
-      compute dipole field (nt) in gsm coordinates 
-   input: 
-      sint, cost: sine and cosine of the tilt angle 
-      gsm(3)      position vector (earth radii, re) 
+/* ------------------------------------------------------------
+   FUNCTION:
+      compute dipole field (nt) in gsm coordinates
+   input:
+      sint, cost: sine and cosine of the tilt angle
+      gsm(3)      position vector (earth radii, re)
    output:
-      bv(3)     : field vector (nanotesla) 
-   ------------------------------------------------------------ 
+      bv(3)     : field vector (nanotesla)
+   ------------------------------------------------------------
    dipmom = magnetic moment of the earth for igrf1985 model */
 
 
-dipol(sint, cost, gsm, bv)
+int dipol(sint, cost, gsm, bv)
 double  sint, cost, *gsm, *bv;
 {
     double  sqrt();
@@ -770,7 +815,7 @@ double  a[3], b[3];
 
 double full_angle_v(x,y)
 double x[3],y[3];
-/* full angle 0 360 deg between vectors y and x 
+/* full angle 0 360 deg between vectors y and x
                 (as in the trigonometric plane)
 */
 {
@@ -798,9 +843,9 @@ double observer[3], pos[3];  /* units of RE */
         double angle, h;
 
         angle= angle_v(observer,pos);
-        if(angle<90.0) 
+        if(angle<90.0)
         return (1);
-        else 
+        else
         h=absv(pos)*sin(angle/RAD);
         if(h>1.0)
         return(1);
@@ -854,25 +899,25 @@ double  *a, *b;
 // Serg Redko remark:
 // This is old externbv function; Tsyg95 isn't used
 
-/* ---------------------------------------------------------------- 
-   FUNCTION: 
-     compute EXTERNAL field model according to tsyganenko models: 
-     planet. space sci., vol 35, no 11, pp1347-1358, 1987 
-     planet. space sci., vol 37, no 1, pp5-20  1989 
-   input: 
-     gsm(3):   position vector (re) in gsm coordinates 
-     amodel:   10.0-15.0  model number for 1987 model 
-               20.0-25.0  for model 1989. 
+/* ----------------------------------------------------------------
+   FUNCTION:
+     compute EXTERNAL field model according to tsyganenko models:
+     planet. space sci., vol 35, no 11, pp1347-1358, 1987
+     planet. space sci., vol 37, no 1, pp5-20  1989
+   input:
+     gsm(3):   position vector (re) in gsm coordinates
+     amodel:   10.0-15.0  model number for 1987 model
+               20.0-25.0  for model 1989.
      amodel =95 for T95_06 model
              uses also PSW - solar wind pressure 0.5 to 10 nPa
                        DSTindex  -100 to 20 nT
                        AEindex     40 to 800 nT
-     sint,cost: sine and cosine of the dipole tilt angle 
-   output: 
-     bex(3):   EXTERNAL field (nt) in gsm coordinates 
+     sint,cost: sine and cosine of the dipole tilt angle
+   output:
+     bex(3):   EXTERNAL field (nt) in gsm coordinates
    ---------------------------------------------------------------- */
 
-externbv(gsm, amodel, sint, cost, bex)
+int externbv(gsm, amodel, sint, cost, bex)
 double  *gsm, amodel, sint, cost, *bex;
 {
 
@@ -908,12 +953,12 @@ double  *gsm, amodel, sint, cost, *bex;
 }
 
 
-/*  FUNCTION: 
-/*      convert (year,month,day,hour,mins,sec,msec) to mjd or vice versa 
-/*      mjd is the day number counted from 
-/*      1 jan 1950 00 hr 00 mins 00 sec 
+/*  FUNCTION:
+/*      convert (year,month,day,hour,mins,sec,msec) to mjd or vice versa
+/*      mjd is the day number counted from
+/*      1 jan 1950 00 hr 00 mins 00 sec
 /*      this routine is valid for dates between 1 jan 1950 and 31 dec 2099
-/*  inputs:  for idr = 1 
+/*  inputs:  for idr = 1
 /*      year,month,day,hour,mins,sec,msec
 /*      (year can have two or four digits e.g. 1984 or 84)
 /*  outputs: for idr = 1
@@ -921,7 +966,7 @@ double  *gsm, amodel, sint, cost, *bex;
 /*      when idr = -1 mjd is input and year,... output */
 
 
- fdate (year, month, day, hour, mins, sec, msec, mjd, idr)
+int fdate (year, month, day, hour, mins, sec, msec, mjd, idr)
 
 int *year, *month, *day, *hour, *mins, *sec, *msec;
 double  *mjd;
@@ -964,17 +1009,17 @@ int idr;
 
 /* FUNCTION:
       computes magnetic footprint (towards the northern pole)
-   input: 
-      mjd :  modified julian day 
-      model : magnetic field model see setmodel() 
-      icor   :   =  GEO coordinates 
+   input:
+      mjd :  modified julian day
+      model : magnetic field model see setmodel()
+      icor   :   =  GEO coordinates
                  =  GSM coordinates
       alt  =  altitude (km) of footprint
       rv(3) initial position (re)
    output:
       foot(3) in (re) and icor coordinates */
 
-foot_in (mjd, model, icor, rv, alt, foot)
+int foot_in (mjd, model, icor, rv, alt, foot)
 double  mjd, model;
 int icor;
 double  *rv, alt, *foot;
@@ -1008,21 +1053,21 @@ double  *rv, alt, *foot;
 //.Name      n_foot_ns
 //
 //.Descr     called by n_lastline()
-//           this is new foot_ns 
+//           this is new foot_ns
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-/* computes magnetic footprint in the north (idir=1) or south (idir=-1) 
+/* computes magnetic footprint in the north (idir=1) or south (idir=-1)
 
-   input: 
+   input:
     rv(3) initial position (re)
     alt = altitude (km)
    output:
       foot(3) in (re) */
 
-n_foot_ns(mjd, icor, xlim, rv, alt, foot, idir)
+int n_foot_ns(mjd, icor, xlim, rv, alt, foot, idir)
 double  mjd;
 int icor;
 double  xlim, *rv, alt, *foot;
@@ -1064,7 +1109,7 @@ int idir;
 // Serg Redko remark:
 // this is old foot_ns function
 
-foot_ns(mjd, model, icor, xlim, rv, alt, foot, idir)
+int foot_ns(mjd, model, icor, xlim, rv, alt, foot, idir)
 double  mjd, model;
 int icor;
 double  xlim, *rv, alt, *foot;
@@ -1107,14 +1152,14 @@ int idir;
 
 
 /* FUNCTION:
-     find cartesian coordinates of a magnetic footprint at z=0 of rv(3) 
+     find cartesian coordinates of a magnetic footprint at z=0 of rv(3)
    input:
-     mjd,model,icor  (see foot_in) 
-     xlim = negative number for the maximum distance in the tail 
+     mjd,model,icor  (see foot_in)
+     xlim = negative number for the maximum distance in the tail
      rv(3),foot(3) : see foot_in  */
 
 
-foot_out(mjd, model, icor, xlim, rv, foot)
+int foot_out(mjd, model, icor, xlim, rv, foot)
 double  mjd, model;
 int icor;
 double  xlim, *rv, *foot;
@@ -1146,7 +1191,7 @@ double  xlim, *rv, *foot;
 
 
 
-/* ------------------------------------------------------ 
+/* ------------------------------------------------------
     FUNCTION:
       transforms gei to geo when ic=+1
              or  geo to gei when ic=-1
@@ -1158,7 +1203,7 @@ double  xlim, *rv, *foot;
  -------------------------------------------------------- */
 
 
-gei_geo(gei, geo, mjd, ic)
+int gei_geo(gei, geo, mjd, ic)
 double  *gei, *geo, mjd;
 int ic;
 {
@@ -1172,9 +1217,9 @@ int ic;
     double  theta, ct, st;
 
 
-/*  changed SEP 94 
+/*  changed SEP 94
     theta = fmod(mjd, 1.0) * TPI + gmstime(mjd);
-*/  
+*/
     theta = gmstime(mjd);
 
     st = sin(theta);
@@ -1195,7 +1240,7 @@ int ic;
 
 
 
-gei_gs(mjd, coord, dir, gei, gse)
+int gei_gs(mjd, coord, dir, gei, gse)
 double  mjd;
 int coord;  /* GSE  or GSEQ or GSM or SMC  or GEI   */
 int dir;   /* +1 from gei to gse(q) -1 reverse */
@@ -1214,7 +1259,7 @@ double  gei[3], gse[3];
     static double   eqlipt[3] = {
         0.0, -0.398, 0.917                  };
 
-   
+
     switch (coord) {
     case GEI:
         if (dir > 0) {
@@ -1281,12 +1326,12 @@ double  gei[3], gse[3];
 
 
 /*-----------------------------------------------------------------
-/* transform geo(3) to gma(3) if idir =1 and vice versa if idir=-1 
-/* flag=0 magnetic dipole 
-/*     =1 eccentric dipole 
+/* transform geo(3) to gma(3) if idir =1 and vice versa if idir=-1
+/* flag=0 magnetic dipole
+/*     =1 eccentric dipole
  -----------------------------------------------------------------*/
 
- geo_gma(flag, geo, gma, idir)
+int geo_gma(flag, geo, gma, idir)
 int flag;
 double  *geo, *gma;
 int idir;
@@ -1326,7 +1371,7 @@ int idir;
 /*  physical vector                                      */
 
 
-geo_gsm(geo, gsm, ic)
+int geo_gsm(geo, gsm, ic)
 double  *geo, *gsm;
 int ic;
 {
@@ -1357,7 +1402,7 @@ int ic;
 /*  transforms geo to gsm (ic = 1) or gsm to geo (ic=-1) */
 /*  mjd modified julian day                              */
 
- geo_gsmd(geo, gsm, mjd, ic)
+int geo_gsmd(geo, gsm, mjd, ic)
 double  *geo, *gsm, mjd;
 int ic;
 {
@@ -1366,7 +1411,7 @@ int ic;
     /* Function Body */
 
     setgsm(mjd);
-    
+
     if (ic > 0) {
         x = geo[0];
         y = geo[1];
@@ -1387,7 +1432,7 @@ int ic;
 }
 
 
- get_dipax(oz_dip)
+int get_dipax(oz_dip)
 double  *oz_dip;
 {
     /*
@@ -1409,7 +1454,7 @@ double  *oz_dip;
 /* (for solar wind inter)                                */
 
 
- get_tilteq(mjd, tilt, tgsm)
+int get_tilteq(mjd, tilt, tgsm)
 double  mjd, *tilt, *tgsm;
 {
 
@@ -1445,7 +1490,7 @@ double  mjd, *tilt, *tgsm;
 }
 
 
-/*------------------------------------------------------ 
+/*------------------------------------------------------
     FUNCTION:
        greenwich mean sideral time (radians)
        for modified julian day (mjd)
@@ -1475,30 +1520,30 @@ double mjd;
 {
   double ret, gha();
   struct julian jday;
- 
+
   mjd2jul(&mjd,&jday,1);
-  
+
   ret=gha(&jday)/RAD;
 
   return(ret);
 }
- 
 
 
-/* ------------------------------------------------------------ 
-   FUNCTION: 
+
+/* ------------------------------------------------------------
+   FUNCTION:
       compute igrf field for cartesian geo
-   input: 
+   input:
       geo(3) position vector (geo) in earth radii (re = 6371.2 km)
-   output: 
+   output:
       bv(3)  magnetic field vector in geo (units as set by setigrf)
    files/COMMONs:
       COMMON /cigrf/ with coefficients set by setigrf(year)
-   remarks: 
-        CALL setigrf(year) before first use 
+   remarks:
+        CALL setigrf(year) before first use
 --------------------------------------------------------------- */
 
-igrf(geo, bv)
+int igrf(geo, bv)
 double  *geo, *bv;
 {
     double  sqrt();
@@ -1562,14 +1607,14 @@ double  *geo, *bv;
                     h[ilm] = Gh[ilm] + z * h[ihm] + x * (h[ihm+2] - h[ihm-2])
                      + y * (h[ihm + 3] + h[ihm - 1]);
                 }
-                h[il + 2] = Gh[il + 2] + z * h[ih + 2] + x * h[ih + 4] 
+                h[il + 2] = Gh[il + 2] + z * h[ih + 2] + x * h[ih + 4]
                     -y * (h[ih + 3] + h[ih]);
-                h[il+1] = Gh[il+1] + z * h[ih+1] + y * h[ih + 4] 
+                h[il+1] = Gh[il+1] + z * h[ih+1] + y * h[ih + 4]
                      + x * (h[ih + 3] - h[ih]);
             } else if (i == 0) {
-                h[il + 2] = Gh[il + 2] + z * h[ih + 2] + x * h[ih + 4] 
+                h[il + 2] = Gh[il + 2] + z * h[ih + 2] + x * h[ih + 4]
                     -y * (h[ih + 3] + h[ih]);
-                h[il+1] = Gh[il+1] + z * h[ih+1] + y * h[ih + 4] 
+                h[il+1] = Gh[il+1] + z * h[ih+1] + y * h[ih + 4]
                      + x * (h[ih + 3] - h[ih]);
             }
 
@@ -1606,7 +1651,7 @@ C    babs      field magnitude
 C    units: nanotesla as set in setigrf(year)
 C ------------------------------------------------------------- */
 
-igrfgd (glat, glon, alt, bnorth, beast, bdown, babs)
+int igrfgd (glat, glon, alt, bnorth, beast, bdown, babs)
 double  glat, glon, alt;
 double  *bnorth, *beast, *bdown, *babs;
 {
@@ -1648,7 +1693,7 @@ double  *bnorth, *beast, *bdown, *babs;
 /*       -1 converts vector in re to km  */
 
 
-km_re(rv, idir)
+int km_re(rv, idir)
 double  *rv;
 int idir;
 {
@@ -1723,16 +1768,16 @@ char    sq;
 //
 //.Descr     externbv() is inside magbv() now
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 /* ------------------------------------------------
-    rv(3)  position vector (geo) or (gsm) in re 
+    rv(3)  position vector (geo) or (gsm) in re
     bv(3)   field nt
 
 --------------------------------------------------- */
- magbv(rv, bv)
+int magbv(rv, bv)
 double  *rv, *bv;
 {
 
@@ -1774,7 +1819,7 @@ double  *rv, *bv;
                   break;
 	  case T2001:
                   tsyg2001(rv, bex);
-                  break;  
+                  break;
           default:
           printf("externbv: wrong model number\n");
           exit (-1);
@@ -1789,7 +1834,7 @@ double  *rv, *bv;
 
 
 
-    
+
     } else {
         printf("incorrect Trcoord in magbv\n");
         exit (-1);
@@ -1803,23 +1848,23 @@ double  *rv, *bv;
 
 
 
-/* ----------------------------------------------------------- 
-   FUNCTION: 
-      compute magnetic local time and magnetic latitude 
-   input: 
-      mjd modified julian day 
-      geo(3) geocentric position (in units of re = 6371.2km) 
-      ityp = 0 dipole  ityp = 1 eccentric dipole 
-   output: 
-      mlat (degrees) 
-      mlt  (hours) 
-   ----------------------------------------------------------- 
-   rh  hour to radian 
-       igrf model valid for 30 days 
+/* -----------------------------------------------------------
+   FUNCTION:
+      compute magnetic local time and magnetic latitude
+   input:
+      mjd modified julian day
+      geo(3) geocentric position (in units of re = 6371.2km)
+      ityp = 0 dipole  ityp = 1 eccentric dipole
+   output:
+      mlat (degrees)
+      mlt  (hours)
+   -----------------------------------------------------------
+   rh  hour to radian
+       igrf model valid for 30 days
    ----------------------------------------------------------- */
 
 
-magpos(mjd, geo, ityp, mlat, mlt)
+int magpos(mjd, geo, ityp, mlat, mlt)
 double  mjd, *geo;
 int ityp;
 double  *mlat, *mlt;
@@ -1871,7 +1916,7 @@ double  *mlat, *mlt;
 /*  tsyganenko long       */
 
 
- mapll(gsm, bv, sint, cost, kp)
+int mapll(gsm, bv, sint, cost, kp)
 double  *gsm, *bv, sint, cost, kp;
 {
     /* Initialized data */
@@ -1986,19 +2031,19 @@ double  *gsm, *bv, sint, cost, kp;
     y2 = y * y;
     z = gsm[2];
     z2 = z * z;
-    bv[0] = ex1 * (a1 * z * cost + a2 * sint) + ex2 * (a3 * z * cost + (a4 
+    bv[0] = ex1 * (a1 * z * cost + a2 * sint) + ex2 * (a3 * z * cost + (a4
          + a5 * y2 + a6 * z2) * sint);
-    bv[1] = ex1 * (b1 * y * z * cost + b2 * y * sint) + ex2 * (b3 * y * z * 
+    bv[1] = ex1 * (b1 * y * z * cost + b2 * y * sint) + ex2 * (b3 * y * z *
         cost + (b4 * y + b5 * y2 * y + b6 * y * z2) * sint);
-    bv[2] = ex1 * ((c1 + c2 * y2 + c3 * z2) * cost + c4 * z * sint) + ex2 * 
-        ((c5 + c6 * y2 + c7 * z2) * cost + (c8 * z + c9 * z * y2 + c10 * 
+    bv[2] = ex1 * ((c1 + c2 * y2 + c3 * z2) * cost + c4 * z * sint) + ex2 *
+        ((c5 + c6 * y2 + c7 * z2) * cost + (c8 * z + c9 * z * y2 + c10 *
         z2 * z) * sint);
 
     return (0);
 }
 
 
-mmid(y, dydx, ndim, xs, htot, nstep, yout, right, error)
+int mmid(y, dydx, ndim, xs, htot, nstep, yout, right, error)
 double  *y, *dydx;
 int ndim;
 double  xs, htot;
@@ -2065,7 +2110,7 @@ double  a, b;
 
 /* change length of vector vec(3) to norm */
 
- normf(vec, norm)
+int normf(vec, norm)
 double  *vec, norm;
 {
 
@@ -2090,7 +2135,7 @@ double  *vec, norm;
 
 
 
-perpar(vv, ref, per, par)
+void perpar(vv, ref, per, par)
 double  vv[3], ref[3], per[3], par[3];
 {
     double  dd;
@@ -2107,7 +2152,7 @@ double  vv[3], ref[3], per[3], par[3];
 
 /* right hand side for field line tracing with bsstep */
 
-rhanda(s, r, drds, error)
+int rhanda(s, r, drds, error)
 double  *s, *r, *drds;
 int *error;
 {
@@ -2141,7 +2186,7 @@ int *error;
 /*  tsyganenko long                                         */
 
 
- rhandb(s, r, drds, error)
+int rhandb(s, r, drds, error)
 double  *s, *r, *drds;
 int *error;
 {
@@ -2181,7 +2226,7 @@ int *error;
 
 
 
- ringl(gsm, bv, sint, cost, kp)
+int ringl(gsm, bv, sint, cost, kp)
 double  *gsm, *bv, sint, cost, kp;
 {
 
@@ -2245,7 +2290,7 @@ double  *gsm, *bv, sint, cost, kp;
 
 /*************************************************************
    Function:
-   Returns year (double) for a given modified Julian day mjd 
+   Returns year (double) for a given modified Julian day mjd
 *************************************************************/
 
 double  rok (mjd)
@@ -2264,7 +2309,7 @@ double  mjd;
 }
 
 
- rzextr(iest, xest, yest, yz, dy, ndim, nuse)
+int rzextr(iest, xest, yest, yz, dy, ndim, nuse)
 int iest;
 double  xest, *yest, *yz, *dy;
 int ndim, nuse;
@@ -2332,7 +2377,7 @@ int ndim, nuse;
 /*  derives transformat matrix geo to gsm  */
 /*     if(year<1965) sets geo = gsm tilt = 0. */
 
-setgsm(mjd)
+int setgsm(mjd)
 double  mjd;
 {
     double  sqrt();
@@ -2381,22 +2426,22 @@ double  mjd;
 
 
 // Serg Redko remark :
-// this is old setigrf() function that uses old format file igrf.d  
+// this is old setigrf() function that uses old format file igrf.d
 // see n_setigrf()
-/* ------------------------------------------------------------ 
+/* ------------------------------------------------------------
  FUNCTION:
-   sets up coefficients Gh(144) for magnetic field computation 
+   sets up coefficients Gh(144) for magnetic field computation
    and  position of the eccentric dipole (re)
- input: 
-    year  
+ input:
+    year
  output:
     to var.h
  files:
-    igrf.d  that contains coeficients for igrf geomagnetic field model 
+    igrf.d  that contains coeficients for igrf geomagnetic field model
    (source:eos june 17, 1986)
 --------------------------------------------------------------- */
 
-setigrf(year)
+int setigrf(year)
 double  year;
 {
     double  sqrt(), atan(), cos(), sin();
@@ -2417,10 +2462,10 @@ double  year;
     static double   lx, ly, lz, dipmom;
     static double   tmp1, tmp2;
     char    *c1, *skip_in_str();
-        
+
         printf("C: igrf coef for %f year\n",year);
 
-    sprintf(str, "%sigrf_c.d", Mdirectory);
+    sprintf(str, "%s", igrf_cPath);
 
     if (( fo = fopen (str, "r")) == NULL) {
         printf("cannot read %s file\n", str);
@@ -2575,7 +2620,7 @@ double  year;
 }
 
 
-/* ---------------------------------------------------------- 
+/* ----------------------------------------------------------
    FUNCTION:
          set magnetic field model and coordinates
    input:
@@ -2593,7 +2638,7 @@ double  year;
 ------------------------------------------------------------- */
 
 
-setmodel(mjd, model, icor)
+int setmodel(mjd, model, icor)
 double  mjd, model;
 int icor;
 {
@@ -2609,7 +2654,7 @@ int icor;
         setigrf(rok(mjd));
         Tigrf = mjd;
     }
-        
+
     if (fabs(mjd - Tsgsm) > 1e-5) {
         setgsm(mjd);
         Tsgsm = mjd;
@@ -2654,7 +2699,7 @@ char    *str;
 
 /*  transforms sm to gsm (ic=1) or gsm to sm (ic=-1) */
 
-sm_gsm(sm, gsm, ic)
+int sm_gsm(sm, gsm, ic)
 double  *sm, *gsm;
 int ic;
 {
@@ -2678,7 +2723,7 @@ int ic;
 /*  transforms sm to gsm (ic=1) or gsm to sm (ic=-1) */
 
 
-sm_gsmd(sm, gsm, mjd, ic)
+int sm_gsmd(sm, gsm, mjd, ic)
 double  *sm, *gsm, mjd;
 int ic;
 {
@@ -2705,13 +2750,13 @@ int ic;
 }
 
 
-/* ------------------------------------------------------ 
-    FUNCTION: 
-           calculates unit sun vector (gei) and 
+/* ------------------------------------------------------
+    FUNCTION:
+           calculates unit sun vector (gei) and
            greenwich mean sideral time gmst (radians)
-           for modified julian day (mjd) 
+           for modified julian day (mjd)
 --------------------------------------------------------- */
-sunmjd(mjd,sunv)
+void sunmjd(mjd,sunv)
 double  mjd, *sunv;
 {
   struct julian jday;
@@ -2721,7 +2766,7 @@ double  mjd, *sunv;
 }
 
 
- sunmjdold(mjd, sunv, gmst)
+int sunmjdold(mjd, sunv, gmst)
 double  mjd, *sunv, *gmst;
 {
     double  sin(), cos(), fmod();
@@ -2763,7 +2808,7 @@ double  mjd, *sunv, *gmst;
 /*  sint = sinus of dipole tilt angle             */
 
 
-taill(gsm, bv, sint, cost, kp)
+int taill(gsm, bv, sint, cost, kp)
 double  *gsm, *bv, sint, cost, kp;
 {
     /* Initialized data */
@@ -2870,19 +2915,19 @@ double  *gsm, *bv, sint, cost, kp;
     tmp = ks2k + be2;
     p2 = log(xnk / (ksnk + be2)) / (tmp * tmp);
     s2 = -ks2 * p2 - 1. / (xn - x2) / tmp + (ks2k - be2) * s0 / (tmp * tmp);
-    g2 = (be2 - ks2k) * p2 / 2. - be2 * 2. * ks2 * s0 
+    g2 = (be2 - ks2k) * p2 / 2. - be2 * 2. * ks2 * s0
          / (tmp * tmp) - ks2 / (xn - x2) / tmp;
 
     tmp = ks2k + bp2;
     p2 = log(xnk / (ksnk + bp2)) / (tmp * tmp);
     sp2 = -ks2 * p2 - 1. / (xn - x2) / tmp + (ks2k - bp2) * sp / (tmp * tmp);
-    gp2 = (bp2 - ks2k) * p2 / 2. - bp2 * 2. * ks2 * sp / (tmp * 
+    gp2 = (bp2 - ks2k) * p2 / 2. - bp2 * 2. * ks2 * sp / (tmp *
         tmp) - ks2 / (xn - x2) / tmp;
 
     tmp = ks2k + bm2;
     p2 = log(xnk / (ksnk + bm2)) / (tmp * tmp);
     sm2 = -ks2 * p2 - 1. / (xn - x2) / tmp + (ks2k - bm2) * sm / (tmp * tmp);
-    gm2 = (bm2 - ks2k) * p2 / 2. - bm2 * 2. * ks2 * sm / (tmp * 
+    gm2 = (bm2 - ks2k) * p2 / 2. - bm2 * 2. * ks2 * sm / (tmp *
         tmp) - ks2 / (xn - x2) / tmp;
 
     bx += b2 * (zr * s2 - (zp * sp2 + zm * sm2) * .5);
@@ -2899,13 +2944,13 @@ double  *gsm, *bv, sint, cost, kp;
 
 
 /* -----------------------------------------------------------------
-/*    field-line tracing 
-/* input: 
-/*    geo(3):   initial position (geo) units of re=6371.2 km 
-/*    alt:      altitude of footprint (km) 
-/*    where=1   trace to alt in the north 
+/*    field-line tracing
+/* input:
+/*    geo(3):   initial position (geo) units of re=6371.2 km
+/*    alt:      altitude of footprint (km)
+/*    where=1   trace to alt in the north
 /*         =0   trace to geomagnetic equator (alt not used)
-/*         =-1  trace to alt in the south 
+/*         =-1  trace to alt in the south
 /* output:
 /*    foot(3):  final vector re in geo coordinates
 /* -----------------------------------------------------------------*/
@@ -2916,7 +2961,7 @@ double  *gsm, *bv, sint, cost, kp;
 #define  MAXCOUNT  300
 #define  STMIN       0.01
 
-traceigrf(geo, alt, where, foot)
+int traceigrf(geo, alt, where, foot)
 double  *geo, alt;
 int where;
 double  *foot;
@@ -3025,7 +3070,7 @@ double  *foot;
 //.Descr     called by tracelin functions
 //           code from Java version
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -3033,7 +3078,7 @@ double Shue97getR(double cosTheta, double swp, double bz)
 {
    double cc=-1.0/6.6;
    double r, r0, alfa;
-      
+
    alfa=(0.58-0.007*bz)*(1.0+0.024*log(swp));
    r0=(10.22+1.29*tanh(0.184*(bz+8.14)))*pow(swp,cc);
    r = r0 * pow(2.0/(1.0+cosTheta),alfa);
@@ -3048,14 +3093,14 @@ double Shue97getR(double cosTheta, double swp, double bz)
 //.Descr     called by Java_ovt_mag_Trace_tracelineJNI
 //           derived from tracelin
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
 /* -----------------------------------------------------------------
       field-line tracing with initial step = step*r
-   input: 
-      rv(3)   initial position (in icor) 
+   input:
+      rv(3)   initial position (in icor)
       alt     altitude of footprint (km)
               if alt=0.0 trace to icor equator
       step ( + ) parallel to b
@@ -3066,12 +3111,12 @@ double Shue97getR(double cosTheta, double swp, double bz)
       mx     maximum size of xx,yy,zz,ss
    output:
       xx(n),yy(n),zz(n) field line coordinates
-      ss(n)   path length 
+      ss(n)   path length
       n       number of points
           bx(n),by(n),bz(n) - field nt bv - use for fast creating fieldline in Java
 ----------------------------------------------------------------- */
- 
-traceline(rv, alt, step, is, xlim, xx, yy, zz, ss,  bx,by,bz,  mx, n)
+
+int traceline(rv, alt, step, is, xlim, xx, yy, zz, ss,  bx,by,bz,  mx, n)
 double  rv[3], alt, step;
 double *xx, *yy, *zz, *ss,  *bx,*by,*bz;
 int is;
@@ -3090,7 +3135,7 @@ int mx, *n;
     int error;
     double  rf, rr, dz, dsmax;
     double  dir, hin;
-  
+
     double cosTheta, shueR;
 
 
@@ -3175,7 +3220,7 @@ int mx, *n;
         if (tocentre==0) {
             if (dir * r[2] > -STEPMIN)
                 return (1);
-           if (rf > RMAX*RMAX)   //?? rem in Java !!!  <<Serg 
+           if (rf > RMAX*RMAX)   //?? rem in Java !!!  <<Serg
                 return(1);
             if (r[0] > 14.)
                                 return (1);
@@ -3202,7 +3247,7 @@ int mx, *n;
                                 r[0] = xx[*n-1];
                                 r[1] = yy[*n-1];
                                 r[2] = zz[*n-1];
-                           
+
                                 magbv(r,b);
                                 bx[*n-1] = b[0];
                                 by[*n-1] = b[1];
@@ -3221,8 +3266,8 @@ int mx, *n;
 
 
 // old  tracelin
-// tracelin is called by n_foot_ns() <- n_lastline() 
-tracelin(rv, alt, step, is, xlim, xx, yy, zz, ss, mx, n)
+// tracelin is called by n_foot_ns() <- n_lastline()
+int tracelin(rv, alt, step, is, xlim, xx, yy, zz, ss, mx, n)
 double  rv[3], alt, step;
 double *xx, *yy, *zz, *ss;
 int is;
@@ -3351,7 +3396,7 @@ int mx, *n;
 
 /* This routine is no more used. Remove  - ? */
 
-tsyg95(gsm,psw,dstindex,aeindex,imf,tiltr,bex)
+void tsyg95(gsm,psw,dstindex,aeindex,imf,tiltr,bex)
 double gsm[3];
 double psw; /* dynamic solar wind pressure nPa */
 double dstindex,aeindex; /* DST index and AE index */
@@ -3365,9 +3410,9 @@ double bex[3]; /* output external field nT */
   ae= (float) aeindex;
   byimf=(float) imf[1];
   bzimf=(float) imf[2];
-  x= (float) gsm[0]; 
-  y= (float) gsm[1]; 
-  z= (float) gsm[2]; 
+  x= (float) gsm[0];
+  y= (float) gsm[1];
+  z= (float) gsm[2];
   ps= (float) tiltr;
 
    /* t95_06(&pdyn,&dst,&ae,&byimf,&bzimf,&ps,&x,&y,&z,&bx,&by,&bz);*/
@@ -3379,7 +3424,7 @@ double bex[3]; /* output external field nT */
 }
 
 
-tsyg87(gsm, kp, sint, cost, bex)
+int tsyg87(gsm, kp, sint, cost, bex)
 double  *gsm, kp, sint, cost, *bex;
 {
     double  b1[3], b2[3], b3[3];
@@ -3398,7 +3443,7 @@ double  *gsm, kp, sint, cost, *bex;
 
 
 /*  EXTERNAL magnetic model by tsyganenko, pss 37, 5-20, 1989.
-    input: 
+    input:
        gsm(3)     position vector (re)
        kp         (0.1 - 6.0) model number (REAL*8)
        sint       sine of tilt angle
@@ -3407,7 +3452,7 @@ double  *gsm, kp, sint, cost, *bex;
        bv(3)    in nanotesla */
 
 
-tsyg89(gsm, kp, sint, cost, bv)
+int tsyg89(gsm, kp, sint, cost, bv)
 double  *gsm, kp, sint, cost, *bv;
 {
     /* Initialized data */
@@ -3592,7 +3637,7 @@ double  *gsm, kp, sint, cost, *bv;
 
     byt = bxt * y;
     bxt *= xsm;
-    bzt = pa[0] * (w * f5 + xwyw * f7 + wtfs * f1) + pa[1] * (w * f9 + xwyw * 
+    bzt = pa[0] * (w * f5 + xwyw * f7 + wtfs * f1) + pa[1] * (w * f9 + xwyw *
         f1 + wtfs * f3);
 
     /* ring current field: */
@@ -3614,7 +3659,7 @@ double  *gsm, kp, sint, cost, *bv;
 
     byrc = bxdr * y;
     bxrc = bxdr * xsm;
-    bzrc = pa[4] * ((adrt2 * 2. - ro2) * fk1 + fk2 * (fr - ddr * (dd * 
+    bzrc = pa[4] * ((adrt2 * 2. - ro2) * fk1 + fk2 * (fr - ddr * (dd *
         ddx + ddopdx) * xsm));
 
     /* chapman-ferraro field and */
@@ -3623,7 +3668,7 @@ double  *gsm, kp, sint, cost, *bv;
     ex = exp(x / delx);
     z2 = z * z;
     bxcf = ex * (cost * pa[5] * z + sint * (pa[6] + pa[7] * y2 + pa[8] * z2));
-    bycf = ex * (cost * pa[9] * y * z + sint * y * (pa[10] + pa[11] * y2 + 
+    bycf = ex * (cost * pa[9] * y * z + sint * y * (pa[10] + pa[11] * y2 +
         pa[12] * z2));
     bzcf = ex * (cost * (pa[13] + pa[14] * y2 + pa[15] * z2) + sint * z * (
         pa[16] + pa[17] * y2 + pa[18] * z2));
@@ -3717,7 +3762,7 @@ double  gsm[3], step;
 }
 
 
-multi_abc(a, b, tb, c, tc)
+void multi_abc(a, b, tb, c, tc)
 double  a[9], b[9], c[9]; /* a(i,k)=b(i,j)c(j,k)  */
 int tb;    /* tb=1 transpose b before use */
 int tc;    /* tc=1 transpose c before use */
@@ -3778,7 +3823,7 @@ int flag;   /* =1 if xyz contain move indicator, otherwise 0 */
     double  theta, ct, st, gmst;
     double  x, y, z;
 
-    double gmstime();   
+    double gmstime();
     extern double   dot();
     static double   rotsun[3] = {
         0.122, -0.424, 0.899                    };
@@ -3900,12 +3945,12 @@ sm_mlat(sm, alt, lat, mlt, idir)
 double  sm[3], *alt, *lat, *mlt;
 int idir;
 // transforms sm[3] (RE) to alt(km) lat(deg) mlt(hours) if idir>0
-//   or vice versa if idir<0  
+//   or vice versa if idir<0
 {
     double  r, h;
     if (idir > 0) {
         r = sqrt(sm[0] * sm[0] + sm[1] * sm[1] + sm[2] * sm[2]);
-        h = atan2(sm[1], sm[0]) / M_TO_R + 12.0;  // radian to hour  
+        h = atan2(sm[1], sm[0]) / M_TO_R + 12.0;  // radian to hour
         *mlt = fmod(h, 24.0);
         *lat = asin(sm[2] / r) / D_TO_R;
         *alt = (r - 1.0) * RE;
@@ -3922,7 +3967,7 @@ int idir;
 
 
 /*****************************************************************/
-norm_d(v, norm)
+void norm_d(v, norm)
 double  v[3], norm;
 {
     double  ab;
@@ -3934,7 +3979,7 @@ double  v[3], norm;
 
 
 
-prerror(message)
+void prerror(message)
 char    *message;
 {
     printf("%s\n", message);
@@ -3946,16 +3991,16 @@ char    *message;
 
 
 /*----------- JNI sm_mlat -> ----------------------
-Input: 
-    sm[3] (RE) 
+Input:
+    sm[3] (RE)
 Output:
-   [0] alt(km) 
-   [1] lat(deg) 
-   [2] mlt(hours) 
+   [0] alt(km)
+   [1] lat(deg)
+   [2] mlt(hours)
 
 -----------------------------------------------------*/
 /*
-JNIEXPORT jdoubleArray JNICALL 
+JNIEXPORT jdoubleArray JNICALL
 Java_ovt_mag_MagPack_smtomlat(env, obj, jsm)
 JNIEnv *env;
 jobject obj;
@@ -3969,20 +4014,20 @@ jdoubleArray jsm;
 
    //sm_mlat(sm, alt, lat, mlt, idir)
 
-   
-   sm_mlat( sm, &res[0], &res[1], &res[2], 1);
-   
 
-   
+   sm_mlat( sm, &res[0], &res[1], &res[2], 1);
+
+
+
    // geo[0]=1;geo[1]=2;geo[2]=3;
    (*env)->ReleaseDoubleArrayElements(env, jsm, sm, 0);
    (*env)->ReleaseDoubleArrayElements(env, jres, res, 0);
-   
+
    return jres;
 }
 
 
-JNIEXPORT jdoubleArray JNICALL 
+JNIEXPORT jdoubleArray JNICALL
 Java_ovt_mag_MagPack_mlatToSM(env, obj, alt, lat, mlt)
 JNIEnv *env;
 jobject obj;
@@ -3995,9 +4040,9 @@ jdouble alt, lat, mlt;
    //sm_mlat(sm, alt, lat, mlt, idir)
 
    sm_mlat( sm, alt, lat, mlt, -1);
-   
+
    (*env)->ReleaseDoubleArrayElements(env, jsm, sm, 0);
-   
+
    return jsm;
 }*/
 
@@ -4008,10 +4053,10 @@ jdouble alt, lat, mlt;
         JNI to setigtf(mjd)
   output:
                 Gh[], Eccrr[], Eccdx[], Eccdy[], Eccdz[]
-        
+
 -----------------------------------------------------*/
 /*
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 Java_ovt_mag_model_IgrfModel_setigrfJNI(env, obj, jyear,
                                         jGh, jEccrr, jEccdx, jEccdy, jEccdz)
 JNIEnv *env;
@@ -4027,7 +4072,7 @@ jdoubleArray jGh, jEccrr, jEccdx, jEccdy, jEccdz;
         int i;
 
         setigrf((int)jyear);
-        
+
         for (i=0; i<144; i++) cGh[i] = Gh[i];
         for (i=0; i<3; i++) {
                 cEccrr[i] = Eccrr[i];
@@ -4035,7 +4080,7 @@ jdoubleArray jGh, jEccrr, jEccdx, jEccdy, jEccdz;
                 cEccdy[i] = Eccdy[i];
                 cEccdz[i] = Eccdz[i];
         }
-                
+
         (*env)->ReleaseDoubleArrayElements(env, jGh, cGh, 0);
         (*env)->ReleaseDoubleArrayElements(env, jEccrr, cEccrr, 0);
         (*env)->ReleaseDoubleArrayElements(env, jEccdx, cEccdx, 0);
@@ -4044,7 +4089,7 @@ jdoubleArray jGh, jEccrr, jEccdx, jEccdy, jEccdz;
 }
 */
 
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 Java_ovt_mag_model_Tsyganenko87_tsyganenko87JNI(env, obj, jgsm, kp, sint, cost, jbex)
 JNIEnv *env;
 jobject obj;
@@ -4055,14 +4100,14 @@ jdouble kp, sint, cost;
    jdouble *bex = (*env)->GetDoubleArrayElements(env, jbex, 0);
 
    tsyg87(gsm, kp, sint, cost, bex);
-   
+
    (*env)->ReleaseDoubleArrayElements(env, jgsm, gsm, 0);
    (*env)->ReleaseDoubleArrayElements(env, jbex, bex, 0);
 
 }
 
 
-JNIEXPORT void JNICALL 
+JNIEXPORT void JNICALL
 Java_ovt_mag_model_Tsyganenko89_tsyganenko89JNI(env, obj, jgsm, kp, sint, cost, jbex)
 JNIEnv *env;
 jobject obj;
@@ -4073,7 +4118,7 @@ jdouble kp, sint, cost;
    jdouble *bex = (*env)->GetDoubleArrayElements(env, jbex, 0);
 
    tsyg89(gsm, kp, sint, cost, bex);
-   
+
    (*env)->ReleaseDoubleArrayElements(env, jgsm, gsm, 0);
    (*env)->ReleaseDoubleArrayElements(env, jbex, bex, 0);
 
@@ -4085,21 +4130,21 @@ jdouble kp, sint, cost;
 //
 //.Descr     external model Tsyganenko 96
 //
-//.Updated by Serg Redko 
+//.Updated by Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-tsyg96(gsm, bv)
+void tsyg96(gsm, bv)
 double  *gsm,*bv;
 {
- 
-   float GSMf[3],BVf[3]; 
-  
+
+   float GSMf[3],BVf[3];
+
    int i;
 
    for(i=0; i<3; ++i)    /* double2float*/
       GSMf[i]=(float)gsm[i];
-        
+
    tsyganenko96_(GSMf,&TILTf,&SWPf,&DSTf,&BYIMFf,&BZIMFf,BVf);
 
    for(i=0; i<3; ++i)    /* double2float*/
@@ -4115,17 +4160,17 @@ double  *gsm,*bv;
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-tsyg2001(gsm, bv)
+void tsyg2001(gsm, bv)
 double  *gsm,*bv;
 {
- 
-   float GSMf[3],BVf[3]; 
-  
+
+   float GSMf[3],BVf[3];
+
    int i;
 
    for(i=0; i<3; ++i)    /* double2float*/
       GSMf[i]=(float)gsm[i];
-        
+
     tsyganenko2001_(GSMf,&TILTf,&SWPf,&DSTf,&BYIMFf,&BZIMFf,&G1f, &G2f, BVf);
 
    for(i=0; i<3; ++i)    /* double2float*/
@@ -4143,7 +4188,7 @@ double  *gsm,*bv;
 //           Allocate memory for GandHcoefs structure
 //           use Nmax global variable for init. GandHcoefs
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -4151,14 +4196,14 @@ struct GandHcoefs* allocGandHcoefs(){
 
      int i,j;
 
-     struct GandHcoefs  *ghCoefs = (struct GandHcoefs *)malloc( sizeof(struct GandHcoefs) );        
+     struct GandHcoefs  *ghCoefs = (struct GandHcoefs *)malloc( sizeof(struct GandHcoefs) );
 
-     ghCoefs->Gcoefs = (float **)malloc( (Nmax+1)*sizeof(float*) ); 
-     ghCoefs->Hcoefs = (float **)malloc( (Nmax+1)*sizeof(float*) ); 
+     ghCoefs->Gcoefs = (float **)malloc( (Nmax+1)*sizeof(float*) );
+     ghCoefs->Hcoefs = (float **)malloc( (Nmax+1)*sizeof(float*) );
 
      for(i=0; i<=Nmax; i++){
-       ghCoefs->Gcoefs[i] = (float *)malloc( (Nmax+1)*sizeof(float) );      
-       ghCoefs->Hcoefs[i] = (float *)malloc( (Nmax+1)*sizeof(float) );      
+       ghCoefs->Gcoefs[i] = (float *)malloc( (Nmax+1)*sizeof(float) );
+       ghCoefs->Hcoefs[i] = (float *)malloc( (Nmax+1)*sizeof(float) );
 
        for(j=0; j<=Nmax; j++)
          ghCoefs->Gcoefs[i][j] = ghCoefs->Hcoefs[i][j] = 0.0F ;
@@ -4177,7 +4222,7 @@ float newRok(double mjd) {
 
         int jday;
         double  temp;
-        int l, m, n, jj;   
+        int l, m, n, jj;
 
 
         temp = mjd + 5.7870370370370369e-9;
@@ -4212,7 +4257,7 @@ float newRok(double mjd) {
 
         temp = (temp - sec) * 1000.;
 
-        msec = (int)(temp + .5); 
+        msec = (int)(temp + .5);
 
     return ((float)year+(float)month*0.083333F);
 //      return (year+month*0.083333F);
@@ -4224,13 +4269,13 @@ float newRok(double mjd) {
 //
 //.Name      initTable
 //
-//.Params    yy - year ; initH = 0 -> first invocation 
+//.Params    yy - year ; initH = 0 -> first invocation
 //
 //.Descr         called by n_setigrf()
-//               reads 'g' & 'h' coef. from igrf.d 
+//               reads 'g' & 'h' coef. from igrf.d
 //           code from ovt\mag\model\IgrfModel.java
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -4246,14 +4291,16 @@ void initTable(int yy, int initH){
    char seps[]  = " ,\t\n";
    char tmps[10];
 
-   struct GandHcoefs *ghCoefs = allocGandHcoefs();      
+   struct GandHcoefs *ghCoefs = allocGandHcoefs();
 
 
 
-   sprintf(str, "%sigrf.d", Mdirectory);
+   //   sprintf(str, "%sigrf.d", Mdirectory);
+      sprintf(str,"%s",igrfPath); //FKJN edit 5 May 2015
+
    if( (stream = fopen( str, "r" )) != 0 ){
                                                               //Getting first Line (header)
-        if(fgets( str, LINELEN, stream ) != 0) 
+        if(fgets( str, LINELEN, stream ) != 0)
          if(initH == 1){              // First time starting (treats header)
          // Reading header
           i=0;
@@ -4265,16 +4312,16 @@ void initTable(int yy, int initH){
             switch(i){
                case 4: sscanf( token, "%d", &minY ); break;
             }
-                        // Get next token: 
+                        // Get next token:
             token = strtok( 0 , seps );
           }
           sscanf( tmps, "%d", &maxY );
           if(minY>=maxY) {
-             printf("Invalid format of %sigrf.d (check LINELEN !) ",Mdirectory);
+             printf("Invalid format of %s (check LINELEN !) ",igrfPath);
                      fclose( stream );
                          exit(-1);
           }
-         } 
+         }
 
  //Checking for corrected year number
 /*               if(yy != 0)  // yy = 0 -> init
@@ -4284,11 +4331,11 @@ void initTable(int yy, int initH){
                          exit(-1);
                  }
 */
-     
 
- // Reading gh coefs. for year ##yy    
+
+ // Reading gh coefs. for year ##yy
         neededCol=4+(yy-minY)/5;          //Definition of needed column
-        while( fgets( str, LINELEN, stream ) != 0){ 
+        while( fgets( str, LINELEN, stream ) != 0){
          i=0;                           // Number parsed columns
          token = strtok( str, seps );
          while( token != 0 )                    // Parsing one line
@@ -4308,9 +4355,9 @@ void initTable(int yy, int initH){
 
            if(i==neededCol){           // Founded needed column!
               sscanf( token, "%f", &flt );
-              
+
               if(n_idx>Nmax || m_idx>Nmax || n_idx<0 || m_idx<0){
-                 printf("Invalid format of %sigrf.d",Mdirectory);
+                 printf("Invalid format of %s",igrfPath);
                  fclose( stream );
                  exit(-1);
               }
@@ -4318,16 +4365,16 @@ void initTable(int yy, int initH){
              switch(ghMarker){
                  case 'g': ghCoefs->Gcoefs[n_idx][m_idx] = flt; break;
                  case 'h': ghCoefs->Hcoefs[n_idx][m_idx] = flt; break;
-                 default: 
-                       printf("Invalid format of %sigrf.d",Mdirectory);
+                 default:
+                       printf("Invalid format of %s",igrfPath);
                        fclose( stream );
                        exit(-1);
              }
            } // if(i==neededCol)
            sscanf( token, "%s", tmps );
-                   // Get next token: 
+                   // Get next token:
            token = strtok( 0 , seps );
-         } //while( token != 0 )        
+         } //while( token != 0 )
 
          if(isaddCol == 0) {       // addCol isn't loaded
                             // loading addCol
@@ -4335,7 +4382,7 @@ void initTable(int yy, int initH){
             switch(ghMarker){
                case 'g': addCol->Gcoefs[n_idx][m_idx] = flt; break;
                case 'h': addCol->Hcoefs[n_idx][m_idx] = flt; break;
-                  default: 
+                  default:
                      printf("Invalid File Format !!!");
                      fclose( stream );
                      exit(-1);
@@ -4343,7 +4390,7 @@ void initTable(int yy, int initH){
          }
 
          if(i<neededCol){
-             printf("Invalid format of %sigrf.d",Mdirectory);
+             printf("Invalid format of %s",igrfPath);
                fclose( stream );
                exit(-1);
          }
@@ -4351,13 +4398,13 @@ void initTable(int yy, int initH){
         fclose( stream );
    } //if( (stream = fopen( DatFile, "r" )) != 0 )
    else{
-     printf("Error in %sigrf.d !",Mdirectory);
+     printf("Error in %s !",igrfPath);
      exit(-1);
    }
-     
+
    if(isaddCol == 0){
-      //create table of "g" and "h" coef different years 
-      ghTable = (struct GandHcoefs **)malloc( (maxY-minY+1)*sizeof(struct GandHcoefs*) );  
+      //create table of "g" and "h" coef different years
+      ghTable = (struct GandHcoefs **)malloc( (maxY-minY+1)*sizeof(struct GandHcoefs*) );
       for(i=0; i<(maxY-minY+1); i++) ghTable[i] = 0;
       isaddCol = 1;
    }
@@ -4373,14 +4420,14 @@ void initTable(int yy, int initH){
 //
 //.Params    year
 //
-//.Descr     new setigrf() works with new format igrf.d 
+//.Descr     new setigrf() works with new format igrf.d
 //           code from ovt\mag\model\IgrfModel.java
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-n_setigrf(float yearf){
+void n_setigrf(float yearf){
 
 
      struct GandHcoefs   *gANDh , *ghFloor , *ghCeil;
@@ -4396,7 +4443,7 @@ n_setigrf(float yearf){
 
 //     printf("C: igrf coef for %f year\n",yearf);
 
-     gANDh   = allocGandHcoefs();    
+     gANDh   = allocGandHcoefs();
 
      if( isaddCol == 0 ){      // Starting for the first time
         addCol  = allocGandHcoefs();
@@ -4405,13 +4452,13 @@ n_setigrf(float yearf){
 
 
      if(year < minY) { //prevent irregular year
-        year = minY; 
-        yearf = (float)minY; 
+        year = minY;
+        yearf = (float)minY;
      }
-      
+
      if(year > maxY) { //prevent irregular year
-        year = maxY; 
-        yearf = (float)maxY; 
+        year = maxY;
+        yearf = (float)maxY;
      }
 
 /*   if( ghTable[year-BASEYEAR] != 0)
@@ -4528,7 +4575,7 @@ n_setigrf(float yearf){
 //
 //.Descr     called by tracelineJNI() - Java native method in ovt\mag\Trace.java
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 // mjd time
@@ -4539,7 +4586,7 @@ n_setigrf(float yearf){
 // xlim maximum distance in the tail
 // mx maximum number of points
 // xx,yy,zz - gsm ;  ss - length;   bx,by,bz  -  bv( gsm,mjd ) where gsm_i = {xx[i],yy[i],zz[i]);
-// IM - internal(igrf or dipol) EM - external(T87,89,96) model 
+// IM - internal(igrf or dipol) EM - external(T87,89,96) model
 // Factor - Model Factor
 // isMPClip = 1 if Magn.Paus Clipping is performed else isMPClip = 0;
 // n[0] - out: number points in field line
@@ -4594,7 +4641,7 @@ jintArray jN;
 
         if(isMPClipping == 1){
           Swp   = dataTs[SWP];
-          Imf_z = dataTs[IMF_Z];                                                  
+          Imf_z = dataTs[IMF_Z];
         }
 
     if (ExtModel == T96 || ExtModel == T2001) {
@@ -4608,7 +4655,7 @@ jintArray jN;
          G1f = dataTs[G1];
 	 G2f = dataTs[G2];
       }
-      
+
     } else {     //ExternalModel == T87 or T89 Model
       KpIndex = dataTs[KPINDEX];
       Sint = dataTs[SINT];
@@ -4642,7 +4689,7 @@ jintArray jN;
 //
 //.Descr     called by lastlineJNI() - Java native method in ovt\mag\Trace.java
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 // mjd time
@@ -4652,7 +4699,7 @@ jintArray jN;
 // is 0 - automatic (optimal) step size; 1 - step size = step * sqrt(r) (enforced)
 // xlim maximum distance in the tail
 // mx maximum number of points
-// IM - internal(igrf or dipol) EM - external(87,89,96) model 
+// IM - internal(igrf or dipol) EM - external(87,89,96) model
 // Factor - Model Factor
 // isMPClip = 1 if Magn.Paus Clipping is performed else isMPClip = 0;
 // datTs[] - data array for Tsyganenko's models 87,89,96 years
@@ -4697,7 +4744,7 @@ jint idir,isMPClip,IntMod,ExtMod;
 
     if(isMPClipping == 1){
       Swp   = dataTs[SWP];
-      Imf_z = dataTs[IMF_Z];                                                  
+      Imf_z = dataTs[IMF_Z];
     }
 
     if(ExtModel == T96){
@@ -4725,12 +4772,12 @@ jint idir,isMPClip,IntMod,ExtMod;
 //
 //.Name      Java_ovt_mag_Trace_mdirectoryJNI
 //
-//.Params    string Ddir - path to file igrf.d 
+//.Params    string Ddir - path to file igrf.d
 //
 //.Descr     called by mdirectoryJNI() - Java native method in ovt\mag\Trace.java
-//           writes to Mdirectory  path to file igrf.d 
+//           writes to Mdirectory  path to file igrf.d
 //
-//.Author    Serg Redko 
+//.Author    Serg Redko
 //
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -4739,12 +4786,22 @@ JNIEnv *env;
 jclass cls;
 jstring Ddir;
 {
+   //EDIT FKJN  5 May 2015
+
    const char *ddir=(*env)->GetStringUTFChars(env,Ddir,0);
-   sprintf(Mdirectory,"%s",ddir);
+   sprintf(igrfPath,"%s",ddir);
+   //printf(igrfPath);
+
+
+   //  char str[] ="This is a simple string";
+   char * pch;
+   pch = strstr (ddir,"igrf.d"); //find pointer to igrf.d position
+   strncpy (pch,"igrf_c.d",8);   // replace with igrf_c.d
+   sprintf(igrf_cPath,"%s",ddir);
+  // printf(igrf_cPath);
+
+
+   //   sprintf(Mdirectory,"%s",ddir);
+   //printf(Mdirectory);
    (*env)->ReleaseStringUTFChars(env,Ddir,ddir);
-}
-
-
-
-
-
+ }

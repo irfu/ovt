@@ -101,10 +101,11 @@ public static final int G2       = 6;
 protected static native void mdirectoryJNI(String Dir);
 
 static {
-    mdirectoryJNI(OVTCore.getMdataDir());
+    
+    mdirectoryJNI(Utils.findFile(OVTCore.getMdataDir() +"igrf.d").getAbsolutePath());
+    //mdirectoryJNI(Utils.findFile(OVTCore.getMdataDir() +"igrf.d").getAbsolutePath().substring(0,42));
+    //    mdirectoryJNI(OVTCore.getMdataDir());
 }
-
-
 
 public static void lastline (MagProps magProps, double mjd, double rv[], double dir[], int idir, double alt) {
         lastline(magProps, mjd, rv, dir, MagProps.xlim, alt, idir, Const.ERR_MP);

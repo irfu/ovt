@@ -5,6 +5,13 @@
 #include <jni.h>
 #include "ovt_mag_model_Tsyganenko2001.h"
 #include <math.h>
+#include <stdlib.h>
+
+
+//FKJN edit FKJN 5 May 2015
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #define TRUE_ (1)
 #define FALSE_ (0)
@@ -81,9 +88,9 @@ struct {
 /* Table of constant values */
 
 static int c__9 = 9;
-static int c__1 = 1;
+static int c__1 = 1; //FKJN addition, commented out 5 May 2015
 static int c__4 = 4;
-static int c__0 = 0;
+static int c__0 = 0; //FKJN addition, commented out 5 May 2015
 static int c__43 = 43;
 static double c_b18 = .33333333;
 static int c__2 = 2;
@@ -133,7 +140,7 @@ $$$$$$$$$$$$*/
 
 
 
-/* Subroutine */ int t01_01__(int *iopt, float *parmod, float *ps, float *x, 
+/* Subroutine */ int t01_01__(int *iopt, float *parmod, float *ps, float *x,
 	float *y, float *z__, float *bx, float *by, float *bz)
 {
     /* Initialized data */
@@ -145,28 +152,28 @@ $$$$$$$$$$$$*/
 	    .03139,.98751,.21824,41.60182,1.12761,.01376,1.02751,.02969,.1579,
 	    8.94335,28.3128,1.24364,.38013 };
 
-    
+
     double sqrt(double);
 
     /* Local variables */
-    static double bxcf, bycf, bzcf, bxr11, byr11, bzr11, bxr12, byr12, 
-	    bzr12, bxr21, byr21, bzr21, bxr22, byr22, bzr22, pdyn, byimf, 
-	    bzimf, hximf, hyimf, hzimf, bxprc, byprc, bzprc, bxsrc, bysrc, 
+    static double bxcf, bycf, bzcf, bxr11, byr11, bzr11, bxr12, byr12,
+	    bzr12, bxr21, byr21, bzr21, bxr22, byr22, bzr22, pdyn, byimf,
+	    bzimf, hximf, hyimf, hzimf, bxprc, byprc, bzprc, bxsrc, bysrc,
 	    bzsrc, g1, g2, xx, yy, zz;
-    extern /* Subroutine */ int extall_(int *, int *, int *, 
-	    int *, double *, int *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int extall_(int *, int *, int *,
+	    int *, double *, int *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
 	    double *);
-    static double bbx, bby, bbz, pss, dst_ast__, bxt1, byt1, bzt1, bxt2, 
+    static double bbx, bby, bbz, pss, dst_ast__, bxt1, byt1, bzt1, bxt2,
 	    byt2, bzt2;
 
 
@@ -200,7 +207,7 @@ NE*/
 *********************/
 /*** ATTENTION:  THE MODEL IS BASED ON DATA TAKEN SUNWARD FROM X=-15Re, AN
 D HENCE BECOMES   **/
-/***              INVALID AT LARGER TAILWARD DISTANCES !!!                
+/***              INVALID AT LARGER TAILWARD DISTANCES !!!
                   **/
 /************************************************************************
 *********************/
@@ -223,7 +230,7 @@ gnetic field:*/
 /*             (submitted to JGR, July 2001) */
 
 
-/* ---------------------------------------------------------------------- 
+/* ----------------------------------------------------------------------
 */
 
 
@@ -250,7 +257,7 @@ gnetic field:*/
     yy = *y;
     zz = *z__;
 
-    extall_(&c__0, &c__0, &c__0, &c__0, a, &c__43, &pdyn, &dst_ast__, &byimf, 
+    extall_(&c__0, &c__0, &c__0, &c__0, a, &c__43, &pdyn, &dst_ast__, &byimf,
 	    &bzimf, &g1, &g2, &pss, &xx, &yy, &zz, &bxcf, &bycf, &bzcf, &bxt1,
 	     &byt1, &bzt1, &bxt2, &byt2, &bzt2, &bxsrc, &bysrc, &bzsrc, &
 	    bxprc, &byprc, &bzprc, &bxr11, &byr11, &bzr11, &bxr12, &byr12, &
@@ -266,18 +273,18 @@ gnetic field:*/
 
 
 /* ================================================================ */
-/* Subroutine */ int extall_(int *iopgen, int *iopt, int *iopb, 
-	int *iopr, double *a, int *ntot, double *pdyn, 
+/* Subroutine */ int extall_(int *iopgen, int *iopt, int *iopb,
+	int *iopr, double *a, int *ntot, double *pdyn,
 	double *dst, double *byimf, double *bzimf, double *
-	vbimf1, double *vbimf2, double *ps, double *x, double 
+	vbimf1, double *vbimf2, double *ps, double *x, double
 	*y, double *z__, double *bxcf, double *bycf, double *
-	bzcf, double *bxt1, double *byt1, double *bzt1, 
+	bzcf, double *bxt1, double *byt1, double *bzt1,
 	double *bxt2, double *byt2, double *bzt2, double *
-	bxsrc, double *bysrc, double *bzsrc, double *bxprc, 
+	bxsrc, double *bysrc, double *bzsrc, double *bxprc,
 	double *byprc, double *bzprc, double *bxr11, double *
-	byr11, double *bzr11, double *bxr12, double *byr12, 
+	byr11, double *bzr11, double *bxr12, double *byr12,
 	double *bzr12, double *bxr21, double *byr21, double *
-	bzr21, double *bxr22, double *byr22, double *bzr22, 
+	bzr21, double *bxr22, double *byr22, double *bzr22,
 	double *hximf, double *hyimf, double *hzimf, double *
 	bx, double *by, double *bz)
 {
@@ -299,29 +306,29 @@ gnetic field:*/
 
     /* Local variables */
     static double a_r11__, a_r12__, a_r21__, a_r22__;
-    extern /* Subroutine */ int deformed_(int *, double *, double 
-	    *, double *, double *, double *, double *, 
+    extern /* Subroutine */ int deformed_(int *, double *, double
+	    *, double *, double *, double *, double *,
 	    double *, double *, double *, double *);
     static double znam, fint, fext, xmxm;
-    extern /* Subroutine */ int shlcar3x3_dup(double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *), birk_tot__(int *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int shlcar3x3_dup(double *, double *,
+	    double *, double *, double *, double *,
+	    double *), birk_tot__(int *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *, double *,
 	    double *, double *);
-    static double tamp1, tamp2, r__, a_prc__, a_src__, sigma, theta, 
-	    bperp, xappa, oimfx, oimfy, oimfz, xsold, zsold, s0, x0, xappa3, 
+    static double tamp1, tamp2, r__, a_prc__, a_src__, sigma, theta,
+	    bperp, xappa, oimfx, oimfy, oimfz, xsold, zsold, s0, x0, xappa3,
 	    dd, am, ct, rh, st, qx, qy, qz, ys, zs;
-    extern /* Subroutine */ int dipole_dup(double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int dipole_dup(double *, double *,
+	    double *, double *, double *, double *,
 	    double *);
-    static double xx, yy, zz, bbx, bby, bbz, aro, cfx, cfy, asq, cfz, 
+    static double xx, yy, zz, bbx, bby, bbz, aro, cfx, cfy, asq, cfz,
 	    factimf, sps;
-    extern /* Subroutine */ int full_rc__(int *, double *, double 
-	    *, double *, double *, double *, double *, 
+    extern /* Subroutine */ int full_rc__(int *, double *, double
+	    *, double *, double *, double *, double *,
 	    double *, double *, double *, double *);
-    static double xss, sthetah, zss, cospsas, sinpsas, dlp1, dlp2, rho2, 
+    static double xss, sthetah, zss, cospsas, sinpsas, dlp1, dlp2, rho2,
 	    axx0;
 
 
@@ -330,7 +337,7 @@ gnetic field:*/
 /*                                  IOPGEN=2 - TAIL FIELD ONLY */
 /*                                  IOPGEN=3 - BIRKELAND FIELD ONLY */
 /*                                  IOPGEN=4 - RING CURRENT FIELD ONLY */
-/*                                  IOPGEN=5 - INTERCONNECTION FIELD ONLY 
+/*                                  IOPGEN=5 - INTERCONNECTION FIELD ONLY
 */
 
 /*   IOPT -  TAIL FIELD FLAG:       IOPT=0  -  BOTH MODES */
@@ -398,7 +405,7 @@ gnetic field:*/
     d__1 = sin(theta / 2.f);
     sthetah = d__1 * d__1;
 
-/* CALCULATE "IMF" COMPONENTS OUTSIDE THE MAGNETOPAUSE LAYER (HENCE BEGIN 
+/* CALCULATE "IMF" COMPONENTS OUTSIDE THE MAGNETOPAUSE LAYER (HENCE BEGIN
 WITH "O")*/
 /* THEY ARE NEEDED ONLY IF THE POINT (X,Y,Z) IS WITHIN THE TRANSITION MAGN
 ETOPAUSE LAYER*/
@@ -459,7 +466,7 @@ L1:
     aro = asq + rho2;
 /* Computing 2nd power */
     d__1 = aro + axx0;
-    sigma = sqrt((aro + axx0 + sqrt(d__1 * d__1 - asq * 4.f * axx0)) / (asq * 
+    sigma = sqrt((aro + axx0 + sqrt(d__1 * d__1 - asq * 4.f * axx0)) / (asq *
 	    2.f));
 
 /*   NOW, THERE ARE THREE POSSIBLE CASES: */
@@ -493,7 +500,7 @@ ONNECTION FIELD):*/
 	    tail_1.dxshift2 = 0.;
 	    tail_1.d__ = a[28];
 	    tail_1.deltady = a[29];
-	    deformed_(iopt, ps, &xx, &yy, &zz, bxt1, byt1, bzt1, bxt2, byt2, 
+	    deformed_(iopt, ps, &xx, &yy, &zz, bxt1, byt1, bzt1, bxt2, byt2,
 		    bzt2);
 /*  TAIL FIELD ( */
 	} else {
@@ -507,7 +514,7 @@ ONNECTION FIELD):*/
 	if (*iopgen == 0 || *iopgen == 3) {
 	    birkpar_1.xkappa1 = a[35] + a[36] * *vbimf2;
 	    birkpar_1.xkappa2 = a[37] + a[38] * *vbimf2;
-	    birk_tot__(iopb, ps, &xx, &yy, &zz, bxr11, byr11, bzr11, bxr12, 
+	    birk_tot__(iopb, ps, &xx, &yy, &zz, bxr11, byr11, bzr11, bxr12,
 		    byr12, bzr12, bxr21, byr21, bzr21, bxr22, byr22, bzr22);
 /*   BIRKELAND FIE */
 	} else {
@@ -535,7 +542,7 @@ ONNECTION FIELD):*/
 
 	    d__1 = 20. / znam;
 	    rcpar_1.sc_as__ = a[32] * pow(d__1, a[33]) * xappa;
-	    full_rc__(iopr, ps, &xx, &yy, &zz, bxsrc, bysrc, bzsrc, bxprc, 
+	    full_rc__(iopr, ps, &xx, &yy, &zz, bxsrc, bysrc, bzsrc, bxprc,
 		    byprc, bzprc);
 /*  SHIELDED RING C */
 	} else {
@@ -551,7 +558,7 @@ ONNECTION FIELD):*/
 	    *hximf = 0.;
 	    *hyimf = *byimf;
 	    *hzimf = *bzimf;
-/*                       IN OTHER WORDS, THESE ARE DERIVATIVES OF 
+/*                       IN OTHER WORDS, THESE ARE DERIVATIVES OF
 THE PENETRATION FIELD COMPONENTS WITH RESPECT*/
 /*                       TO THE PENETRATION COEFFICIENT.   WE ASSU
 ME THAT ONLY THE TRANSVERSE COMPONENT OF THE*/
@@ -578,16 +585,16 @@ ME THAT ONLY THE TRANSVERSE COMPONENT OF THE*/
 	a_r12__ = a[18] + a[19] * *vbimf2;
 	a_r21__ = a[20] + a[21] * *vbimf2;
 	a_r22__ = a[22] + a[23] * *vbimf2;
-	bbx = a[1] * *bxcf + tamp1 * *bxt1 + tamp2 * *bxt2 + a_src__ * *bxsrc 
-		+ a_prc__ * *bxprc + a_r11__ * *bxr11 + a_r12__ * *bxr12 + 
+	bbx = a[1] * *bxcf + tamp1 * *bxt1 + tamp2 * *bxt2 + a_src__ * *bxsrc
+		+ a_prc__ * *bxprc + a_r11__ * *bxr11 + a_r12__ * *bxr12 +
 		a_r21__ * *bxr21 + a_r22__ * *bxr22 + a[24] * *hximf + a[25] *
 		 *hximf * sthetah;
-	bby = a[1] * *bycf + tamp1 * *byt1 + tamp2 * *byt2 + a_src__ * *bysrc 
-		+ a_prc__ * *byprc + a_r11__ * *byr11 + a_r12__ * *byr12 + 
+	bby = a[1] * *bycf + tamp1 * *byt1 + tamp2 * *byt2 + a_src__ * *bysrc
+		+ a_prc__ * *byprc + a_r11__ * *byr11 + a_r12__ * *byr12 +
 		a_r21__ * *byr21 + a_r22__ * *byr22 + a[24] * *hyimf + a[25] *
 		 *hyimf * sthetah;
-	bbz = a[1] * *bzcf + tamp1 * *bzt1 + tamp2 * *bzt2 + a_src__ * *bzsrc 
-		+ a_prc__ * *bzprc + a_r11__ * *bzr11 + a_r12__ * *bzr12 + 
+	bbz = a[1] * *bzcf + tamp1 * *bzt1 + tamp2 * *bzt2 + a_src__ * *bzsrc
+		+ a_prc__ * *bzprc + a_r11__ * *bzr11 + a_r12__ * *bzr12 +
 		a_r21__ * *bzr21 + a_r22__ * *bzr22 + a[24] * *hzimf + a[25] *
 		 *hzimf * sthetah;
 
@@ -660,17 +667,17 @@ EGION */
 	    ;
 
     /* Local variables */
-    static double expr, exqs, sqpr, sqqs, a1, a2, a3, a4, a5, a6, a7, a8, 
-	    a9, p1, p2, p3, r1, r2, r3, q1, q2, q3, s1, s2, s3, t1, t2, x1, 
+    static double expr, exqs, sqpr, sqqs, a1, a2, a3, a4, a5, a6, a7, a8,
+	    a9, p1, p2, p3, r1, r2, r3, q1, q2, q3, s1, s2, s3, t1, t2, x1,
 	    z1, x2, z2, ct1, ct2, fx1, fx2, fz1, hy1, hx1, hz1, hy2, fz2, hx2,
-	     st1, st2, hz2, fx3, hy3, fz3, hx3, hz3, fx4, hy4, fz4, hx4, hz4, 
-	    fx5, hy5, fz5, hx5, hz5, fx6, hy6, fz6, hx6, hz6, fx7, hy7, fz7, 
-	    hx7, hz7, fx8, hy8, fz8, hx8, hz8, fx9, hy9, fz9, hx9, hz9, cps, 
+	     st1, st2, hz2, fx3, hy3, fz3, hx3, hz3, fx4, hy4, fz4, hx4, hz4,
+	    fx5, hy5, fz5, hx5, hz5, fx6, hy6, fz6, hx6, hz6, fx7, hy7, fz7,
+	    hx7, hz7, fx8, hy8, fz8, hx8, hz8, fx9, hy9, fz9, hx9, hz9, cps,
 	    cyp, cyq, czr, czs, sps, syp, syq, szr, szs, s2ps;
 
 
 /*   THIS S/R RETURNS THE SHIELDING FIELD FOR THE EARTH'S DIPOLE, */
-/*   REPRESENTED BY  2x3x3=18 "CARTESIAN" HARMONICS, tilted with respect 
+/*   REPRESENTED BY  2x3x3=18 "CARTESIAN" HARMONICS, tilted with respect
 */
 /*   to the z=0 plane  (NB#4, p.74) */
 
@@ -767,7 +774,7 @@ NICS*/
     hy3 = expr / p1 * syp * (z1 * czr + x1 / r3 * szr / sqpr);
 /* Computing 2nd power */
     d__1 = r3;
-    fz3 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 * 
+    fz3 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 *
 	    szr);
     hx3 = fx3 * ct1 + fz3 * st1;
     hz3 = -fx3 * st1 + fz3 * ct1;
@@ -818,7 +825,7 @@ NICS*/
     hy6 = expr / p2 * syp * (z1 * czr + x1 / r3 * szr / sqpr);
 /* Computing 2nd power */
     d__1 = r3;
-    fz6 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 * 
+    fz6 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 *
 	    szr);
     hx6 = fx6 * ct1 + fz6 * st1;
     hz6 = -fx6 * st1 + fz6 * ct1;
@@ -869,7 +876,7 @@ NICS*/
     hy9 = expr / p3 * syp * (z1 * czr + x1 / r3 * szr / sqpr);
 /* Computing 2nd power */
     d__1 = r3;
-    fz9 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 * 
+    fz9 = -expr * cyp * (czr * (x1 / (d__1 * d__1) / sqpr + 1.) - z1 / r3 *
 	    szr);
     hx9 = fx9 * ct1 + fz9 * st1;
     hz9 = -fx9 * st1 + fz9 * ct1;
@@ -883,11 +890,11 @@ NICS*/
     a7 = a[12] + a[13] * cps;
     a8 = a[14] + a[15] * cps;
     a9 = a[16] + a[17] * cps;
-    *bx = a1 * hx1 + a2 * hx2 + a3 * hx3 + a4 * hx4 + a5 * hx5 + a6 * hx6 + 
+    *bx = a1 * hx1 + a2 * hx2 + a3 * hx3 + a4 * hx4 + a5 * hx5 + a6 * hx6 +
 	    a7 * hx7 + a8 * hx8 + a9 * hx9;
-    *by = a1 * hy1 + a2 * hy2 + a3 * hy3 + a4 * hy4 + a5 * hy5 + a6 * hy6 + 
+    *by = a1 * hy1 + a2 * hy2 + a3 * hy3 + a4 * hy4 + a5 * hy5 + a6 * hy6 +
 	    a7 * hy7 + a8 * hy8 + a9 * hy9;
-    *bz = a1 * hz1 + a2 * hz2 + a3 * hz3 + a4 * hz4 + a5 * hz5 + a6 * hz6 + 
+    *bz = a1 * hz1 + a2 * hz2 + a3 * hz3 + a4 * hz4 + a5 * hz5 + a6 * hz6 +
 	    a7 * hz7 + a8 * hz8 + a9 * hz9;
 /*  MAKE THE TERMS IN THE 2ND SUM ("PARALLEL" SYMMETRY): */
 
@@ -1043,11 +1050,11 @@ NICS*/
     a7 = a[30] + a[31] * s2ps;
     a8 = a[32] + a[33] * s2ps;
     a9 = a[34] + a[35] * s2ps;
-    *bx = *bx + a1 * hx1 + a2 * hx2 + a3 * hx3 + a4 * hx4 + a5 * hx5 + a6 * 
+    *bx = *bx + a1 * hx1 + a2 * hx2 + a3 * hx3 + a4 * hx4 + a5 * hx5 + a6 *
 	    hx6 + a7 * hx7 + a8 * hx8 + a9 * hx9;
-    *by = *by + a1 * hy1 + a2 * hy2 + a3 * hy3 + a4 * hy4 + a5 * hy5 + a6 * 
+    *by = *by + a1 * hy1 + a2 * hy2 + a3 * hy3 + a4 * hy4 + a5 * hy5 + a6 *
 	    hy6 + a7 * hy7 + a8 * hy8 + a9 * hy9;
-    *bz = *bz + a1 * hz1 + a2 * hz2 + a3 * hz3 + a4 * hz4 + a5 * hz5 + a6 * 
+    *bz = *bz + a1 * hz1 + a2 * hz2 + a3 * hz3 + a4 * hz4 + a5 * hz5 + a6 *
 	    hz6 + a7 * hz7 + a8 * hz8 + a9 * hz9;
 
     return 0;
@@ -1058,8 +1065,8 @@ NICS*/
 */
 
 
-/* Subroutine */ int deformed_(int *iopt, double *ps, double *x, 
-	double *y, double *z__, double *bx1, double *by1, 
+/* Subroutine */ int deformed_(int *iopt, double *ps, double *x,
+	double *y, double *z__, double *bx1, double *by1,
 	double *bz1, double *bx2, double *by2, double *bz2)
 {
     /* Initialized data */
@@ -1072,17 +1079,17 @@ NICS*/
     double d__1, d__2, d__3;
 
     /* Builtin functions */
-    double sin(double), sqrt(double), 
+    double sin(double), sqrt(double),
 	     pow(double , double );
 
     /* Local variables */
-    static double dfdr, bxas1, byas1, bzas1, bxas2, byas2, bzas2, f, r__, 
+    static double dfdr, bxas1, byas1, bzas1, bxas2, byas2, bzas2, f, r__,
 	    dfdrh, facps, drhdr, cpsas, drhdz, spsas, psasx, psasy, psasz, r2,
 	     rh, zr;
     extern /* Subroutine */ int warped_(int *, double *, double *,
-	     double *, double *, double *, double *, 
+	     double *, double *, double *, double *,
 	    double *, double *, double *, double *);
-    static double dxasdx, dxasdy, dxasdz, dzasdx, dzasdy, dzasdz, cps, 
+    static double dxasdx, dxasdy, dxasdz, dzasdx, dzasdy, dzasdz, cps,
 	    rrh, xas, zas, sps, fac1, fac2, fac3;
 
 
@@ -1097,7 +1104,7 @@ P*/
 HIS SUBROUTINE)*/
 
 
-/* RH0,RH1,RH2, AND IEPS CONTROL THE TILT-RELATED DEFORMATION OF THE TAIL 
+/* RH0,RH1,RH2, AND IEPS CONTROL THE TILT-RELATED DEFORMATION OF THE TAIL
 FIELD*/
 
     sps = sin(*ps);
@@ -1168,24 +1175,24 @@ FIELD*/
 
 /* ------------------------------------------------------------------ */
 
-/* Subroutine */ int warped_(int *iopt, double *ps, double *x, 
-	double *y, double *z__, double *bx1, double *by1, 
+/* Subroutine */ int warped_(int *iopt, double *ps, double *x,
+	double *y, double *z__, double *bx1, double *by1,
 	double *bz1, double *bx2, double *by2, double *bz2)
 {
     /* System generated locals */
     double d__1, d__2, d__3;
 
     /* Builtin functions */
-    double sin(double), sqrt(double), atan2(double, double), 
+    double sin(double), sqrt(double), atan2(double, double),
 	    cos(double);
 
     /* Local variables */
     static double cphi, dfdx, dgdx, sphi, rr4l4;
-    extern /* Subroutine */ int unwarped_(int *, double *, double 
-	    *, double *, double *, double *, double *, 
+    extern /* Subroutine */ int unwarped_(int *, double *, double
+	    *, double *, double *, double *, double *,
 	    double *, double *, double *);
-    static double f, dxldx, bx_as1__, by_as1__, bz_as1__, bx_as2__, 
-	    by_as2__, bz_as2__, cf, sf, dfdphi, xl, bphi_s__, dfdrho, 
+    static double f, dxldx, bx_as1__, by_as1__, bz_as1__, bx_as2__,
+	    by_as2__, bz_as2__, cf, sf, dfdphi, xl, bphi_s__, dfdrho,
 	    brho_s__, phi, bphi_as__, rho, yas, zas, brho_as__, sps, rho2;
 
 
@@ -1271,8 +1278,8 @@ P*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%*/
 
-/* Subroutine */ int unwarped_(int *iopt, double *x, double *y, 
-	double *z__, double *bx1, double *by1, double *bz1, 
+/* Subroutine */ int unwarped_(int *iopt, double *x, double *y,
+	double *z__, double *bx1, double *by1, double *bz1,
 	double *bx2, double *by2, double *bz2)
 {
     /* Initialized data */
@@ -1313,12 +1320,12 @@ P*/
     static double xm2 = -12.;
 
     static double d0sc1, d0sc2;
-    extern /* Subroutine */ int taildisk_dup(double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int taildisk_dup(double *, double *,
+	    double *, double *, double *, double *,
 	    double *, double *, double *), shlcar5x5_(double *
-	    , double *, double *, double *, double *, 
+	    , double *, double *, double *, double *,
 	    double *, double *, double *);
-    static double fx1, fy1, fz1, hx1, hy1, hz1, fx2, fy2, fz2, hx2, hy2, 
+    static double fx1, fy1, fz1, hx1, hy1, hz1, fx2, fy2, fz2, hx2, hy2,
 	    hz2, xsc1, ysc1, zsc1, xsc2, ysc2, zsc2;
 
 /*  IOPT - TAIL FIELD MODE FLAG:   IOPT=0 - THE TWO TAIL MODES ARE ADDED U
@@ -1379,8 +1386,8 @@ L1:
 
 /* $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ */
 
-/* Subroutine */ int taildisk_dup(double *d0, double *deltadx, 
-	double *deltady, double *x, double *y, double *z__, 
+/* Subroutine */ int taildisk_dup(double *d0, double *deltadx,
+	double *deltady, double *x, double *y, double *z__,
 	double *bx, double *by, double *bz)
 {
     /* Initialized data */
@@ -1399,19 +1406,19 @@ L1:
     double sqrt(double), exp(double);
 
     /* Local variables */
-    static double dddx, dddy, s1ps2, s1ts2, ddzetadx, ddzetady, ddzetadz, 
+    static double dddx, dddy, s1ps2, s1ts2, ddzetadx, ddzetady, ddzetadz,
 	    ds1dx, ds1dy, ds1dz, ds2dx, ds2dy, ds2dz, d__;
     static int i__;
-    static double dasdx, dasdy, dasdz, dzeta, s1, s2, dasds1, dasds2, 
-	    ds1ddz, ds2ddz, bi, ci, as, drhodx, drhody, s1ps2sq, ds1drho, 
+    static double dasdx, dasdy, dasdz, dzeta, s1, s2, dasds1, dasds2,
+	    ds1ddz, ds2ddz, bi, ci, as, drhodx, drhody, s1ps2sq, ds1drho,
 	    ds2drho, dbx, dby, dbz, dex, rho, fac1;
 
 
 /*      THIS SUBROUTINE COMPUTES THE COMPONENTS OF THE TAIL CURRENT FIELD,
 */
-/*       SIMILAR TO THAT DESCRIBED BY TSYGANENKO AND PEREDO (1994).  THE 
+/*       SIMILAR TO THAT DESCRIBED BY TSYGANENKO AND PEREDO (1994).  THE
 */
-/*       DIFFERENCE IS THAT NOW WE USE SPACEWARPING, AS DESCRIBED IN OUR 
+/*       DIFFERENCE IS THAT NOW WE USE SPACEWARPING, AS DESCRIBED IN OUR
 */
 /*       PAPER ON MODELING BIRKELAND CURRENTS (TSYGANENKO AND STERN, 1996)
  */
@@ -1489,9 +1496,9 @@ L1:
 	d__1 = bi * 2.;
 	fac1 = sqrt(s1ps2sq - d__1 * d__1);
 	as = fac1 / (s1ts2 * s1ps2sq);
-	dasds1 = (1. / (fac1 * s2) - as / s1ps2 * (s2 * s2 + s1 * (s1 * 3. + 
+	dasds1 = (1. / (fac1 * s2) - as / s1ps2 * (s2 * s2 + s1 * (s1 * 3. +
 		s2 * 4.))) / (s1 * s1ps2);
-	dasds2 = (1. / (fac1 * s1) - as / s1ps2 * (s1 * s1 + s2 * (s2 * 3. + 
+	dasds2 = (1. / (fac1 * s1) - as / s1ps2 * (s1 * s1 + s2 * (s2 * 3. +
 		s1 * 4.))) / (s2 * s1ps2);
 
 	dasdx = dasds1 * ds1dx + dasds2 * ds2dx;
@@ -1515,8 +1522,8 @@ L1:
 /*THIS CODE RETURNS THE SHIELDING FIELD REPRESENTED BY  5x5=25 "CARTESIAN"*/
 /*    HARMONICS */
 
-/* Subroutine */ int shlcar5x5_(double *a, double *x, double *y, 
-	double *z__, double *dshift, double *hx, double *hy, 
+/* Subroutine */ int shlcar5x5_(double *a, double *x, double *y,
+	double *z__, double *dshift, double *hx, double *hy,
 	double *hz)
 {
     /* System generated locals */
@@ -1591,10 +1598,10 @@ i*/
 
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-/* Subroutine */ int birk_tot__(int *iopb, double *ps, double *x, 
-	double *y, double *z__, double *bx11, double *by11, 
+/* Subroutine */ int birk_tot__(int *iopb, double *ps, double *x,
+	double *y, double *z__, double *bx11, double *by11,
 	double *bz11, double *bx12, double *by12, double *
-	bz12, double *bx21, double *by21, double *bz21, 
+	bz12, double *bx21, double *by21, double *bz21,
 	double *bx22, double *by22, double *bz22)
 {
     /* Initialized data */
@@ -1673,13 +1680,13 @@ i*/
 	    2.904964304,.1486276863,.06859991529 };
 
     static double x_sc__;
-    extern /* Subroutine */ int birk_shl__(double *, double *, 
-	    double *, double *, double *, double *, 
-	    double *, double *, double *), birk_1n2__(int *, 
+    extern /* Subroutine */ int birk_shl__(double *, double *,
+	    double *, double *, double *, double *,
+	    double *, double *, double *), birk_1n2__(int *,
 	    int *, double *, double *, double *, double *,
 	     double *, double *, double *);
-    static double fx11, fy11, fz11, hx11, hy11, hz11, fx12, fy12, fz12, 
-	    hx12, hy12, hz12, fx21, fy21, fz21, hx21, hy21, hz21, fx22, fy22, 
+    static double fx11, fy11, fz11, hx11, hy11, hz11, fx12, fy12, fz12,
+	    hx12, hy12, hz12, fx21, fy21, fz21, hx21, hy21, hz21, fx22, fy22,
 	    fz22, hx22, hy22, hz22;
 
 
@@ -1734,8 +1741,8 @@ i*/
 /*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 
-/* Subroutine */ int birk_1n2__(int *numb, int *mode, double *ps, 
-	double *x, double *y, double *z__, double *bx, 
+/* Subroutine */ int birk_1n2__(int *numb, int *mode, double *ps,
+	double *x, double *y, double *z__, double *bx,
 	double *by, double *bz)
 {
     /* Initialized data */
@@ -1776,16 +1783,16 @@ i*/
     double d__1, d__2, d__3, d__4, d__5;
 
     /* Builtin functions */
-    double sqrt(double), atan2(double, double), sin(double), 
+    double sqrt(double), atan2(double, double), sin(double),
 	    cos(double), pow(double, double);
 
     /* Local variables */
     static double by_s__, byas, phis, dphisphi, dphisrho;
-    extern /* Subroutine */ int twocones_(double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int twocones_(double *, double *,
+	    double *, double *, double *, double *,
 	    double *);
-    static double brack, cphic, sphic, psias, bphi_s__, bphias, cphics, 
-	    xs, brho_s__, zs, brhoas, sphics, phi, rho, rsc, bxs, xsc, ysc, 
+    static double brack, cphic, sphic, psias, bphi_s__, bphias, cphics,
+	    xs, brho_s__, zs, brhoas, sphics, phi, rho, rsc, bxs, xsc, ysc,
 	    zsc, bzs, dphisdy, rho2, r1rh;
 
 
@@ -1807,7 +1814,7 @@ RRENT AT DAWN/DUSK MERIDIAN*/
 /* (2) B:      AN ASYMMETRY FACTOR AT HIGH-ALTITUDES;  FOR B=0, THE ONLY A
 SYMMETRY IS THAT FROM DPHI*/
 /*              TYPICAL VALUES: 0.35-0.70 */
-/* (3) RHO_0:  A FIXED PARAMETER, DEFINING THE DISTANCE RHO, AT WHICH THE 
+/* (3) RHO_0:  A FIXED PARAMETER, DEFINING THE DISTANCE RHO, AT WHICH THE
 LATITUDE SHIFT GRADUALLY SATURATES AND*/
 /*              STOPS INCREASING */
 /*              ITS VALUE WAS ASSUMED FIXED, EQUAL TO 7.0. */
@@ -1874,7 +1881,7 @@ HE SIZE OF THE F.A.C. OVAL*/
     d__3 = eps - 1.;
     d__4 = pow(r1rh,eps) + 1.;
     d__5 = 1. / eps + 1.;
-    dphisrho = dphi_b_rho0__1.b * -2. * rho2 * rho / (d__1 * d__1) * sin(phi) 
+    dphisrho = dphi_b_rho0__1.b * -2. * rho2 * rho / (d__1 * d__1) * sin(phi)
 	    + beta * *ps * pow(r1rh, d__3) * rho / (rh * rsc * pow(d__4, d__5));
     d__1 = eps - 1.;
     d__2 = pow(r1rh, eps) + 1.;
@@ -1902,7 +1909,7 @@ HE SIZE OF THE F.A.C. OVAL*/
     brhoas = bxs * cphics - bzs * sphics;
     bphias = -bxs * sphics - bzs * cphics;
     brho_s__ = brhoas * dphisphi * dphi_b_rho0__1.xkappa;
-    bphi_s__ = (bphias - rho * (byas * dphisdy + brhoas * dphisrho)) * 
+    bphi_s__ = (bphias - rho * (byas * dphisdy + brhoas * dphisrho)) *
 	    dphi_b_rho0__1.xkappa;
     by_s__ = byas * dphisphi * dphi_b_rho0__1.xkappa;
     *bx = brho_s__ * cphic - bphi_s__ * sphic;
@@ -1914,15 +1921,15 @@ HE SIZE OF THE F.A.C. OVAL*/
 
 /*=========================================================================*/
 
-/* Subroutine */ int twocones_(double *a, double *x, double *y, 
+/* Subroutine */ int twocones_(double *a, double *x, double *y,
 	double *z__, double *bx, double *by, double *bz)
 {
     /* System generated locals */
     double d__1, d__2;
 
     /* Local variables */
-    extern /* Subroutine */ int one_cone__(double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int one_cone__(double *, double *,
+	    double *, double *, double *, double *,
 	    double *);
     static double bxn, byn, bzn, bxs, bys, bzs;
 
@@ -1949,7 +1956,7 @@ NTS. (NB #6, P.58).*/
 
 /*-------------------------------------------------------------------------*/
 
-/* Subroutine */ int one_cone__(double *a, double *x, double *y, 
+/* Subroutine */ int one_cone__(double *a, double *x, double *y,
 	double *z__, double *bx, double *by, double *bz)
 {
     /* Initialized data */
@@ -1964,19 +1971,19 @@ NTS. (NB #6, P.58).*/
     double sqrt(double), atan2(double, double), sin(double);
 
     /* Local variables */
-    static double bphi, phis, c__, r__, s, bfast, theta, btast, drsdr, 
-	    drsdt, dtsdr, dtsdt, stsst, theta0, be, cf, br, sf, rs, btheta, 
+    static double bphi, phis, c__, r__, s, bfast, theta, btast, drsdr,
+	    drsdt, dtsdr, dtsdt, stsst, theta0, be, cf, br, sf, rs, btheta,
 	    thetas, phi;
     extern double r_s__(double *, double *, double *);
     static double rho;
-    extern /* Subroutine */ int fialcos_(double *, double *, 
+    extern /* Subroutine */ int fialcos_(double *, double *,
 	    double *, double *, double *, int *, double *,
 	     double *);
     extern double theta_s__(double *, double *, double *);
     static double rsr, rho2;
 
 
-/* RETURNS FIELD COMPONENTS FOR A DEFORMED CONICAL CURRENT SYSTEM, FITTED 
+/* RETURNS FIELD COMPONENTS FOR A DEFORMED CONICAL CURRENT SYSTEM, FITTED
 TO A BIOSAVART FIELD*/
 /*  HERE ONLY THE NORTHERN CONE IS TAKEN INTO ACCOUNT. */
 
@@ -2016,11 +2023,11 @@ TO A BIOSAVART FIELD*/
 
     d__1 = r__ + dr;
     d__2 = r__ - dr;
-    drsdr = (r_s__(&a[1], &d__1, &theta) - r_s__(&a[1], &d__2, &theta)) / (dr 
+    drsdr = (r_s__(&a[1], &d__1, &theta) - r_s__(&a[1], &d__2, &theta)) / (dr
 	    * 2.);
     d__1 = theta + dt;
     d__2 = theta - dt;
-    drsdt = (r_s__(&a[1], &r__, &d__1) - r_s__(&a[1], &r__, &d__2)) / (dt * 
+    drsdt = (r_s__(&a[1], &r__, &d__1) - r_s__(&a[1], &r__, &d__2)) / (dt *
 	    2.);
     d__1 = r__ + dr;
     d__2 = r__ - dr;
@@ -2028,7 +2035,7 @@ TO A BIOSAVART FIELD*/
 	    ) / (dr * 2.);
     d__1 = theta + dt;
     d__2 = theta - dt;
-    dtsdt = (theta_s__(&a[1], &r__, &d__1) - theta_s__(&a[1], &r__, &d__2)) / 
+    dtsdt = (theta_s__(&a[1], &r__, &d__1) - theta_s__(&a[1], &r__, &d__2)) /
 	    (dt * 2.);
     stsst = sin(thetas) / sin(theta);
     rsr = rs / r__;
@@ -2054,7 +2061,7 @@ TO A BIOSAVART FIELD*/
 double r_s__(double *a, double *r__, double *theta)
 {
     /* System generated locals */
-    double ret_val, d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8, d__9, 
+    double ret_val, d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8, d__9,
 	    d__10, d__11, d__12, d__13;
 
     /* Builtin functions */
@@ -2091,10 +2098,10 @@ double r_s__(double *a, double *r__, double *theta)
     d__13 = a[16];
 /* Computing 2nd power */
     d__11 = d__12 * d__12 + d__13 * d__13;
-    ret_val = *r__ + a[2] / *r__ + a[3] * *r__ / sqrt(d__1 * d__1 + d__2 * 
+    ret_val = *r__ + a[2] / *r__ + a[3] * *r__ / sqrt(d__1 * d__1 + d__2 *
 	    d__2) + a[4] * *r__ / (d__3 * d__3 + d__4 * d__4) + (a[5] + a[6] /
 	     *r__ + a[7] * *r__ / sqrt(d__5 * d__5 + d__6 * d__6) + a[8] * *
-	    r__ / (d__7 * d__7 + d__8 * d__8)) * cos(*theta) + (a[9] * *r__ / 
+	    r__ / (d__7 * d__7 + d__8 * d__8)) * cos(*theta) + (a[9] * *r__ /
 	    sqrt(d__9 * d__9 + d__10 * d__10) + a[10] * *r__ / (d__11 * d__11)
 	    ) * cos(*theta * 2.);
 
@@ -2137,10 +2144,10 @@ double theta_s__(double *a, double *r__, double *theta)
 /* Computing 2nd power */
     d__9 = a[30];
     ret_val = *theta + (a[17] + a[18] / *r__ + a[19] / (d__1 * d__1) + a[20] *
-	     *r__ / sqrt(d__2 * d__2 + d__3 * d__3)) * sin(*theta) + (a[21] + 
+	     *r__ / sqrt(d__2 * d__2 + d__3 * d__3)) * sin(*theta) + (a[21] +
 	    a[22] * *r__ / sqrt(d__4 * d__4 + d__5 * d__5) + a[23] * *r__ / (
-	    d__6 * d__6 + d__7 * d__7)) * sin(*theta * 2.) + (a[24] + a[25] / 
-	    *r__ + a[26] * *r__ / (d__8 * d__8 + d__9 * d__9)) * sin(*theta * 
+	    d__6 * d__6 + d__7 * d__7)) * sin(*theta * 2.) + (a[24] + a[25] /
+	    *r__ + a[26] * *r__ / (d__8 * d__8 + d__9 * d__9)) * sin(*theta *
 	    3.);
 
     return ret_val;
@@ -2162,8 +2169,8 @@ double theta_s__(double *a, double *r__, double *theta)
     /* Local variables */
     static double ccos[10], ssin[10], cosm1, tgm2m, sinm1, tgp2m;
     static int m;
-    static double t, cosfi, tgm2m1, sinfi, coste, sinte, fc, tg, ro, tm, 
-	    tetanm, fc1, tetanp, ctg, tg21, bpn[10], btn[10], tgm, tgp, dtt, 
+    static double t, cosfi, tgm2m1, sinfi, coste, sinte, fc, tg, ro, tm,
+	    tetanm, fc1, tetanp, ctg, tg21, bpn[10], btn[10], tgm, tgp, dtt,
 	    tgm2, dtt0, tgp2;
 
 
@@ -2223,10 +2230,10 @@ L1:
 	    tgm2m1 = tgm2m * tgm;
 	    tg21 = tg * tg + 1.;
 	    t = fc * (tm * (tgp - tg) + fc1 * (tm * tg - tgm2m1 / tm));
-	    dtt = m * .5 * fc * tg21 * (tm / tg * (tgp - tg) - fc1 * (tm - 
+	    dtt = m * .5 * fc * tg21 * (tm / tg * (tgp - tg) - fc1 * (tm -
 		    tgm2m1 / (tm * tg)));
-	    dtt0 = fc * .5 * ((tgp + tgm) * (tm * tg - fc1 * (tm * tg - 
-		    tgm2m1 / tm)) + tm * (1. - tgp * tgm) - (tgm2 + 1.) * 
+	    dtt0 = fc * .5 * ((tgp + tgm) * (tm * tg - fc1 * (tm * tg -
+		    tgm2m1 / tm)) + tm * (1. - tgp * tgm) - (tgm2 + 1.) *
 		    tgm2m / tm);
 	} else {
 	    tgp2m *= tgp2;
@@ -2261,12 +2268,12 @@ L1:
 	    ;
 
     /* Local variables */
-    static double cypi, cyqi, czrk, czsk, sypi, syqi, sqpr, sqqs, szrk, 
+    static double cypi, cyqi, czrk, czsk, sypi, syqi, sqpr, sqqs, szrk,
 	    szsk;
     static int i__, k, l, m, n;
     static double p, q, r__, s, x1, x2, z1, z2;
     static int nn;
-    static double fx, gx, gy, gz, fy, fz, hx, hy, hz, ct1, ct2, st1, st2, 
+    static double fx, gx, gy, gz, fy, fz, hx, hy, hz, ct1, ct2, st1, st2,
 	    cps, epr, eqs, hxr, hzr, sps, pst1, s3ps, pst2;
 
 
@@ -2418,8 +2425,8 @@ D ONE */
 /****************************************************************************
 **********/
 
-/* Subroutine */ int full_rc__(int *iopr, double *ps, double *x, 
-	double *y, double *z__, double *bxsrc, double *bysrc, 
+/* Subroutine */ int full_rc__(int *iopr, double *ps, double *x,
+	double *y, double *z__, double *bxsrc, double *bysrc,
 	double *bzsrc, double *bxprc, double *byprc, double *
 	bzprc)
 {
@@ -2463,21 +2470,21 @@ D ONE */
 	    21.90881131,-.0177583937,.399634671 };
 
     static double x_sc__;
-    extern /* Subroutine */ int rc_shield__(double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int rc_shield__(double *, double *,
+	    double *, double *, double *, double *,
 	    double *, double *, double *);
     static double hxprc, hyprc, hxsrc, hysrc, hzsrc, hzprc, fpx, fpy, fpz,
 	     fsx, fsy, fsz;
-    extern /* Subroutine */ int src_prc__(int *, double *, double 
-	    *, double *, double *, double *, double *, 
-	    double *, double *, double *, double *, 
+    extern /* Subroutine */ int src_prc__(int *, double *, double
+	    *, double *, double *, double *, double *,
+	    double *, double *, double *, double *,
 	    double *, double *, double *);
 
 
 /*  CALCULATES GSM FIELD COMPONENTS OF THE SYMMETRIC (SRC) AND PARTIAL (PR
 C) COMPONENTS OF THE RING CURRENT*/
 /*   SRC  PROVIDES A DEPRESSION OF -28 nT AT EARTH */
-/*  PRC  CORRESPONDS TO THE PRESSURE DIFFERENCE OF 2 nPa BETWEEN MIDNIGHT 
+/*  PRC  CORRESPONDS TO THE PRESSURE DIFFERENCE OF 2 nPa BETWEEN MIDNIGHT
 AND NOON RING CURRENT*/
 /*            PARTICLE PRESSURE AND YIELDS A DEPRESSION OF -17 nT AT X=-6R
 e*/
@@ -2496,7 +2503,7 @@ NLY):*/
 /*             IOPR=2 - PRC ONLY */
 
 
-    src_prc__(iopr, &rcpar_2.sc_sy__, &rcpar_2.sc_pr__, &rcpar_2.phi, ps, x, 
+    src_prc__(iopr, &rcpar_2.sc_sy__, &rcpar_2.sc_pr__, &rcpar_2.phi, ps, x,
 	    y, z__, &hxsrc, &hysrc, &hzsrc, &hxprc, &hyprc, &hzprc);
     x_sc__ = rcpar_2.sc_sy__ - 1.;
     if (*iopr == 0 || *iopr == 1) {
@@ -2526,7 +2533,7 @@ NLY):*/
 /*---------------------------------------------------------------------------
 ------------*/
 
-/* Subroutine */ int src_prc__(int *iopr, double *sc_sy__, double 
+/* Subroutine */ int src_prc__(int *iopr, double *sc_sy__, double
 	*sc_pr__, double *phi, double *ps, double *x, double *
 	y, double *z__, double *bxsrc, double *bysrc, double *
 	bzsrc, double *bxprc, double *byprc, double *bzprc)
@@ -2535,20 +2542,20 @@ NLY):*/
     double cos(double), sin(double);
 
     /* Local variables */
-    extern /* Subroutine */ int prc_quad__(double *, double *, 
-	    double *, double *, double *, double *), 
+    extern /* Subroutine */ int prc_quad__(double *, double *,
+	    double *, double *, double *, double *),
 	    prc_symm__(double *, double *, double *, double *,
 	     double *, double *);
-    static double bxa_q__, bxa_s__, bya_s__, bza_s__, bza_q__, bya_q__, 
-	    cp, sp, xr, yr, xt, bxa_qr__, zt, bya_qr__, cps, bxp, byp, bzp, 
+    static double bxa_q__, bxa_s__, bya_s__, bza_s__, bza_q__, bya_q__,
+	    cp, sp, xr, yr, xt, bxa_qr__, zt, bya_qr__, cps, bxp, byp, bzp,
 	    xta, yta, zta, bxs, bys, bzs, sps, xts, yts, zts;
-    extern /* Subroutine */ int rc_symm__(double *, double *, 
+    extern /* Subroutine */ int rc_symm__(double *, double *,
 	    double *, double *, double *, double *);
 
 
 /*  RETURNS FIELD COMPONENTS FROM A MODEL RING CURRENT, INCLUDING ITS SYMM
 ETRIC PART*/
-/*    AND A PARTIAL RING CURRENT, CLOSED VIA BIRKELAND CURRENTS. BASED ON 
+/*    AND A PARTIAL RING CURRENT, CLOSED VIA BIRKELAND CURRENTS. BASED ON
 RESULTS, DESCRIBED*/
 /*    IN A PAPER "MODELING THE INNER MAGNETOSPHERE: ASYMMETRIC RING CURREN
 T AND REGION 2*/
@@ -2651,7 +2658,7 @@ LATE QUADRUPOLE PRC FIELD*/
 /*&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&
 &&&*/
 
-/* Subroutine */ int rc_symm__(double *x, double *y, double *z__, 
+/* Subroutine */ int rc_symm__(double *x, double *y, double *z__,
 	double *bx, double *by, double *bz)
 {
     /* Initialized data */
@@ -2665,11 +2672,11 @@ LATE QUADRUPOLE PRC FIELD*/
     double d__1, d__2;
 
     /* Builtin functions */
-    double sqrt(double), atan2(double, double), sin(double), 
+    double sqrt(double), atan2(double, double), sin(double),
 	    cos(double);
 
     /* Local variables */
-    static double cost, sint, a, r__, dardr, theta, costm, costp, sintm, 
+    static double cost, sint, a, r__, dardr, theta, costm, costp, sintm,
 	    sintp, r2;
     extern double ap_(double *, double *, double *);
     static double br, bt, rm, tm, rp, tp, fxy, rho2;
@@ -2712,7 +2719,7 @@ LATE QUADRUPOLE PRC FIELD*/
 	costm = cos(tm);
 	br = (sintp * ap_(&r__, &sintp, &costp) - sintm * ap_(&r__, &sintm, &
 		costm)) / (r__ * sint) * drd;
-	bt = (rm * ap_(&rm, &sint, &cost) - rp * ap_(&rp, &sint, &cost)) / 
+	bt = (rm * ap_(&rm, &sint, &cost) - rp * ap_(&rp, &sint, &cost)) /
 		r__ * drd;
 	fxy = (br + bt * cost / sint) / r__;
 	*bx = fxy * *x;
@@ -2757,8 +2764,8 @@ double ap_(double *r__, double *sint, double *cost)
     /* Local variables */
     static double rhos;
     static int prox;
-    static double aphi1, aphi2, cost1, rhos2, sint1, c__, f, g, p, q, 
-	    gamma, alpha, alsqh, costs, sints, dl, xk, rs, zs, xkrho12, xk2, 
+    static double aphi1, aphi2, cost1, rhos2, sint1, c__, f, g, p, q,
+	    gamma, alpha, alsqh, costs, sints, dl, xk, rs, zs, xkrho12, xk2,
 	    gammas2, ele, elk, gamma_s__, alpha_s__, xk2s;
 
 
@@ -2795,7 +2802,7 @@ OORDINATES BECOMES INACCURATE*/
     d__4 = cost1 / dla2;
 /* Computing 2nd power */
     d__5 = (*r__ - r3) / dr3;
-    alpha_s__ = alpha * (p1 * exp(-(d__1 * d__1) - d__2 * d__2) + 1. + p2 * 
+    alpha_s__ = alpha * (p1 * exp(-(d__1 * d__1) - d__2 * d__2) + 1. + p2 *
 	    exp(-(d__3 * d__3) - d__4 * d__4) + p3 * exp(-(d__5 * d__5)));
 /*  ALPHA -> ALPHA_S  (DEFORMED) */
     gamma_s__ = gamma;
@@ -2846,11 +2853,11 @@ OORDINATES BECOMES INACCURATE*/
 /*    NB#4, P.3 */
     xk2s = 1. - xk2;
     dl = log(1. / xk2s);
-    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) + 
+    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) +
 	    .03590092383f) + .09666344259) + 1.38629436112 + dl * (xk2s * (
-	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) + 
+	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) +
 	    .06880248576) + .12498593597) + .5);
-    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) + 
+    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) +
 	    .0626060122) + .44325141463) + 1. + dl * xk2s * (xk2s * (xk2s * (
 	    xk2s * .00526449639 + .04069697526) + .09200180037) + .2499836831)
 	    ;
@@ -2872,11 +2879,11 @@ OORDINATES BECOMES INACCURATE*/
 /*    NB#4, P.3 */
     xk2s = 1. - xk2;
     dl = log(1. / xk2s);
-    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) + 
+    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) +
 	    .03590092383f) + .09666344259) + 1.38629436112 + dl * (xk2s * (
-	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) + 
+	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) +
 	    .06880248576) + .12498593597) + .5);
-    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) + 
+    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) +
 	    .0626060122) + .44325141463) + 1. + dl * xk2s * (xk2s * (xk2s * (
 	    xk2s * .00526449639 + .04069697526) + .09200180037) + .2499836831)
 	    ;
@@ -2908,13 +2915,13 @@ OORDINATES BECOMES INACCURATE*/
     double d__1, d__2;
 
     /* Builtin functions */
-    double sqrt(double), atan2(double, double), sin(double), 
+    double sqrt(double), atan2(double, double), sin(double),
 	    cos(double);
 
     /* Local variables */
     static double cost, sint, a, r__, dardr;
     extern double apprc_(double *, double *, double *);
-    static double theta, costm, costp, sintm, sintp, r2, br, bt, rm, tm, 
+    static double theta, costm, costp, sintm, sintp, r2, br, bt, rm, tm,
 	    rp, tp, fxy, rho2;
 
 /* DS=SIN(TH */
@@ -2936,7 +2943,7 @@ OORDINATES BECOMES INACCURATE*/
  */
 /*  TOO CLOSE TO THE Z-AXIS; USING A LINEAR A */
 	a = apprc_(&r__, &ds, &dc) / ds;
-	dardr = (rp * apprc_(&rp, &ds, &dc) - rm * apprc_(&rm, &ds, &dc)) * 
+	dardr = (rp * apprc_(&rp, &ds, &dc) - rm * apprc_(&rm, &ds, &dc)) *
 		drd;
 	fxy = *z__ * (a * 2. - dardr) / (r__ * r2);
 	*bx = fxy * *x;
@@ -3011,7 +3018,7 @@ double apprc_(double *r__, double *sint, double *cost)
     static double beta7 = .7277854652;
 
     /* System generated locals */
-    double ret_val, d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8, d__9, 
+    double ret_val, d__1, d__2, d__3, d__4, d__5, d__6, d__7, d__8, d__9,
 	    d__10, d__11, d__12;
 
     /* Builtin functions */
@@ -3021,8 +3028,8 @@ double apprc_(double *r__, double *sint, double *cost)
     /* Local variables */
     static double rhos;
     static int prox;
-    static double aphi1, aphi2, cost1, rhos2, sint1, c__, f, g, p, q, 
-	    gamma, alpha, alsqh, costs, sints, dl, xk, rs, zs, xkrho12, xk2, 
+    static double aphi1, aphi2, cost1, rhos2, sint1, c__, f, g, p, q,
+	    gamma, alpha, alsqh, costs, sints, dl, xk, rs, zs, xkrho12, xk2,
 	    gammas2, ele, elk, gamma_s__, alpha_s__, xk2s;
 
 
@@ -3065,7 +3072,7 @@ tric*/
 /* Computing 2nd power */
     d__12 = gamma / dg3;
     d__11 = d__12 * d__12 + 1.;
-    alpha_s__ = alpha * (p1 / pow(d__1, beta1) * exp(-(d__3 * d__3)) + 
+    alpha_s__ = alpha * (p1 / pow(d__1, beta1) * exp(-(d__3 * d__3)) +
 	    1. + p2 * (alpha - alpha2) / pow(d__4, beta2) / pow(d__6,
 	     beta3) + p3 * (d__8 * d__8) / pow(d__9, beta4) / pow(d__11, beta5));
 /*  ALPHA -> ALPHA_S  (DEFORMED) */
@@ -3079,8 +3086,8 @@ tric*/
 /* Computing 2nd power */
     d__6 = gamma / dg5;
     d__5 = d__6 * d__6 + 1.;
-    gamma_s__ = gamma * (q0 + 1. + q1 * (alpha - alpha4) * exp(-(d__1 * d__1) 
-	    - d__2 * d__2) + q2 * (alpha - alpha5) / pow(d__3, beta6) / 
+    gamma_s__ = gamma * (q0 + 1. + q1 * (alpha - alpha4) * exp(-(d__1 * d__1)
+	    - d__2 * d__2) + q2 * (alpha - alpha5) / pow(d__3, beta6) /
 	    pow(d__5, beta7));
 /*  GAMMA -> GAM */
 /* Computing 2nd power */
@@ -3130,11 +3137,11 @@ tric*/
 /*    NB#4, P.3 */
     xk2s = 1. - xk2;
     dl = log(1. / xk2s);
-    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) + 
+    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) +
 	    .03590092383f) + .09666344259) + 1.38629436112 + dl * (xk2s * (
-	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) + 
+	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) +
 	    .06880248576) + .12498593597) + .5);
-    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) + 
+    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) +
 	    .0626060122) + .44325141463) + 1. + dl * xk2s * (xk2s * (xk2s * (
 	    xk2s * .00526449639 + .04069697526) + .09200180037) + .2499836831)
 	    ;
@@ -3156,11 +3163,11 @@ tric*/
 /*    NB#4, P.3 */
     xk2s = 1. - xk2;
     dl = log(1. / xk2s);
-    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) + 
+    elk = xk2s * (xk2s * (xk2s * (xk2s * .01451196212f + .03742563713f) +
 	    .03590092383f) + .09666344259) + 1.38629436112 + dl * (xk2s * (
-	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) + 
+	    xk2s * (xk2s * (xk2s * .00441787012 + .03328355346) +
 	    .06880248576) + .12498593597) + .5);
-    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) + 
+    ele = xk2s * (xk2s * (xk2s * (xk2s * .01736506451 + .04757383546) +
 	    .0626060122) + .44325141463) + 1. + dl * xk2s * (xk2s * (xk2s * (
 	    xk2s * .00526449639 + .04069697526) + .09200180037) + .2499836831)
 	    ;
@@ -3194,7 +3201,7 @@ tric*/
     double d__1, d__2, d__3, d__4;
 
     /* Builtin functions */
-    double sqrt(double), atan2(double, double), sin(double), 
+    double sqrt(double), atan2(double, double), sin(double),
 	    cos(double);
 
     /* Local variables */
@@ -3202,7 +3209,7 @@ tric*/
     extern double br_prc_q__(double *, double *, double *);
     static double cost;
     extern double bt_prc_q__(double *, double *, double *);
-    static double fcxy, sint, r__, theta, costm, costp, sintm, sintp, br, 
+    static double fcxy, sint, r__, theta, costm, costp, sintm, sintp, br,
 	    bt, ct, rm, tm, rp, tp, st, rho, rho2;
 
 
@@ -3240,7 +3247,7 @@ HE PRC*/
 		costm)) / dd;
 /* Computing 2nd power */
 	d__1 = sphi;
-	*bx = sint * (br + (br + r__ * dbrr + dbtt) * (d__1 * d__1)) + cost * 
+	*bx = sint * (br + (br + r__ * dbrr + dbtt) * (d__1 * d__1)) + cost *
 		bt;
 	*by = -sint * sphi * cphi * (br + r__ * dbrr + dbtt);
 	*bz = (br * cost - bt * sint) * cphi;
@@ -3343,8 +3350,8 @@ double br_prc_q__(double *r__, double *sint, double *cost)
     double pow(double, double);
 
     /* Local variables */
-    static double arga, argg, cost2, sint2, f, gamma, alpha, d1, d2, d3, 
-	    d4, d5, d6, d7, d8, d9, fa, d10, d11, d12, d13, d14, d15, d16, 
+    static double arga, argg, cost2, sint2, f, gamma, alpha, d1, d2, d3,
+	    d4, d5, d6, d7, d8, d9, fa, d10, d11, d12, d13, d14, d15, d16,
 	    d17, d18, sc, fs;
     extern /* Subroutine */ int ffs_(double *, double *, double *,
 	     double *, double *, double *);
@@ -3374,7 +3381,7 @@ tial ring current.*/
     d4 = d3 * cost2;
     ffs_(&alpha, &al3, &dal3, &f, &fa, &fs);
     d__1 = *r__ / b3;
-    d5 = sc * pow(alpha, xk3) * pow(fs, xk4) / (pow(d__1, be3) 
+    d5 = sc * pow(alpha, xk3) * pow(fs, xk4) / (pow(d__1, be3)
 	    + 1.);
     d6 = d5 * cost2;
 /* Computing 2nd power */
@@ -3419,7 +3426,7 @@ tial ring current.*/
     d__1 = (*r__ - 1.2) / drm;
     d18 = sc * fs / (d__1 * d__1 + 1.);
     ret_val = a1 * d1 + a2 * d2 + a3 * d3 + a4 * d4 + a5 * d5 + a6 * d6 + a7 *
-	     d7 + a8 * d8 + a9 * d9 + a10 * d10 + a11 * d11 + a12 * d12 + a13 
+	     d7 + a8 * d8 + a9 * d9 + a10 * d10 + a11 * d11 + a12 * d12 + a13
 	    * d13 + a14 * d14 + a15 * d15 + a16 * d16 + a17 * d17 + a18 * d18;
 
     return ret_val;
@@ -3482,8 +3489,8 @@ double bt_prc_q__(double *r__, double *sint, double *cost)
     double pow(double, double);
 
     /* Local variables */
-    static double cost2, sint2, f, gamma, alpha, d1, d2, d3, d4, d5, d6, 
-	    d7, d8, d9, fa, d10, d11, d12, d13, d14, d15, d16, d17, sc, fs, 
+    static double cost2, sint2, f, gamma, alpha, d1, d2, d3, d4, d5, d6,
+	    d7, d8, d9, fa, d10, d11, d12, d13, d14, d15, d16, d17, sc, fs,
 	    fcc, arg;
     extern /* Subroutine */ int ffs_(double *, double *, double *,
 	     double *, double *, double *);
@@ -3551,7 +3558,7 @@ ial ring current.*/
     d17 = d__1 * d__1 / (d__2 * d__2 + d__3 * d__3);
 
     ret_val = a1 * d1 + a2 * d2 + a3 * d3 + a4 * d4 + a5 * d5 + a6 * d6 + a7 *
-	     d7 + a8 * d8 + a9 * d9 + a10 * d10 + a11 * d11 + a12 * d12 + a13 
+	     d7 + a8 * d8 + a9 * d9 + a10 * d10 + a11 * d11 + a12 * d12 + a13
 	    * d13 + a14 * d14 + a15 * d15 + a16 * d16 + a17 * d17;
 
     return ret_val;
@@ -3559,7 +3566,7 @@ ial ring current.*/
 
 
 /*@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@*/
-/* Subroutine */ int ffs_(double *a, double *a0, double *da, 
+/* Subroutine */ int ffs_(double *a, double *a0, double *da,
 	double *f, double *fa, double *fs)
 {
     /* System generated locals */
@@ -3604,16 +3611,16 @@ ial ring current.*/
 	    ;
 
     /* Local variables */
-    static double cypi, cyqi, czrk, czsk, sypi, syqi, sqpr, sqqs, szrk, 
+    static double cypi, cyqi, czrk, czsk, sypi, syqi, sqpr, sqqs, szrk,
 	    szsk;
     static int i__, k, l, m, n;
     static double p, q, r__, s, x1, x2, z1, z2, fac_sc__;
     static int nn;
-    static double fx, gx, gy, gz, fy, fz, hx, hy, hz, ct1, ct2, st1, st2, 
+    static double fx, gx, gy, gz, fy, fz, hx, hy, hz, ct1, ct2, st1, st2,
 	    cps, epr, eqs, hxr, hzr, sps, pst1, s3ps, pst2;
 
 
-/*   COMPUTES THE COMPONENTS OF THE SHIELDING FIELD FOR THE RING CURRENT 
+/*   COMPUTES THE COMPONENTS OF THE SHIELDING FIELD FOR THE RING CURRENT
 */
 /*       (EITHER PARTIAL OR AXISYMMETRICAL) */
 /*  INPUT:   A - AN ARRAY CONTAINING THE HARMONIC COEFFICIENTS AND NONLINE
@@ -3777,7 +3784,7 @@ D ONE */
 /*===========================================================================
 */
 
-/* Subroutine */ int dipole_dup(double *ps, double *x, double *y, 
+/* Subroutine */ int dipole_dup(double *ps, double *x, double *y,
 	double *z__, double *bx, double *by, double *bz)
 {
     /* Initialized data */
@@ -3811,7 +3818,7 @@ T*/
 
 /*   LAST MODIFICATION: JAN. 5, 2001. THE VALUE OF THE DIPOLE MOMENT WAS U
 PDATED TO 2000.*/
-/*     AND A "SAVE" STATEMENT HAS BEEN ADDED, TO AVOID POTENTIAL PROBLEMS 
+/*     AND A "SAVE" STATEMENT HAS BEEN ADDED, TO AVOID POTENTIAL PROBLEMS
 WITH SOME*/
 /*      FORTRAN COMPILERS */
 
@@ -3865,12 +3872,12 @@ L1:
 int tsyganenko2001_(float *gsm, float *ps, float *pdyn, float *dst,
 	 float *byimf, float *bzimf, float *g1, float *g2, float *bv)
 {
-    /*extern  Subroutine int t01_01__(int *, float *, float *, float *, 
+    /*extern  Subroutine int t01_01__(int *, float *, float *, float *,
 	float *, float *, float *, float *, float *) */
-	
+
     static float parmod[10];
     int iopt = 0; /* dummy param */
-    
+
     /* Parameter adjustments */
     --bv;
     --gsm;
@@ -3888,21 +3895,24 @@ int tsyganenko2001_(float *gsm, float *ps, float *pdyn, float *dst,
 
 
 /*  ------------------------ OVT JNI Interface ---------------------------*/
-
-
+/*
 JNIEXPORT void JNICALL Java_ovt_mag_model_Tsyganenko2001_tsyganenko2001JNI
   (env, obj, jgsm, jtilt, jswp, jdst, jByImf, jBzImf, jG1, jG2, jBv)
 JNIEnv *env;
 jobject obj;
 jdoubleArray jgsm, jBv;
 jdouble jtilt, jswp, jdst, jByImf, jBzImf, jG1, jG2;
+*/
+
+JNIEXPORT void JNICALL Java_ovt_mag_model_Tsyganenko2001_tsyganenko2001JNI
+  (JNIEnv *env,jobject obj,jdoubleArray jgsm, jdoubleArray jBv, jdouble jtilt,jdouble jswp,jdouble jdst,jdouble jByImf,jdouble jBzImf,jdouble jG1,jdouble jG2)
 {
    jfloat GSMf[3],PSf=jtilt,PDYNf=jswp,DSTf=jdst,BYIMFf=jByImf,
-   	BZIMFf=jBzImf, G1=jG1, G2=jG2, BVf[3];
+   BZIMFf=jBzImf, G1=jG1, G2=jG2, BVf[3];
    jint i;
    jdouble *gsm=(*env)->GetDoubleArrayElements(env, jgsm, 0);
    jdouble *Bv=(*env)->GetDoubleArrayElements(env, jBv, 0);
-   
+
    for(i=0;i<3;++i)    /* double2float*/
       GSMf[i]=gsm[i];
 
@@ -3915,13 +3925,12 @@ jdouble jtilt, jswp, jdst, jByImf, jBzImf, jG1, jG2;
    (*env)->ReleaseDoubleArrayElements(env, jBv, Bv, 0);
 }
 
-
 /*#include<stdio.h>
 void main()
 {
    double gsm[3]={15.2,30.4,20.3},bv[3],
    ps=0.089,pdyn=5.0,dst=-20.3,byimf=-3,bzimf=1.5;
-   
+
    tsyganenko96JNI(gsm,ps,pdyn,dst,byimf,bzimf,bv);
    printf("%f %f %f\n",(float)bv[0],(float)bv[1],(float)bv[2]);
 }*/

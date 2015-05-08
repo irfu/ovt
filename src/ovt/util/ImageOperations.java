@@ -71,6 +71,11 @@ public class ImageOperations {
         else if (filename.endsWith(".pnm"))
             writer = new vtkPNMWriter();
         
+        else if (filename.endsWith(".png"))
+        
+           writer = new vtkPNGWriter();
+      
+
         else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
         
         //toFront(); // Places this window at the top of the stacking order and
