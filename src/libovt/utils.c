@@ -213,7 +213,7 @@ int rmatrix (double angle,int index,double mat[3][3])
       mat[1][0] = -s;
       mat[1][1] = c;
       break;
-    default: 
+    default:
       printf (" index = %d in rmatrix\n", index);
       return(-1);
   }
@@ -538,7 +538,7 @@ int tz_hours;
   tz_hours += daylight;		//compensate for daylight savings
 
 #else				// MS-DOS
-  tzset ();                     // MS-C for setup of daylight & timezone 
+  tzset ();                     // MS-C for setup of daylight & timezone
   tz_hours = (timez+1) / 3600.;  //seconds -> hours (watch for roundoff)
 #endif
 
@@ -613,7 +613,7 @@ struct julian *jday;            /* julian day */
 {
   double  interval, t, jday0, gmst, gha_;
   int   ah, am, as;
-  
+
  /* THIS STUPID PART OF CODE SOMEHOW WAS INSERTED HERE!
    WHO DID AND WHEN? MAY BE IT WA ME? (ko) :)
   jday -> integer = 10;
@@ -653,7 +653,7 @@ struct julian *jday;            /* julian day */
 }
 
 /**-------------------------------------------------------------*/
-void julian_day (int year, int month, int day_of_month, 
+void julian_day (int year, int month, int day_of_month,
 double hour,double minute,double second,struct julian *jday)
 {
   jday -> integer =
@@ -1073,7 +1073,7 @@ int print_jtime (FILE *fout,struct julian *jday)
   struct tm  *tm_;
   static char date_buf[27];
 
-  gm_time =                       // seconds since 1970.0 rel to jday 
+  gm_time =                       // seconds since 1970.0 rel to jday
     ((jday -> integer - J1970) +
       jday -> fraction) * SEC_PER_DAY;
 
@@ -1085,11 +1085,11 @@ int print_jtime (FILE *fout,struct julian *jday)
   local_time = gm_time - local_2_gmt_sec;
   strcpy (date_buf, asctime (tm_ = gmtime (&local_time)));
 
-  date_buf[24] = 0;             // kill \n 
+  date_buf[24] = 0;             // kill \n
   fprintf (fout, " %s (local)", date_buf);
   strcpy (date_buf, asctime (tm_ = gmtime (&gm_time)));
 
-  date_buf[19] = 0;             // kill year, \n 
+  date_buf[19] = 0;             // kill year, \n
   fprintf (fout, " %s (GMT)\n", date_buf + 10);
 }*/
 
@@ -1110,22 +1110,22 @@ int   npts                     /* # of pts in array, pass &x if npts=1 */
     if (strlen (resp) == 0)     /* <CR> => exit from loop */
       return(0);
     switch (npts) {             /* this is brute force, but it works */
-      case 1: 
+      case 1:
         sscanf (resp, "%lf", d_array);
         break;
-      case 2: 
+      case 2:
         sscanf (resp, "%lf %lf",
             &d_array[0], &d_array[1]);
         break;
-      case 3: 
+      case 3:
         sscanf (resp, "%lf %lf %lf",
             &d_array[0], &d_array[1], &d_array[2]);
         break;
-      case 4: 
+      case 4:
         sscanf (resp, "%lf %lf %lf %lf",
             &d_array[0], &d_array[1], &d_array[2], &d_array[3]);
         break;
-      default: 
+      default:
         printf (" npts = %d; must be 1->4\n", npts);
         return(0);
     }
@@ -1149,22 +1149,22 @@ int   npts                     // # of pts in array, pass &x if npts=1
     if (strlen (resp) == 0)     // <CR> => exit from loop
       return;
     switch (npts) {             // this is brute force, but it works
-      case 1: 
+      case 1:
         sscanf (resp, "%d", i_array);
         break;
-      case 2: 
+      case 2:
         sscanf (resp, "%d %d",
             &i_array[0], &i_array[1]);
         break;
-      case 3: 
+      case 3:
         sscanf (resp, "%d %d %d",
             &i_array[0], &i_array[1], &i_array[2]);
         break;
-      case 4: 
+      case 4:
         sscanf (resp, "%d %d %d %d",
             &i_array[0], &i_array[1], &i_array[2], &i_array[3]);
         break;
-      default: 
+      default:
         printf (" npts = %d; must be 1->4\n", npts);
         return;
     }
@@ -1193,10 +1193,10 @@ struct julian *jday;
       station_lat,              // input: (geodetic) in deg., 90 = n. pole
       station_long,             // input: east is positive
       station_height,           // input: height in km above sealevel
-      jday,                     // input: julian day 
+      jday,                     // input: julian day
       vector,                   // input: geocentric vector to object (km)
-      topocent_v,               // output: topo vector to object (km) 
-      horizon_v,                // output: in elev-azim coord system 
+      topocent_v,               // output: topo vector to object (km)
+      horizon_v,                // output: in elev-azim coord system
       station_v                 // output: geocentric vector to station
     );
 
@@ -1251,7 +1251,7 @@ double station_v[3]             /* output: geocentric vector to station */
 
 /**-----------------------------------------------------------*/
 
-int sun_vect (struct julian *jday,double geocentric[3]) 
+int sun_vect(struct julian *jday,double geocentric[3]) 
 /* vect from earth to sun */
 {
   double  rot_mat[3][3], eclip_v[3];
@@ -1313,7 +1313,7 @@ double mj0;
   ms=0;
     cdate(&ymd,&hms,&ms,&mj0,1);
     jday -> integer = mj0+ J1950;
-    jday -> fraction = *mjd-mj0; 
+    jday -> fraction = *mjd-mj0;
     } else {
     *mjd= (jday->integer -J1950) + jday->fraction;
    }
@@ -1343,15 +1343,15 @@ void mjd2day(double *mjd,double *day,int dir)
 
 /*----------- JNI to earth -------------------------
 	input:
-		double integer  -	julian->integer,    
+		double integer  -	julian->integer,
 		double fraction -	julian->fraction
    output:
- 
- 	 vector2                      - heliocentric vector of earth 
+
+ 	 vector2                      - heliocentric vector of earth
 
 -----------------------------------------------------*/
 
-JNIEXPORT jdoubleArray JNICALL 
+JNIEXPORT jdoubleArray JNICALL
 Java_ovt_util_Utils_earthJNI(env, obj, integer, fraction)
 JNIEnv *env;
 jobject obj;
@@ -1363,26 +1363,26 @@ jdouble integer, fraction;
 	struct julian jday;
 	jday.integer = integer;
 	jday.fraction = fraction;
-	
+
 	earth(&jday, res);
-   
+
 	(*env)->ReleaseDoubleArrayElements(env, jres, res, 0);
-   
+
 	return jres;
 }
 
 
 /*----------- JNI to sun_vect -> ------------------------
 	input:
-		double integer  -	julian->integer,    
+		double integer  -	julian->integer,
 		double fraction -	julian->fraction
    output:
- 
+
  	 vector from earth to sun
 
 -----------------------------------------------------*/
 
-JNIEXPORT jdoubleArray JNICALL 
+JNIEXPORT jdoubleArray JNICALL
 Java_ovt_util_Utils_sun_1vectJNI(env, obj, integer, fraction)
 JNIEnv *env;
 jobject obj;
@@ -1394,25 +1394,25 @@ jdouble integer, fraction;
 	struct julian jday;
 	jday.integer = integer;
 	jday.fraction = fraction;
-	
+
 	sun_vect(&jday, res);
-   
+
 	(*env)->ReleaseDoubleArrayElements(env, jres, res, 0);
-   
+
 	return jres;
 }
 
 /*----------- JNI to sun_vect -> ------------------------
 	input:
-		double integer  -	julian->integer,    
+		double integer  -	julian->integer,
 		double fraction -	julian->fraction
    output:
- 
+
  	The angle in degrees between the vernal equinox (X axis) and the
 	Greewich meridian. All numbers from pgs B6-B7 of 1984 Alamanc
 -----------------------------------------------------*/
 
-JNIEXPORT jdouble JNICALL 
+JNIEXPORT jdouble JNICALL
 Java_ovt_mag_MagPack_ghaJNI(env, obj, integer, fraction)
 JNIEnv *env;
 jobject obj;
@@ -1422,6 +1422,6 @@ jdouble integer, fraction;
 	struct julian jday;
 	jday.integer = integer;
 	jday.fraction = fraction;
-	
+
 	return gha(&jday);
 }

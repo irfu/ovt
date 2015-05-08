@@ -83,8 +83,8 @@ public class SatelliteModule extends SingleActorSatModule implements MenuItemsSo
         
         // map to graphics library
         vtkPolyDataMapper map = new vtkPolyDataMapper();
-        map.SetInputData(sphere.GetOutput());
-        
+        //map.SetInputData(sphere.GetOutput()); FKJN 8/5 2015
+        map.SetInputConnection(sphere.GetOutputPort());
         // actor coordinates geometry, properties, transformation
         actor.SetMapper(map);
         float[] rgb = ovt.util.Utils.getRGB(getColor());
@@ -129,20 +129,25 @@ public class SatelliteModule extends SingleActorSatModule implements MenuItemsSo
 
                 vtkTransformPolyDataFilter cylinderTransformPolyData = new vtkTransformPolyDataFilter();
                     cylinderTransformPolyData.SetTransform(cylinderTransform);
-	            cylinderTransformPolyData.SetInputData(cylinder.GetOutput());
+	            //cylinderTransformPolyData.SetInputData(cylinder.GetOutput());
+	            cylinderTransformPolyData.SetInputConnection(cylinder.GetOutputPort());
 
                 vtkTransformPolyDataFilter coneTransformPolyData = new vtkTransformPolyDataFilter();
                     coneTransformPolyData.SetTransform(coneTransform);
-	            coneTransformPolyData.SetInputData(cone.GetOutput());
+	            //coneTransformPolyData.SetInputData(cone.GetOutput());
+	            coneTransformPolyData.SetInputConnection(cone.GetOutputPort());
 
 
                 vtkAppendPolyData appendPolyData = new vtkAppendPolyData();
-                    appendPolyData.AddInputData(cylinderTransformPolyData.GetOutput());
-                    appendPolyData.AddInputData(coneTransformPolyData.GetOutput());
-               
+                    //appendPolyData.AddInputData(cylinderTransformPolyData.GetOutput()); //FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+                    //appendPolyData.AddInputData(coneTransformPolyData.GetOutput());
+                    appendPolyData.AddInputConnection(cylinderTransformPolyData.GetOutputPort());
+                    appendPolyData.AddInputConnection(coneTransformPolyData.GetOutputPort());              
                 // map to graphics library
                 vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-                    mapper.SetInputData(appendPolyData.GetOutput());
+                    //mapper.SetInputData(appendPolyData.GetOutput());
+                    mapper.SetInputConnection(appendPolyData.GetOutputPort());
+                    
                     mapper.ScalarVisibilityOff();
                 
                 actor = new vtkActor();
@@ -151,6 +156,7 @@ public class SatelliteModule extends SingleActorSatModule implements MenuItemsSo
                     actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
                     actor.SetScale(normalActorSize * scale);
                 actorIsArrow = true;
+                
             }
         }
     }

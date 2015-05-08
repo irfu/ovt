@@ -6,7 +6,7 @@
   Version:   $Revision: 2.2 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -59,34 +59,34 @@ import javax.swing.*;
  * SWP and Mach Number.
  */
 
-public class MagTangent extends SingleActorObject implements 
-  TimeChangeListener, CoordinateSystemChangeListener, 
+public class MagTangent extends SingleActorObject implements
+  TimeChangeListener, CoordinateSystemChangeListener,
   MagPropsChangeListener, MenuItemsSource {
 
-  
+
   /** Holds value of property representation. */
   private int representation = RepresentationEditor.WIREFRAME;
   /** Holds value of property opacity. */
   private double opacity = 0.1;
-  
+
   private int[] activityDependsOn = { MagProps.IMF, MagProps.SWP, MagProps.MACHNUMBER };
   /** Holds Characteristics of this object */
   private Characteristics characteristics = new Characteristics(-1);
-  
+
   /** Holds value of property customizerVisible. */
   private boolean customizerVisible = false;
 
-public MagTangent(OVTCore core) { 
+public MagTangent(OVTCore core) {
   super(core, "Magnetic Tangent", "images/mag_tangent.gif");
   // set the color
-  setColor(Color.green); 
+  setColor(Color.green);
   Log.log("MagTangent :: init ...", 3);
 }
 
 
 protected void show() {
   super.show();
-  setRepresentation(getRepresentation()); 
+  setRepresentation(getRepresentation());
   rotate();
 }
 
@@ -98,22 +98,22 @@ protected void validate() {
 
 	double[] gsm = new double[3];
 	double[] rv = new double[3];
-	
-	
+
+
 	vtkPoints points = new vtkPoints();
-        
+
         double[] imf = getMagProps().getIMF(getMjd());
-        double swp = getMagProps().getSWP(getMjd());        
+        double swp = getMagProps().getSWP(getMjd());
         double machNumber = getMagProps().getMachNumber(getMjd());
-        
+
         // save characteristics
         characteristics.setMjd(getMjd());
         characteristics.put(MagProps.SWP, swp);
         characteristics.put(MagProps.MACHNUMBER, machNumber);
-        
+
         int sizex = 2;
         int sizey = 31;
-        
+
         double sinPhi = imf[1]/Math.sqrt(imf[1]*imf[1]+imf[2]*imf[2]);
         double cosPhi = imf[2]/Math.sqrt(imf[1]*imf[1]+imf[2]*imf[2]);
         double L = FieldlineModule.LENGH_OF_IMF_LINE;
@@ -130,33 +130,35 @@ protected void validate() {
           x = -(imf[0]/Math.sqrt(imf[1]*imf[1]+imf[2]*imf[2]))*L/2 + x0;
           points.InsertNextPoint(x, y, z);
         }
-        
 
-        
+
+
 	vtkStructuredGrid sgrid = new vtkStructuredGrid();
 			sgrid.SetDimensions(sizex, sizey,1);
 			sgrid.SetPoints(points);
-		
+
 	vtkStructuredGridGeometryFilter gfilter = new vtkStructuredGridGeometryFilter();
 			gfilter.SetInputData(sgrid);
 			gfilter.SetExtent(0,sizex,0,sizey,0,0);
-                        
+
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-			mapper.SetInputData(gfilter.GetOutput());
-		
+			//mapper.SetInputData(gfilter.GetOutput());
+      mapper.SetInputConnection(gfilter.GetOutputPort());
+
+
         actor = new vtkActor();
         	actor.SetMapper(mapper);
                 float[] rgb = ovt.util.Utils.getRGB(getColor());
                 actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
                 actor.GetProperty().SetOpacity(this.opacity);
-       
+
        super.validate();
 }
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).gsm_trans_matrix(getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
+    actor.SetUserMatrix(m3x3.getVTKMatrix());
 }
 
 
@@ -259,12 +261,12 @@ public Descriptors getDescriptors() {
     if (descriptors == null) {
         descriptors = super.getDescriptors();
         try {
-            
-            // representation property descriptor 
+
+            // representation property descriptor
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("representation", this);
             pd.setDisplayName("Representation:");
-            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd, 
-                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE}, 
+            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd,
+                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE},
                 new String[]{ "Wireframe", "Surface"}
             );
             // Render each time user changes time by means of gui
@@ -275,14 +277,14 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(representationEditor);
             descriptors.put(pd);
-            addPropertyChangeListener("representation", representationEditor); 
-            
+            addPropertyChangeListener("representation", representationEditor);
+
             // opacity
-            
+
             pd = new BasicPropertyDescriptor("opacity", this);
             pd.setLabel("Opacity");
             pd.setDisplayName("Magnetic Tangent opacity");
-            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05, 
+            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05,
                 new double[]{0,.25,.5,.75,1}, new String[]{"0%","25%","50%","75%","100%"});
             addPropertyChangeListener("opacity", sliderEditor);
             sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -292,7 +294,7 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
-            
+
         } catch (IntrospectionException e2) {
             e2.printStackTrace();
             System.exit(-1);

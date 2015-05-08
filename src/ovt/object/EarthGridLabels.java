@@ -61,12 +61,12 @@ import javax.swing.*;
 /**
  *
  * @author  root
- * @version 
+ * @version
  */
-public class EarthGridLabels extends ovt.object.SingleActorObject implements TimeChangeListener, 
+public class EarthGridLabels extends ovt.object.SingleActorObject implements TimeChangeListener,
                       CoordinateSystemChangeListener {
 
-private Vector labels = new Vector();                          
+private Vector labels = new Vector();
 vtkAssembly actors = new vtkAssembly();
 /** Holds value of property prefferedVisibility. */
 private boolean prefferedVisibility = true;
@@ -77,7 +77,7 @@ protected double normalLabelSize = 0.02;
 private static final double R = 1.001;
 
 private static final double[][] m1 = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-                          
+
  /** Creates new EarthGridlabels */
 public EarthGridLabels(EarthGrid earthGrid) {
     super(earthGrid.getCore(), "EarthGridLabels");
@@ -87,26 +87,26 @@ public EarthGridLabels(EarthGrid earthGrid) {
     Descriptors descriptors = super.getDescriptors();
     descriptors.remove("visible"); // remove "Show/Hide" descriptor
     try {
-      
+
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("prefferedVisibility", this);
             pd.setLabel("Show Labels");
             pd.setDisplayName(getName());
-            
-        
+
+
         BasicPropertyEditor editor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
             editor.setTags(new String[]{"LabelsOn", "LabelsOff"});
            // editor.setValues(new Object[]{new Boolean(true), new Boolean(false)});
         addPropertyChangeListener("prefferedVisibility", editor);
         pd.setPropertyEditor(editor);
         descriptors.put(pd);
-        
+
     } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
     }
-        
+
 }
-   
+
 protected void validate() {
     labels.removeAllElements();
     //System.out.println("Setting lables...");
@@ -124,22 +124,22 @@ protected void validate() {
             appendPolyData.AddInputData(label);
         }
     }
-    
+
     double[] lat = { 30, 60, 90, 120, 150 };
-    
+
     for (int i=0; i<lat.length; i++) {
         for (int lon=0; lon<360; lon+=15) {
             vtkPolyData label = getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon);
             appendPolyData.AddInputData(label);
         }
     }
-    
-    
-    
-        
+
+
+
+
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-    mapper.SetInputData(appendPolyData.GetOutput());
-    
+    //mapper.SetInputData(appendPolyData.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+    mapper.SetInputConnection(appendPolyData.GetOutputPort());
     actor = new vtkActor();
     actor.SetMapper(mapper);
     actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
@@ -150,26 +150,26 @@ protected void validate() {
 }
 
 
-/** Note! lat is a ange in radians between R and OZ */
+/** Note! lat is a angle in radians between R and OZ */
 private vtkPolyData getLabelPolyData(double lat, double lon, String text) {
     vtkVectorText atext = new vtkVectorText();
         atext.SetText(text);
-    
+
     // orient and move polyData, representing text to it's position
     vtkTransform transform = new vtkTransform();
         transform.SetMatrix(getTransformMatrix(lat, lon)); // apply matrix
         transform.Scale(normalLabelSize, normalLabelSize, normalLabelSize);
-    
+
     vtkTransformPolyDataFilter transformPolyData = new vtkTransformPolyDataFilter();
         transformPolyData.SetTransform(transform);
-        transformPolyData.SetInputData(atext.GetOutput());
-    
+        //transformPolyData.SetInputData(atext.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+        transformPolyData.SetInputConnection(atext.GetOutputPort());
     return transformPolyData.GetOutput();
 }
 
 /** Returns tr.matrix for positioning and orienting labels.
  * They are always on the earth surface.
- * Note! lat is a ange in radians between R and OZ 
+ * Note! lat is a ange in radians between R and OZ
  */
 private vtkMatrix4x4 getTransformMatrix(double lat, double lon) {
     double [][] m2 = new double[3][3];
@@ -178,13 +178,13 @@ private vtkMatrix4x4 getTransformMatrix(double lat, double lon) {
     double x = R * Math.sin(lat)*Math.cos(lon);
     double y = R * Math.sin(lat)*Math.sin(lon);
     double z = R * Math.cos(lat);
-    
+
     // create transformation matrix
     double[] n = Vect.norm(new double[]{ x, y, z}); // normal to earth
     m2[k] = n;
     m2[i] = Vect.crossn(m1[k], m2[k]);
     m2[j] = Vect.crossn(m2[k], m2[i]);
-    
+
     vtkMatrix4x4 matr = new vtkMatrix4x4();
     for (int ii=0; ii<3; ii++)
         for (int jj=0; jj<3; jj++) {
@@ -202,11 +202,11 @@ private vtkMatrix4x4 getTransformMatrix(double lat, double lon) {
         getRenderer().AddActor(actor);
         rotate();
     }
-    
+
     protected void hide() {
         getRenderer().RemoveActor(actor);
     }
-    
+
 public void setVisible(boolean visible) {
     if (visible) { // to show one must look at a parent's "visibility" state
         if (isPrefferedVisibility()) super.setVisible(visible);
@@ -217,7 +217,7 @@ public boolean parentIsVisible() {
     //try {
         return ((VisualObject)getParent()).isVisible();
     //} catch (NullPointerException e2) { return false;
-    //} 
+    //}
 }
 
 /** Getter for property prefferedVisibility.
@@ -235,7 +235,7 @@ public void setPrefferedVisibility(boolean prefferedVisibility) {
     boolean oldPrefferedVisibility = this.prefferedVisibility;
     if (oldPrefferedVisibility == prefferedVisibility) return; // nothing have changed
     this.prefferedVisibility = prefferedVisibility;
-    
+
     if (prefferedVisibility == true) {
         if (parentIsVisible()) setVisible(true); // show only if the parent is visible
     } else {
@@ -246,9 +246,9 @@ public void setPrefferedVisibility(boolean prefferedVisibility) {
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).trans_matrix(getPolarCS(), getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
+    actor.SetUserMatrix(m3x3.getVTKMatrix());
 }
- 
+
 public void timeChanged(TimeEvent evt) {
     if (evt.timeSetChanged()) {
         invalidate();

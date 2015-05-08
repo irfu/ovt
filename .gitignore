@@ -3,3 +3,7 @@ VTKBuild/
 nbproject/private/private.properties
 nbproject/private/private.xml
 /dist/
+
+src/libovt/magpackbackup.c
+
+src/libovt/libovt-3.0.jnilib_temp

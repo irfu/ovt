@@ -37,7 +37,7 @@ Khotyaintsev
  * according to the model Weimer96.
  *
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -62,19 +62,19 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class ElectPot extends VisualObject implements 
-    TimeChangeListener, CoordinateSystemChangeListener, 
+public class ElectPot extends VisualObject implements
+    TimeChangeListener, CoordinateSystemChangeListener,
     MagPropsChangeListener, MenuItemsSource {
 
   public static final int SURFACE = 0;
   public static final int WIREFRAME = 1;
-  
+
   protected vtkActor actor;
   protected vtkFollower[][] text_actor = new vtkFollower[2][2];
   private int[] activityDependsOn = { MagProps.IMF_Y, MagProps.IMF_Z, MagProps.SW_VELOCITY };
   /** Holds Characteristics of this object */
   private Characteristics characteristics = new Characteristics(-1);
-    
+
 /** Holds value of property representation. */
 private int representation;
 
@@ -85,11 +85,11 @@ private int representation;
 
   /** Holds value of property resolution in kV. */
   private int resolution = 4;
- 
-public ElectPot(OVTCore core) { 
+
+public ElectPot(OVTCore core) {
   super(core, "Electrical Potential", "images/elpot.gif");
   ovtCore = core;
-  
+
   Descriptors descriptors = getDescriptors();
   try {
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("resolution", this);
@@ -104,7 +104,7 @@ public ElectPot(OVTCore core) {
         addPropertyChangeListener("resolution", editor);
         pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "OK", true));
         descriptors.put(pd);
-        
+
   } catch (IntrospectionException e2) {
         e2.printStackTrace();
   }
@@ -125,7 +125,7 @@ public void show() {
 
 public void hide() {
   getRenderer().RemoveActor(actor);
-  for( int ip=0; ip<2; ip++ ) 
+  for( int ip=0; ip<2; ip++ )
   for( int im=0; im<2; im++ ){
     getRenderer().RemoveActor(text_actor[ip][im]);
   }
@@ -162,19 +162,19 @@ private double[] xyz2flr(double[] xyz){
 protected void getActors() {
 
   if (!isValid()) update();
-  
+
   if (actor != null) return;
-  
+
   int X=0, Y=1, Z=2;
 
 	actor = new vtkActor();
-	for( int ip=0; ip<2; ip++ ) 
+	for( int ip=0; ip<2; ip++ )
 	for( int im=0; im<2; im++ ) text_actor[ip][im] = new vtkFollower();
 
 	vtkPoints points = new vtkPoints();
-        
+
         vtkFloatArray scalars = new vtkFloatArray();
-        
+
 	double mjd = getMjd();
       int year = Time.getYear(mjd);
       try {
@@ -186,15 +186,15 @@ protected void getActors() {
       }
 	double UT = getUT(mjd);
         // get parameters
-      double[] imf = ovtCore.getMagProps().getIMF(mjd); 
-      double swVelocity = ovtCore.getMagProps().getSWVelocity(mjd); 
+      double[] imf = ovtCore.getMagProps().getIMF(mjd);
+      double swVelocity = ovtCore.getMagProps().getSWVelocity(mjd);
       double Tilt = ovtCore.getMagProps().getDipoleTilt(mjd);
       // save characteristics
         characteristics.setMjd(getMjd());
         characteristics.put(MagProps.IMF_Y, imf[Y]);
         characteristics.put(MagProps.IMF_Z, imf[Z]);
         characteristics.put(MagProps.SW_VELOCITY, swVelocity);
-        
+
       Trans trans = getTrans(mjd);
 
         double phi, theta, dPhi, dTheta;
@@ -207,7 +207,7 @@ protected void getActors() {
       int sizex = phiResolution + 1;
       int sizey = thetaResolution + 1;
       int half_sizey = sizey / 2;
-	
+
       double[] GNP,GSP;   //geogr. coords of Magnetic North and South Poles
       try{
         double[] CNP = {90, 360}, CSP = {-90, 360};
@@ -217,7 +217,7 @@ protected void getActors() {
         System.out.println(getClass().getName() + " -> " + e.toString());
         return;  //empty actors
       }
-        
+
       //1-st array index selects north/south pole, 2-nd - min/max.
       double[][] EE = {{200,-200},{200,-200}};  //min/max el.pot.
       double[][] TT = new double[2][2];  //theta
@@ -227,18 +227,18 @@ protected void getActors() {
 	for (theta=0, i=0; i<sizey; theta+=dTheta, i++) {
         if( i == 0 ){                 // initialize Weimer96 for North Pole
           pole_index = 0;
-          double Bz = imf[2];  
-          double By = imf[1]; 
+          double Bz = imf[2];
+          double By = imf[1];
           double Bt = Math.sqrt(Bz*Bz + By*By);
           double angle = Math.atan2(By,Bz)*180/Math.PI;
-          w96.SetModel(angle, Bt, +Tilt, swVelocity);   
+          w96.SetModel(angle, Bt, +Tilt, swVelocity);
         }else if ( i == half_sizey ) {  // initialize Weimer96 for South Pole
           pole_index = 1;
-          double Bz = imf[2];  
-          double By = -imf[1];  //see minus?   
+          double Bz = imf[2];
+          double By = -imf[1];  //see minus?
           double Bt = Math.sqrt(Bz*Bz + By*By);
           double angle = Math.atan2(By,Bz)*180/Math.PI;
-          w96.SetModel(angle, Bt, -Tilt, swVelocity); 
+          w96.SetModel(angle, Bt, -Tilt, swVelocity);
 /* -tilt is important !
     The southern dipole axis has the opposite direction, so the southern
 hemisphere is differently enlightened than the northern one in a given
@@ -295,16 +295,16 @@ work).
 
 	  }
 	}
-        
-        
+
+
 	vtkStructuredGrid sgrid = new vtkStructuredGrid();
 			sgrid.SetDimensions(sizex, sizey,1);
 			sgrid.SetPoints(points);
                   sgrid.GetPointData().SetScalars(scalars);
-		
-      vtkContourFilter gfilter2 = new vtkContourFilter();
-      gfilter2.SetInputData(sgrid /*gfilter1.GetOutput()*/);
 
+      vtkContourFilter gfilter2 = new vtkContourFilter();
+      gfilter2.SetInputData(sgrid /*gfilter1.GetOutput()*/);//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+      //gfilter2.SetInputConnection(sgrid /*gfilter1.GetOutputPort()*/);
       int izolinesNumber = (int)(120 / getResolution());
       for( int i2=0; i2<=(izolinesNumber*2); i2++ )
         gfilter2.SetValue(i2, (i2-izolinesNumber)*resolution);
@@ -319,14 +319,15 @@ work).
 */
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-		mapper.SetInputData(gfilter2.GetOutput());
-		mapper.SetScalarRange(-2*resolution, 2*resolution /*scalars.GetRange()*/);
+		//mapper.SetInputData(gfilter2.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+    mapper.SetInputConnection(gfilter2.GetOutputPort());
+    mapper.SetScalarRange(-2*resolution, 2*resolution /*scalars.GetRange()*/);
 
 		actor.SetMapper(mapper);
 
 
 	r = 1.2;
-	for( int ip=0; ip<2; ip++ ) 
+	for( int ip=0; ip<2; ip++ )
 	for( int im=0; im<2; im++ ){
 		z = r * Math.cos(TT[ip][im]*Math.PI/180);
 		x = r * Math.sin(TT[ip][im]*Math.PI/180) * Math.cos(PP[ip][im]*Math.PI/180);
@@ -346,7 +347,7 @@ work).
 
 public void update() {
   actor = null;
-  for( int ip=0; ip<2; ip++ ) 
+  for( int ip=0; ip<2; ip++ )
   for( int im=0; im<2; im++ ) text_actor[ip][im] = null;
   valid = true;
 }
@@ -354,8 +355,8 @@ public void update() {
 public void rotate() {
   Matrix3x3 m3x3 = getTrans(getMjd()).gsm_trans_matrix(getCS());
   getActors();
-  actor.SetUserMatrix(m3x3.getVTKMatrix()); 
-  for( int ip=0; ip<2; ip++ ) 
+  actor.SetUserMatrix(m3x3.getVTKMatrix());
+  for( int ip=0; ip<2; ip++ )
   for( int im=0; im<2; im++ ) text_actor[ip][im].SetUserMatrix(m3x3.getVTKMatrix());
 }
 
@@ -372,7 +373,7 @@ public void timeChanged(TimeEvent evt) {
             hide();
             show();
       }
-  } else if (isVisible()){  hide(); show(); }  
+  } else if (isVisible()){  hide(); show(); }
 }
 public void coordinateSystemChanged(CoordinateSystemEvent evt) {
   if (isVisible()) rotate();
@@ -444,7 +445,7 @@ public void setResolution(int resolution) throws IllegalArgumentException {
     int oldResolution = this.resolution;
     if (resolution == oldResolution) return; // nothing' changed
     this.resolution = resolution;
-    invalidate(); 
+    invalidate();
     if (isVisible()) {
             hide();
             show();

@@ -41,7 +41,7 @@ package ovt.object;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 import vtk.*;
 
@@ -63,7 +63,7 @@ import java.io.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class FieldlineDataModule extends SingleActorSatModule {
     public final int TO_EARTH   = 0;
@@ -75,10 +75,10 @@ public class FieldlineDataModule extends SingleActorSatModule {
     private static final int Z = 2;
     DataModule dataModule;
     double height = 0.1;
-   
+
     /** Holds value of property direction. */
     private int direction;
-    
+
 public FieldlineDataModule(DataModule module) {
   super(module.getSat(),  "On Fieldlines", "images/fieldline.gif");
   this.dataModule = module;
@@ -97,30 +97,30 @@ private TimePeriod getDataTimePeriod() {
 
 
 protected void validate() {
-   
+
    double[][] data = getData();
    if (data == null) return;
 
    double min = dataModule.getMin();
    double max = dataModule.getMax();
-   
+
 
    int minNumOfPoints = Integer.MAX_VALUE;
    int maxNumOfPoints = 0;
-   
+
    int[] indexes = dataModule.getFirstAndLastIndexes();
    int firstIndex = indexes[0];
    int lastIndex  = indexes[1];
    //Log.log("first="+firstIndex+" last="+lastIndex + "data.length="+data.length);
    int dateCount = lastIndex - firstIndex + 1;
-   
+
    Fieldline[][] fl = new Fieldline[dateCount][2];
-   
+
    double[] r = null, r2, r3;
    double y = 1, mjd;
    for (int i=firstIndex; i<=lastIndex; i++) {
       mjd = data[i][TIME];
-      
+
       r = getPosition(mjd); // GSM!!!
       fl[i] = makeFieldlines(mjd, r);
       //Log.log(i+" "+new Time(mjd));
@@ -128,9 +128,9 @@ protected void validate() {
       if (fl[i][direction].size() < minNumOfPoints) minNumOfPoints = fl[i][direction].size();
       if (fl[i][direction].size() > maxNumOfPoints) maxNumOfPoints = fl[i][direction].size();
    }
-   
+
    //minNumOfPoints = 8;
-   
+
    vtkPoints points = new vtkPoints();
    vtkFloatArray scalars = new vtkFloatArray();
    Enumeration e;
@@ -149,26 +149,27 @@ protected void validate() {
          if (j!=0) scalars.InsertNextValue(data[i][VALUE]);
      }
    }
-   
+
    vtkStructuredGrid grid = new vtkStructuredGrid();
         grid.SetPoints(points);
         grid.SetDimensions(maxNumOfPoints, dateCount, 1);
         grid.GetCellData().SetScalars(scalars);
-        
+
 
    vtkStructuredGridGeometryFilter filter = new vtkStructuredGridGeometryFilter();
         filter.SetInputData(grid);
-        
+
         //filter.SetExtent(0, dateCount - 1, 0, minNumOfPoints - 1, 1, 1);
 
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
-    mapper.SetInputData(filter.GetOutput());
+    //mapper.SetInputData(filter.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+    mapper.SetInputConnection(filter.GetOutputPort());
     mapper.SetScalarModeToUseCellData();
         mapper.ScalarVisibilityOn();
     mapper.SetScalarRange(min, max);
     mapper.SetLookupTable(dataModule.getLookupTable());
-        
-        
+
+
     actor = new vtkActor();
         actor.SetMapper(mapper);
         actor.GetProperty().SetRepresentationToSurface();
@@ -181,16 +182,16 @@ protected Fieldline[] makeFieldlines(double mjd, double[] gsm) {
     Fieldline[] fl;
     double rmin = getMagProps().alt / Const.RE + 1.;
     MagProps magProps = getMagProps();
-    
-    if (gsm == null) System.out.println("NULL POSITION!!!"); 
+
+    if (gsm == null) System.out.println("NULL POSITION!!!");
     double alt = 2*Const.RE;
     Fieldline fl1 = Trace.traceline(magProps, mjd, gsm,  1 * 0.001, 0, alt);
     Fieldline fl2 = Trace.traceline(magProps, mjd, gsm, -1 * 0.001, 0, alt);
-      
+
     boolean first = true; // - first line is FL_2_EARTH
-  
+
     // if two fotprints are close to earth - choose the shirtest line
-    if ((Vect.absv(fl1.lastPoint().gsm) < rmin) && 
+    if ((Vect.absv(fl1.lastPoint().gsm) < rmin) &&
         (Vect.absv(fl2.lastPoint().gsm) < rmin)) {
       if ((Math.abs(fl1.length()) < Math.abs(fl2.length()))) {
         first = true;
@@ -206,7 +207,7 @@ protected Fieldline[] makeFieldlines(double mjd, double[] gsm) {
 
     if (first) return new Fieldline[]{ fl1, fl2 };
     else return new Fieldline[]{ fl2, fl1 };
-    
+
 }
 
 
@@ -215,7 +216,7 @@ public Descriptors getDescriptors() {
         try {
             descriptors = super.getDescriptors();
             descriptors.removeDescriptor("color");
-            
+
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("direction", this);
             String[] tags = { "to Earth", "to Equator" };
             MenuPropertyEditor editor = new MenuPropertyEditor(pd, tags);
@@ -242,7 +243,7 @@ public int getDirection() {
 public void setDirection(int direction) throws IllegalArgumentException {
     int oldDirection = this.direction;
     if (oldDirection == direction) return; // nothing has changed
-    if (direction != TO_EARTH && direction != TO_EQUATOR) 
+    if (direction != TO_EARTH && direction != TO_EQUATOR)
         throw new IllegalArgumentException("Invalid direction("+direction+")");
     this.direction = direction;
     invalidate();
@@ -263,7 +264,7 @@ public void timeChanged(TimeEvent evt) {
 public void coordinateSystemChanged(CoordinateSystemEvent evt) {
     System.out.println("Coord system changed.. I see...");
     if (evt.getWindow() == Const.XYZ) {
-        if (getCS() != CoordinateSystem.GSM  &&  isEnabled()) setEnabled(false); 
+        if (getCS() != CoordinateSystem.GSM  &&  isEnabled()) setEnabled(false);
         else if (getCS() == CoordinateSystem.GSM  &&  !isEnabled()) setEnabled(true);
     }
 }
