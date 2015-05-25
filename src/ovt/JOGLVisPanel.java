@@ -7,6 +7,7 @@ package ovt;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 import java.util.Iterator;
 import ovt.event.CameraEvent;
@@ -61,6 +62,10 @@ public class JOGLVisPanel extends vtkJoglCanvasComponent implements ovt.interfac
     cameraChangeSupport.removeCameraChangeListener(l);
   }
 
+  public Rectangle getBounds() {  
+    return this.getComponent().getBounds();
+}
+  
   @Override
   public Image getImage() {
     throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.

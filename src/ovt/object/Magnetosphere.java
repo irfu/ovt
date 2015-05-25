@@ -50,7 +50,7 @@ import java.util.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-
+import java.awt.*;
 /**
  * This class caries about ploting magnetisphere
  */
@@ -143,6 +143,10 @@ public static final double  STMIN	=	0.01;
 
 /** Holds value of property fieldlineRadiusScale. */
 private double fieldlineRadiusScale = 1.;
+
+/** Holds value of property color. */
+ private Color color = Color.blue;
+
 
 /** Holds value of property wireframe. */
 private boolean wireframe = true;
@@ -419,6 +423,9 @@ protected void prepareData() {
   System.out.println(" Done.");
 }
 
+
+
+
 private double getFieldlineRadius() {
     return MagnetosphereActor.NORMAL_FL_RADIUS*fieldlineRadiusScale;
 }
@@ -552,11 +559,58 @@ public void setVisible(boolean visible) {
       propertyChangeSupport.firePropertyChange("wireframe", new Boolean(oldWireframe), new Boolean(wireframe));
   }
 
+ 
+  
+  //copied from SingleActorSatModule FKJN 
+  /** Getter for property color.
+   * @return Value of property color.
+   */
+      public Color getColor() {
+          return color;
+      }
+
+  /** Setter for property color.
+   * @param color New value of property color.
+   *
+   * @throws PropertyVetoException
+   */
+      public void setColor(Color color) {
+          Color oldColor = this.color;
+          this.color = color;
+          if (actor != null) {
+              float[] rgb = ovt.util.Utils.getRGB(getColor());
+              actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+              actor.setColor(color);
+              //mapper.SetColorMode(1);
+
+              
+            }
+            //firePropertyChange("color", oldColor, color);
+          //propertyChangeSupport.firePropertyChange ("color", oldColor, color);
+      }
+  
+      
+         //public void setFieldlineRadiusScale(double fieldlineRadiusScale) {
+     // double oldFieldlineRadiusScale = this.fieldlineRadiusScale;
+     // this.fieldlineRadiusScale = fieldlineRadiusScale;
+     // if (actor != null) {
+     //     if (Math.abs(actor.getFieldlineRadius() - getFieldlineRadius()) > 0.0001)
+     //     actor.setFieldlineRadius(getFieldlineRadius());
+      //  }
+      //firePropertyChange("fieldlineRadiusScale", new Double(oldFieldlineRadiusScale), new Double(fieldlineRadiusScale));
+  //}
+
+
   public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
                 descriptors = super.getDescriptors();
 
+
+
+
+
+                    //FKJN COPY THIS
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("fieldlineRadiusScale", this);
                 pd.setLabel("Fieldline Thickness...");
                 pd.setDisplayName("Magnetospheric Fieldline Thickness");
@@ -570,6 +624,36 @@ public void setVisible(boolean visible) {
                 });
                 pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
                 descriptors.put(pd);
+
+
+                    //TO THIS FKJN
+
+                // FKJN copy from Satellite colour 13May 2015
+                pd = new BasicPropertyDescriptor("color", this);
+                pd.setLabel("Color...");
+                pd.setDisplayName(getParent().getName()+" : "+ getName() +" color");
+                ComponentPropertyEditor editor = new ColorPropertyEditor(pd);
+                editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
+                    public void editingFinished(GUIPropertyEditorEvent evt) {
+                        Render();
+                    }
+                });
+                addPropertyChangeListener("color", editor);
+                pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "Close"));
+                descriptors.put(pd);
+
+                /*
+                MenuPropertyEditor keepEditor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
+                pd.setPropertyEditor(keepEditor);
+                addPropertyChangeListener("color", keepEditor);
+                pd.setPropertyEditor(keepEditor);
+                getDescriptors().put(pd);
+                */
+
+
+
+
+
 
                 pd = new BasicPropertyDescriptor("wireframe", this);
                 pd.setLabel("Wireframe");
@@ -600,6 +684,7 @@ class MagnetosphereActor extends vtkActor {
     private vtkTubeFilter tubeFilter = new vtkTubeFilter();
     private vtkPolyDataMapper mapper = new vtkPolyDataMapper();
     private boolean wireframe;
+    private Color color;
     private double fieldlineRadius;
 
     /** Constructs wireframe actor by default */
@@ -644,8 +729,32 @@ class MagnetosphereActor extends vtkActor {
     public double getFieldlineRadius() {
         return fieldlineRadius;
     }
+    
+    
+  //copied from SingleActorSatModule FKJN 
+  /** Getter for property color.
+   * @return Value of property color.
+   */
+      public Color getColor() {
+          return color;
+      }
 
-
+  /** Setter for property color.
+   * @param color New value of property color.
+   *
+   * @throws PropertyVetoException
+   */
+      public void setColor(Color color) {
+          Color oldColor = this.color;
+          this.color = color;
+          //vtkLogLookupTable lut  = new vtkLogLookupTable();
+          //lut.SetHueRange(0.6667, 0);
+          
+          float[] rgb = ovt.util.Utils.getRGB(getColor());
+          this.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          mapper.SetColorMode(1);
+          //mapper.SetLookupTable(lut);
+      }
 }
 
 // ------------------------------_------------------------------

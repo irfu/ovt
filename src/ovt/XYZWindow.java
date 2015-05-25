@@ -232,6 +232,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
   public void Render() {
       renPanel.Render();
   }
+  public JOGLVisPanel getRenpanel() {
+      return renPanel;
+  }
 
   public vtkRenderer getRenderer() {
     return renPanel.getRenderer();

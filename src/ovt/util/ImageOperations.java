@@ -47,6 +47,19 @@ import java.io.*;
 import java.awt.*;
 import java.awt.print.*;
 import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Rectangle;
+import java.awt.Robot;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
+import java.io.File; 
+import javax.imageio.ImageIO;
+import org.apache.commons.io.FilenameUtils;
+
 
 /**
  *
@@ -58,10 +71,267 @@ public class ImageOperations {
     public static final String PRINT_JOB_NAME = "OVT printing";
     
     private static final String DEFAULT_IMAGE_FILE = "Image.File";
+    public static void exportImage2old(OVTCore core, String filename) throws Exception {
+        
+        
+        
+        String ext = FilenameUtils.getExtension(filename);
+        
+       
+        XYZWindow frameOwner = core.getXYZWin();
+        
+        /* method 1
+        //whole screen
+         Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        //VTK window
+         screenRect = frameOwner.getRenpanel().getComponent().getBounds();
+         
+        // Program window
+        screenRect = frameOwner.getCore().getXYZWin().getBounds();
+         
+         BufferedImage capture = new Robot().createScreenCapture(screenRect);
+        //ImageIO.write(capture, ext, new File(filename));
+        */
+        
+
+       //WIDTH, HEIGHT = 1920, 1080
+
+         /* method 2, sphere
+        vtkSphereSource source = new vtkSphereSource();
+
+        //source = vtk.vtkSphereSource()
+        source.SetCenter(0, 0, 0);
+        source.SetRadius(5);
+
+        vtkPolyDataMapper mapper = new vtkPolyDataMapper();
+
+        
+        //core.getXYZWin().getVisualizationPanel().getRenderer().GetVTKWindow()
+        //mapper = vtk.vtkPolyDataMapper()
+        mapper.SetInputConnection(source.GetOutputPort());
+        mapper.ImmediateModeRenderingOff();
+
+        vtkActor actor = new vtkActor();
+
+        //actor = vtk.vtkActor()
+        actor.SetMapper(mapper);
+
+        vtkRenderer renderer = new vtkRenderer();
+        //renderer = vtk.vtkRenderer()
+        renderer.SetBackground(1, 1, 1);
+        renderer.AddActor(actor);
+        renderer.ResetCamera();
+
+        vtkRenderWindow renwin = new vtkRenderWindow();
+        //renwin = vtk.vtkRenderWindow()
+        renwin.OffScreenRenderingOn();
+        renwin.SetSize(1920, 1080);
+        renwin.AddRenderer(renderer);
+
+        //#interactor = vtk.vtkRenderWindowInteractor()
+        renwin.Render();
+        vtkRenderWindowInteractor interactor = new vtkRenderWindowInteractor();
+
+
+
+        interactor.SetRenderWindow(renwin);
+
+        //renwin.Render();
+
+        vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+
+        w2if.SetInputBufferTypeToRGBA();
+        w2if.SetMagnification(1);
+        w2if.SetInput(renwin);
+        w2if.ShouldRerenderOff();
+        w2if.ReadFrontBufferOff();
+
+
+        w2if.Update();
+        vtkImageData image = w2if.GetOutput();
+
+        vtkPNGWriter writer2 = new vtkPNGWriter();
+        writer2.SetInputConnection(w2if.GetOutputPort());
+        interactor.Render();
+        w2if.Modified();
+        w2if.Update();
+
+        writer2.SetFileName("frame.png");
+        writer2.Write();
+         */
+
+         
+    vtkRenderer renderer = frameOwner.getRenpanel().getRenderer();
+    renderer.ResetCamera();
+
+    vtkRenderWindow renwin = new vtkRenderWindow();
+    //vtkRenderWindow renwin = frameOwner.getRenderWindow();
+    //renwin = vtk.vtkRenderWindow()
+    renwin.OffScreenRenderingOn();
+    renwin.SetSize(1920, 1080); 
+    renwin.AddRenderer(renderer);
+
+    vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
+
+//    vtkRenderWindowInteractor interactor = new vtkRenderWindowInteractor();
+    //vtkRenderWindowInteractor interactor=frameOwner.getRenpanel().getRenderWindowInteractor();
     
+    
+    interactor.SetRenderWindow(renwin);
+    renwin.Render();
+    vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+
+    w2if.SetInputBufferTypeToRGBA();
+    w2if.SetMagnification(1);
+    w2if.SetInput(renwin);
+    w2if.ShouldRerenderOff();
+    w2if.ReadFrontBufferOff();
+
+
+    w2if.Update();
+    vtkImageData image = w2if.GetOutput();
+
+    vtkPNGWriter writer2 = new vtkPNGWriter();
+    writer2.SetInputConnection(w2if.GetOutputPort());
+    interactor.Render();
+    w2if.Modified();
+    w2if.Update();
+
+    writer2.SetFileName(filename);
+    writer2.Write();
+    
+    //frameOwner.getRenpanel().getComponent().requestFocus();
+    //renderer.ResetCamera();
+
+        
+        
+        
+    //capture frame
+//    BufferedImage image = new Robot().createScreenCapture( 
+//        new Rectangle( myframe.getX(), myframe.getY(), 
+ //           myframe.getWidth(), myframe.getHeight() ) );
+    
+    
+        
+        
+         
+         
+         //java.awt.Robot.
+         
+//        Lock();
+/* should hav also worked
+    vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+    
+    w2if.ReadFrontBufferOff();
+    w2if.SetInput(renderWindow);
+
+    w2if.SetMagnification(3);
+    w2if.Update();
+
+    vtkPNGWriter writer = new vtkPNGWriter();
+    writer.SetInputConnection(w2if.GetOutputPort());
+    writer.SetFileName(filename);
+    writer.Write();
+*/
+    }
+    public static void exportImage2(OVTCore core, String filename) throws Exception {
+        
+        
+         vtkImageWriter writer;
+        //renderWindow.
+        if (filename.endsWith(".bmp"))
+            writer = new vtkBMPWriter();
+        
+        else if (filename.endsWith(".tif")  || filename.endsWith(".tiff"))
+            writer = new vtkTIFFWriter();
+        
+        else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg"))
+            writer = new vtkJPEGWriter();
+        
+        else if (filename.endsWith(".png"))
+       
+            writer = new vtkPNGWriter();
+      
+        else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
+        
+    String ext = FilenameUtils.getExtension(filename);
+    
+
+
+    XYZWindow frameOwner = core.getXYZWin();
+    vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
+    vtkRenderer renderer = frameOwner.getRenderer();
+    
+//vtkRenderer renderer = frameOwner.getRenpanel().getRenderer();
+    //renderer.ResetCamera();
+    renderer.SetBackground(1,1,1); // Background color white
+    //renderer.SetBackground(core.getRenderer().GetBackground());
+    vtkRenderWindow renwin = new vtkRenderWindow();
+    //vtkRenderWindow renwin = frameOwner.getRenderWindow();
+    //renwin = vtk.vtkRenderWindow()
+    renwin.OffScreenRenderingOn();
+  //  renwin.SetSize(1920, 1080); 
+    renwin.SetSize(renderWindow.GetSize());
+    renwin.AddRenderer(renderer);
+
+    vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
+
+    //vtkRenderWindowInteractor interactor = new vtkRenderWindowInteractor();
+    //vtkRenderWindowInteractor interactor=frameOwner.getRenpanel().getRenderWindowInteractor();
+
+    interactor.SetRenderWindow(renwin);
+    renwin.Render();
+    vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+
+ //   w2if.SetInputBufferTypeToRGBA();
+    w2if.SetMagnification(2);
+    w2if.SetInput(renwin);
+//    w2if.ShouldRerenderOff();
+//    w2if.ReadFrontBufferOff();
+
+
+//    w2if.Update();
+    //vtkImageData image = w2if.GetOutput();
+
+    //vtkPNGWriter writer2 = new vtkPNGWriter();
+    writer.SetInputConnection(w2if.GetOutputPort());
+
+        //renderer->SetBackground(1,1,1); // Background color white
+
+    interactor.Render();
+//    w2if.Modified();
+//    w2if.Update();
+
+    writer.SetFileName(filename);
+    writer.Write();
+    
+       
+    //try to change everything back.
+    
+    renwin.OffScreenRenderingOff();
+    //renwin.RemoveRenderer(renderer);
+//    renwin.Delete();
+    renderWindow.MakeCurrent();
+    
+    renderWindow.AddRenderer(renderer);
+    //interactor.Delete();
+//    vtkRenderWindowInteractor interactor2 = new vtkRenderWindowInteractor();
+
+    renderWindow.SetInteractor(interactor);
+    interactor.SetRenderWindow(renderWindow);
+    renderWindow.Render();
+    interactor.Render();
+    frameOwner.getRenpanel().getComponent().requestFocus();
+    frameOwner.Render();
+    //interactor.Delete();
+//    frameOwner.Render();
+//    frameOwner.getRenpanel().resetCamera();
+//    frameOwner.toFront(); 
+    /*******/
+          }
     public static void exportImage(vtkRenderWindow renderWindow, String filename) {
         vtkImageWriter writer;
-        
+        //renderWindow.
         if (filename.endsWith(".bmp"))
             writer = new vtkBMPWriter();
         
@@ -89,7 +359,21 @@ public class ImageOperations {
         windowToImageFilter.SetInput(renderWindow);   // Original code
         //windowToImageFilter.Update();
         //windowToImageFilter.SetInputConnection(renderWindow.);
-        
+            vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+    
+            //w2if.ReadFrontBufferOff();
+            w2if.SetInput(renderWindow);
+
+            w2if.SetMagnification(3);
+            w2if.Update();
+
+            vtkPNGWriter writer2 = new vtkPNGWriter();
+            writer2.SetInputConnection(w2if.GetOutputPort());
+            //writer2.SetFileName(filename);
+            //writer2.Write();
+            
+
+   
         //windowToImageFilter.ReadFrontBufferOn();
         //windowToImageFilter.ReadFrontBufferOff();
         //windowToImageFilter.SetInputBufferTypeToRGB();
@@ -107,7 +391,50 @@ public class ImageOperations {
         writer.Write();
         
     }
+        public static final void makeScreenshot(JOGLVisPanel renPanel) {
+        
+                        
+    Rectangle rec = renPanel.getBounds();
+    BufferedImage bufferedImage = new BufferedImage(rec.width, rec.height,
+            BufferedImage.TYPE_INT_ARGB);
+    renPanel.getComponent().paint(bufferedImage.getGraphics());
+
+    try {
+        // Create temp file.
+        File temp = File.createTempFile("screenshot", ".png");
+
+        // Use the ImageIO API to write the bufferedImage to a temporary file
+        ImageIO.write(bufferedImage, "png", temp);
+
+        //BufferedImage image = new Robot().createScreenCapture( 
+        //new Rectangle( renPanel.getBounds() ) );
+        
+        
+        // Delete temp file when program exits.
+        temp.deleteOnExit();
+    } catch (IOException ioe) {
+        System.out.println(ioe.getMessage());
+    } // catch
+} // makeScreenshot method
+     public static void screenCapture(String filename) throws
+           AWTException, IOException {
+     // capture the whole screen
+        
+    String ext = FilenameUtils.getExtension(filename);
+    //capture whole screen  
+    BufferedImage screencapture = new Robot().createScreenCapture(
+    new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()) );
+
+    //capture frame
+//    BufferedImage image = new Robot().createScreenCapture( 
+//        new Rectangle( myframe.getX(), myframe.getY(), 
+ //           myframe.getWidth(), myframe.getHeight() ) );
     
+    
+     File file = new File("filename");
+     ImageIO.write(screencapture, ext, file);
+
+  }
     public static void exportImageDialog(OVTCore core) {
         XYZWindow frameOwner = core.getXYZWin();
         vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
@@ -117,10 +444,16 @@ public class ImageOperations {
         JFileChooser chooser = new JFileChooser(new File(defaultFile));
         chooser.setDialogTitle("Export image");
         OvtExtensionFileFilter filter = new OvtExtensionFileFilter();
-        filter.addExtension(".bmp");
-        filter.setDescription("Windows Bitmap (*.bmp)");
+        filter.addExtension(".png");
+        filter.setDescription("PNG file (*.png)");
         chooser.setFileFilter(filter);
         
+        filter = new OvtExtensionFileFilter();
+        filter.addExtension(".bmp");
+        filter.setDescription("Windows Bitmap (*.bmp)");
+        //chooser.setLocation(frameOwner.getLocation().x+frameOwner.getSize().width,frameOwner.getLocation().y);
+        chooser.addChoosableFileFilter(filter);
+      
         filter = new OvtExtensionFileFilter();
         filter.addExtension(".tiff");
         filter.addExtension(".tif");
@@ -128,8 +461,8 @@ public class ImageOperations {
         chooser.addChoosableFileFilter(filter);
         
         filter = new OvtExtensionFileFilter();
-        filter.addExtension(".pnm");
-        filter.setDescription("PNM (*.pnm)");
+        filter.addExtension(".jpg");
+        filter.setDescription("JPG (*.jpg)");
         //chooser.setLocation(frameOwner.getLocation().x+frameOwner.getSize().width,frameOwner.getLocation().y);
         chooser.addChoosableFileFilter(filter);
         
@@ -157,7 +490,15 @@ public class ImageOperations {
             else outputLabel.setLabelText(COPYRIGHT);
             outputLabel.setVisible(true);
             /* ********/
-            exportImage(renderWindow, fname);
+            //exportImage(renderWindow, fname);
+            
+            //makeScreenshot(frameOwner.getRenpanel());
+            
+            try{
+                //screenCapture(fname);//this thing actually works, but is not preferred
+                exportImage2(core, fname); //this kinda works, but makes window unusable.
+                } catch (Exception ex) {System.out.println(ex.getMessage());
+             }
             /* ********/
             OVTCore.setGlobalSetting(DEFAULT_IMAGE_FILE, fname);
             outputLabel.setVisible(oldVisible);
@@ -243,7 +584,7 @@ public class ImageOperations {
         gr.translate(-image.width/2, -image.height/2);
     }
 
-    /** Tryes to obtain image size for 5 seconds */
+    /** Tries to obtain image size for 5 seconds */
     static public Dimension getImageSize(Image image) {
         int width, height;
         int tr = 0;
