@@ -42,6 +42,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*;
+import ovt.object.Camera;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 import vtk.rendering.jogl.vtkJoglCanvasComponent;
 
@@ -214,6 +215,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     setVisible(true);
     renPanel.resetCamera();
     renPanel.getComponent().requestFocus();
+    core.getCamera().setViewFrom(Camera.VIEW_FROM_X);
+    core.getCamera().setProjection(1);
+    core.Render();
+    
   }
 
   /**

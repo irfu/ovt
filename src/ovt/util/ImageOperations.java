@@ -237,6 +237,7 @@ public class ImageOperations {
     public static void exportImage2(OVTCore core, String filename) throws Exception {
         
         
+
          vtkImageWriter writer;
         //renderWindow.
         if (filename.endsWith(".bmp"))
@@ -253,6 +254,8 @@ public class ImageOperations {
             writer = new vtkPNGWriter();
       
         else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
+       
+        
         
     String ext = FilenameUtils.getExtension(filename);
     
@@ -260,69 +263,268 @@ public class ImageOperations {
 
     XYZWindow frameOwner = core.getXYZWin();
     vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
-    vtkRenderer renderer = frameOwner.getRenderer();
+
+        // Setup offscreen rendering
+        vtkGraphicsFactory graphics_factory = new vtkGraphicsFactory();
+        graphics_factory.SetOffScreenOnlyMode(1);
+        graphics_factory.SetUseMesaClasses(1);
+
+     //   vtkImagingFactory imf = new vtkImagingFactory();
+     //   imf.SetUseMesaClasses(1);
+    renderWindow.GetSize();
+    //vtkRenderer renderer = frameOwner.getRenderer();
+    vtkRenderer rendbackup = core.getRenderer();
     
-//vtkRenderer renderer = frameOwner.getRenpanel().getRenderer();
-    //renderer.ResetCamera();
+    vtkRenderer renderer = rendbackup;
+
+//renderer.ResetCamera();
+    double[] oldbackground = renderer.GetBackground();
     renderer.SetBackground(1,1,1); // Background color white
     //renderer.SetBackground(core.getRenderer().GetBackground());
     vtkRenderWindow renwin = new vtkRenderWindow();
     //vtkRenderWindow renwin = frameOwner.getRenderWindow();
     //renwin = vtk.vtkRenderWindow()
     renwin.OffScreenRenderingOn();
-  //  renwin.SetSize(1920, 1080); 
+    //renwin.SetSize(1920, 1080); 
     renwin.SetSize(renderWindow.GetSize());
+    
+    
+    /*
+    vtkRenderer rend2 = new vtkRenderer();
+
+    vtkActorCollection collActs = renderer.GetActors();
+    vtkMapper map = new vtkMapper();
+    
+      for (int i=0; i<collActs.GetNumberOfItems(); i++)
+      {
+          rend2.AddActor(collActs.GetNextActor());
+          
+      }
+      
+      */
+    //  rend2.SetActiveCamera(renderer.GetActiveCamera());
+    
+    vtkRendererCollection collection = renderWindow.GetRenderers();
+//      assemblyGetActors(collection);
+
+    //collection.InitTraversal();
+   // collection->InitTraversal();
+    //vtkIdType i = new vtkIdType();
+    
+    //for(vtkIdType i = 0;i < collection.GetNumberOfItems(); i++)
+    //for (int i=0; i<collection.GetNumberOfItems(); i++)renwin.AddRenderer(collection.GetNextItem());
+    
+  //for(i = 0; i < collection->GetNumberOfItems(); i++){    vtkActor::SafeDownCast(collection->GetNextProp())->GetProperty()->SetOpacity(0.5);}
+    
+    
+    
+    renderer.SetRenderWindow(renwin);
+    renderer.Render();
+
     renwin.AddRenderer(renderer);
 
+    //renderer.SetRenderWindow(renwin);
+    //renderer.Render();
+    //renwin.AddRenderer(renderer);
+
     vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
-
-    //vtkRenderWindowInteractor interactor = new vtkRenderWindowInteractor();
-    //vtkRenderWindowInteractor interactor=frameOwner.getRenpanel().getRenderWindowInteractor();
-
+ 
     interactor.SetRenderWindow(renwin);
     renwin.Render();
     vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
 
- //   w2if.SetInputBufferTypeToRGBA();
+    w2if.SetInputBufferTypeToRGBA();
     w2if.SetMagnification(2);
     w2if.SetInput(renwin);
-//    w2if.ShouldRerenderOff();
-//    w2if.ReadFrontBufferOff();
+    w2if.ShouldRerenderOff();
+    w2if.ReadFrontBufferOff();
 
 
-//    w2if.Update();
-    //vtkImageData image = w2if.GetOutput();
-
-    //vtkPNGWriter writer2 = new vtkPNGWriter();
+    w2if.Update();
     writer.SetInputConnection(w2if.GetOutputPort());
 
-        //renderer->SetBackground(1,1,1); // Background color white
+    //renderer->SetBackground(1,1,1); // Background color white
 
     interactor.Render();
-//    w2if.Modified();
-//    w2if.Update();
+    w2if.Modified();
+    w2if.Update();
 
     writer.SetFileName(filename);
     writer.Write();
     
        
-    //try to change everything back.
-    
+    //try to change everything back
     renwin.OffScreenRenderingOff();
     //renwin.RemoveRenderer(renderer);
-//    renwin.Delete();
-    renderWindow.MakeCurrent();
+    //renwin.Delete();
+    //renderWindow.MakeCurrent();
     
-    renderWindow.AddRenderer(renderer);
+    /*****
+    collection.InitTraversal();
+        for (int i=0; i<collection.GetNumberOfItems(); i++) {
+            collection.GetNextItem().SetRenderWindow(renderWindow);
+            collection.Render();
+        };
+*////
+    
+    rendbackup.SetRenderWindow(renderWindow);
+    rendbackup.Render();
+    renderWindow.Render();
+    renderWindow.Modified();
+    //renderWindow.AddRenderer(renderer);
     //interactor.Delete();
-//    vtkRenderWindowInteractor interactor2 = new vtkRenderWindowInteractor();
+    //interactor.SetRenderWindow(renderWindow);
+    //renderWindow.Render();
+    //interactor.Render();
+    //frameOwner.getRenpanel().getComponent().requestFocus();
+    //interactor.Delete();
+//    frameOwner.Render();
+//    frameOwner.getRenpanel().resetCamera();
+//    frameOwner.toFront(); 
+    /*******/
+          }
+    
+    public static void exportImage222(OVTCore core, String filename) throws Exception {
+        
+        
 
-    renderWindow.SetInteractor(interactor);
+         vtkImageWriter writer;
+        //renderWindow.
+        if (filename.endsWith(".bmp"))
+            writer = new vtkBMPWriter();
+        
+        else if (filename.endsWith(".tif")  || filename.endsWith(".tiff"))
+            writer = new vtkTIFFWriter();
+        
+        else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg"))
+            writer = new vtkJPEGWriter();
+        
+        else if (filename.endsWith(".png"))
+       
+            writer = new vtkPNGWriter();
+      
+        else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
+       
+        
+        
+    String ext = FilenameUtils.getExtension(filename);
+    
+
+
+    XYZWindow frameOwner = core.getXYZWin();
+    vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
+
+        // Setup offscreen rendering
+        vtkGraphicsFactory graphics_factory = new vtkGraphicsFactory();
+        graphics_factory.SetOffScreenOnlyMode(1);
+        graphics_factory.SetUseMesaClasses(1);
+        
+        
+        renderWindow.OffScreenRenderingOn();
+
+    renderWindow.GetSize();
+    //vtkRenderer renderer = frameOwner.getRenderer();
+    vtkRenderer renderer = core.getRenderer();
+    
+//renderer.ResetCamera();
+    renderer.SetBackground(1,1,1); // Background color white
+    //renderer.SetBackground(core.getRenderer().GetBackground());
+    //vtkRenderWindow renwin = new vtkRenderWindow();
+    //vtkRenderWindow renwin = frameOwner.getRenderWindow();
+    //renwin = vtk.vtkRenderWindow()
+    //renwin.OffScreenRenderingOn();
+    //renwin.SetSize(1920, 1080); 
+    //renwin.SetSize(renderWindow.GetSize());
+    
+    
+    /*
+    vtkRenderer rend2 = new vtkRenderer();
+
+    vtkActorCollection collActs = renderer.GetActors();
+    vtkMapper map = new vtkMapper();
+    
+      for (int i=0; i<collActs.GetNumberOfItems(); i++)
+      {
+          rend2.AddActor(collActs.GetNextActor());
+          
+      }
+      
+      */
+    //  rend2.SetActiveCamera(renderer.GetActiveCamera());
+    
+    vtkRendererCollection collection = renderWindow.GetRenderers();
+//      assemblyGetActors(collection);
+
+    //collection.InitTraversal();
+   // collection->InitTraversal();
+    //vtkIdType i = new vtkIdType();
+    
+    //for(vtkIdType i = 0;i < collection.GetNumberOfItems(); i++)
+    //for (int i=0; i<collection.GetNumberOfItems(); i++)renwin.AddRenderer(collection.GetNextItem());
+    
+  //for(i = 0; i < collection->GetNumberOfItems(); i++){    vtkActor::SafeDownCast(collection->GetNextProp())->GetProperty()->SetOpacity(0.5);}
+    
+    
+   
+    renderer.SetRenderWindow(renderWindow);
+    //renderer.Render();
+
+    //renwin.AddRenderer(renderer);
+
+    //renderer.SetRenderWindow(renwin);
+    //renderer.Render();
+    //renwin.AddRenderer(renderer);
+
+    vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
+ 
     interactor.SetRenderWindow(renderWindow);
     renderWindow.Render();
+    vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
+
+    w2if.SetInputBufferTypeToRGBA();
+    w2if.SetMagnification(2);
+    w2if.SetInput(renderWindow);
+    w2if.ShouldRerenderOff();
+    w2if.ReadFrontBufferOff();
+
+
+    w2if.Update();
+    writer.SetInputConnection(w2if.GetOutputPort());
+
+    //renderer->SetBackground(1,1,1); // Background color white
+
     interactor.Render();
-    frameOwner.getRenpanel().getComponent().requestFocus();
-    frameOwner.Render();
+    w2if.Modified();
+    w2if.Update();
+
+    writer.SetFileName(filename);
+    writer.Write();
+    
+       
+    //try to change everything back
+    renderWindow.OffScreenRenderingOff();
+    //renwin.RemoveRenderer(renderer);
+    //renwin.Delete();
+    //renderWindow.MakeCurrent();
+    
+    /*****
+    collection.InitTraversal();
+        for (int i=0; i<collection.GetNumberOfItems(); i++) {
+            collection.GetNextItem().SetRenderWindow(renderWindow);
+            collection.Render();
+        };
+*////
+    
+    //renderer.SetRenderWindow(renderWindow);
+    //renderer.Render();
+    renderWindow.Render();
+    renderWindow.Modified();
+    //renderWindow.AddRenderer(renderer);
+    //interactor.Delete();
+    //interactor.SetRenderWindow(renderWindow);
+    //renderWindow.Render();
+    //interactor.Render();
+    //frameOwner.getRenpanel().getComponent().requestFocus();
     //interactor.Delete();
 //    frameOwner.Render();
 //    frameOwner.getRenpanel().resetCamera();

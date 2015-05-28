@@ -150,6 +150,7 @@ private double fieldlineRadiusScale = 1.;
 
 /** Holds value of property wireframe. */
 private boolean wireframe = true;
+private boolean scalarcolor = true;
 
 public Magnetosphere(OVTCore core) {
 	super(core, "Magnetosphere", "images/magnetosphere.gif");
@@ -559,9 +560,18 @@ public void setVisible(boolean visible) {
       propertyChangeSupport.firePropertyChange("wireframe", new Boolean(oldWireframe), new Boolean(wireframe));
   }
 
- 
-  
-  //copied from SingleActorSatModule FKJN 
+    public boolean isScalarcolor() {
+      return scalarcolor;
+  }
+    
+public void setScalarcolor(boolean scalarcolor) {
+      boolean oldScalarcolor = this.scalarcolor;
+      this.scalarcolor = scalarcolor;
+      if (actor != null)
+        if (actor.isScalarcolor() != scalarcolor) actor.setScalarcolor(scalarcolor);
+      propertyChangeSupport.firePropertyChange("scalarcolor", new Boolean(oldScalarcolor), new Boolean(scalarcolor));
+  }
+  //copied from SingleActorSatModule FKJN
   /** Getter for property color.
    * @return Value of property color.
    */
@@ -583,13 +593,13 @@ public void setVisible(boolean visible) {
               actor.setColor(color);
               //mapper.SetColorMode(1);
 
-              
+
             }
             //firePropertyChange("color", oldColor, color);
-          //propertyChangeSupport.firePropertyChange ("color", oldColor, color);
+          propertyChangeSupport.firePropertyChange ("color", oldColor, color);
       }
-  
-      
+
+
          //public void setFieldlineRadiusScale(double fieldlineRadiusScale) {
      // double oldFieldlineRadiusScale = this.fieldlineRadiusScale;
      // this.fieldlineRadiusScale = fieldlineRadiusScale;
@@ -651,10 +661,6 @@ public void setVisible(boolean visible) {
                 */
 
 
-
-
-
-
                 pd = new BasicPropertyDescriptor("wireframe", this);
                 pd.setLabel("Wireframe");
                 //pd.setDisplayName("Keep Fieldlines");
@@ -662,6 +668,16 @@ public void setVisible(boolean visible) {
                 addPropertyChangeListener("wireframe", keepEditor);
                 pd.setPropertyEditor(keepEditor);
                 getDescriptors().put(pd);
+
+
+                pd = new BasicPropertyDescriptor("scalarcolor", this);
+                pd.setLabel("Scalar Colors");
+                //pd.setDisplayName("Keep Fieldlines");
+                MenuPropertyEditor keepEditor2 = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
+                addPropertyChangeListener("scalarcolor", keepEditor2);
+                pd.setPropertyEditor(keepEditor2);
+                getDescriptors().put(pd);
+
 
             } catch (IntrospectionException e2) {
                 System.out.println(getClass().getName() + " -> " + e2.toString());
@@ -685,6 +701,7 @@ class MagnetosphereActor extends vtkActor {
     private vtkPolyDataMapper mapper = new vtkPolyDataMapper();
     private boolean wireframe;
     private Color color;
+    private boolean scalarcolor;
     private double fieldlineRadius;
 
     /** Constructs wireframe actor by default */
@@ -729,9 +746,19 @@ class MagnetosphereActor extends vtkActor {
     public double getFieldlineRadius() {
         return fieldlineRadius;
     }
+
     
-    
-  //copied from SingleActorSatModule FKJN 
+   public boolean isScalarcolor() {
+        return scalarcolor;
+    }
+
+    public void setScalarcolor(boolean scalarcolor) {
+        this.scalarcolor = scalarcolor;
+        if (scalarcolor) mapper.ScalarVisibilityOn();
+        //else mapper.SetInputData(tubeFilter.GetOutput());
+        else mapper.ScalarVisibilityOff();
+    }
+  //copied from SingleActorSatModule FKJN
   /** Getter for property color.
    * @return Value of property color.
    */
@@ -746,17 +773,14 @@ class MagnetosphereActor extends vtkActor {
    */
       public void setColor(Color color) {
           Color oldColor = this.color;
+          this.setScalarcolor(false);
           this.color = color;
-          //vtkLogLookupTable lut  = new vtkLogLookupTable();
-          //lut.SetHueRange(0.6667, 0);
-          
+
           float[] rgb = ovt.util.Utils.getRGB(getColor());
           this.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-          mapper.SetColorMode(1);
-          //mapper.SetLookupTable(lut);
+
       }
 }
-
 // ------------------------------_------------------------------
 
 class MagnetosphereActorCollection extends Hashtable {

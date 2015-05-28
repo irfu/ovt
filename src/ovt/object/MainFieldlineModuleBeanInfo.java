@@ -4,55 +4,71 @@ import java.beans.*;
 
 public class MainFieldlineModuleBeanInfo extends SimpleBeanInfo {
 
-  // Property identifiers //GEN-FIRST:Properties
-  private static final int PROPERTY_keep = 0;
-  private static final int PROPERTY_visible = 1;
+    // Property identifiers//GEN-FIRST:Properties
+    private static final int PROPERTY_color = 0;
+    private static final int PROPERTY_keep = 1;
+    private static final int PROPERTY_scalarcolor = 2;
+    private static final int PROPERTY_visible = 3;
 
-  // Property array 
-  private static PropertyDescriptor[] properties = new PropertyDescriptor[2];
+    // Property array 
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[4];
 
-  static {
-    try {
-      properties[PROPERTY_keep] = new PropertyDescriptor ( "keep", MainFieldlineModule.class, "isKeep", "setKeep" );
-      properties[PROPERTY_visible] = new PropertyDescriptor ( "visible", MainFieldlineModule.class, "isVisible", "setVisible" );
+    private static PropertyDescriptor[] getPdescriptor(){
+        return properties;
     }
-    catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
+
+    static {
+        try {
+            properties[PROPERTY_color] = new PropertyDescriptor ( "color", ovt.object.MainFieldlineModule.class, "getColor", "setColor" ); // NOI18N
+            properties[PROPERTY_keep] = new PropertyDescriptor ( "keep", ovt.object.MainFieldlineModule.class, "isKeep", "setKeep" ); // NOI18N
+            properties[PROPERTY_scalarcolor] = new PropertyDescriptor ( "scalarcolor", ovt.object.MainFieldlineModule.class, "isScalarcolor", "setScalarcolor" ); // NOI18N
+            properties[PROPERTY_visible] = new PropertyDescriptor ( "visible", ovt.object.MainFieldlineModule.class, "isVisible", "setVisible" ); // NOI18N
+        }
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
 
     // Here you can add code for customizing the properties array.
 
 }//GEN-LAST:Properties
 
-  // EventSet identifiers//GEN-FIRST:Events
+    // EventSet identifiers//GEN-FIRST:Events
 
-  // EventSet array
-  private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
-//GEN-HEADEREND:Events
+    // EventSet array
+    private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
+
+    private static EventSetDescriptor[] getEdescriptor(){
+        return eventSets;
+    }//GEN-HEADEREND:Events
 
     // Here you can add code for customizing the event sets array.
 
-  //GEN-LAST:Events
+//GEN-LAST:Events
 
-  // Method identifiers //GEN-FIRST:Methods
+    // Method identifiers//GEN-FIRST:Methods
 
-  // Method array 
-  private static MethodDescriptor[] methods = new MethodDescriptor[0];
-//GEN-HEADEREND:Methods
+    // Method array 
+    private static MethodDescriptor[] methods = new MethodDescriptor[0];
+
+    private static MethodDescriptor[] getMdescriptor(){
+        return methods;
+    }//GEN-HEADEREND:Methods
 
     // Here you can add code for customizing the methods array.
     
-  //GEN-LAST:Methods
+//GEN-LAST:Methods
 
-    private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
+    private static java.awt.Image iconColor16 = null;//GEN-BEGIN:IconsDef
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
-    private static java.awt.Image iconMono32 = null; //GEN-END:IconsDef
+    private static java.awt.Image iconMono32 = null;//GEN-END:IconsDef
   private static String iconNameC16 = null;//GEN-BEGIN:Icons
   private static String iconNameC32 = null;
   private static String iconNameM16 = null;
   private static String iconNameM32 = null;//GEN-END:Icons
 
-  private static int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
-  private static int defaultEventIndex = -1;//GEN-END:Idx
+    private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
+    private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
     /**

@@ -38,6 +38,7 @@ Khotyaintsev
 
 package ovt.object;
 
+import java.awt.Color;
 import ovt.*;
 import ovt.beans.*;
 import ovt.mag.*;
@@ -69,6 +70,8 @@ implements MagPropsChangeListener {
   /** Holds value of property keep. */
     private boolean keep = false;
     private boolean keep_preffered = true;
+    private Color color = Color.blue;
+    private boolean scalarcolor = true;
     
     private GUIPropertyEditor keepEditor;
     
@@ -86,6 +89,33 @@ implements MagPropsChangeListener {
             addPropertyChangeListener("keep", keepEditor);
             pd.setPropertyEditor(keepEditor);
             getDescriptors().put(pd);
+
+            // FKJN copy from Satellite colour 13May 2015
+            pd = new BasicPropertyDescriptor("color", this);
+            pd.setLabel("Color...");
+            pd.setDisplayName(getParent().getName()+" : "+ getName() +" color");
+            ComponentPropertyEditor editor = new ColorPropertyEditor(pd);
+            editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
+                public void editingFinished(GUIPropertyEditorEvent evt) {
+                    Render();
+                }
+            });
+            addPropertyChangeListener("color", editor);
+            pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "Close"));
+            descriptors.put(pd);
+
+
+            pd = new BasicPropertyDescriptor("scalarcolor", this);
+            pd.setLabel("Scalar Colors");
+            //pd.setDisplayName("Keep Fieldlines");
+            MenuPropertyEditor keepEditor2 = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
+            addPropertyChangeListener("scalarcolor", keepEditor2);
+            pd.setPropertyEditor(keepEditor2);
+            getDescriptors().put(pd);
+
+
+            
+            
         } catch (IntrospectionException e2) {
             System.out.println(getClass().getName() + " -> " + e2.toString());
             System.exit(0);
@@ -243,5 +273,66 @@ implements MagPropsChangeListener {
         propertyChangeSupport.firePropertyChange ("keep", new Boolean (oldKeep), new Boolean (keep));
     }
     
+   public boolean isScalarcolor() {
+        return scalarcolor;
+    }
+
+    public void setScalarcolor(boolean scalarcolor) {
+        boolean oldScalarcolor = this.scalarcolor;
+        this.scalarcolor = scalarcolor;
+        
+        
+        //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
+        //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
+
+        Log.log("Creating pretty colours ...", 3);
+
+        //mapper = sat.satelliteModule.actor.GetMapper();
+        
+                if (scalarcolor) {
+                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
+                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
+
+                    //sat.magTangentModule.actor.GetMapper().ScalarVisibilityOn();
+                }
+        //else mapper.SetInputData(tubeFilter.GetOutput());
+        else {
+                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOff();
+                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOff();
+                //sat.magTangentModule.actor.GetMapper().ScalarVisibilityOff();
+                }
+                
+    propertyChangeSupport.firePropertyChange("scalarcolor", oldScalarcolor, scalarcolor);
+
+    }
+  //copied from SingleActorSatModule FKJN
+  /** Getter for property color.
+   * @return Value of property color.
+   */
+      public Color getColor() {
+          return color;
+      }
+
+  /** Setter for property color.
+   * @param color New value of property color.
+   *
+   * @throws PropertyVetoException
+   */
+      public void setColor(Color color) {
+          Color oldColor = this.color;
+          this.setScalarcolor(false);
+          this.color = color;
+//this.getFieldline(int 1, double mjd).get
+          //vtkLogLookupTable lut  = new vtkLogLookupTable();
+          //lut.SetHueRange(0.6667, 0);
+
+          float[] rgb = ovt.util.Utils.getRGB(getColor());
+          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+
+          //this.sat.magTangentModule.actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          //mapper.SetColorMode(1);
+          //mapper.SetLookupTable(lut);
+      }
     
 }
