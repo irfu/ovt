@@ -111,7 +111,7 @@ implements MagPropsChangeListener {
         return getActor(getMjd());
     }
     
-    private vtkActor getActor(double mjd) {
+    public vtkActor getActor(double mjd) {
         if (!isValid()) validate();
         // look in hashtable
         vtkActor act = (vtkActor)actors.get(new Double(mjd));

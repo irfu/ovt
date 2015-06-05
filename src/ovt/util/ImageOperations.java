@@ -633,7 +633,7 @@ public class ImageOperations {
  //           myframe.getWidth(), myframe.getHeight() ) );
     
     
-     File file = new File("filename");
+     File file = new File(filename);
      ImageIO.write(screencapture, ext, file);
 
   }
@@ -692,12 +692,12 @@ public class ImageOperations {
             else outputLabel.setLabelText(COPYRIGHT);
             outputLabel.setVisible(true);
             /* ********/
-            //exportImage(renderWindow, fname);
+            exportImage(renderWindow, fname);
             
-            //makeScreenshot(frameOwner.getRenpanel());
+            makeScreenshot(frameOwner.getRenpanel());
             
             try{
-                //screenCapture(fname);//this thing actually works, but is not preferred
+                screenCapture(fname);//this thing actually works, but is not preferred
                 exportImage2(core, fname); //this kinda works, but makes window unusable.
                 } catch (Exception ex) {System.out.println(ex.getMessage());
              }
