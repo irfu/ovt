@@ -13,7 +13,7 @@ mkdir VTKBuild
 cd VTKBuild
 ccmake /path/to/VTK
 #Enable Java,JOGL, and Testing in VTK config
-change VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.class 
+change VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.java
 from —>
 line 49		vtkAbstractJoglComponent.this.setSize(drawable.getWidth(), drawable.getHeight());
 —— 
@@ -23,9 +23,9 @@ line 49		vtkAbstractJoglComponent.this.setSize(drawable.getSurfaceWidth(), drawa
 
 and all import javax.media.opengl.* must be change to com.jogamp.opengl.* in;
 
-VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.class 
-VTKBuild/java/vtk/rendering/jogl/vtkJoglPanelComponent.class 
-VTKBuild/java/vtk/rendering/jogl/vtkJoglCanvasComponent.class 
+VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.java
+VTKBuild/java/vtk/rendering/jogl/vtkJoglPanelComponent.java
+VTKBuild/java/vtk/rendering/jogl/vtkJoglCanvasComponent.java
 
 make
 compile libovt:
