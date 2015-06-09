@@ -52,6 +52,7 @@ import vtk.*;
 
 import javax.swing.*;
 import java.beans.*;
+import java.util.Enumeration;
 
 /**
  *
@@ -72,7 +73,9 @@ implements MagPropsChangeListener {
     private boolean keep_preffered = true;
     private Color color = Color.blue;
     private boolean scalarcolor = true;
-    
+    private FieldlineModule module1;
+    private FieldlineModule module2;
+
     private GUIPropertyEditor keepEditor;
     
   /** Creates new MainFieldlineModule */
@@ -121,13 +124,13 @@ implements MagPropsChangeListener {
             System.exit(0);
         }
         
-        FieldlineModule module = new FieldlineModule(this, FieldlineModule.FL_2_EQUATOR);
-        addPropertyChangeListener(module);
-        addChild(module);
+        FieldlineModule module1 = new FieldlineModule(this, FieldlineModule.FL_2_EQUATOR);
+        addPropertyChangeListener(module1);
+        addChild(module1);
         
-        module = new FieldlineModule(this, FieldlineModule.FL_2_EARTH);
-        addPropertyChangeListener(module);
-        addChild(module);
+        module2 = new FieldlineModule(this, FieldlineModule.FL_2_EARTH);
+        addPropertyChangeListener(module2);
+        addChild(module2);
     }
     
     public FieldlineCollection getFieldlineCollection(int type) {
@@ -282,6 +285,12 @@ implements MagPropsChangeListener {
         this.scalarcolor = scalarcolor;
         
         
+        
+        
+        
+        //vtkActor act = ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd()));
+        //this.module1.getActor(getMjd());
+        
         //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
         //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
 
@@ -289,16 +298,39 @@ implements MagPropsChangeListener {
 
         //mapper = sat.satelliteModule.actor.GetMapper();
         
-                if (scalarcolor) {
-                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
-                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
+            if (scalarcolor) {
 
-                    //sat.magTangentModule.actor.GetMapper().ScalarVisibilityOn();
+                Enumeration e = this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
+                while (e.hasMoreElements())
+                    ((vtkFollower)e.nextElement()).GetMapper().ScalarVisibilityOn();    
+
+                e = this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd()).elements();
+                while (e.hasMoreElements())
+                    ((vtkFollower)e.nextElement()).GetMapper().ScalarVisibilityOn();    
+
+                //this.module1.getActor(getMjd()).GetMapper().ScalarVisibilityOn();
+               // this.module2.getActor(getMjd()).GetMapper().ScalarVisibilityOn();
+
+//                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
+//                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
+
+                //sat.magTangentModule.actor.GetMapper().ScalarVisibilityOn();
                 }
         //else mapper.SetInputData(tubeFilter.GetOutput());
         else {
-                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOff();
-                    ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOff();
+                
+                Enumeration e = this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
+                while (e.hasMoreElements())
+                    ((vtkFollower)e.nextElement()).GetMapper().ScalarVisibilityOff();    
+                     
+                e = this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd()).elements();
+                while (e.hasMoreElements())
+                    ((vtkFollower)e.nextElement()).GetMapper().ScalarVisibilityOff();    
+
+                    //this.module1.getActor(getMjd()).GetMapper().ScalarVisibilityOff();
+                    //this.module2.getActor(getMjd()).GetMapper().ScalarVisibilityOff();
+                    //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOff();
+                    //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOff();
                 //sat.magTangentModule.actor.GetMapper().ScalarVisibilityOff();
                 }
                 
@@ -325,11 +357,25 @@ implements MagPropsChangeListener {
 //this.getFieldline(int 1, double mjd).get
           //vtkLogLookupTable lut  = new vtkLogLookupTable();
           //lut.SetHueRange(0.6667, 0);
+          
+          
+        //this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
+        float[] rgb = ovt.util.Utils.getRGB(getColor());
+        Enumeration e = this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
+        while (e.hasMoreElements())
+            ((vtkFollower)e.nextElement()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);    
+        
+        e = this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd()).elements();
+        while (e.hasMoreElements())
+            ((vtkFollower)e.nextElement()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);    
+        
 
-          float[] rgb = ovt.util.Utils.getRGB(getColor());
-          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
 
+         //   this.module1.getActor(getMjd()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);;
+         //   this.module2.getActor(getMjd()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);;
+//          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+//          ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          
           //this.sat.magTangentModule.actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
           //mapper.SetColorMode(1);
           //mapper.SetLookupTable(lut);
