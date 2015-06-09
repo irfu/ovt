@@ -67,7 +67,7 @@ import org.apache.commons.io.FilenameUtils;
  * @version
  */
 public class ImageOperations {
-    public static final String COPYRIGHT = "Produced by OVT (http://ovt.irfu.se)";
+    public static final String COPYRIGHT = "Produced by OVT ("+ovt.OVTCore.ovtHomePage+")";
     public static final String PRINT_JOB_NAME = "OVT printing";
     
     private static final String DEFAULT_IMAGE_FILE = "Image.File";

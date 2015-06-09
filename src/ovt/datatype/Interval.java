@@ -54,10 +54,15 @@ public class Interval {
     }
     
     public Interval(double days) throws IllegalArgumentException {
-        if (days >=32) throw new IllegalArgumentException("The interval can not be greater or equal to  32 days");
+        if (days >=32) throw new IllegalArgumentException("The interval can not be greater or equal to 32 days.");
         time = new Time(days);
     }
     
+    /* NOTE: STRANGE IMPLEMENTATION: Since the implementation uses the argument to create a "Time" object which
+    apparently represents a date, having day>30, hour>23 , or min>59 means trying to create an illegal date,
+    which triggers an exception, which prevents the caller from defining such time intervals.
+    /Erik P G Johansson 2015-06-04.
+    */
     public Interval(String s) throws NumberFormatException {
         int day = 0;
         int hour = 0;

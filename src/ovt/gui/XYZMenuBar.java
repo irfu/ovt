@@ -1,35 +1,34 @@
 /*=========================================================================
 
-  Program:   Orbit Visualization Tool
-  Source:    $Source: /stor/devel/ovt2g/ovt/gui/XYZMenuBar.java,v $
-  Date:      $Date: 2005/12/13 16:32:52 $
-  Version:   $Revision: 2.14 $
+ Program:   Orbit Visualization Tool
+ Source:    $Source: /stor/devel/ovt2g/ovt/gui/XYZMenuBar.java,v $
+ Date:      $Date: 2005/12/13 16:32:52 $
+ Version:   $Revision: 2.14 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
-Yuri Khotyaintsev)
-All rights reserved.
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Yuri Khotyaintsev)
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification is permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification is permitted provided that the following conditions are met:
 
  * No part of the software can be included in any commercial package without
-written consent from the OVT team.
+ written consent from the OVT team.
 
  * Redistributions of the source or binary code must retain the above
-copyright notice, this list of conditions and the following disclaimer.
+ copyright notice, this list of conditions and the following disclaimer.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
-IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
-INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
+ INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
 
-OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
-Khotyaintsev
+ OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ Khotyaintsev
 
-=========================================================================*/
-
+ =========================================================================*/
 package ovt.gui;
 
 import ovt.*;
@@ -45,49 +44,47 @@ import javax.swing.event.*;
 
 import java.io.*;
 
-
 public class XYZMenuBar extends JMenuBar {
+
     private Font font = Style.getMenuFont();
-    public OVTCore core;
+    private OVTCore core;
     public XYZWindow xyzWin;
     private JMenuItem importSatelliteMenuItem;
     private ovt.object.editor.SettingsEditor renPanelSizeEditor;
-    
-public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
-  super();
-  this.core = acore;
-  xyzWin = xyzwin;
-  JMenuItem menuItem;
-  JRadioButtonMenuItem rbMenuItem;
-  JCheckBoxMenuItem cbMenuItem;
-  String ItemName;
 
-  
+    public XYZMenuBar(XYZWindow xyzwin) {
+        super();
+        this.core = xyzwin.getCore();
+        xyzWin = xyzwin;
+        JMenuItem menuItem;
+        JRadioButtonMenuItem rbMenuItem;
+        JCheckBoxMenuItem cbMenuItem;
+        String ItemName;
 
+        //-----------
+        // File menu
+        //-----------
+        JMenu menu = new JMenu("File");
+        menu.setFont(font);
 
-//--------------Build the File menu.-----------------
-
-	JMenu menu = new JMenu("File");
-	menu.setFont(font);
-        
-	menuItem = new JMenuItem("Export Image...");
+        menuItem = new JMenuItem("Export Image...");
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-            KeyEvent.VK_E, ActionEvent.CTRL_MASK));  // Set accelerator Ctrl-E.
+                KeyEvent.VK_E, ActionEvent.CTRL_MASK));  // Set accelerator Ctrl-E.
 
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            ImageOperations.exportImageDialog(getCore());
-          }
+            public void actionPerformed(ActionEvent evt) {
+                ImageOperations.exportImageDialog(getCore());
+            }
         });
-	
+
         menu.add(menuItem);
-        
+
         menu.addSeparator();
-        
+
         menuItem = new JMenuItem("Load Settings...");
-          menuItem.setFont(font);
-          menuItem.addActionListener(new ActionListener() {
+        menuItem.setFont(font);
+        menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfDir());
                 String file = Settings.showOpenDialog(xyzWin, new File(defaultFile));
@@ -98,7 +95,7 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
                         getCore().hideAllVisibleObjects();
                         // load new settings
                         Settings.load(file, core);
-                        
+
                         xyzWin.getTreePanel().expandSatellitesNode();
                         OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, file);
                         core.Render();
@@ -107,10 +104,10 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
                     }
                 }
             }
-          });
+        });
 
         menu.add(menuItem);
-          
+
         menuItem = new JMenuItem("Save Settings...");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
@@ -127,26 +124,22 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
                 }
             }
         });
-        
+
         menu.add(menuItem);
-        
+
         //menu.addSeparator();
         //menu.add(menuItem);
-        
-        
-        
-          
         //if ( xyzWin.windowResizable ){
-          menu.addSeparator();
-          
-          menuItem = new JMenuItem("Print...");
-          menuItem.setFont(font);
-          menuItem.addActionListener(new ActionListener() {
+        menu.addSeparator();
+
+        menuItem = new JMenuItem("Print...");
+        menuItem.setFont(font);
+        menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-              ImageOperations.print(getCore());
+                ImageOperations.print(getCore());
             }
-          });
-          menu.add(menuItem);
+        });
+        menu.add(menuItem);
         //}
 
         menu.addSeparator();
@@ -154,163 +147,154 @@ public XYZMenuBar(OVTCore acore, XYZWindow xyzwin) {
         menuItem = new JMenuItem("Exit");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            getVW().quit();
-          }
+            public void actionPerformed(ActionEvent evt) {
+                getVW().quit();
+            }
         });
         menu.add(menuItem);
-        
+
         add(menu);
-        
-        
-        
+
+        //------------
         // Satellites
-        
+        //------------
         add(createSatsMenu());
-        
-        
-        
+
+        //---------
         // Options
+        //---------
         menu = new JMenu("Options");
         menu.setFont(font);
-        
+
         // View Control
-        
         menuItem = new JMenuItem("View Control...");
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                 KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+                KeyEvent.VK_V, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            getCore().getCamera().setCustomizerVisible(true);
-          }
+            public void actionPerformed(ActionEvent evt) {
+                getCore().getCamera().setCustomizerVisible(true);
+            }
         });
         menu.add(menuItem);
-        
+
         menu.addSeparator();
-        
+
         // Magnetic Field 
-        
         menuItem = new JMenuItem("Magnetic Field...");
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                 KeyEvent.VK_M, ActionEvent.CTRL_MASK));
+                KeyEvent.VK_M, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            getCore().getMagProps().setCustomizerVisible(true);
-          }
+            public void actionPerformed(ActionEvent evt) {
+                getCore().getMagProps().setCustomizerVisible(true);
+            }
         });
         menu.add(menuItem);
-        
-        
+
         menu.addSeparator();
-        
+
         // Activity indexes
-        
         MagProps magProps = getCore().getMagProps();
-        for (int i=1; i<=MagProps.MAX_ACTIVITY_INDEX; i++) {
-          menuItem = new ActivityDataMenuItem(magProps, i);
-          menu.add(menuItem);
+        for (int i = 1; i <= MagProps.MAX_ACTIVITY_INDEX; i++) {
+            menuItem = new ActivityDataMenuItem(magProps, i);
+            menu.add(menuItem);
         }
 
-	menu.addSeparator();
-        
+        menu.addSeparator();
+
         // Space Colour
-        
-        menuItem = ((MenuItemsSource)getCore().getDescriptors().getDescriptor("backgroundColor").getPropertyEditor()).getMenuItems()[0];
+        menuItem = ((MenuItemsSource) getCore().getDescriptors().getDescriptor("backgroundColor").getPropertyEditor()).getMenuItems()[0];
         menu.add(menuItem);
-        
-        
-        
-        if ( !xyzWin.windowResizable ){
-          renPanelSizeEditor = new ovt.object.editor.SettingsEditor(xyzWin,true);
-          menu.addSeparator();
 
-          menuItem = new JMenuItem("Visualization Panel Size...");
-          menuItem.setFont(font);
-          menuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-              renPanelSizeEditor.setVisible(true);
-            }
-          });
+        if (!xyzWin.windowResizable) {
+            renPanelSizeEditor = new ovt.object.editor.SettingsEditor(xyzWin, true);
+            menu.addSeparator();
 
-          menu.add(menuItem);
+            menuItem = new JMenuItem("Visualization Panel Size...");
+            menuItem.setFont(font);
+            menuItem.addActionListener(new ActionListener() {
+                public void actionPerformed(ActionEvent evt) {
+                    renPanelSizeEditor.setVisible(true);
+                }
+            });
+
+            menu.add(menuItem);
         }
-        
-        
+
         add(menu);
-        
-        
-        // --------------- Add -------------
-        
+
+        // ---------------
+        //  Add FL Mapper
+        // ---------------
         menu = new JMenu("Add FL Mapper");
         menu.setFont(font);
-        
+
         // GB FL [GEO]
-        
         menuItem = new JMenuItem("Bind to GEO");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-             FieldlineMapper flm = new FieldlineMapper(getCore());
-             flm.setBindCS(CoordinateSystem.GEO);
-             flm.setName("New FL Mapper [GEO]");
-             getCore().getChildren().addChild(flm);
-             getCore().getChildren().fireChildAdded(flm);
-             flm.setCustomizerVisible(true);
-          }
+            public void actionPerformed(ActionEvent evt) {
+                FieldlineMapper flm = new FieldlineMapper(getCore());
+                flm.setBindCS(CoordinateSystem.GEO);
+                flm.setName("New FL Mapper [GEO]");
+                getCore().getChildren().addChild(flm);
+                getCore().getChildren().fireChildAdded(flm);
+                flm.setCustomizerVisible(true);
+            }
         });
         menu.add(menuItem);
-        
+
         // GB FL [SM]
-        
         menuItem = new JMenuItem("Bind to SMC");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-             FieldlineMapper flm = new FieldlineMapper(getCore());
-             flm.setBindCS(CoordinateSystem.SM);
-             flm.setName("New FL Mapper [SMC]");
-             getCore().getChildren().addChild(flm);
-             getCore().getChildren().fireChildAdded(flm);
-             flm.setCustomizerVisible(true);
-          }
+            public void actionPerformed(ActionEvent evt) {
+                FieldlineMapper flm = new FieldlineMapper(getCore());
+                flm.setBindCS(CoordinateSystem.SM);
+                flm.setName("New FL Mapper [SMC]");
+                getCore().getChildren().addChild(flm);
+                getCore().getChildren().fireChildAdded(flm);
+                flm.setCustomizerVisible(true);
+            }
         });
         menu.add(menuItem);
-        
+
         add(menu);
 
+        //------
         // Help
-        
+        //------
         menu = new JMenu("Help");
         menu.setFont(font);
-        
+
         menuItem = new JMenuItem("About");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent evt) {
-            HTMLBrowser hw = getVW().getHTMLBrowser();
-            String url = "file:"+getCore().getDocsDir()+"about.html";
-            //String url = "http://www.yahoo.com";
-            try {
-              hw.setPage(url);
-            } catch (IOException e) {e.printStackTrace();}
-            hw.setVisible(true);
-          }
+            public void actionPerformed(ActionEvent evt) {
+                HTMLBrowser hw = getVW().getHTMLBrowser();
+                String url = "file:" + getCore().getDocsDir() + "about.html";
+                //String url = "http://www.yahoo.com";
+                try {
+                    hw.setPage(url);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                hw.setVisible(true);
+            }
         });
         menu.add(menuItem);
-        
+
         add(menu);
+    }
 
-}
-
-public JMenuItem createImportSatelliteMenuItem() {
-    JMenuItem menuItem = new JMenuItem("Import Satellite ...");
+    public JMenuItem createImportSatelliteMenuItem() {
+        JMenuItem menuItem = new JMenuItem("Import Satellite ...");
         menuItem.setFont(Style.getMenuFont());
-        menuItem.addActionListener(new ActionListener(){
-             public void actionPerformed(ActionEvent evt) {
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
                 ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
                 Sat sat = wizard.start();
                 if (sat != null) {
@@ -318,124 +302,198 @@ public JMenuItem createImportSatelliteMenuItem() {
                     core.getSats().getChildren().fireChildAdded(sat);
                     core.Render();
                 }
-             }
+            }
         });
-    return menuItem;
-}
-
-private JMenu createSatsMenu() {
-    if (importSatelliteMenuItem == null) importSatelliteMenuItem = createImportSatelliteMenuItem();
-    JMenu menu = new JMenu("Satellites");
-    menu.setFont(font);
-    menu.addMenuListener( new MenuListener() {
-        public void menuCanceled(MenuEvent e) {}
-                
-        public void menuDeselected(MenuEvent e) {}
-                
-        public void menuSelected(MenuEvent e) {
-            JMenu satsMenu = (JMenu)e.getSource();
-            satsMenu.removeAll();
-            // Import Satellite ...
-            satsMenu.add(importSatelliteMenuItem);
-            satsMenu.addSeparator();
-            // List of satellites
-            JMenuItem[] items = createSatsList();
-            for (int i=0; i<items.length; i++) satsMenu.add(items[i]);
-        }
-    });
-    return menu;
-}        
-
-/** Each  JMenuItem is a JCheckBoxMenuItem with a satellite's name, 
- * is checked if sat is added to  {@link ovt.object.Sats Sats}.
-   * @return JMenuItem[]
- */
-public JMenuItem[] createSatsList() {
-  File[] files = null;
-  FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle") || 
-          (file.endsWith(".ltof") && !file.startsWith("Cluster"));
-  // First check odata in user home
-  File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
-  if (userOrbitDir!=null)
-    files = userOrbitDir.listFiles(filter);
-  // Then check the system level odata
-  File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
-  if (sysOrbitDir!=null){
-    File[] sysFiles = sysOrbitDir.listFiles(filter);
-    if (files==null) 
-      files = sysFiles;
-    else 
-      files = Utils.concat(files, sysFiles);
-  }
-    
-    JMenuItem[] items = null;
-    if (files==null) {
-      return items;
-    } else {
-      items = new JMenuItem[files.length];
+        return menuItem;
     }
-     
-     ActionListener actionListener = (ActionEvent evt) -> {
-       JCheckBoxMenuItem item = (JCheckBoxMenuItem)evt.getSource();
-       String satname = item.getText();
-       if (item.isSelected()) { // create Sat and add it to OVTCore.Sats
-         
-         try {
-           Sat sat;
-           // check if TLE file exists
-           String satName = OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satname);
-           File file = Utils.findFile(satName+".tle");
-           if (file==null) {
-             // check if LTOF file exists
-             file =  Utils.findFile(satName+".ltof");
-             if (file==null)
-               throw new IOException("Orbit file "+satName+".tle/.ltof not found");
-             else
-               sat = new LTOFSat(getCore());
-           } else sat = new TLESat(getCore());
-           sat.setName(satname);
-           sat.setOrbitFile(file);
-           core.getSats().addSat(sat);
-           core.getSats().getChildren().fireChildAdded(sat);
-         } catch (IOException e2) {
-           core.sendErrorMessage(e2);
-         }
-       } else {                 // remove Sat from OVTCore.Sats
-         Sat sat = (Sat)core.getSats().getChildren().getChild(satname);
-         core.getSats().removeSat(sat);
-         core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
-       }
-       core.Render();
-    };
 
-     for (int i=0; i<files.length; i++) { 
-         String filename = files[i].getName();
-         String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
-         JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
-         menuItem.setFont(font);
-         menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // select if sat is already added to OVT
-         menuItem.addActionListener(actionListener);
-         items[i] = menuItem;
-     }
-        
-     return items;   
-}
+    /**
+     * Create Satellites menu. NOTE: Only creates a JMenu and a MenuListener
+     * immediately, but no JMenuItems. The actual JMenuItems are created and
+     * added dynamically to the JMenu every time the "Satellites" menu is
+     * clicked. Any previous JMenuItems are destroyed first.
+     */
+    private JMenu createSatsMenu() {
+        if (importSatelliteMenuItem == null) {
+            importSatelliteMenuItem = createImportSatelliteMenuItem();
+        }
+        JMenu menu = new JMenu("Satellites");
+        menu.setFont(font);
+        menu.addMenuListener(new MenuListener() {
+            public void menuCanceled(MenuEvent e) {
+            }
 
+            public void menuDeselected(MenuEvent e) {
+            }
 
-protected XYZWindow getVW()
-	{ return xyzWin; }
+            public void menuSelected(MenuEvent e) {
+                JMenu satsMenu = (JMenu) e.getSource();
+                satsMenu.removeAll();                 // NOTE: Remove all previously existing MenuItems!
 
-protected OVTCore getCore()
-	{ return xyzWin.getCore(); }
-        
-        
-        
+                // Import Satellite ...
+                satsMenu.add(importSatelliteMenuItem);
+
+                // List of satellites
+                satsMenu.addSeparator();
+                JMenuItem[] items = createSatsList();
+                for (int i = 0; i < items.length; i++) {
+                    satsMenu.add(items[i]);
+                }
+
+                // DEBUG
+                satsMenu.addSeparator();
+                satsMenu.add(createTestSatMenuItem_TEST());
+            }
+        });
+        return menu;
+    }
+
+    private final String satTreeName_TEST = "(SSC) TestSat";
+    // TEST / DEBUG
+    public JMenuItem createTestSatMenuItem_TEST() {
+
+        final ActionListener actionListener = (ActionEvent evt) -> {
+            final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
+
+            if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
+                addTestSat_TEST();
+            } else {
+                // remove Sat from OVTCore.Sats
+                final Sat sat = (Sat) core.getSats().getChildren().getChild(satTreeName_TEST);
+                core.getSats().removeSat(sat);
+                core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
+            }
+            core.Render();
+        };
+
+        final JMenuItem newMenuItem = new JCheckBoxMenuItem("SSC Test satellite menu item");
+        newMenuItem.setFont(Style.getMenuFont());
+        newMenuItem.addActionListener(actionListener);
+        newMenuItem.setSelected(core.getSats().getChildren().containsChild(satTreeName_TEST));  // Select if sat is already added to OVT.
+        return newMenuItem;
+    }
+
+    public void addTestSat_TEST() {
+        final Sat sat = new SSCWebServicesSat_TEST(getCore());
+        sat.setName(satTreeName_TEST);
+        //sat.setOrbitFile(null);   // Null not permitted by <Sat>.setOrbitFile. Permitted to omit?
+        try {
+            sat.setNoOrbitFile();
+        } catch (IOException e2) {
+            getCore().sendErrorMessage(e2);
+        }
+        getCore().getSats().addSat(sat);
+        getCore().getSats().getChildren().fireChildAdded(sat);
+    }
+
+// TEST / DEBUG
+    /**
+     * The java "command" to add a satellite. This should be called by any GUI
+     * item that wants to add a satellite, or for any initialization of OVT at
+     * startup. NOTE: Not static since command needs
+     */
+    /**
+     * Each JMenuItem is a JCheckBoxMenuItem with a satellite's name, is checked
+     * if sat is added to {@link ovt.object.Sats Sats}.
+     *
+     * @return JMenuItem[]
+     */
+    public JMenuItem[] createSatsList() {
+        File[] files = null;
+        FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
+                || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
+        // First check odata in user home
+        File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
+        if (userOrbitDir != null) {
+            files = userOrbitDir.listFiles(filter);
+        }
+        // Then check the system level odata
+        File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
+        if (sysOrbitDir != null) {
+            File[] sysFiles = sysOrbitDir.listFiles(filter);
+            if (files == null) {
+                files = sysFiles;
+            } else {
+                files = Utils.concat(files, sysFiles);
+            }
+        }
+
+        JMenuItem[] items = null;
+        if (files == null) {
+            return items;
+        } else {
+            items = new JMenuItem[files.length];
+        }
+
+        // ---------------------------------------------------
+        // Create one ActionListener used for all Sat in list.
+        // ---------------------------------------------------
+        ActionListener actionListener = (ActionEvent evt) -> {
+            JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
+            String satname = item.getText();    // Figure out which Sat is referred to.
+            if (item.isSelected()) { // create Sat and add it to OVTCore.Sats
+
+                try {
+                    Sat sat;
+                    // check if TLE file exists
+                    String satName = OVTCore.getOrbitDataDir() + Utils.replaceSpaces(satname);
+                    File file = Utils.findFile(satName + ".tle");
+                    if (file == null) {
+                        // check if LTOF file exists
+                        file = Utils.findFile(satName + ".ltof");
+                        if (file == null) {
+                            throw new IOException("Orbit file " + satName + ".tle/.ltof not found");
+                        } else {
+                            sat = new LTOFSat(getCore());
+                        }
+                    } else {
+                        sat = new TLESat(getCore());
+                    }
+                    sat.setName(satname);
+                    sat.setOrbitFile(file);
+                    core.getSats().addSat(sat);
+                    core.getSats().getChildren().fireChildAdded(sat);
+                } catch (IOException e2) {
+                    core.sendErrorMessage(e2);
+                }
+            } else {
+                // Remove Sat from OVTCore.Sats
+                Sat sat = (Sat) core.getSats().getChildren().getChild(satname);
+                core.getSats().removeSat(sat);
+                core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
+            }
+            core.Render();
+        };
+
+        for (int i = 0; i < files.length; i++) {
+            String filename = files[i].getName();
+            String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
+            JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
+            menuItem.setFont(font);
+            menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // select if sat is already added to OVT
+            menuItem.addActionListener(actionListener);
+            items[i] = menuItem;
+        }
+
+        return items;
+    }
+
+    protected XYZWindow getVW() {
+        return xyzWin;
+    }
+
+    protected OVTCore getCore() {
+        return xyzWin.getCore();
+
+    }
+
 }
 
 class ActivityDataMenuItem extends JMenuItem implements ActionListener {
 
     private int activityIndex;
     private MagProps magProps;
+
     ActivityDataMenuItem(MagProps mp, int activityIndex) {
         super();
         setText(mp.getActivityName(activityIndex) + "...");
@@ -444,9 +502,9 @@ class ActivityDataMenuItem extends JMenuItem implements ActionListener {
         this.magProps = mp;
         addActionListener(this);
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
-            magProps.activityEditors[activityIndex].setVisible(true);
+        magProps.activityEditors[activityIndex].setVisible(true);
     }
-    
+
 }

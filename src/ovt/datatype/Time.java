@@ -172,6 +172,7 @@ public void setTime(double mjd) {
 	n = jday - (l * 1461) / 4 + 18234;
 	m = (n * 80) / 2447;
 	
+        // Set instance variables: day, month etc..
 	day = n - (m * 2447) / 80;
 	  jj = m / 11;
 	month = m + 2 - jj * 12;
@@ -193,6 +194,18 @@ public void setTime(double mjd) {
 }
     
 
+/** Convert from Gregorian calendar date (UTC?) and time to Modified Julian date (Mjd).
+ * 
+ * NOTE: Uncertain how correct the conversion is.: 1949-12-31 gives Mjd = 0 (approximately).
+ * The conversion also jumps at year 1900 which the real conversion function does not.
+ * Empirical comparisons (plots) with other conversion function (Wikipedia) implies that this
+ * conversion function is wrong by a constant offset for year>=1900.
+ * <BR>
+ * 
+ * NOTE: There is at least one OVT function that converts in the opposite direction:<BR>
+ * public void setTime(double mjd) which should be modified if this function is modified.<BR>
+ *  
+ */
 public static double getMjd(int year, int month, int day, int hour, int mins, double sec)
                                   throws NumberFormatException {
     int jj,l;
@@ -205,7 +218,7 @@ public static double getMjd(int year, int month, int day, int hour, int mins, do
 
     return temp_mjd;
 }
-    
+ 
 
 /*public static double getMjd(int year, int month, int day, int hour, int mins) 
     							throws NumberFormatException {

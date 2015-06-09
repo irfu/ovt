@@ -110,7 +110,7 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     setOrbitFile(new File(orbitFile));
   }*/
 
-  /** used my each constructor */
+  /** Used by each constructor. */
   protected void initialize() {
     
     try {
@@ -182,6 +182,22 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     int tmpi=tmps.lastIndexOf('.');
     this.spinFileName=new String(tmps.substring(0,tmpi)+".spin");
     this.spinData=new SpinData(spinFileName);
+    
+    updateEnabled();
+  }
+  
+  // PROPOSAL: Incorporate into setOrbitFile.
+  /** Alternative to setOrbitFile for subclasses which data are not based on an "orbitFile" and therefore can not use that method. */
+  public void setNoOrbitFile() throws IOException {
+    this.orbitFile = null;
+    this.spinFileName = null;
+    this.spinData = null;
+      
+    double firstLastMjdPeriodSatNumber[] = getFirstLastMjdPeriodSatNumber();
+    firstDataMjd = firstLastMjdPeriodSatNumber[0];
+    lastDataMjd  = firstLastMjdPeriodSatNumber[1];
+    revolutionPeriod = firstLastMjdPeriodSatNumber[2];
+    satNumber = (int)firstLastMjdPeriodSatNumber[3];
     
     updateEnabled();
   }
@@ -310,6 +326,7 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
 
 /** This method should read orbitFile, fill in gei_arr and vei_arr with the positions and velocities of the satellite computed 
   * on the basis of thr orbitFile.
+  * @param geiarr The first index numbers the coordinate tuple. The second index represents the coordinate axis (x,y,z).
   */
 abstract void fill_GEI_VEI(double[] timeMap, double[][]  gei_arr,double[][]  vei_arr) throws IOException;
 

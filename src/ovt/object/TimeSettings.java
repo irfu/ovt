@@ -34,6 +34,7 @@ Khotyaintsev
  * TimeSettings.java
  *
  * Created on February 28, 2000, 11:00 AM
+ *
  */
  
 package ovt.object;
@@ -46,6 +47,7 @@ import ovt.event.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
 import ovt.object.editor.*;
+import ovt.object.TimeSettingsCustomizer;
 
 import java.beans.*;
 
@@ -53,12 +55,15 @@ import java.awt.event.*;
 import java.util.*;
 import java.lang.reflect.*;
 
+
 /** 
  *
  * @author  mykola
  * @version 
  */
 public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
+
+  private final int NBR_OF_STEPS_BEFORE_WARNING = 400;
 
   /** Holds value of property customizerVisible. */
   private boolean customizerVisible = false;
@@ -106,10 +111,10 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   public void setTimeSet(TimeSet ts) throws IllegalArgumentException {
     //Log.log("->setTimeSet("+ts+")");
     if (ts.getStepMjd() > ts.getIntervalMjd()/2.)
-        throw new IllegalArgumentException("Step is too large");
+        throw new IllegalArgumentException("Step is more than twice as large as the length of the time interval.");
     
-    if ( ts.getIntervalMjd()/ts.getStepMjd() > 400) 
-        getCore().sendWarningMessage("Warning", "Number of steps exceeds 400");
+    if ( ts.getIntervalMjd()/ts.getStepMjd() > NBR_OF_STEPS_BEFORE_WARNING) 
+        getCore().sendWarningMessage("Warning", "Number of steps exceeds "+NBR_OF_STEPS_BEFORE_WARNING+".");
     
     ts.adjustInterval();
     ts.adjustCurrentMjd();
