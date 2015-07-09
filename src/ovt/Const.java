@@ -49,8 +49,12 @@ public static final double R_TO_D = 57.29577951;
 public static final double M_TO_R = 0.261799388; 
 public static final double GEX = 45.0;    /* plot extent */
 public static final double PEX = 0.75;
-/** earth radius */
-public static final double RE = 6371.2; 
+/** Earth radius (km). */
+public static final double RE = 6371.2;    
+/** Earth mass (kg). */
+public static final double ME = 5.9722e24; 
+/** Gravitational constant (m^3 * kg^-1 * s^-2; does not use km!). */
+public static final double GRAV_CONST = 6.67259e-11;
 
 
 public static final int HOLLOW  = 0;
@@ -82,8 +86,6 @@ public static final int LOG =   0;
 public static final Vector CoordSystems = new Vector();
 
 static {
-
-	
 	CoordSystems.addElement("GSM");
 	CoordSystems.addElement("GSE");
 	CoordSystems.addElement("GEI");
@@ -91,7 +93,6 @@ static {
 	CoordSystems.addElement("SMC");
 	CoordSystems.addElement("COR");
 	CoordSystems.addElement("ECC");
-	
 }
 
 

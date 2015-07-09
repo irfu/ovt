@@ -64,6 +64,10 @@ import java.lang.reflect.*;
 public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
 
   private final int NBR_OF_STEPS_BEFORE_WARNING = 400;
+  private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");
+  private final double INITIAL_INTERVAL_MJD = 1;
+  private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");   
+  private final double INITIAL_CURRENT_MJD = Time.getMjd("2012-12-30 00:00:00");
 
   /** Holds value of property customizerVisible. */
   private boolean customizerVisible = false;
@@ -83,11 +87,9 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     showInTree(false);
     setParent(core); // to have a full name "OVT.TimeSettings"
     
-    timeSet = new TimeSet(Time.getMjd("2002-01-01 00:00:00"), 1., 
-        MinutesAndSeconds.getInDays("20:00"), Time.getMjd("2002-01-01 00:00:00"));
+    timeSet = new TimeSet(INITIAL_START_MJD, INITIAL_INTERVAL_MJD, INITIAL_STEP_MJD, INITIAL_CURRENT_MJD);
 
-    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);
-    
+    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);    
   }
 
   public void addTimeChangeListener (TimeChangeListener listener) {

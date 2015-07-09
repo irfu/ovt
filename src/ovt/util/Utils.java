@@ -40,6 +40,7 @@ package ovt.util;
 
 import java.util.*;
 import java.io.*;
+import java.math.RoundingMode;
 
 import ovt.*;
 import ovt.datatype.*;
@@ -51,8 +52,8 @@ import ovt.datatype.*;
  */
 public class Utils extends Object {
     
-  /** Creates new Utils */
-    public Utils() {
+    /** Private constructor to prevent instantiation. */
+    private Utils() {
     }
     
     public static float[] getRGB(java.awt.Color color) {
@@ -64,7 +65,7 @@ public class Utils extends Object {
         return rgb;
     }
     
-  /** Returns the array 0, 1, 2, 3, ...., objs.length */
+  /** Creates and returns the array [0, 1, 2, 3, ...., objs.length-1]. */
     public static int[] getIndexes(Object[] objs) {
         int[] res = new int[objs.length];
         for (int i=0; i<objs.length; i++)
@@ -87,8 +88,8 @@ public class Utils extends Object {
     }
     
    /**
-    * @returns the angle in degrees between the vernal equinox (X axis) and the
-    * Greewich meridian. All numbers from pgs B6-B7 of 1984 Alamanc
+    * @return The angle in degrees between the vernal equinox (X axis) and the
+    * Greenwich meridian. All numbers from pgs B6-B7 of 1984 Alamanc
     */
     public static double gha(Julian jday) {
         double  interval, t, jday0, gmst, gha_;
@@ -134,7 +135,7 @@ public class Utils extends Object {
         return sunv;
     }
     
-/** vector from earth to sun */
+/** vector from earth to sun. NOTE: The use of this function in "sunmjd" implies that the returned value is in GEI. */
     public static double[] sun_vect(Julian mjd) {
         return sun_vectJNI(mjd.integer, mjd.fraction);
     }
@@ -579,10 +580,6 @@ public static <T> T[] concat(T[] first, T[] second) {
         return sb.toString();
     }
     
-    public static void main(String[] args) {
-        getRGB(java.awt.Color.white);
-    }
-    
     public static Enumeration sort(Enumeration e) {
         Vector v = new Vector();
         while (e.hasMoreElements()) sortInsert(v, e.nextElement());
@@ -721,4 +718,335 @@ public static <T> T[] concat(T[] first, T[] second) {
         }
         return file;
     }
+    
+    
+    /**
+     * Linear interpolation of array. Interpolates a sequence/line of points
+     * (X[i], Y[i]) to a sequence of points (X_int[i], Y_int[i]).
+     *
+     * Although the primary purpose of this function is to interpolate orbital
+     * positions (one coordinate axis at a time) and calculate approximate
+     * velocities, the function itself is generic and the result is in the units
+     * used by the caller.
+     * 
+     * NOTE: The dYdX value on points between line segments comes from the preceeding line segment.
+     *
+     * @param X Array with X values. Values increase monotonically.
+     * @param Y Array with one Y value for every X value.
+     * @param X_int Array with X values for which interpolated Y values are
+     * requested. Values increase monotonically. All values must be within the range of X.
+     * @param Y_int Array into which interpolated data will be put.
+     * @param dYdX Array into which interpolated data will be put.
+     */
+    // PROPOSAL: Replace with better interpolation (splines)?
+    public static void linearInterpolation(double[] X, double[] Y, double[] X_int, double[] Y_int, double[] dYdX_int) {
+        // Naming convention:
+        //   Suffix "_int" = Interpolated/interpolation data
+        //   No suffix = Data to interpolate from
+        //   Lower case x/y = Specific points.
+        //   Upper case X/Y = Entire array.
+
+        if (X.length < 2) {
+            throw new IllegalArgumentException("X array is too short (length<2) for this function.");
+        } else if (Y_int.length != X_int.length) {
+            throw new IllegalArgumentException("Y_int has an incompatible length.");            
+        } else if (dYdX_int.length != X_int.length) {
+            throw new IllegalArgumentException("dXdX_int has an incompatible length.");            
+        } else if (X_int[0] < X[0]) {
+            throw new IllegalArgumentException("Trying to interpolate outside data, X_int[0] < X[0]");
+        } else if (X[X.length-1] < X_int[X_int.length-1]) {
+            throw new IllegalArgumentException("Trying to interpolate outside data, X[X.length-1] < X_int[X_int.length-1]");            
+        }
+
+        int i2 = 0;
+        for (int i_int = 0; i_int < X_int.length; i_int++) {
+
+            // Find the lowest "i2" such that X[i2] >= X_int[i_int] and i2>0.
+            while ((X[i2] < X_int[i_int]) || (i2 == 0)) {
+                i2++;
+            }
+
+            // Interpolate between points (x1, y1) and (x2, y2) and find
+            // the derivative at that point.
+            final int i1 = i2 - 1;
+            final double x_int = X_int[i_int];
+            final double x1 = X[i1], x2 = X[i2];
+            final double y1 = Y[i1], y2 = Y[i2];
+            final double weight2 = (x_int - x1) / (x2 - x1);
+            final double weight1 = 1 - weight2;
+            Y_int[i_int] = weight1 * y1 + weight2 * y2;
+            dYdX_int[i_int] = (y2 - y1) / (x2 - x1);
+        }
+    }
+
+
+    /**
+     * Calculate orbital period from a satellite's velocity and distance to
+     * Earth at an arbitrarily chosen instant. This should always yield the same
+     * result for an idealized elliptical orbit. Only uses SI units.
+     *
+     * @param r Distance from center of the Earth in meters.
+     * @param v Velocity in m/s.
+     * @return Orbital period in seconds.
+     */
+    // PROPOSAL: Move to Utils?
+    private static double orbitalPeriod(double r, double v) {
+
+        /* Derive semimajor axis.
+         This can probably be derived from the expression for the effective
+         potential for an orbit (average of min & max distance ==> semimajor axis). */
+        final double mu = Const.GRAV_CONST * Const.ME;
+        final double epsilon = v * v / 2 - mu / r;
+        final double a = -mu / (2 * epsilon);  // Semimajor axis
+
+        /* Derive period from semimajor axis.
+         Uses Kepler's third law. The constant in Kepler's third law (C_K3) can
+         be derived using a circular orbit. */
+        final double C_K3 = 4 * Math.PI * Math.PI / (Const.GRAV_CONST * Const.ME);
+        final double P = Math.sqrt(C_K3 * a * a * a);
+
+        return P;
+    }
+    
+    
+    /**
+     * Return array that is the concatenation of multiple arrays.
+     * Should work for zero-length arrays, including zero-length aa.
+     * No null pointers permitted anywhere.
+     */
+    public static double[] concatDoubleArrays(double[][] aa) {
+        int N_a = 0;
+        for (double[] ap : aa) {
+            if (ap == null) {
+                throw new NullPointerException("Array component is null.");
+            }
+            N_a = N_a + ap.length;
+        }
+        final double[] a = new double[N_a];
+
+        int i_a = 0;
+        for (double[] ap : aa) {
+            System.arraycopy(ap, 0, a, i_a, ap.length);
+            i_a += ap.length;
+        }
+        return a;
+    }
+
+
+    /**
+     * @author Erik P G Johansson
+     * Find index of a specified value.
+     *
+     * NOTE: Behaviour is undefined for any appearance of NaN or Inf anywhere.
+     *
+     * @param a Sorted array, monotonically increasing values, i.e. no value
+     * occurs multiple times.
+     * 
+     * @return The index i for which a[i]==x if there is any.
+     * If x lies between any pair of elements, return the lower/higher index depending on rounding mode.
+     * If x lies outside the range of the array, return -1 or a.length depending on rounding mode.
+     */
+    public static int findNearestMatch(double[] a, double x, RoundingMode indexRoundingMode) {
+        if ((indexRoundingMode != RoundingMode.FLOOR) && (indexRoundingMode != RoundingMode.CEILING)) {
+            throw new IllegalArgumentException("Illegal \"indexRoundingMode\" value.");
+        }
+        
+        int i = java.util.Arrays.binarySearch(a, x);
+        if (i < 0) {
+            // CASE: No exact match.
+            i = -i - 1;  // "Insertion point" in "Arrays" API documentation <=> rounding up (ceil)
+            if (indexRoundingMode == RoundingMode.FLOOR) {
+                i--;
+            }
+        }
+        return i;
+    }
+    
+    
+    /** Find an interval of values in a sorted array.
+     * 
+     * NOTE: Behaviour is undefined for any appearance of NaN or Inf anywhere.
+     * NOTE: This functio nis often used for copying intervals from arrays.
+     * Howver, one might still want to keep it separate from the copying so that
+     * the derived indices can be used on other arrays than the parameter array.
+     * 
+     * @param a Sorted array, monotonically increasing values, i.e. no value
+     * occurs multiple times.
+     * 
+     * @return Pair of elements defining the specified interval of indices into
+     * the array "a". The first element defines
+     * the lower bound (inclusive), the second element defines the upper bound
+     * (exclusive). These will always define a valid interval that can be copied.
+     */
+    public static int[] findInterval(double[] a, double min, double max, boolean minInclusive, boolean maxInclusive) {
+        if (((max == min) & !minInclusive & !maxInclusive) | (max < min)) {
+            throw new IllegalArgumentException("Illegal combination of arguments which define no interval.");
+        }
+        
+        int i_first, i_last;  // Will be assigned value which are always valid indices into "a".
+        if (minInclusive) {
+            i_first = findNearestMatch(a, min, RoundingMode.CEILING);
+        } else {
+            i_first = findNearestMatch(a, min, RoundingMode.FLOOR) + 1;
+        }
+        if (maxInclusive) {
+            i_last = findNearestMatch(a, max, RoundingMode.FLOOR);
+        } else {
+            i_last = findNearestMatch(a, max, RoundingMode.CEILING) - 1;
+        }
+        return new int[] {i_first, i_last+1};   // Add one to "i_last" to make return value exclusive.
+    }
+    
+    
+    /**
+     * Select interval from array. If specifying the entire source array, then
+     * return the source array (same reference; shallow copy), if not, then
+     * return new array with copied content.
+     * MC = maybe copy (only if necessary)
+     */
+    public static double[] selectArrayIntervalMC(double[] a, int i_start, int i_end) {
+        if (i_end - i_start == a.length) {
+            return a;
+        } else {
+            double[] ra = new double[i_end - i_start];
+            System.arraycopy(a, i_start, ra, 0, i_end - i_start);
+            return ra;
+        }
+    }
+    
+
+    /** Informal test code. */
+    public static void main(String args) {
+        //test_findNearestMatch();
+        //test_linearInterpolation();
+        test_findInterval();
+    }
+    
+    
+    private static void test_findInterval() {
+        class Test {
+            double[] a;
+            double min, max;
+            boolean minIncl, maxIncl;
+            int[] result;
+            Test(double[] a, double min, double max, boolean minIncl, boolean maxIncl, int[] result) {
+                this.a = a;
+                this.min = min;
+                this.max = max;
+                this.minIncl = minIncl;
+                this.maxIncl = maxIncl;
+                this.result = result;
+            }
+        }
+        //===================================
+        final List<Test> tests = new ArrayList();
+        tests.add(new Test(new double[] {}, 2,3, true, true, new int[] {0,0}));
+        tests.add(new Test(new double[] {}, 2,3, false, false, new int[] {0,0}));
+        tests.add(new Test(new double[] {5,6,7}, 2,3, false, false, new int[] {0,0}));
+        tests.add(new Test(new double[] {5,6,7}, 2,3, true, true, new int[] {0,0}));
+        tests.add(new Test(new double[] {5,6,7}, 5,6, true, false, new int[] {0,1}));
+        tests.add(new Test(new double[] {5,6,7}, 5,6, false, true, new int[] {1,2}));
+        tests.add(new Test(new double[] {5,6,7}, 5,6, false, false, new int[] {1,1}));
+        //===================================
+        for (Test test : tests) {
+            System.out.println("findInterval("+Arrays.toString(test.a)+", "+test.min+", "+test.max+", "+test.minIncl+", "+test.maxIncl+");");
+            
+            final int[] actualResult = findInterval(test.a, test.min, test.max, test.minIncl, test.maxIncl);
+            if (Arrays.equals(actualResult, test.result)) {
+                System.out.println("=== OK");
+            } else {
+                System.out.println("##############################");
+                System.out.println("ERROR: actualResult = "+Arrays.toString(actualResult));
+                System.out.println("##############################");
+            }
+        }
+    }
+
+    
+    /** Test code. */
+    private static void test_findNearestMatch() {        
+        class Test {
+            double[] a;
+            double x;
+            RoundingMode indexRoundingMode;
+            int result;
+            Test(double[] a, double divider, RoundingMode indexRoundingMode, int result) {
+                this.a = a;
+                this.x = divider;
+                this.indexRoundingMode = indexRoundingMode;
+                this.result = result;
+            }            
+        }        
+        final List<Test> tests = new ArrayList();
+        
+        tests.add(new Test(new double[] {}, 4.0, RoundingMode.CEILING, 0));
+        tests.add(new Test(new double[] {}, 4.0, RoundingMode.FLOOR, -1));
+        //
+        tests.add(new Test(new double[] {5.0}, 4.0, RoundingMode.CEILING, 0));
+        tests.add(new Test(new double[] {5.0}, 5.0, RoundingMode.CEILING, 0));
+        tests.add(new Test(new double[] {5.0}, 6.0, RoundingMode.CEILING, 1));
+        //
+        tests.add(new Test(new double[] {5.0}, 4.0, RoundingMode.FLOOR, -1));
+        tests.add(new Test(new double[] {5.0}, 5.0, RoundingMode.FLOOR, 0));
+        tests.add(new Test(new double[] {5.0}, 6.0, RoundingMode.FLOOR, 0));
+        //
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 0.0, RoundingMode.CEILING, 0));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 1.5, RoundingMode.CEILING, 1));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 3.0, RoundingMode.CEILING, 2));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 5.0, RoundingMode.CEILING, 4));
+        //
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 0.0, RoundingMode.FLOOR, -1));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 1.5, RoundingMode.FLOOR, 0));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 3.0, RoundingMode.FLOOR, 2));
+        tests.add(new Test(new double[] {1.0, 2.0, 3.0, 4.0}, 5.0, RoundingMode.FLOOR, 3));
+        
+        for (Test test : tests) {
+            System.out.println("findNearestMatch("+Arrays.toString(test.a)+", "+test.x+", "+test.indexRoundingMode+");");
+            
+            final int actualResult = findNearestMatch(test.a, test.x, test.indexRoundingMode);
+            if (actualResult == test.result) { 
+                System.out.println("=== OK");
+            } else {
+                System.out.println("##############################");
+                System.out.println("ERROR: actualResult = "+actualResult);
+                System.out.println("##############################");
+            }
+        }
+    }
+
+    
+    /** Test code. */
+    private static void test_linearInterpolation() {
+        class Test {
+            // Y_int, dYdX_int are the results.
+            final double[] X, Y, X_int, Y_int, dYdX_int;
+            public Test(double[] X, double[] Y, double[] X_int, double[] Y_int, double[] dYdX_int) {
+                this.X = X;
+                this.Y = Y;
+                this.X_int = X_int;
+                this.Y_int = Y_int;
+                this.dYdX_int = dYdX_int;
+            }
+        }
+        //======================================================================
+        List<Test> tests = new ArrayList();
+        tests.add(new Test(new double[] {10,15}, new double[] {20,30}, new double[] {11}, new double[] {22}, new double[] {2}));
+        tests.add(new Test(new double[] {10,15}, new double[] {20,30}, new double[] {10}, new double[] {20}, new double[] {2}));
+        tests.add(new Test(new double[] {10,15}, new double[] {20,30}, new double[] {15}, new double[] {30}, new double[] {2}));
+        tests.add(new Test(new double[] {10,15}, new double[] {20,30}, new double[] {11, 12.5, 13.5}, new double[] {22,25,27}, new double[] {2,2,2}));
+        tests.add(new Test(new double[] {10,15,25}, new double[] {20,30,35}, new double[] {10, 11, 12.5, 13.5, 20, 25}, new double[] {20,22,25,27,32.5,35}, new double[] {2, 2, 2, 2, 0.5, 0.5}));
+        
+        for (Test test : tests) {
+            final double[] actual_Y_int = Arrays.copyOf(test.Y_int, test.Y_int.length);
+            final double[] actual_dYdX_int = Arrays.copyOf(test.dYdX_int, test.dYdX_int.length);
+            linearInterpolation(test.X, test.Y, test.X_int, actual_Y_int, actual_dYdX_int);            
+            if (Arrays.equals(test.Y_int, actual_Y_int) && Arrays.equals(test.dYdX_int, actual_dYdX_int)) {
+                System.out.println("OK");
+            } else {
+                System.out.println("====================================================  ERROR");
+            }
+        }
+    }
+    
+
 }

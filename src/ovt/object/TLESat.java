@@ -68,8 +68,8 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
 /** 
  * Implementation of the parents abstract method. Reads the orbitFIle, computes... returns...
  */
-protected  void fill_GEI_VEI(double[] timeMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
-    getSatPosJNI(orbitFile.getAbsolutePath(), timeMap, gei_arr, vei_arr, timeMap.length);
+protected  void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
+    getSatPosJNI(orbitFile.getAbsolutePath(), timeMjdMap, gei_arr, vei_arr, timeMjdMap.length);
 }
 
 

@@ -37,7 +37,7 @@ Khotyaintsev
  * 
  * IMPORTANT NOTE: THIS CLASS DOES NOT SEEM TO BE USED. It seems to be an
  * alternate version of ovt.object.TimeSettingsManager which is used and is
- * labeled "Revision 1.2" (!).
+ * labeled as an _earlier version, "Revision 1.2".
  */
 
 package ovt.gui;

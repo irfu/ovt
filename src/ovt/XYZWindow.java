@@ -42,7 +42,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*;
 import ovt.object.Camera;
-import ovt.object.SSCWebServicesSat_TEST;
+import ovt.object.SSCWSSat;
 import ovt.object.Sat;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 import vtk.rendering.jogl.vtkJoglCanvasComponent;
@@ -202,7 +202,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             setResizable(windowResizable);
         }
         
-        menuBar.addTestSat_TEST();  // TEST
+        //menuBar.addSSCWSSatAction_TEST("TestSat");  // TEST
+        //menuBar.addSSCWSSatAction_TEST("Enterprise");  // TEST
+        //menuBar.addSSCWSSatAction_TEST("UFO");  // TEST
     }
 
     public void start() {

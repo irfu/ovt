@@ -84,12 +84,12 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
     return new double[] {  firstTime+Time.Y2000,  lastMjd,  evolPeriodDays,  satNumber}; 
  }
     
-/**Reads LTOFile, computes positions and velocities for given times */
-protected void fill_GEI_VEI(double[] timeMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
+/** Reads LTOFile, computes positions and velocities for given times. */
+protected void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
     BufferedReader inData;
     String line;
     int codeOfLine,i,j, k=0,lineNumber=0;
-    double mjd = timeMap[k];
+    double mjd = timeMjdMap[k];
 
     try {
         inData = new BufferedReader(new FileReader(orbitFile));
@@ -102,7 +102,7 @@ protected void fill_GEI_VEI(double[] timeMap, double[][] gei_arr, double[][] vei
     // the structure of the the LTOF is given in docs/LTOF.pdf
     
 
-    while (inData.ready() && k<timeMap.length) {
+    while (inData.ready() && k<timeMjdMap.length) {
         LTOFRecord rec = new LTOFRecord();
         line = inData.readLine();    // Read 1st record
         lineNumber++;
@@ -155,9 +155,9 @@ protected void fill_GEI_VEI(double[] timeMap, double[][] gei_arr, double[][] vei
         }
         
         // calculate and fill in gei_arr vei_arr  for the time valid for this record
-        while (mjd<=rec.dayEnd && k<timeMap.length) {  //Treatment of MJDs as much as possible.
+        while (mjd<=rec.dayEnd && k<timeMjdMap.length) {  //Treatment of MJDs as much as possible.
             //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
-            mjd = timeMap[k];
+            mjd = timeMjdMap[k];
             double[] posAndVel = solveKepler(mjd, rec);
             for (int jx=0; jx<3; jx++) {
                 gei_arr[k][jx] = posAndVel[jx];
@@ -173,7 +173,7 @@ protected void fill_GEI_VEI(double[] timeMap, double[][] gei_arr, double[][] vei
 
 
 
- /** Keper solver. Returns S/C position & velocity for input mjd
+ /** Kepler solver. Returns S/C position & velocity for input mjd
   * @param Mjd
   * @return double []
   */

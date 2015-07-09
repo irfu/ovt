@@ -135,12 +135,13 @@ public class IntHashtable extends Dictionary implements Cloneable
 	return false;
 	}
 
-    /// Gets the object associated with the specified key in the 
-    // hashtable.
-    // @param key the specified key
-    // @returns the element for the key or null if the key
-    // 		is not defined in the hash table.
-    // @see IntHashtable#put
+    /** Gets the object associated with the specified key in the 
+     * hashtable.
+     * @param key The specified key
+     * @return The element for the key or null if the key
+     * 		is not defined in the hash table.
+     * @see IntHashtable#put
+    */
     public synchronized Object get( int key )
 	{
 	IntHashtableEntry tab[] = table;

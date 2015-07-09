@@ -93,6 +93,8 @@ public class MinutesAndSeconds {
   public static String toString(double in_days) throws IllegalArgumentException 
     { return new MinutesAndSeconds(in_days).toString(); }
     
+  
+  /** Informal test code. */
   public static void main(String argv[]) {
       MinutesAndSeconds ms = new MinutesAndSeconds("54:01");
       //System.out.println(ms.toString()+" days: "+ms.getInDays());

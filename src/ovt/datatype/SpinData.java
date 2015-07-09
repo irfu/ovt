@@ -81,7 +81,7 @@ public class SpinData {
     *@return x,y,z - spin vector in GEI CS (abs. value indicates spin rate!)
     */
    public double[] getSpinVect(double mjd){
-      mjd-=18262.0;              //from J2000 !!!
+      mjd-=Time.Y2000;              // Change to Epoch from J2000 !!!
       if(!this.isAvailable())
          return null;
       try {
@@ -117,7 +117,7 @@ public class SpinData {
       BufferedReader inData;
       boolean isFound=false;
       String str;
-      double mjdx=mjd; //-18262.0;  //mjd from J1950, but mjdx from J2000 !!!
+      double mjdx=mjd; //-18262.0 (18626==Time.Y2000);  //mjd from J1950, but mjdx from J2000 !!!
       double[] spinVect={0,0,0};
       SpinRecord spRec=new SpinRecord();
       SpinRecord closestRec=new SpinRecord();
@@ -152,7 +152,7 @@ public class SpinData {
       String str=new String(" 1 R 2001-01-01T12:35:25Z 2001-01-02T16:35:25Z 273.45 -43.56 14.456789 333.723 777.9  -2.1   1.3  0.02 -0.05 2001-01-02T16:33:31Z");
       xx.testRecord(str);*/
      SpinData xx=new SpinData("/export/home/kono/ovt2g/odata/satt.dat");
-     double[] spinVect=xx.getSpinVect(369.1+18262.0);
+     double[] spinVect=xx.getSpinVect(369.1 + Time.Y2000);
      if(spinVect!=null)
         System.out.println("res: "+spinVect[0]+", "+spinVect[1]+", "+spinVect[2]);
      else System.out.println("Error :-(");

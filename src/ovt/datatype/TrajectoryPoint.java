@@ -52,7 +52,7 @@ public class TrajectoryPoint {
 /** GSE coordinates (RE) of the satellite */      
    public double gse[] = new double[3];	
 /** SM coordinates (RE) of the satellite */      
-   public double sm[] = new double[3];	
+   public double sm[] = new double[3];
    
 
 /**

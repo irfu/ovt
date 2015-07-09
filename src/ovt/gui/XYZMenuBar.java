@@ -43,6 +43,9 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 
 public class XYZMenuBar extends JMenuBar {
 
@@ -51,6 +54,7 @@ public class XYZMenuBar extends JMenuBar {
     public XYZWindow xyzWin;
     private JMenuItem importSatelliteMenuItem;
     private ovt.object.editor.SettingsEditor renPanelSizeEditor;
+
 
     public XYZMenuBar(XYZWindow xyzwin) {
         super();
@@ -290,6 +294,7 @@ public class XYZMenuBar extends JMenuBar {
         add(menu);
     }
 
+
     public JMenuItem createImportSatelliteMenuItem() {
         JMenuItem menuItem = new JMenuItem("Import Satellite ...");
         menuItem.setFont(Style.getMenuFont());
@@ -307,6 +312,7 @@ public class XYZMenuBar extends JMenuBar {
         return menuItem;
     }
 
+
     /**
      * Create Satellites menu. NOTE: Only creates a JMenu and a MenuListener
      * immediately, but no JMenuItems. The actual JMenuItems are created and
@@ -323,8 +329,10 @@ public class XYZMenuBar extends JMenuBar {
             public void menuCanceled(MenuEvent e) {
             }
 
+
             public void menuDeselected(MenuEvent e) {
             }
+
 
             public void menuSelected(MenuEvent e) {
                 JMenu satsMenu = (JMenu) e.getSource();
@@ -342,49 +350,99 @@ public class XYZMenuBar extends JMenuBar {
 
                 // DEBUG
                 satsMenu.addSeparator();
-                satsMenu.add(createTestSatMenuItem_TEST());
+                try {
+                    for (SSCWSSatelliteInfo satInfo : OVTCore.SSCWS_LIBRARY.getAllSatelliteInfo()) {
+                        satsMenu.add(createSSCWSTestSatMenuItem_TEST(satInfo.ID));
+                    }
+                } catch (IOException exc) {
+                    getCore().sendErrorMessage(exc);
+                }
             }
         });
         return menu;
     }
 
-    private final String satTreeName_TEST = "(SSC) TestSat";
-    // TEST / DEBUG
-    public JMenuItem createTestSatMenuItem_TEST() {
 
-        final ActionListener actionListener = (ActionEvent evt) -> {
-            final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
+    /**
+     * TEST / DEBUG
+     *
+     * Create menu item for _ONE_ SSC WS satellite to put in the data structures
+     * describing the GUI.
+     *
+     * NOTE: Maybe inefficient to have one ActionListener per satellite. Add all
+     * satellites at once as with the preexisting OVT file-based satellites?
+     */
+    public JMenuItem createSSCWSTestSatMenuItem_TEST(String SSCWS_satID) {
+        JMenuItem newMenuItem = null;
+        try {
+            final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;
 
-            if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
-                addTestSat_TEST();
-            } else {
-                // remove Sat from OVTCore.Sats
-                final Sat sat = (Sat) core.getSats().getChildren().getChild(satTreeName_TEST);
-                core.getSats().removeSat(sat);
-                core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
-            }
-            core.Render();
-        };
+            final ActionListener actionListener = (ActionEvent evt) -> {
+                final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
 
-        final JMenuItem newMenuItem = new JCheckBoxMenuItem("SSC Test satellite menu item");
-        newMenuItem.setFont(Style.getMenuFont());
-        newMenuItem.addActionListener(actionListener);
-        newMenuItem.setSelected(core.getSats().getChildren().containsChild(satTreeName_TEST));  // Select if sat is already added to OVT.
+                if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
+                    addSSCWSSatAction_TEST(SSCWS_satID);
+                } else {
+                    // remove Sat from OVTCore.Sats 
+                    removeSSCWSSatAction_TEST(SSCWS_satID);
+                }
+                core.Render();
+            };
+
+            newMenuItem = new JCheckBoxMenuItem(satName);
+            newMenuItem.setFont(Style.getMenuFont());
+            newMenuItem.addActionListener(actionListener);
+            newMenuItem.setSelected(core.getSats().getChildren().containsChild(satName));  // Select if sat is already added to OVT.
+        } catch (IOException e) {
+            getCore().sendErrorMessage(e);
+        }
         return newMenuItem;
     }
 
-    public void addTestSat_TEST() {
-        final Sat sat = new SSCWebServicesSat_TEST(getCore());
-        sat.setName(satTreeName_TEST);
-        //sat.setOrbitFile(null);   // Null not permitted by <Sat>.setOrbitFile. Permitted to omit?
+
+    /**
+     * Method that represents the action of adding a SSC Web Services satellite
+     * to the "GUI tree", independent of how such an action is triggered in the
+     * GUI.
+     *
+     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
+     * Services to reference satellites, SatelliteDescription#getId().
+     */
+    public void addSSCWSSatAction_TEST(String SSCWS_satID) {
         try {
+            final Sat sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
+
+            /* NOTE: The string value appears in the GUI tree node, but is also
+             used to find the satellite when removing it from the tree(?). */
+            sat.setName(OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name);
             sat.setNoOrbitFile();
-        } catch (IOException e2) {
-            getCore().sendErrorMessage(e2);
+            getCore().getSats().addSat(sat);
+            getCore().getSats().getChildren().fireChildAdded(sat);
+        } catch (IOException e) {
+            getCore().sendErrorMessage(e);
         }
-        getCore().getSats().addSat(sat);
-        getCore().getSats().getChildren().fireChildAdded(sat);
     }
+
+
+    /**
+     * Method that represents the action of removing a SSC Web Services
+     * satellite from the "GUI tree", independent of how such an action is
+     * triggered in the GUI.
+     *
+     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
+     * Services to reference satellites, SatelliteDescription#getId().
+     */
+    public void removeSSCWSSatAction_TEST(String SSCWS_satID) {
+        try {
+            final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;
+            final Sat sat = (Sat) core.getSats().getChildren().getChild(satName);
+            core.getSats().removeSat(sat);
+            core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.
+        } catch (IOException e) {
+            getCore().sendErrorMessage(e);
+        }
+    }
+
 
 // TEST / DEBUG
     /**
@@ -478,9 +536,11 @@ public class XYZMenuBar extends JMenuBar {
         return items;
     }
 
+
     protected XYZWindow getVW() {
         return xyzWin;
     }
+
 
     protected OVTCore getCore() {
         return xyzWin.getCore();
@@ -494,6 +554,7 @@ class ActivityDataMenuItem extends JMenuItem implements ActionListener {
     private int activityIndex;
     private MagProps magProps;
 
+
     ActivityDataMenuItem(MagProps mp, int activityIndex) {
         super();
         setText(mp.getActivityName(activityIndex) + "...");
@@ -502,6 +563,7 @@ class ActivityDataMenuItem extends JMenuItem implements ActionListener {
         this.magProps = mp;
         addActionListener(this);
     }
+
 
     public void actionPerformed(ActionEvent evt) {
         magProps.activityEditors[activityIndex].setVisible(true);

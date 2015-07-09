@@ -431,7 +431,7 @@ public double getAlt() {
 }
 
 /** Returns footprint altitude (RE)
- * @returns footprint altitude (RE)
+ * @return footprint altitude (RE)
  */
 public double getFootprintAltitude() {
   //System.out.println("getFootprintAlt is Broken.");

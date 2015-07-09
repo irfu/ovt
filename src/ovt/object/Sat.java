@@ -117,7 +117,7 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
         setIcon(new ImageIcon(Utils.findResource("images/satellite.gif")));
     } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
     
-    // create sat modules and put them to children
+    // Create Sat modules and put them to children.
     
     satelliteModule = new SatelliteModule(this);
     addPropertyChangeListener(satelliteModule);
@@ -186,8 +186,8 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     updateEnabled();
   }
   
-  // PROPOSAL: Incorporate into setOrbitFile.
-  /** Alternative to setOrbitFile for subclasses which data are not based on an "orbitFile" and therefore can not use that method. */
+  // PROPOSAL: Incorporate into setOrbitFile as special case for argument orbitFile=null.
+  /** Alternative to setOrbitFile for subclasses which satellite data are not based on an "orbitFile" and therefore can not use that method. */
   public void setNoOrbitFile() throws IOException {
     this.orbitFile = null;
     this.spinFileName = null;
@@ -197,7 +197,7 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     firstDataMjd = firstLastMjdPeriodSatNumber[0];
     lastDataMjd  = firstLastMjdPeriodSatNumber[1];
     revolutionPeriod = firstLastMjdPeriodSatNumber[2];
-    satNumber = (int)firstLastMjdPeriodSatNumber[3];
+    satNumber = (int) firstLastMjdPeriodSatNumber[3];
     
     updateEnabled();
   }
@@ -262,61 +262,57 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
   }
 
   protected void updateTrajectory() {
-    System.out.print("Computing orbit for " + getName()+" ... ");
+    System.out.println("Computing orbit for " + getName()+" ... ");
 
     tra.clear();
     //System.out.println(new TimeSet(getStartMjd(), getStopMjd(), getStepMjd()));
     
-    double[] timeMap = getTimeSet().getValues();
+    double[] timeMjdMap = getTimeSet().getValues();
     long start = System.currentTimeMillis();
-    int N = timeMap.length;
+    int N = timeMjdMap.length;
     
     double[][] gei_arr = new double[N][3];
     double[][] vei_arr = new double[N][3];
     
     try {
-        fill_GEI_VEI( timeMap, gei_arr, vei_arr); 
+        fill_GEI_VEI(timeMjdMap, gei_arr, vei_arr); 
     } catch (IOException e2) {
-        getCore().sendErrorMessage("Error computing "+getName()+"'s orbit",e2);
+        getCore().sendErrorMessage("Error computing "+getName()+"'s orbit.", e2);
     }
     long fill_time = System.currentTimeMillis();
-    Log.log("fill_GEI_VEI : " + (fill_time - start)/60 + " sek", 3);
+    Log.log("fill_GEI_VEI: " + (fill_time - start)/1000.0 + " seconds", 3);
             
-     for (int k=0; k<N; k++){
-        double mjd = timeMap[k];
-        TrajectoryPoint trp = new TrajectoryPoint();
+    // Put orbit data in TrajectoryPoint objects ("trp") which in turn
+    // are put in a Trajectory object ("tra").
+    for (int k=0; k<N; k++) {
+        final double mjd = timeMjdMap[k];
+        final TrajectoryPoint trp = new TrajectoryPoint();
         trp.mjd = mjd;
-       
-        //System.out.println("mjd["+k+"]"+timeMap[k]);
        
         for (int i = 0; i < 3; i++){ 
             trp.gei[i] = gei_arr[k][i] / Const.RE;
-            trp.vei[i] = vei_arr[k][i];            
+            trp.vei[i] = vei_arr[k][i];
         }
 
-        double velocity = Vect.absv(trp.vei);
+        final double velocity = Vect.absv(trp.vei);
         if (velocity > maxVelocity) maxVelocity = velocity;
         if (velocity < minVelocity) minVelocity = velocity;
 
         //System.out.println("gei : "+trp.gei[0]+"\t"+trp.gei[1]+"\t"+trp.gei[2]);
         //System.out.println("vei : "+trp.vei[0]+"\t"+trp.vei[1]+"\t"+trp.vei[2]);
         
-        // get transformation class
-        Trans trans = getTrans(mjd);
-        // Transform gei to geo
-        trp.geo = trans.gei2geo(trp.gei);
-        // Transform geo to gsm
-        trp.gsm = trans.geo2gsm(trp.geo);
-        // Transform gei to gse
-        trp.gse = trans.gei2gse(trp.gei);
-        // Transform again.. .-)
-        trp.sm = trans.gsm2sm(trp.gsm);
+        // Calculate coordinate values for other coordinate systems than GEI.
+        final Trans trans = getTrans(mjd);
+        trp.geo = trans.gei2geo(trp.gei);  // Transform gei to geo        
+        trp.gsm = trans.geo2gsm(trp.geo);  // Transform geo to gsm        
+        trp.gse = trans.gei2gse(trp.gei);  // Transform gei to gse        
+        trp.sm = trans.gsm2sm(trp.gsm);    // Transform again.. .-)
         
         tra.put(trp);
-     }
+    }
     
     long endtime = System.currentTimeMillis();
-    Log.log("Trans time:  " + (endtime - fill_time)/60 + " sek", 3);
+    Log.log("Coordinate transformation time: " + (endtime - fill_time)/1000.0 + " seconds", 3);
     
     System.out.println(getName() + "'s trajectory has " + tra.size() + " points"); 
     
@@ -324,16 +320,26 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     valid = true;
   }
 
-/** This method should read orbitFile, fill in gei_arr and vei_arr with the positions and velocities of the satellite computed 
-  * on the basis of thr orbitFile.
-  * @param geiarr The first index numbers the coordinate tuple. The second index represents the coordinate axis (x,y,z).
-  */
-abstract void fill_GEI_VEI(double[] timeMap, double[][]  gei_arr,double[][]  vei_arr) throws IOException;
+  /** This method should fill in gei_arr and vei_arr with the positions and
+   * velocities of the satellite (based on the orbit file if there is one).
+   * 
+   * NOTE: Empirically it appears that preceeding calls to updateEnabled make
+   * sure that this function is never called for times outside the valid time
+   * range (firstDataMjd & lastDataMjd) for which there is data, but it does
+   * not check for data gaps (and can not easily be made to).
+   * 
+   * @param geiarr Array in which the method puts satellite positions. The first
+   * index numbers the coordinate tuple. The second index represents the
+   * coordinate axis (x,y,z).
+   * @param timeMjdMap Points in times for which the method should
+   * return positions.
+   */
+  abstract void fill_GEI_VEI(double[] timeMjdMap, double[][]  gei_arr,double[][]  vei_arr) throws IOException;
 
   /** Returns Sat's Trajectory */
   public Trajectory getTrajectory() {
-  if (!isValid()) validate();
-  return tra;
+    if (!isValid()) validate();
+    return tra;
   }
 
   /** Returns current Sat's TrajectoryPoint */
@@ -488,7 +494,7 @@ abstract void fill_GEI_VEI(double[] timeMap, double[][]  gei_arr,double[][]  vei
 
 
 
-public void timeChanged(TimeEvent evt) {
+  public void timeChanged(TimeEvent evt) {
     
     if (evt.timeSetChanged()) {
       // current time and time period have changed
@@ -511,7 +517,12 @@ public void timeChanged(TimeEvent evt) {
     TimeSet timeSet = getCore().getTimeSettings().getTimeSet();
     double globalStart = timeSet.getStartMjd();
     double globalStop = timeSet.getStopMjd();
-    // global time period shoud be inside Sat's data period
+    
+    /* Check whether the global time period is _entirely_ covered by the Sat's
+    available data period. If not, setEnabled(false).
+    ==> The satellite will be unchecked in the tree panel and the orbit will not be shown.
+    NOTE: This feature can not check for data gaps.
+    */
       if (getFirstDataMjd() <= globalStart  &&  getLastDataMjd() >= globalStop) {
         if (!isEnabled())
           setEnabled(true);

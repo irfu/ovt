@@ -229,7 +229,9 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
       //System.out.println("yes!");
       if (evt.getPropertyName().equals("enabled")) { // Sat.enabled property changed
         boolean satEnabled = ((Boolean)evt.getNewValue()).booleanValue();
-        if (satEnabled != isEnabled())  setEnabled(satEnabled);
+        if (satEnabled != isEnabled()) {
+            setEnabled(satEnabled);
+        }
       }
       
     } //else System.out.println("no :(");

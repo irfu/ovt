@@ -39,13 +39,13 @@ import ovt.util.*;
 public class Julian {
 
 public static final double J1950 = 2433282.50;
-public static final double J2000 = 2451545.00;
+public static final double J2000 = 2451545.00; // Julian day number for the day starting at 12:00 UT on January 1, 2000" /Wikipedia.
 public double integer = -1;               /* separate integer and fractional parts */
 public double fraction = -1;              /* are used to minimize roundoff problems */
 
 public Julian(double mjd) {
 	Time time = new Time(mjd);
-	time.setTime(time.year, time.month, time.day, 0, 0, 0);
+	time.setTime(time.getYear(), time.getMonth(), time.getDay(), 0, 0, 0);
 	
 	double mj0 = time.getMjd();
     
@@ -53,6 +53,7 @@ public Julian(double mjd) {
     fraction = mjd-mj0; 
 }
 
+/** NOTE: Odd construct: static function used to extract data variables data from instance. */
 public static double getMjd(Julian jday) {
 	return (jday.integer - J1950) + jday.fraction;
 }

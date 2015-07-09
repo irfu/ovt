@@ -32,6 +32,7 @@ public class MjdEditor extends PropertyEditorSupport {
     }
     
     public String getAsText() {
+        // NOTE: Uses Time#toString().
         return "" + new ovt.datatype.Time(((Double)getValue()).doubleValue());
     }
     

@@ -41,6 +41,11 @@ package ovt.util;
 import java.io.*;
 
 /**
+ * Log class with only static methods.
+ * Log and error messages are "registered" with a debug number.
+ * Messages are only logged if the debug numer is lower or equal to the current
+ * "debugLevel". Higher debugLevel means more detailed logs.
+ * 
  *
  * @author  ko
  * @version 
@@ -51,8 +56,7 @@ public class Log extends Object {
     // 1 - some essential things
     protected static int debugLevel = 0;
 
-    /** Creates new Log */
-    public Log() {
+    private Log() {
     }
     
     public static void setOut(PrintStream output) {

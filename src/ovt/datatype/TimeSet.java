@@ -49,7 +49,9 @@ import java.beans.*;
 import java.lang.reflect.*;
 
 /** 
- *
+ * Represents a sequence of equidistant points in time (mjd = modified Julian day),
+ * including one such point that is the "current" one.
+ * 
  * @author  mykola
  * @version 
  */
@@ -218,7 +220,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     firePropertyChange("currentMjdIndex", null, null);
   }
   
-  /** returns time, from wich is possible to start 
+  /** Returns time, from which it is possible to start 
    *
    */
   public double getStartFor(double mjd) {
@@ -330,6 +332,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       return false;
   }
   
+  /** Test code. */
   public static void main(String[] args) {
         TimeSet ts = new TimeSet(Time.Y2000, 1, new Interval(0, 1, 0).getMjd());
         for (int i=0; i<ts.getNumberOfValues(); i++) {

@@ -119,7 +119,14 @@ public class SatInfoWindow extends JDialog implements Customizer {
     public void setObject(Object sat) {
         Sat satellite = (Sat)sat;
         setTitle("Satellite : " + satellite.getName());
-        fileL.setText("File : "+satellite.getOrbitFile().getAbsolutePath());
+        
+        final File file = satellite.getOrbitFile();
+        String displayFilePath = "(none; uses other data source)";
+        if (file != null) {
+            displayFilePath = file.getAbsolutePath();
+        }
+        fileL.setText("File : "+displayFilePath);
+        
         //recordsL.setText("Data has "+module.getData().length+ " records");
         timeL.setText("Orbit data available for "+new Time(satellite.getFirstDataMjd())+" - " +
                               new Time(satellite.getLastDataMjd()));
