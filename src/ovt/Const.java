@@ -56,6 +56,7 @@ public static final double ME = 5.9722e24;
 /** Gravitational constant (m^3 * kg^-1 * s^-2; does not use km!). */
 public static final double GRAV_CONST = 6.67259e-11;
 
+public static final int METERS_PER_KM = 1000;
 
 public static final int HOLLOW  = 0;
 public static final int SOLIDI  = 1;

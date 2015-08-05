@@ -56,14 +56,14 @@ public class IntervalEditor extends PropertyEditorSupport {
     }
     
     public String getAsText() {
-        double mjd = ((Double)getValue()).doubleValue();
-        return new Interval(mjd).toString();
+        double mjd = ((Double)getValue());
+        return new Interval(mjd).toString(true);
     }
     
     public void setAsText(String s) throws IllegalArgumentException {
         try {
             Interval interval = new Interval(s);
-            setValue(new Double(interval.getMjd()));
+            setValue(interval.getIntervalInDays());
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Time format : ([_d] [_h] [_m] [_s])");
         } catch (IllegalArgumentException e3) {

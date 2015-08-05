@@ -43,13 +43,11 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.io.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 
 public class XYZMenuBar extends JMenuBar {
 
-    private Font font = Style.getMenuFont();
+    final private Font font = Style.getMenuFont();
     private OVTCore core;
     public XYZWindow xyzWin;
     private JMenuItem importSatelliteMenuItem;
@@ -77,6 +75,7 @@ public class XYZMenuBar extends JMenuBar {
 
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 ImageOperations.exportImageDialog(getCore());
             }
@@ -89,6 +88,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem = new JMenuItem("Load Settings...");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent evt) {
                 String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfDir());
                 String file = Settings.showOpenDialog(xyzWin, new File(defaultFile));
@@ -314,28 +314,28 @@ public class XYZMenuBar extends JMenuBar {
 
 
     /**
-     * Create Satellites menu. NOTE: Only creates a JMenu and a MenuListener
-     * immediately, but no JMenuItems. The actual JMenuItems are created and
-     * added dynamically to the JMenu every time the "Satellites" menu is
-     * clicked. Any previous JMenuItems are destroyed first.
+     * Create Satellites menu data structure. NOTE: The method only creates a JMenu and a
+     * MenuListener immediately, but no JMenuItems. The actual JMenuItems are
+     * created and added dynamically to the JMenu every time the "Satellites"
+     * menu is clicked. Any previous JMenuItems are destroyed first.
      */
     private JMenu createSatsMenu() {
         if (importSatelliteMenuItem == null) {
             importSatelliteMenuItem = createImportSatelliteMenuItem();
         }
-        JMenu menu = new JMenu("Satellites");
+        final JMenu menu = new JMenu("Satellites");
         menu.setFont(font);
         menu.addMenuListener(new MenuListener() {
-            public void menuCanceled(MenuEvent e) {
+            public void menuCanceled(MenuEvent event) {
             }
 
 
-            public void menuDeselected(MenuEvent e) {
+            public void menuDeselected(MenuEvent event) {
             }
 
 
-            public void menuSelected(MenuEvent e) {
-                JMenu satsMenu = (JMenu) e.getSource();
+            public void menuSelected(MenuEvent event) {
+                JMenu satsMenu = (JMenu) event.getSource();
                 satsMenu.removeAll();                 // NOTE: Remove all previously existing MenuItems!
 
                 // Import Satellite ...
@@ -344,8 +344,8 @@ public class XYZMenuBar extends JMenuBar {
                 // List of satellites
                 satsMenu.addSeparator();
                 JMenuItem[] items = createSatsList();
-                for (int i = 0; i < items.length; i++) {
-                    satsMenu.add(items[i]);
+                for (JMenuItem item : items) {
+                    satsMenu.add(item);
                 }
 
                 // DEBUG
@@ -381,10 +381,10 @@ public class XYZMenuBar extends JMenuBar {
                 final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
 
                 if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
-                    addSSCWSSatAction_TEST(SSCWS_satID);
+                    addSSCWSSatAction(SSCWS_satID);
                 } else {
                     // remove Sat from OVTCore.Sats 
-                    removeSSCWSSatAction_TEST(SSCWS_satID);
+                    removeSSCWSSatAction(SSCWS_satID);
                 }
                 core.Render();
             };
@@ -402,37 +402,39 @@ public class XYZMenuBar extends JMenuBar {
 
     /**
      * Method that represents the action of adding a SSC Web Services satellite
-     * to the "GUI tree", independent of how such an action is triggered in the
+     * to the "GUI tree", as if this action was triggered in the
      * GUI.
      *
      * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
      * Services to reference satellites, SatelliteDescription#getId().
      */
-    public void addSSCWSSatAction_TEST(String SSCWS_satID) {
+    public void addSSCWSSatAction(String SSCWS_satID) {
+        final Sat sat;
         try {
-            final Sat sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
+            sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
 
             /* NOTE: The string value appears in the GUI tree node, but is also
              used to find the satellite when removing it from the tree(?). */
             sat.setName(OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name);
-            sat.setNoOrbitFile();
-            getCore().getSats().addSat(sat);
-            getCore().getSats().getChildren().fireChildAdded(sat);
+            sat.setOrbitFile(null);
         } catch (IOException e) {
             getCore().sendErrorMessage(e);
+            return;
         }
+        getCore().getSats().addSat(sat);
+        getCore().getSats().getChildren().fireChildAdded(sat);
     }
 
 
     /**
      * Method that represents the action of removing a SSC Web Services
-     * satellite from the "GUI tree", independent of how such an action is
+     * satellite from the "GUI tree", as if this action was
      * triggered in the GUI.
      *
      * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
      * Services to reference satellites, SatelliteDescription#getId().
      */
-    public void removeSSCWSSatAction_TEST(String SSCWS_satID) {
+    public void removeSSCWSSatAction(String SSCWS_satID) {
         try {
             final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;
             final Sat sat = (Sat) core.getSats().getChildren().getChild(satName);
@@ -444,29 +446,25 @@ public class XYZMenuBar extends JMenuBar {
     }
 
 
-// TEST / DEBUG
-    /**
-     * The java "command" to add a satellite. This should be called by any GUI
-     * item that wants to add a satellite, or for any initialization of OVT at
-     * startup. NOTE: Not static since command needs
-     */
     /**
      * Each JMenuItem is a JCheckBoxMenuItem with a satellite's name, is checked
      * if sat is added to {@link ovt.object.Sats Sats}.
      *
-     * @return JMenuItem[]
+     * @return Array with JMenuItem to put in JMenu.
      */
     public JMenuItem[] createSatsList() {
         File[] files = null;
-        FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
+        final FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
                 || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
-        // First check odata in user home
-        File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
+        
+        // Look for files in odata in user home.
+        final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
         if (userOrbitDir != null) {
             files = userOrbitDir.listFiles(filter);
         }
-        // Then check the system level odata
-        File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
+        
+        // Look for files in system level odata.
+        final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
         if (sysOrbitDir != null) {
             File[] sysFiles = sysOrbitDir.listFiles(filter);
             if (files == null) {
@@ -486,10 +484,11 @@ public class XYZMenuBar extends JMenuBar {
         // ---------------------------------------------------
         // Create one ActionListener used for all Sat in list.
         // ---------------------------------------------------
-        ActionListener actionListener = (ActionEvent evt) -> {
-            JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
-            String satname = item.getText();    // Figure out which Sat is referred to.
-            if (item.isSelected()) { // create Sat and add it to OVTCore.Sats
+        final ActionListener actionListener = (ActionEvent evt) -> {
+            final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
+            final String satname = item.getText();    // Figure out which Sat is referred to.
+            if (item.isSelected()) {
+                // Create Sat and ADD it to OVTCore.Sats
 
                 try {
                     Sat sat;
@@ -509,27 +508,30 @@ public class XYZMenuBar extends JMenuBar {
                     }
                     sat.setName(satname);
                     sat.setOrbitFile(file);
+                    
                     core.getSats().addSat(sat);
                     core.getSats().getChildren().fireChildAdded(sat);
                 } catch (IOException e2) {
                     core.sendErrorMessage(e2);
                 }
             } else {
-                // Remove Sat from OVTCore.Sats
-                Sat sat = (Sat) core.getSats().getChildren().getChild(satname);
+                // REMOVE Sat from OVTCore.Sats
+                final Sat sat = (Sat) core.getSats().getChildren().getChild(satname);
                 core.getSats().removeSat(sat);
                 core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
             }
             core.Render();
         };
 
+        // Iterate over all found files and add one JCheckBoxMenuItem for each
+        // one using the ActionListener created above.
         for (int i = 0; i < files.length; i++) {
-            String filename = files[i].getName();
-            String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
-            JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
+            final String filename = files[i].getName();
+            final String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
+            final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
             menuItem.setFont(font);
             menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // select if sat is already added to OVT
-            menuItem.addActionListener(actionListener);
+            menuItem.addActionListener(actionListener);   // NOTE: Use previously constructed ActionListener.
             items[i] = menuItem;
         }
 

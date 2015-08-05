@@ -59,20 +59,15 @@ import java.util.*;
  * days, hours, minutes, seconds) assumes that there is a constant
  * 24*60*60=86400 s/day, i.e. there are no leap seconds (as in UTC), but mjd
  * still follows astronomical days (Earth rotation relative to the direction of
- * the Sun) on multi-year timescales, i.e. the physical length of a "Time"
- * second varies slightly.<BR>
+ * the Sun) on multi-year timescales. Since the speed of Earth's rotation varies
+ * slightly, this can be interpreted as that the physical length of a second in
+ * the "Time" class varies slightly.<BR>
  *
  * NOTE 2: Since the length of astronomical days (Earth rotation relative to the
  * Sun) varies on multi-year time scales, a specific difference between two Mjd
  * values (or Julian Day values) is technically not a proportional to a specific
  * amount of physical time, albeit it is very close.<BR>
  * /Erik P G Johansson 2015-06-16
- *
- *
- * NOTE: Method in other class "ovt.util.TimeFormat#public String
- * format(ovt.datatype.Time time)" makes the assumption that there is 24*3600
- * seconds/day. That code/assumption should maybe be moved here. /Erik P G
- * Johansson 2015-06-25.
  */
 public class Time {
 
@@ -80,6 +75,8 @@ public class Time {
     public static final double Y2000 = Time.getMjd(2000, 1, 1, 0, 0, 0);
     public static final double Y1970 = Time.getMjd(1970, 1, 1, 0, 0, 0);
     public static final double Y1960 = Time.getMjd(1960, 1, 1, 0, 0, 0);
+    public static final double Y1950 = Time.getMjd(1950, 1, 1, 0, 0, 0);
+    public static final double Y3799 = Time.getMjd(3799, 1, 1, 0, 0, 0);
 
     public static final int YEAR = 0;
     public static final int MONTH = 1;
@@ -125,7 +122,13 @@ public class Time {
 
     public Time(Calendar date) {
         // Calendar.JANUARY == 0  -> +1
-        setTime(date.get(Calendar.YEAR), date.get(Calendar.MONTH) + 1, date.get(Calendar.DAY_OF_MONTH), date.get(Calendar.HOUR_OF_DAY), date.get(Calendar.MINUTE), date.get(Calendar.SECOND));
+        setTime(
+                date.get(Calendar.YEAR),
+                date.get(Calendar.MONTH) + 1, // NOTE: Plus one. Why?
+                date.get(Calendar.DAY_OF_MONTH),
+                date.get(Calendar.HOUR_OF_DAY),
+                date.get(Calendar.MINUTE),
+                date.get(Calendar.SECOND));
     }
 
 
@@ -190,12 +193,21 @@ public class Time {
 
 
     /**
-     * Convert from mjd to "Time".
+     * Convert from mjd to "Time". Uncertain what the actual time limits (min &
+     * max) are for this function to work. Conversion double-to-int is one
+     * limit. It is known empirically that something goes wrong with
+     * date-to-mjd-to-date for times before 1950-01-01, 00:00.00 (i.e. negative
+     * mjd values).
      *
      * @see Comments for Time#getMjd(int year, int month, int day, int hour, int
      * mins, double sec)
      */
     public void setTime(double mjd) {
+
+        if ((mjd < Y1950) || (Y3799 < mjd)) {
+            throw new IllegalArgumentException("mjd=" + mjd + " is out of range for conversion formula.");
+        }
+
         int jday;
         double temp;
         int l, m, n, jj;
@@ -249,6 +261,12 @@ public class Time {
      */
     public static double getMjd(int year, int month, int day, int hour, int mins, double sec)
             throws NumberFormatException {
+
+        if (year < 1900) {
+            throw new IllegalArgumentException("Can not use year = " + year + " < 1900.");
+        } else if (year >= (2 * 1900)) {
+            throw new IllegalArgumentException("Can not use year = " + year + " > 2*1900.");
+        }
         int jj, l;
         double temp_mjd;
 
@@ -367,38 +385,39 @@ public class Time {
 
     @Override
     /**
-     * Return string representation of the contents of the object. Should not really be used for anything but debugging?
+     * Return string representation of the contents of the object. Should not
+     * really be used for anything but debugging?
      */
     public String toString() {
         String yeart, montht, dayt, hourt, minst, sect;
-         yeart = String.valueOf(year);
-         montht = String.valueOf(month);
-         dayt = String.valueOf(day);
-         hourt = String.valueOf(hour);
-         minst = String.valueOf(mins);
+        yeart = String.valueOf(year);
+        montht = String.valueOf(month);
+        dayt = String.valueOf(day);
+        hourt = String.valueOf(hour);
+        minst = String.valueOf(mins);
 
-         sect = String.valueOf((int) sec);
-         if (sect.length() == 1) {
+        sect = String.valueOf((int) sec);
+        if (sect.length() == 1) {
             sect = "0" + sect;
-         }
+        }
 
-         // this is correct, but MjdEditPanel (MjdEditorPanel?) should be revised to function properly
-         //sect = String.valueOf(((int)sec*1e6)/1e6);
-         //if (sect.indexOf('.') == 1) { sect = "0" + sect; }
-         if (montht.length() == 1) {
+        // this is correct, but MjdEditPanel (MjdEditorPanel?) should be revised to function properly
+        //sect = String.valueOf(((int)sec*1e6)/1e6);
+        //if (sect.indexOf('.') == 1) { sect = "0" + sect; }
+        if (montht.length() == 1) {
             montht = "0" + montht;
-         }
-         if (dayt.length() == 1) {
+        }
+        if (dayt.length() == 1) {
             dayt = "0" + dayt;
-         }
-         if (hourt.length() == 1) {
+        }
+        if (hourt.length() == 1) {
             hourt = "0" + hourt;
-         }
-         if (minst.length() == 1) {
+        }
+        if (minst.length() == 1) {
             minst = "0" + minst;
-         }
+        }
 
-         return yeart + "-" + montht + "-" + dayt + " " + hourt + ":" + minst + ":" + sect;//*/
+        return yeart + "-" + montht + "-" + dayt + " " + hourt + ":" + minst + ":" + sect;//*/
 
         //=============================================================================
         // Copied from the API documentation for java.util.Formatter:
@@ -578,8 +597,24 @@ public class Time {
         {
             System.out.println("Test whether conversions Time-->mjd-->Time are consistent, or if they drift (much or little).");
             // Starts with Time (year-month-...) value.
-            final int N_iterations = 2;
-            final Time[] timeTestValues = new Time[]{new Time(2004, 02, 11, 00, 00, 00), new Time(2015, 4, 9, 00, 00, 0)};
+            final int N_iterations = 1;
+            final Time[] timeTestValues = new Time[]{
+                new Time(2004, 02, 11, 00, 00, 00),
+                new Time(2015, 4, 9, 00, 00, 00),
+                new Time(1900, 1, 1, 00, 00, 00),
+                new Time(1901, 1, 1, 00, 00, 00),
+                new Time(1902, 1, 1, 00, 00, 00),
+                new Time(1910, 1, 1, 00, 00, 00),
+                new Time(1920, 1, 1, 00, 00, 00),
+                new Time(1930, 1, 1, 00, 00, 00),
+                new Time(1940, 1, 1, 00, 00, 00),
+                new Time(1949, 12, 31, 23, 59, 59),
+                new Time(1950, 1, 1, 00, 00, 00),
+                new Time(1960, 1, 1, 00, 00, 00),
+                new Time(1970, 1, 1, 00, 00, 00),
+                new Time(1980, 1, 1, 00, 00, 00),
+                new Time(1990, 1, 1, 00, 00, 00)
+            };
             for (Time timeTestValue : timeTestValues) {
                 Time time1 = timeTestValue;
 
@@ -589,6 +624,7 @@ public class Time {
                     System.out.println(String.format("time1=%-39s;  mjd=%12f;  time2=%-39s", time1, mjd, time2));
                     time1 = time2;
                 }
+                System.out.println("--");
             }
         }
 

@@ -126,8 +126,9 @@ public abstract class SSCWSLibrary {
     //
     // TODO: Check which coordinate system to use: CoordinateSystem.GEI_J_2000, or .GEI_TOD or some other which is unambiguous.
     // TODO: formatOptions.setDistanceUnits(DistanceUnits.KM); or at least check with units are actually returned.
-    public abstract double[][] getOrbitData(String satID, double beginMjdInclusive, double endMjdInclusive, int resolutionFactor) throws IOException;
-
+    public abstract double[][] getOrbitData(
+            String satID, double beginMjdInclusive, double endMjdInclusive, int resolutionFactor)
+            throws IOException;
 
     // PROPOSAL: Move to Utils or Time?
     //    CON: Is the time conversion used by data from the SSC Web Servies. Therefore one wants to keep it close to that code.

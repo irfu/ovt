@@ -165,42 +165,43 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     return orbitFile;
   }
   
-  /** set's orbitFile, firstMjd, lastMjd, revolutionPeriod and spinData  */
+  /** Sets orbitFile, firstMjd, lastMjd, revolutionPeriod and spinData.   * 
+   * If a file is given, then it assumes that there is a corresponding spin file with other suffix, ".spin".
+   * @param orbitFile Null means there is no file (i.e. another data source is used).
+   * 
+   */
   public void setOrbitFile(File orbitFile) throws IOException {
-    if (!orbitFile.exists()) throw new IOException("File "+orbitFile+" does not exist");
-    if (orbitFile.isDirectory()) throw new IOException("File "+orbitFile+" is a directory");
-    this.orbitFile = orbitFile; // set it first!! 
+    if (orbitFile != null) {
+        if (!orbitFile.exists()) {
+            throw new IOException("File "+orbitFile+" does not exist");
+        }
+        if (orbitFile.isDirectory()) {
+            throw new IOException("File "+orbitFile+" is a directory");
+        }
+        this.orbitFile = orbitFile; // set it first!! 
     
+    
+        // Set spin data if spin file is available
+        String tmps = orbitFile.getAbsolutePath();
+        int tmpi = tmps.lastIndexOf('.');
+        this.spinFileName = tmps.substring(0,tmpi)+".spin";
+        this.spinData = new SpinData(spinFileName);    
+    } else {
+        this.orbitFile = null;
+        this.spinFileName = null;
+        this.spinData = new SpinData(null);
+    }
     double firstLastMjdPeriodSatNumber[] = getFirstLastMjdPeriodSatNumber();
     firstDataMjd = firstLastMjdPeriodSatNumber[0];
     lastDataMjd  = firstLastMjdPeriodSatNumber[1];
     revolutionPeriod = firstLastMjdPeriodSatNumber[2];
     satNumber = (int)firstLastMjdPeriodSatNumber[3];
-    
-    // Set spin data if spin file is available
-    String tmps=new String(orbitFile.getAbsolutePath());
-    int tmpi=tmps.lastIndexOf('.');
-    this.spinFileName=new String(tmps.substring(0,tmpi)+".spin");
-    this.spinData=new SpinData(spinFileName);
-    
+        
     updateEnabled();
   }
+
+ 
   
-  // PROPOSAL: Incorporate into setOrbitFile as special case for argument orbitFile=null.
-  /** Alternative to setOrbitFile for subclasses which satellite data are not based on an "orbitFile" and therefore can not use that method. */
-  public void setNoOrbitFile() throws IOException {
-    this.orbitFile = null;
-    this.spinFileName = null;
-    this.spinData = null;
-      
-    double firstLastMjdPeriodSatNumber[] = getFirstLastMjdPeriodSatNumber();
-    firstDataMjd = firstLastMjdPeriodSatNumber[0];
-    lastDataMjd  = firstLastMjdPeriodSatNumber[1];
-    revolutionPeriod = firstLastMjdPeriodSatNumber[2];
-    satNumber = (int) firstLastMjdPeriodSatNumber[3];
-    
-    updateEnabled();
-  }
   
    /** Return the catalog satellite number  */
  public int getSatNumber() {
@@ -227,8 +228,8 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     return lastDataMjd;
   }
   
-  /** Returns revolution period [days] */
-  public final double getRevolutionPeriod() {
+  /** Returns orbital period. Unit: days. */
+  public final double getOrbitalPeriodDays() {
     return revolutionPeriod;
   }
   
@@ -278,10 +279,17 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
         fill_GEI_VEI(timeMjdMap, gei_arr, vei_arr); 
     } catch (IOException e2) {
         getCore().sendErrorMessage("Error computing "+getName()+"'s orbit.", e2);
+        /* NOTE: Failing to retrieve the trajectory still leads to OVT using
+        the default variable values instead, i.e. zero. It also means that OVT
+        thinks it does have a valid trajectory for the current time interval until
+        the current time interval is changed and a new trajectory data is requested.
+        This is kind of (maybe) a problem for trajectories which are downloaded
+        from the internet and where the code might fail on the first attempt
+        but succeed on a later attempt. This is unintuitive behaviour for the user. */
     }
     long fill_time = System.currentTimeMillis();
     Log.log("fill_GEI_VEI: " + (fill_time - start)/1000.0 + " seconds", 3);
-            
+
     // Put orbit data in TrajectoryPoint objects ("trp") which in turn
     // are put in a Trajectory object ("tra").
     for (int k=0; k<N; k++) {
@@ -298,9 +306,6 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
         if (velocity > maxVelocity) maxVelocity = velocity;
         if (velocity < minVelocity) minVelocity = velocity;
 
-        //System.out.println("gei : "+trp.gei[0]+"\t"+trp.gei[1]+"\t"+trp.gei[2]);
-        //System.out.println("vei : "+trp.vei[0]+"\t"+trp.vei[1]+"\t"+trp.vei[2]);
-        
         // Calculate coordinate values for other coordinate systems than GEI.
         final Trans trans = getTrans(mjd);
         trp.geo = trans.gei2geo(trp.gei);  // Transform gei to geo        
@@ -314,7 +319,7 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     long endtime = System.currentTimeMillis();
     Log.log("Coordinate transformation time: " + (endtime - fill_time)/1000.0 + " seconds", 3);
     
-    System.out.println(getName() + "'s trajectory has " + tra.size() + " points"); 
+    System.out.println(getName() + "'s trajectory has " + tra.size() + " points."); 
     
     // System.out.println("max mlat = " + ClatMax + "\n");
     valid = true;
@@ -338,7 +343,9 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
 
   /** Returns Sat's Trajectory */
   public Trajectory getTrajectory() {
-    if (!isValid()) validate();
+    if (!isValid()) {
+        validate();
+    }
     return tra;
   }
 
@@ -427,12 +434,13 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
   public double[] getSpinVectorRate(){
      if (this.isSpinAvailable()){
         double[] geiSpin = getSpinVectGEI(getMjd());
-        if(geiSpin==null)
+        if(geiSpin==null) {
            return null;
-        Trans trans=this.getTrans(getMjd());
-        Matrix3x3 mtrx=trans.gei_gsm_trans_matrix(); //GEI -> GSM
-        double[] gsmSpin=mtrx.multiply(geiSpin);
-        mtrx=trans.gsm_trans_matrix(getCS());        //GSM -> current CS
+        }
+        Trans trans = this.getTrans(getMjd());
+        Matrix3x3 mtrx = trans.gei_gsm_trans_matrix(); //GEI -> GSM
+        double[] gsmSpin = mtrx.multiply(geiSpin);
+        mtrx = trans.gsm_trans_matrix(getCS());        //GSM -> current CS
         return mtrx.multiply(gsmSpin);               // result in current CS
      } else return null;
   }
@@ -623,6 +631,15 @@ TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
     while (e.hasMoreElements()) removeDataModule((DataModule)e.nextElement());
     // add new
     for (int i=0; i<modules.length; i++) addDataModule(modules[i]);
+  }
+  
+  
+  /** Informal test code for comparing orbit data for the same satellite from
+   * two different sources (instance of "Sat"). Used to verify that the same
+   * coordinate system is used.
+   */
+  public static void test_compareTrajectories() {
+      
   }
   
 }

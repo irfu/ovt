@@ -70,7 +70,7 @@ public IntervalEditor(BasicPropertyDescriptor pd) {
       Interval interval = new Interval(s);
       Interval oldInterval = new Interval(getAsText());
       if (interval.equals(oldInterval)) return;
-      setValue(new Double(interval.getMjd()));
+      setValue(interval.getIntervalInDays());
     } catch (NumberFormatException e2) {
       throw new PropertyVetoException("Time format : ([ad] [bh] [cm] [ds])", null);
     } catch (IllegalArgumentException e3) {

@@ -212,7 +212,26 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     }
 
 
-    public double[][] getOrbitData(String satID, double beginMjdInclusive, double endMjdInclusive, int resolutionFactor) throws IOException {
+    public double[][] getOrbitData(
+            String satID,
+            double beginMjdInclusive, double endMjdInclusive,
+            int resolutionFactor)
+            throws IOException {
+
+        try {
+            return getOrbitDataRaw(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor);
+        } catch (Exception e) {
+            Log.log("ERROR/EXCEPTION: "+e.getMessage(), DEBUG);
+            throw e;   // Re-throws the same exception but keeps the stack trace.
+        }
+    }
+
+
+    private double[][] getOrbitDataRaw(
+            String satID,
+            double beginMjdInclusive, double endMjdInclusive,
+            int resolutionFactor)
+            throws IOException {
 
         /*======================================================================
          Coordinate system used for the downloaded orbital positions.
@@ -283,13 +302,13 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          ======================================================================*/
         final DataResult dataResult;
         try {
-            Log.log(this.getClass().getSimpleName() + ".getOrbitData: Download orbit data from SSC Web Services.", DEBUG);
-            final long t_start = System.nanoTime();
+            //Log.log(this.getClass().getSimpleName() + ".getOrbitData: Download orbit data from SSC Web Services.", DEBUG);
+            //final long t_start = System.nanoTime();
 
             dataResult = getSSCInterface().getData(dataFileReq);
 
-            final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
-            Log.log(this.getClass().getSimpleName() + ".getOrbitData: Time used for downloading data: " + duration + " [s]", DEBUG);
+            //final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
+            //Log.log(this.getClass().getSimpleName() + ".getOrbitData: Time used for downloading data: " + duration + " [s]", DEBUG);
         } catch (SSCDatabaseLockedException_Exception | SSCExternalException_Exception | SSCResourceLimitExceededException_Exception e) {
             throw new IOException("Attempt to download data from SSC Web Services failed: " + e.getMessage(), e);
         }
@@ -297,46 +316,51 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
             throw new IOException("Error when requesting data from SSC Web Services. dataResult.getStatusCode()=" + dataResult.getStatusCode()
                     + "; dataResult.getStatusSubCode()=" + dataResult.getStatusSubCode());
         }
-        final SatelliteData satData = dataResult.getData().get(0);   // Select data for satellite number 0 (there is only one satellite in the list).
 
-        /*======================================================================
-         Check the size of the data structure before reading so that it does not contain anything unexpected.
-         I do not know why satData.getCoordinates() is a list since it always seems to contain exactly one single value.
-         /Erik P G Johansson 2015-06-05.
-         =======================================================================*/
-        if (satData.getCoordinates().size() != 1) {
-            throw new IOException("SSC Web Services returned a data structure with an unexpected size: "
-                    + "satData.getCoordinates().size() = " + satData.getCoordinates().size());
+        if (dataResult.getData().isEmpty()) {
+            return new double[4][0];
+        } else {
+            final SatelliteData satData = dataResult.getData().get(0);   // Select data for satellite number 0 (there is only one satellite in the list).
+
+            /*======================================================================
+             Check the size of the data structure before reading so that it does not contain anything unexpected.
+             I do not know why satData.getCoordinates() is a list since it always seems to contain exactly one single value.
+             /Erik P G Johansson 2015-06-05.
+             =======================================================================*/
+            if (satData.getCoordinates().size() != 1) {
+                throw new IOException("SSC Web Services returned a data structure with an unexpected size: "
+                        + "satData.getCoordinates().size() = " + satData.getCoordinates().size());
+            }
+            final CoordinateData coordData = satData.getCoordinates().get(0);
+
+            // Make sure the data uses a supported coordinate system.
+            final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
+            if (!requestedCS.equals(receivedCS)) {
+                throw new IOException("The orbit data downloaded from SSC Web Services "
+                        + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
+            }
+
+            /*===========================================
+             Convert data into data structure to return.
+             ==========================================*/
+            final List<Double> X = coordData.getX();
+            final List<Double> Y = coordData.getY();
+            final List<Double> Z = coordData.getZ();
+            final List<XMLGregorianCalendar> timeList = satData.getTime(); // Define variable to reduce number of calls to satData.getTime() (or does the compiler figure that out itself?).
+            int N_coord = coordData.getX().size();
+            final double[][] coordinates = new double[4][N_coord];
+            for (int i = 0; i < N_coord; i++) {
+                coordinates[0][i] = X.get(i);
+                coordinates[1][i] = Y.get(i);
+                coordinates[2][i] = Z.get(i);
+
+                // NOTE: The call to convertXMLGregorianCalendarToMjd is possibly slow.
+                // One could in principle parallelize the call with something like java.util.Arrays.parallelSetAll.
+                coordinates[3][i] = convertXMLGregorianCalendarToMjd(timeList.get(i));
+            }
+            return coordinates;
         }
-        final CoordinateData coordData = satData.getCoordinates().get(0);
 
-        // Make sure the data uses a supported coordinate system.
-        final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
-        if (!requestedCS.equals(receivedCS)) {
-            throw new IOException("The orbit data downloaded from SSC Web Services "
-                    + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
-        }
-
-        /*===========================================
-         Convert data into data structure to return.
-         ==========================================*/
-        final List<Double> X = coordData.getX();
-        final List<Double> Y = coordData.getY();
-        final List<Double> Z = coordData.getZ();
-        final List<XMLGregorianCalendar> timeList = satData.getTime(); // Define variable to reduce number of calls to satData.getTime() (or does the compiler figure that out itself?).
-        final int N = coordData.getX().size();
-        final double[][] coordinates = new double[4][N];
-        for (int i = 0; i < N; i++) {
-            coordinates[0][i] = X.get(i);
-            coordinates[1][i] = Y.get(i);
-            coordinates[2][i] = Z.get(i);
-
-            // NOTE: The call to convertXMLGregorianCalendarToMjd is possibly slow.
-            // One could in principle parallelize the call with something like java.util.Arrays.parallelSetAll.
-            coordinates[3][i] = convertXMLGregorianCalendarToMjd(timeList.get(i));
-        }
-
-        return coordinates;
     }
 
 }

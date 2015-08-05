@@ -334,7 +334,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   
   /** Test code. */
   public static void main(String[] args) {
-        TimeSet ts = new TimeSet(Time.Y2000, 1, new Interval(0, 1, 0).getMjd());
+        TimeSet ts = new TimeSet(Time.Y2000, 1, new Interval(0, 1, 0, 0).getIntervalInDays());
         for (int i=0; i<ts.getNumberOfValues(); i++) {
             System.out.println(""+i+" : "+ts.indexOf(ts.get(i)));
         }

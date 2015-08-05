@@ -289,7 +289,7 @@ public class LabelsModule extends SingleActorSatModule implements MenuItemsSourc
         String[] s = new String[n];
         double stepMjd = getTimeSet().getStepMjd();
         for (int i=0; i<n; i++)
-            s[i] = (new Interval( stepMjd * (i+1) )).toString();
+            s[i] = (new Interval( stepMjd * (i+1) )).toString(true);
         return s;
     }
 

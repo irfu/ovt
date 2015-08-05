@@ -120,9 +120,10 @@ public class Vect {
     return res;
   }
   
+  
+/** Absolute value of 3-vector. */
 public static double absv(double vec[]) {
-
-	double sum = 0;
+    double sum = 0;
 
     for (int i=0; i<3; i++)
         sum += vec[i]*vec[i];
@@ -130,9 +131,9 @@ public static double absv(double vec[]) {
     return Math.sqrt(sum);
 }
 
+/** Square of absolute value of 3-vector. */
 public static double absv2(double vec[]) {
-
-	double sum = 0;
+    double sum = 0;
 
     for (int i=0; i<3; i++)
         sum += vec[i]*vec[i];
@@ -173,8 +174,7 @@ public static double[] norm(double vec[]) {
 }
 
 
-/* scalar product of two vectors */
-
+/** Scalar product of two vectors. */
 public static double  dot(double a[], double b[]) {
 
     double  ret_val = 0.0;
@@ -195,19 +195,18 @@ public static double  dot(double a[], double b[]) {
   }
 
 
-/** vector product c =  a x b 
- * @depricated since 0.0001
+/** Vector product c = a x b.
+ * @deprecated since 0.0001
  */
-public static void cross(double a[], double b[], double c[]) {
-	
-	c[0] = a[1] * b[2] - a[2] * b[1];
+// Why deprecated?!
+public static void cross(double a[], double b[], double c[]) {	
+    c[0] = a[1] * b[2] - a[2] * b[1];
     c[1] = a[2] * b[0] - a[0] * b[2];
-    c[2] = a[0] * b[1] - a[1] * b[0];
-	
+    c[2] = a[0] * b[1] - a[1] * b[0];	
 }
 
 
-/** normalized vector product */
+/** Normalized vector product. */
 public static double[] crossn(double a[], double b[]) {
   double c[] = new double[3];
   double x;
@@ -221,35 +220,33 @@ public static double[] crossn(double a[], double b[]) {
 }
 
 
-/** normalized vector product */
+/** Normalized vector product. */
 public static void crossn(double a[], double b[], double c[]) {
-
     double x;
 
     cross(a, b, c);
     x = absv(c);
 
     if (x >= 1e-30)
-		for (int i=0; i<3; i++) 
-			c[i] = c[i] / x;
+	for (int i=0; i<3; i++) 
+            c[i] = c[i] / x;
 
   }
 
-/** Returns true if vectors are equal */
+/** Returns true if vectors are equal. */
 public static boolean equal(double[] vector1, double[] vector2) {
     for (int i=0; i<3; i++)
         if (vector1[i] != vector2[i]) return false;
     return true;
 }
 
-/** Returns true if vectors are equal within the eps tolorance */
+/** Returns true if vectors are equal within the eps tolorance. */
 public static boolean equal(double[] vector1, double[] vector2, double eps) {
     if ((Math.abs(vector1[0] - vector2[0]) < eps) && 
         (Math.abs(vector1[1] - vector2[1]) < eps) && 
         (Math.abs(vector1[2] - vector2[2]) < eps)) return true;
     else return false;
 }
-
 
 
   /** Returns the array of Vector's elements. Used for JAK1.1 compatibility.
@@ -286,12 +283,14 @@ public static String toString(double[] vect) {
     return res;
 }
 
+
 /** @return <CODE>true</CODE> if vect contains value */
 public static boolean contains(int[] vect, int value) {
     for (int i=0; i<vect.length; i++)
         if (vect[i] == value) return true;
     return false;
 }
+
 
   public static void main(String[] args){
     

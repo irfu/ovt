@@ -185,10 +185,10 @@ private JPanel createMainPanel() {
     
 
 public void setObject(final java.lang.Object obj) {
-    this.timeSet = (TimeSet)obj;
-    editor[START].setValue(new Double(timeSet.getStartMjd()));
-    editor[INTERVAL].setValue(new Double(timeSet.getIntervalMjd()));
-    editor[STEP].setValue(new Double(timeSet.getStepMjd()));
+    this.timeSet = (TimeSet) obj;
+    editor[START].setValue(timeSet.getStartMjd());
+    editor[INTERVAL].setValue(timeSet.getIntervalMjd());
+    editor[STEP].setValue(timeSet.getStepMjd());
 }
 
 public void actionPerformed(final java.awt.event.ActionEvent p1) {

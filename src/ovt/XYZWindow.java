@@ -42,10 +42,7 @@ import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*;
 import ovt.object.Camera;
-import ovt.object.SSCWSSat;
-import ovt.object.Sat;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
-import vtk.rendering.jogl.vtkJoglCanvasComponent;
 
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -202,9 +199,13 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             setResizable(windowResizable);
         }
         
-        //menuBar.addSSCWSSatAction_TEST("TestSat");  // TEST
-        //menuBar.addSSCWSSatAction_TEST("Enterprise");  // TEST
-        //menuBar.addSSCWSSatAction_TEST("UFO");  // TEST
+        //menuBar.addSSCWSSatAction("Enterprise");  // TEST
+        //menuBar.addSSCWSSatAction("DataGapSat");  // TEST
+        //menuBar.addSSCWSSatAction("DownloadFailSat");  // TEST
+        //menuBar.addSSCWSSatAction("astrid2");  // TEST
+        //menuBar.addSSCWSSatAction("ace");  // TEST
+        //menuBar.addSSCWSSatAction("TestSat");  // TEST
+        //menuBar.addSSCWSSatAction("UFO");  // TEST
     }
 
     public void start() {
