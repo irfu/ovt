@@ -3,19 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ovt.object;
+package ovt.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Predicate;
 import ovt.datatype.Time;
-import ovt.util.IndexedSegmentsCache;
-import ovt.util.IndexedSegmentsCache.SegmentCacheUnit;
-import ovt.util.Log;
-import ovt.util.SSCWSLibrary;
+import ovt.util.IndexedSegmentsCache.CacheSegment;
 import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
-import ovt.util.Utils;
 
 /**
  * @author Erik P G Johansson, erik.johansson@irfu.se
@@ -26,14 +23,11 @@ import ovt.util.Utils;
  * NOTE: Uncertain if this is the right package for the class.<BR>
  * NOTE: SSCWS = SSC Web Services
  *
- * IMPLEMENTATION NOTE: The cache unit size is not a constant to simplify
+ * IMPLEMENTATION NOTE: The cache unit size is not a STATIC constant to simplify
  * automated code testing.
  */
 // PROPOSAL: Use IndexObjectsCache through composition, not inheritance.
 public class SSCWSOrbitCache {
-
-    private final static java.util.function.Predicate ACCEPT_CACHED_UNIT_FUNCTION = (Object o) -> (true);     // TEMPORARY!!!
-    private final static Object NEW_UNITS_ARGUMENT = 1;    // TEMPORARY
 
     private static final int DEBUG = 1;   // Set the minimum log message level for this class.
 
@@ -44,9 +38,79 @@ public class SSCWSOrbitCache {
     //private final File fileCache;   // When write to? When downloading? When OVT quits?
 
     //##########################################################################
-    private static class CacheUnit implements IndexedSegmentsCache.SegmentCacheUnit {
+    public static class OrbitalData {
 
-        // NOTE: ResolutionFactor currently unused. TEMP
+        public double[][] orbit;
+        public int worstRequestedResolutionSeconds;  // Unit: seconds
+        public List<Integer> dataGaps;
+    }
+    //##########################################################################
+
+
+    /**
+     * IMPLEMENTATION NOTE: Constructor uses SSC Web Services satellite ID
+     * string to identify satellite instead of SSCWSSatelliteInfo to make
+     * automated testing more convenient.
+     */
+    public SSCWSOrbitCache(
+            SSCWSLibrary mSSCWSLibrary, String SSCWSSatID,
+            double mCacheUnitSizeMjd, int proactiveFillMargin) throws Exception {
+
+        if (mCacheUnitSizeMjd <= 0) {
+            throw new IllegalArgumentException();
+        }
+        this.satInfo = mSSCWSLibrary.getSatelliteInfo(SSCWSSatID);
+        this.sscwsLibrary = mSSCWSLibrary;
+        this.cacheUnitSizeMjd = mCacheUnitSizeMjd;
+        this.segmentsCache = new IndexedSegmentsCache(
+                new CacheDataSource(),
+                satInfo.availableBeginTimeMjd, satInfo.availableEndTimeMjd,
+                proactiveFillMargin);
+    }
+
+
+    public void setCachingEnabled(boolean cachingEnabled) {
+        this.segmentsCache.setCachingEnabled(cachingEnabled);
+    }
+
+
+    public OrbitalData getOrbitData(
+            double beginMjdInclusive, double endMjdInclusive,
+            int beginIndexMargin, int endIndexMargin,
+            int newRequestedResolution)
+            throws IOException {
+
+        if (newRequestedResolution <= 0) {
+            throw new IllegalArgumentException("Illegal requested time resolution. newRequestedResolution = " + newRequestedResolution);
+        }
+
+        /**
+         * Limit requested solution to the best possible. May otherwise
+         * unnecessarily reject old cached data and fetch new data that can not
+         * possible have a higher resolution anyway. Since the accept-cache-unit
+         * function is defined here, the check also has to be done here.
+         *
+         * NOTE: Need to define "final" variable so that the value can be used
+         * in the lambda function (anonymous class).
+         */
+        final int actualRequestedResolution = Math.max(newRequestedResolution, satInfo.bestTimeResolution);
+
+        final Predicate ACCEPT_CACHED_UNIT_FUNCTION = (Predicate) (Object o) -> {
+            final CacheUnit unit = (CacheUnit) o;
+            return (unit.requestedTimeResolutionSeconds <= actualRequestedResolution);
+        };
+
+        final Object data = this.segmentsCache.getData(
+                beginMjdInclusive, endMjdInclusive,
+                beginIndexMargin, endIndexMargin,
+                ACCEPT_CACHED_UNIT_FUNCTION, actualRequestedResolution);
+
+        return (OrbitalData) data;
+    }
+
+    //##########################################################################
+    private static class CacheUnit implements IndexedSegmentsCache.CacheSegment {
+
         /**
          * The requested time resolution (after multiplying with the resolution
          * factor) used when requesting data from SSC Web Services.
@@ -56,13 +120,13 @@ public class SSCWSOrbitCache {
          *
          * NOTE: SatelliteDescription#getResolution() returns int.
          */
-        final int requestedTimeResolution;   // Unit: seconds
+        final int requestedTimeResolutionSeconds;   // Unit: seconds
         final double[][] coordinates;
 
 
         // NOTE: Only soft-copies mCoordinates.
         public CacheUnit(int mResolutionFactor, double[][] mCoordinates) {
-            this.requestedTimeResolution = mResolutionFactor;
+            this.requestedTimeResolutionSeconds = mResolutionFactor;
             this.coordinates = mCoordinates;
         }
 
@@ -87,52 +151,27 @@ public class SSCWSOrbitCache {
     private class CacheDataSource implements IndexedSegmentsCache.DataSource {
 
         @Override
-        public int getCacheUnit(double t) {
-            return SSCWSOrbitCache.this.getCacheUnit(t);
+        public int getCacheSlotIndex(double t) {
+            return SSCWSOrbitCache.this.getCacheUnitIndex(t);
         }
 
 
         @Override
-        public Object extractCacheUnitContents(List<SegmentCacheUnit> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
+        public Object extractDataFromCacheSegments(List<CacheSegment> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
             return SSCWSOrbitCache.this.extractCacheUnitContents(requestedUnits, i_beginUnitArrayInclusive, i_endUnitArrayExclusive);
         }
 
 
         @Override
-        public List<SegmentCacheUnit> createNewCacheUnits(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
+        public List<CacheSegment> getCacheSegments(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
             return SSCWSOrbitCache.this.createNewCacheUnits(i_beginInclusive, i_endExclusive, newUnitsArgument);
         }
-    }
-    //##########################################################################
-
-
-    /**
-     * IMPLEMENTATION NOTE: Constructor uses SSC Web Services satellite ID
-     * string to identify satellite instead of SSCWSSatelliteInfo to make
-     * autmated testing more convenient.
-     */
-    public SSCWSOrbitCache(SSCWSLibrary mSSCWSLibrary, String SSCWSSatID,
-            double mCacheUnitSizeMjd, int proactiveFillMargin) throws Exception {
-
-        if (mCacheUnitSizeMjd <= 0) {
-            throw new IllegalArgumentException();
-        }
-        this.satInfo = mSSCWSLibrary.getSatelliteInfo(SSCWSSatID);
-        this.sscwsLibrary = mSSCWSLibrary;
-        this.cacheUnitSizeMjd = mCacheUnitSizeMjd;
-        this.segmentsCache = new IndexedSegmentsCache(new CacheDataSource(), satInfo.availableBeginTimeMjd, satInfo.availableEndTimeMjd, proactiveFillMargin);
-    }
-
-
-    public double[][] getOrbitData(double beginMjdInclusive, double endMjdInclusive, int beginIndexMargin, int endIndexMargin) throws IOException {
-        final Object data = this.segmentsCache.getData(beginMjdInclusive, endMjdInclusive, beginIndexMargin, endIndexMargin, ACCEPT_CACHED_UNIT_FUNCTION, NEW_UNITS_ARGUMENT);
-        return (double[][]) data;
     }
 
 
     /**
      * Return the time period for which this cache unit MAY contain data. The
-     * method should be consistent with int getCacheUnitIndex(double mjd).<BR>
+     * method should be consistent with int getCacheSlotIndex(double mjd).<BR>
      *
      * NOTE: The returned values do NOT necessarily refer to the time span of
      * the data that is actually in the cache unit. There might not be any data
@@ -150,7 +189,7 @@ public class SSCWSOrbitCache {
     }
 
 
-    private int getCacheUnit(double mjd) {
+    private int getCacheUnitIndex(double mjd) {
         if ((mjd < (Integer.MIN_VALUE / cacheUnitSizeMjd)) || ((Integer.MAX_VALUE / cacheUnitSizeMjd) < mjd)) {
             throw new RuntimeException("Can not convert modified Julian Day (mjd) value to int."
                     + "This (probably) indicates a bug.");
@@ -163,24 +202,30 @@ public class SSCWSOrbitCache {
      * Fill specified cache units with new data downloaded from SSC Web
      * Services.
      */
-    private List<SegmentCacheUnit> createNewCacheUnits(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
+    private List<CacheSegment> createNewCacheUnits(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
 
-        Log.log("Call: createNewCacheUnits(i_beginInclusive=" + i_beginInclusive + ", i_endExclusive=" + i_endExclusive + ", ...)", DEBUG);
+        Log.log(this.getClass().getSimpleName() + ".createNewCacheUnits(i_beginInclusive=" + i_beginInclusive + ", i_endExclusive=" + i_endExclusive + ", ...)", DEBUG);
 
         final int requestedTimeResolution = (int) newUnitsArgument;
         final double requestBeginMjd = getCacheUnitSpanMjd(i_beginInclusive)[0];
         final double requestEndMjd = getCacheUnitSpanMjd(i_endExclusive - 1)[1];
-        final List<SegmentCacheUnit> filledUnits = new ArrayList();
+        final List<CacheSegment> filledUnits = new ArrayList();
 
-        Log.log("      createNewCacheUnits: " + Time.toString(requestBeginMjd) + " (" + requestBeginMjd + ") to " + Time.toString(requestEndMjd) + " (" + requestEndMjd + ")", DEBUG);
+        Log.log(this.getClass().getSimpleName() + ".createNewCacheUnits: " + Time.toString(requestBeginMjd) + " (" + requestBeginMjd + ") to " + Time.toString(requestEndMjd) + " (" + requestEndMjd + ")", DEBUG);
 
-        /* Download data        
+        /*======================================================================
+         Download data        
          ---------------
          NOTE: The resolution factor must not be lower than one.
-         NOTE: It is better to round down to a better resolution, and integer division does round down.
-         */
+         NOTE: It is better to round down to a better resolution, and integer
+         division does round down.
+         ======================================================================*/
         final int resolutionFactor = Math.max(requestedTimeResolution / this.satInfo.bestTimeResolution, 1);
+        System.out.println("Downloading data from SSC Web Services.");   // Printout (not log message) is here to cover the SSCWSLibrary for testing.
+        final long t_start = System.nanoTime();
         final double[][] coords = sscwsLibrary.getOrbitData(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
+        final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
+        System.out.println("   Time used for downloading data: " + duration + " [s]");
 
         /* Create cache units containing sections of data. */
         for (int i = i_beginInclusive; i < i_endExclusive; i++) {
@@ -203,7 +248,7 @@ public class SSCWSOrbitCache {
     }
 
 
-    private Object extractCacheUnitContents(List<SegmentCacheUnit> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
+    private Object extractCacheUnitContents(List<CacheSegment> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
         /* Merge and clip time series from the various units into one long
          time series (array) for every component X/Y/Z/mjd.
          -----------------------------------------------------------------
@@ -215,18 +260,24 @@ public class SSCWSOrbitCache {
          */
 
         final double[][][] coordUnmerged = new double[4][requestedUnits.size()][];  // Indices [component X/Y/Z/mjd][unit][position index]
+        int worstResolutionSeconds = 0;
         for (int i_unitInList = 0; i_unitInList < requestedUnits.size(); i_unitInList++) {
             final CacheUnit unit = (CacheUnit) requestedUnits.get(i_unitInList);   // NOTE: Typecasting
+            worstResolutionSeconds = Math.max(worstResolutionSeconds, unit.requestedTimeResolutionSeconds);
 
             // Construct indices to copy from this particular unit.
             // NOTE: A unit may be BOTH FIRST AND LAST in the list.
             int j_begin = 0;
             int j_end = unit.coordinates[3].length;
+
             if (i_unitInList == 0) {
+                // CASE: Unit is FIRST in list.
                 //j_begin = Math.max(i_beginDataPointInclusive, j_begin);   // beginDataPointInclusive might be negative.
                 j_begin = i_beginUnitArrayInclusive;
             }
+
             if (i_unitInList == requestedUnits.size() - 1) {
+                // CASE: Unit is LAST in list.
                 //j_end = Math.min(i_endDataPointExclusive, j_end);   // endDataPointExclusive might be greater than length of array.
                 j_end = i_endUnitArrayExclusive;
             }
@@ -241,11 +292,48 @@ public class SSCWSOrbitCache {
             coordMerged[k_comp] = Utils.concatDoubleArrays(coordUnmerged[k_comp]);
         }
 
-        return coordMerged;
+        final List<Integer> dataGaps = findJumps(coordMerged[3], worstResolutionSeconds * 2 * Time.DAYS_IN_SECOND);
+
+        if (DEBUG > 0) {
+            final double[] t = coordMerged[3];
+            for (int i_dg = 0; i_dg < dataGaps.size(); i_dg++) {  // dg = data gap
+                int i = dataGaps.get(i_dg);
+                final Time dgBegin = new Time(t[i]);
+                final Time dgEnd = new Time(t[i + 1]);
+                System.out.println("Detected data gap " + i_dg + ": " + dgBegin.toString() + " to " + dgEnd.toString() + ", length=" + (t[i + 1] - t[i]) + " (mjd)");
+                System.out.println("                     " + t[i] + " to " + t[i + 1] + " (mjd)");
+                // NOTE: Log.log and System.out.println might not always print in the order they are executed.
+            }
+        }
+
+        final OrbitalData data = new OrbitalData();
+        data.orbit = coordMerged;
+        data.worstRequestedResolutionSeconds = worstResolutionSeconds;
+        data.dataGaps = dataGaps;
+        return data;
     }
 
-    //########################################################################
 
+    /**
+     * Look for jumps greater or equal to threshold. Return list of indices for
+     * which a[i + 1] - a[i] >= minJumpGap.
+     *
+     * Behaviour is undefined for NaN, +Inf, -Inf.
+     */
+    // PROPOSAL: Move to Utils?
+    private static List<Integer> findJumps(double[] a, double minJumpGap) {
+        final List<Integer> dataGaps = new ArrayList();
+        for (int i = 0; i < a.length - 1; i++) {
+            // Check if there is a (positive) jump.
+            if (a[i + 1] - a[i] >= minJumpGap) {
+                dataGaps.add(i);
+            }
+        }
+        return dataGaps;
+    }//*/
+
+
+    //########################################################################
     /**
      * Informal test code.
      */
@@ -253,9 +341,9 @@ public class SSCWSOrbitCache {
         //======================================================================
         class SSCWSLibraryEmul extends SSCWSLibrary {
 
-            private double data[][];
+            private final double data[][];
             //private double availableBeginTimeMjd , availableEndTimeMjd;
-            private SSCWSSatelliteInfo satInfo;
+            private final SSCWSSatelliteInfo satInfo;
 
 
             SSCWSLibraryEmul(double[][] data, SSCWSSatelliteInfo satInfo) {
@@ -264,6 +352,7 @@ public class SSCWSOrbitCache {
             }
 
 
+            @Override
             public List<SSCWSSatelliteInfo> getAllSatelliteInfo() {
                 List<SSCWSSatelliteInfo> satInfos = new ArrayList();
                 satInfos.add(satInfo);
@@ -271,18 +360,24 @@ public class SSCWSOrbitCache {
             }
 
 
-            public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int resolutionFactor) {
-                System.out.println("SSCWSLibraryEmul#getOrbitData(" + beginInclusiveMjd + ", " + endInclusiveMjd + ", " + resolutionFactor + ")");
-                return getOrbitData(satID, beginInclusiveMjd, endInclusiveMjd, 0, 0, resolutionFactor);
+            @Override
+            public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int reqResolution) {
+                System.out.println(this.getClass().getSimpleName() + ".SSCWSLibraryEmul#getOrbitData("
+                        + beginInclusiveMjd + ", " + endInclusiveMjd + ", " + reqResolution + ")");
+                return getOrbitData(satID, beginInclusiveMjd, endInclusiveMjd, 0, 0, reqResolution);
             }
 
 
             /**
-             * Method is no prescribed by SSCWSLibrary but is useful for testing
-             * since it should return exactly what the cache method should
-             * return.
+             * This method is not prescribed by SSCWSLibrary but is useful for
+             * testing since it should return exactly what the cache method
+             * should return.
+             *
+             * NOTE: Currently ignores the requested resolution, but the cache
+             * still cares about the requested value when deciding whether to
+             * keep old cache units or replace them.
              */
-            public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int beginIndexMargin, int endIndexMargin, int resolutionFactor) {
+            public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int beginIndexMargin, int endIndexMargin, int reqResolution) {
 
                 // Select and extract data range.
                 int[] i_interval = Utils.findInterval(data[3], beginInclusiveMjd, endInclusiveMjd, true, true);   // NOTE: inclusive + INclusive.
@@ -353,14 +448,14 @@ public class SSCWSOrbitCache {
             }
         }
         //======================================================================
-        final int resolutionFactor = 1;
+        final int reqResolution = Time.SECONDS_IN_DAY / 5;
 
         final List<TestRun> testRuns = new ArrayList<>();
 
         double[][][] dataList = new double[][][]{data1, data2};
         double[][] dataLimitsList = new double[][]{{0, 10}, {0, 2}};
         for (int i = 0; i < 2; i++) {
-            SSCWSLibraryEmul lib = new SSCWSLibraryEmul(dataList[i], new SSCWSSatelliteInfo("TestSat", "Test Satellite", dataLimitsList[i][0], dataLimitsList[i][1], Time.SECONDS_IN_DAY / 5));
+            SSCWSLibraryEmul lib = new SSCWSLibraryEmul(dataList[i], new SSCWSSatelliteInfo("TestSat", "Test Satellite", dataLimitsList[i][0], dataLimitsList[i][1], reqResolution));
             testRuns.add(new TestRun(
                     lib,
                     new SSCWSOrbitCache(
@@ -370,14 +465,14 @@ public class SSCWSOrbitCache {
 
         for (TestRun run : testRuns) {
             final List<TestCall> newCalls = new ArrayList();
-            newCalls.add(new TestCall(4.5, 5.5, 0, run.lib.getOrbitData(null, 4.5, 5.5, resolutionFactor)));
-            newCalls.add(new TestCall(5.0, 7.0, 0, run.lib.getOrbitData(null, 5.0, 7.0, resolutionFactor)));
-            newCalls.add(new TestCall(0.0, 2.0, 0, run.lib.getOrbitData(null, 0.0, 2.0, resolutionFactor)));
-            newCalls.add(new TestCall(1.0, 2.0, 1, run.lib.getOrbitData(null, 1.0, 2.0, 1, 1, resolutionFactor)));
-            newCalls.add(new TestCall(2.0, 3.0, 7, run.lib.getOrbitData(null, 2.0, 3.0, 7, 7, resolutionFactor)));
-            newCalls.add(new TestCall(2.3, 3.7, 7, run.lib.getOrbitData(null, 2.3, 3.7, 7, 7, resolutionFactor)));
-            newCalls.add(new TestCall(9.8, 9.8, 5, run.lib.getOrbitData(null, 9.8, 9.8, 5, 5, resolutionFactor)));
-            newCalls.add(new TestCall(0.2, 0.2, 5, run.lib.getOrbitData(null, 0.2, 0.2, 5, 5, resolutionFactor)));
+            newCalls.add(new TestCall(4.5, 5.5, 0, run.lib.getOrbitData(null, 4.5, 5.5, reqResolution)));
+            newCalls.add(new TestCall(5.0, 7.0, 0, run.lib.getOrbitData(null, 5.0, 7.0, reqResolution)));
+            newCalls.add(new TestCall(0.0, 2.0, 0, run.lib.getOrbitData(null, 0.0, 2.0, reqResolution)));
+            newCalls.add(new TestCall(1.0, 2.0, 1, run.lib.getOrbitData(null, 1.0, 2.0, 1, 1, reqResolution)));
+            newCalls.add(new TestCall(2.0, 3.0, 7, run.lib.getOrbitData(null, 2.0, 3.0, 7, 7, reqResolution)));
+            newCalls.add(new TestCall(2.3, 3.7, 7, run.lib.getOrbitData(null, 2.3, 3.7, 7, 7, reqResolution)));
+            newCalls.add(new TestCall(9.8, 9.8, 5, run.lib.getOrbitData(null, 9.8, 9.8, 5, 5, reqResolution)));
+            newCalls.add(new TestCall(0.2, 0.2, 5, run.lib.getOrbitData(null, 0.2, 0.2, 5, 5, reqResolution)));
             run.testCalls.addAll(newCalls);
         }
         //testRuns.remove(1);
@@ -391,15 +486,18 @@ public class SSCWSOrbitCache {
 
             for (TestCall call : run.testCalls) {
 
-                final double[][] actualResult = run.orbitCache.getOrbitData(call.beginMjd, call.endMjd, call.beginEndIndexMargin, call.beginEndIndexMargin);
+                final OrbitalData actualResult = run.orbitCache.getOrbitData(
+                        call.beginMjd, call.endMjd,
+                        call.beginEndIndexMargin, call.beginEndIndexMargin,
+                        reqResolution);
                 //System.out.println("actualResult[3] = " + Arrays.toString(actualResult[3]));
 
-                if (Arrays.deepEquals(actualResult, call.result)) {
+                if (Arrays.deepEquals(actualResult.orbit, call.result)) {
                     System.out.println("OK");
                 } else {
                     System.out.println("#############################################");
-                    System.out.println("orbitCache.getOrbitData(" + call.beginMjd + ", " + call.endMjd + ", " + call.beginEndIndexMargin + ", " + resolutionFactor + ");");
-                    System.out.println("ERROR: actualResult[3] = " + Arrays.toString(actualResult[3]));
+                    System.out.println("orbitCache.getOrbitData(" + call.beginMjd + ", " + call.endMjd + ", " + call.beginEndIndexMargin + ", " + reqResolution + ");");
+                    System.out.println("ERROR: actualResult.orbit[3] = " + Arrays.toString(actualResult.orbit[3]));
                     System.out.println("#############################################");
                     System.exit(1);
                 }
