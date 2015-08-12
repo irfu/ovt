@@ -71,7 +71,6 @@ public class OrbitModule extends SingleActorSatModule {
   }
   
   public void coordinateSystemChanged(CoordinateSystemEvent evt) {
-    //System.out.println("Coord system changed.. I see...");
     invalidate();
     if (isVisible()) {
       hide();
@@ -82,7 +81,7 @@ public class OrbitModule extends SingleActorSatModule {
   
   public void validate() {
     
-      int resolution = 10; // number of interpolated points between 2 normal points
+      final int resolution = 10; // Number of interpolated points between 2 normal points.
       vtkPolyData profile = new vtkPolyData();
       vtkCellArray lines = new vtkCellArray();
       TrajectoryPoint tr;

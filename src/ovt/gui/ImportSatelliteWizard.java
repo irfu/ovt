@@ -255,7 +255,7 @@ public class ImportSatelliteWizard extends JDialog {
     }
     
     /** Derives the file type on the basis of the filename (*.tle, *.ltof)
-     * @returns  TLE or LTOF or -1
+     * @return  TLE or LTOF or -1
      */
     private static int getOrbitDataType(String filename) {
         if (filename.toLowerCase().endsWith(".tle")) return TLE;

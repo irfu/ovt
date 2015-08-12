@@ -34,24 +34,18 @@ Khotyaintsev
  * TimeSettings.java
  *
  * Created on February 28, 2000, 11:00 AM
+ *
  */
  
 package ovt.object;
 
 import ovt.*;
-import ovt.gui.*;
-import ovt.util.*;
 import ovt.beans.*;
 import ovt.event.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
-import ovt.object.editor.*;
 
-import java.beans.*;
 
-import java.awt.event.*;
-import java.util.*;
-import java.lang.reflect.*;
 
 /** 
  *
@@ -59,6 +53,12 @@ import java.lang.reflect.*;
  * @version 
  */
 public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
+
+  private final int NBR_OF_STEPS_BEFORE_WARNING = 1000;
+  private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");
+  private final double INITIAL_INTERVAL_MJD = 1;
+  private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");   
+  private final double INITIAL_CURRENT_MJD = Time.getMjd("2012-12-30 00:00:00");
 
   /** Holds value of property customizerVisible. */
   private boolean customizerVisible = false;
@@ -78,11 +78,9 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     showInTree(false);
     setParent(core); // to have a full name "OVT.TimeSettings"
     
-    timeSet = new TimeSet(Time.getMjd("2002-01-01 00:00:00"), 1., 
-        MinutesAndSeconds.getInDays("20:00"), Time.getMjd("2002-01-01 00:00:00"));
+    timeSet = new TimeSet(INITIAL_START_MJD, INITIAL_INTERVAL_MJD, INITIAL_STEP_MJD, INITIAL_CURRENT_MJD);
 
-    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);
-    
+    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);    
   }
 
   public void addTimeChangeListener (TimeChangeListener listener) {
@@ -106,10 +104,11 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   public void setTimeSet(TimeSet ts) throws IllegalArgumentException {
     //Log.log("->setTimeSet("+ts+")");
     if (ts.getStepMjd() > ts.getIntervalMjd()/2.)
-        throw new IllegalArgumentException("Step is too large");
+        throw new IllegalArgumentException("Step is greater than half the specified time interval.");
     
-    if ( ts.getIntervalMjd()/ts.getStepMjd() > 400) 
-        getCore().sendWarningMessage("Warning", "Number of steps exceeds 400");
+    final int nbrOfSteps = ts.getNumberOfValues();
+    if (nbrOfSteps > NBR_OF_STEPS_BEFORE_WARNING)
+        getCore().sendWarningMessage("Warning", "Number of steps ("+nbrOfSteps+") exceeds "+NBR_OF_STEPS_BEFORE_WARNING+".");
     
     ts.adjustInterval();
     ts.adjustCurrentMjd();

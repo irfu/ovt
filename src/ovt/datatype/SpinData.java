@@ -35,8 +35,6 @@ package ovt.datatype;
 import ovt.util.*;
 
 import java.io.*;
-import java.util.*;
-import java.lang.Math;
 
 
 
@@ -45,43 +43,46 @@ import java.lang.Math;
  */
 public class SpinData {  
   
-   protected String fname;
    private boolean isAvailable=false;
+   protected String fname;
    protected SpinRecord spinRecord=new SpinRecord();
    
-   //for test only!
-   public SpinData(){
+   // For testing only!
+   private SpinData(){
    }
   
    //for test only!
-   public static void testRecord(String x){
+   private static void testRecord(String x){
       SpinRecord tmp=new SpinRecord(x);
       tmp.print();
    }
   
-   public SpinData(String fName){
-      this.fname=new String(fName);
-      this.isAvailable=isAvailable(fname);
+   /** @param filename Spin file. Null (e.g.) represents there being no spin file. */
+   public SpinData(String filename){
+      this.fname = filename;
+      this.isAvailable = isAvailable(fname);
    }
    
    public boolean isAvailable(){
       return isAvailable;
    }
   
-   public static boolean isAvailable(String filename){
-      File file=new File(filename);
-      if(file.exists()==false) return false;
-      if(file.length()<100)return false;
-      if(file.canRead()==false)return false;
+   /** @param filename Spin file. Null (e.g.) represents there being no spin file. */
+   private static boolean isAvailable(String filename){
+      if (filename == null) return false;
+      final File file = new File(filename);
+      if (file.exists() == false) return false;
+      if (file.length() < 100) return false;
+      if (file.canRead() == false) return false;
       return true;
    }
    
    /**
-    *@param MJD (from J1950)
+    *@param mjd (epoch J1950)
     *@return x,y,z - spin vector in GEI CS (abs. value indicates spin rate!)
     */
    public double[] getSpinVect(double mjd){
-      mjd-=18262.0;              //from J2000 !!!
+      mjd-=Time.Y2000;              // Change to Epoch from J2000 !!!
       if(!this.isAvailable())
          return null;
       try {
@@ -105,19 +106,21 @@ public class SpinData {
       }
    }
    
-   /* Returns null if any error or spin parameters (record)
+   
+   
+   /** Returns null if any error or spin parameters (record).
     * @param mjd - MJD from 1950
     * @param fileName - File name
     * @return null or spin record
     */
-   public static SpinRecord getSpinRecord(String fileName,double mjd) throws IOException{
+   private static SpinRecord getSpinRecord(String fileName, double mjd) throws IOException{
       if(isAvailable(fileName)==false)
          throw new IOException("File "+fileName+" is not available.");
       
       BufferedReader inData;
       boolean isFound=false;
       String str;
-      double mjdx=mjd; //-18262.0;  //mjd from J1950, but mjdx from J2000 !!!
+      double mjdx=mjd; //-18262.0 (18626==Time.Y2000);  //mjd from J1950, but mjdx from J2000 !!!
       double[] spinVect={0,0,0};
       SpinRecord spRec=new SpinRecord();
       SpinRecord closestRec=new SpinRecord();
@@ -147,12 +150,14 @@ public class SpinData {
       else return null;
    }
   
+   
+   
    public static void main(String[] s){
 /*      SpinData xx=new SpinData();
       String str=new String(" 1 R 2001-01-01T12:35:25Z 2001-01-02T16:35:25Z 273.45 -43.56 14.456789 333.723 777.9  -2.1   1.3  0.02 -0.05 2001-01-02T16:33:31Z");
       xx.testRecord(str);*/
      SpinData xx=new SpinData("/export/home/kono/ovt2g/odata/satt.dat");
-     double[] spinVect=xx.getSpinVect(369.1+18262.0);
+     double[] spinVect=xx.getSpinVect(369.1 + Time.Y2000);
      if(spinVect!=null)
         System.out.println("res: "+spinVect[0]+", "+spinVect[1]+", "+spinVect[2]);
      else System.out.println("Error :-(");

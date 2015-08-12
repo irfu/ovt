@@ -30,8 +30,13 @@ Khotyaintsev
 
 =========================================================================*/
 
-/*
+/**
  * Trans.java
+ * 
+ * Supplies functions for among other things coordinate transformations.
+ * One possible source/reference for coordinate transformations is
+ * "Space Physics Coordinate Transformations: A User Guide", M. A. Hapgood,
+ * Planet. Space Sci., Vol. 40, No. 5. pp. 711-717, 1992
  *
  * Created on March 24, 2000, 1:18 PM
  */
@@ -53,7 +58,7 @@ import ovt.datatype.*;
 public class Trans {
 
   /** Degrees in 1 radian */
-  public static final double  RAD   =   57.295779513;
+  public static final double RAD = 57.295779513;
   /** equals to 0 */
   public static final int MAGNETIC_DIPOLE  = 0;
   /** equals to 1 */
@@ -434,7 +439,7 @@ public class Trans {
 
   public static Matrix3x3 gei_gse_trans_matrix(double mjd) {
     double[][] geigse = new double[3][];
-  double eqlipt[] = {   0.0, -0.398, 0.917 };
+    double eqlipt[] = {   0.0, -0.398, 0.917 };
     geigse[0] = Utils.sunmjd(mjd);
     geigse[1] = Vect.crossn(eqlipt, geigse[0]);
     geigse[2] = Vect.crossn(geigse[0], geigse[1]);
@@ -729,7 +734,7 @@ public class Trans {
 
   
 
-  /** Returns [0] - Geografical Latitude, [1] - Geografical Longitude in degrees*/
+  /** Returns [0] - Geographic Latitude, [1] - Geographic Longitude in degrees */
   public static double[] xyz2LatLon(double[] xyz) {
     int X = 0; int Y = 1; int Z = 2;
     double irad = 180./Math.PI;

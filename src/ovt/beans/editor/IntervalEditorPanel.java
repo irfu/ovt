@@ -49,6 +49,7 @@ import javax.swing.event.*;
 import javax.swing.text.*; 
 
 import java.awt.Toolkit;
+import ovt.util.Log;
 
 
 /**
@@ -83,6 +84,7 @@ public IntervalEditorPanel(IntervalEditor ed) {
     getDocument().addDocumentListener( documentListener );
 }
 
+/** _Try_ to interpret the string in the textfield as an interval. Fail silently. */
 private void applyChangesSilently() {
     editor.removePropertyChangeListener(IntervalEditorPanel.this);
     try {
@@ -96,7 +98,8 @@ private void applyChangesSilently() {
 public void propertyChange(PropertyChangeEvent evt) {
     // oldPropertyValue is changed only from outside
     getDocument().removeDocumentListener( documentListener );
-    setText(editor.getAsText());
+    final String s = editor.getAsText();   
+    setText(s);  // NOTE: Must use text that can be parsed into an interval again. 
     getDocument().addDocumentListener( documentListener );
 }
 
@@ -115,15 +118,23 @@ public void sync() throws SyncException {
 }
 class IntervalDocument extends DefaultStyledDocument {
 
+    /** Called whenever the user types something into the text field
+     * (and other text field updates too). Calls to setText seem to
+     * indirectly lead to a call to this function.
+     * 
+     * @param str The string that "someone" tried to INSERT.
+     */
     public void insertString(int offs, String str, AttributeSet a) 
         throws BadLocationException {
-        if ( isTimeStr(str) )
-            super.insertString(offs, str, a);
+        
+        // Insert string into text field, but only if the string contains permitted characters.
+        if ( onlyContainsPermittedCharacters(str) )
+            super.insertString(offs, str, a);   // Triggers call to DocumentListener#insertUpdate.
         else
             Toolkit.getDefaultToolkit().beep();
     }
     
-    private static boolean isTimeStr(String str){
+    private static boolean onlyContainsPermittedCharacters(String str){
       if (str != null )
       for (int i=0;i<str.length();i++)
         if (!java.lang.Character.isDigit(str.charAt(i)) &&

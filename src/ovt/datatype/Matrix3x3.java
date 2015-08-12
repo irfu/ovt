@@ -128,7 +128,7 @@ public class Matrix3x3 {
   }
   
   /** Multyply matrix by a scalar. The result is a vector. 
-   * @returns vector 
+   * @return vector 
    */
   public void multiply(double scalar) {
     //System.out.println("Multyplying by" + scalar);
@@ -141,7 +141,7 @@ public class Matrix3x3 {
   }
   
   /** Multyply matrix by vector. The result is a vector. 
-   * @returns vector 
+   * @return vector 
    */
   public double[] multiply(double[] vector) {    
     double[] res = new double[3];
@@ -150,8 +150,8 @@ public class Matrix3x3 {
     return res;
   }
   
-  /** Multyply matrix by matrix 3x3. The result is a Matrix3x3. 
-   * @returns vector 
+  /** Multiply matrix by matrix.
+   * @return New instance of Matrix3x3. 
    */
   public Matrix3x3 multiply(Matrix3x3 matrix) {
     Matrix3x3 res = new Matrix3x3();

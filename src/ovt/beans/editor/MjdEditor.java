@@ -25,13 +25,14 @@ public class MjdEditor extends PropertyEditorSupport {
 
     public void setAsText(String text) throws IllegalArgumentException {
         try {
-            setValue(new Double(new ovt.datatype.Time(text).getMjd()));
+            setValue(new ovt.datatype.Time(text).getMjd());
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Time format: YYYY-MM-DD HH:MM:SS");
         }
     }
     
     public String getAsText() {
+        // NOTE: Uses Time#toString().
         return "" + new ovt.datatype.Time(((Double)getValue()).doubleValue());
     }
     

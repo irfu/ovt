@@ -68,6 +68,14 @@ GUIPropertyEditorListener {
     public static final Properties globalProperties = new Properties();
     public static int DEBUG = 0;
     
+    /**
+     * Select what to use as a data source for the functionality/code that
+     * handles SSC Web Services satellites.
+    */
+    //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
+    public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
+
+    
     private vtkRenderer renderer = null;
     /**
      * @see #setRenderAction(Renderable)
@@ -320,11 +328,11 @@ GUIPropertyEditorListener {
         Log.log("Creating Earth ...", 3);
         earth = new Earth(this);
         
-        // set frames
+        // Set frames
         Log.log("Creating Frames ...", 3);
         frames = new Frames(this);
         
-        // set frames
+        // Set frames
         Log.log("Creating Ground-Based-Stations ...", 3);
         groundStations = new GroundStations(this);
         
@@ -332,10 +340,10 @@ GUIPropertyEditorListener {
         bowShock = new BowShock(this);
         magTangent = new MagTangent(this);
         
-        //load sattelites
+        // Load satellites
         sats = new Sats(this);
         
-        //set magnetosphere
+        // Set magnetosphere
         Log.log("Creating Magnetosphere ...", 3);
         magnetosphere = new Magnetosphere(this);
         

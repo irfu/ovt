@@ -175,7 +175,7 @@ public class SpinRecord{
             //System.err.println("SpinRecord.ccsds2mjd: Invalid CCSDS format");
             return err;
          }
-         mjd=Time.getMjd(y,m,d,hh,mm,ss)-18262.0;  //from 2000 epoch!!!
+         mjd=Time.getMjd(y,m,d,hh,mm,ss)-Time.Y2000;  //from 2000 epoch!!!
          return mjd;
       } catch (NumberFormatException e1){
          //System.err.println("SpinRecord.ccsds2mjd: NumberFormatException");

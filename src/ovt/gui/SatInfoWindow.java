@@ -66,10 +66,11 @@ import javax.swing.event.*;
  */
 public class SatInfoWindow extends JDialog implements Customizer {
     
-    private Descriptors desc;
-    private JLabel fileL = new JLabel("File : .........");
-    private JLabel timeL = new JLabel("Orbit data is available for 2000-01-01 00:00:00 - 2000-01-02 00:00:00");
-    private JLabel revolPeriodL = new JLabel("Approx. revolution period:  2.3 days");
+    private Descriptors desc;    
+    // Preliminary texts which are never (?) displayed. Probably specified to set the initial size of the window.
+    private JLabel fileL = new JLabel("File : XXXXXXXXX");
+    private JLabel timeL = new JLabel("Orbit data is available for XXXX-XX-XX XX:XX:XX - XXXX-XX-XX XX:XX:XX");
+    private JLabel revolPeriodL = new JLabel("Estimated approx. orbital period:  X.X days");
     
     public SatInfoWindow(JFrame owner) {
         super(owner, true); 
@@ -107,7 +108,7 @@ public class SatInfoWindow extends JDialog implements Customizer {
         
         getContentPane().add(cont);
         
-        pack();
+        pack();  // "Causes this Window to be sized to fit the preferred size and layouts of its subcomponents."
         
         // senter the window
         Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
@@ -119,21 +120,29 @@ public class SatInfoWindow extends JDialog implements Customizer {
     public void setObject(Object sat) {
         Sat satellite = (Sat)sat;
         setTitle("Satellite : " + satellite.getName());
-        fileL.setText("File : "+satellite.getOrbitFile().getAbsolutePath());
+        
+        final File file = satellite.getOrbitFile();
+        String displayFilePath = "(none; uses other data source)";
+        if (file != null) {
+            displayFilePath = file.getAbsolutePath();
+        }
+        fileL.setText("File : "+displayFilePath);
+        
         //recordsL.setText("Data has "+module.getData().length+ " records");
         timeL.setText("Orbit data available for "+new Time(satellite.getFirstDataMjd())+" - " +
                               new Time(satellite.getLastDataMjd()));
         
         String period = "not available";
-        double perDays = satellite.getRevolutionPeriod();
+        double perDays = satellite.getOrbitalPeriodDays();
         if (perDays > 0) {
-             Interval interv = new Interval(perDays);
+             final Interval interv = new Interval(perDays);
              interv.setSeconds(0);
-             if (interv.getDay() > 0) interv.setMinutes(0); // if the period is in days - no need to show minutes .-))
+             if (interv.getDays() > 0) { 
+                 interv.setMinutes(0); // if the period is in days - no need to show minutes .-))
+             }
              period = interv.toString();
         }
-        revolPeriodL.setText("Approx. revolution period :  "+period);
+        revolPeriodL.setText("Estimated approx. orbital period :  "+period);
     }
 
-    
 }

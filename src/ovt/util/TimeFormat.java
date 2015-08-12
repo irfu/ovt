@@ -117,7 +117,7 @@ public class TimeFormat extends OVTObject {
 	    	date = days_format.format(time.getMjd());
 		break;
 	    case SECS_SINCE_1970_01_01:	    
-	    	date = ""+(time.getMjd()-Time.Y1970)*3600.*24.;//secs_format.format(time.getMjd()*3600.*24.);
+	    	date = ""+(time.getMjd()-Time.Y1970)*Time.SECONDS_IN_DAY;//secs_format.format(time.getMjd()*3600.*24.);
 		break;
             
         }

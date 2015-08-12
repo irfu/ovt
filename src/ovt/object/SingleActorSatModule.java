@@ -45,7 +45,6 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- *
  * @author  ko
  * @version
  */

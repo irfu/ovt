@@ -66,7 +66,11 @@ public class Sats extends BasicObject implements TimeChangeListener,
     //protected static boolean nothingIsShown = true;
     
     
-    // Constructor2. Directory with Sat-data files is passed to it.
+    /** Constructor. Directory with Sat-data files is passed to it.
+     * Set default satellites.
+     * 
+     * @param core 
+     */
     public Sats(OVTCore core) {
         super(core, "Satellites");
         Log.log("Sats :: init ...", 3);
