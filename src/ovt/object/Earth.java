@@ -72,7 +72,7 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
   protected vtkTexture[] texture = new vtkTexture[4];
   
   /** Holds value of property textureType. */
-  protected int textureType = NORMAL_TEXTURE;
+  protected int textureType = HIGH_RESOLUTION_TEXTURE; // let's set default to high res FKJN 22/6 2015
   
   /** The type of the texture to be used in the case of no conflicts */
   protected int prefferedTextureType = NORMAL_TEXTURE;
@@ -138,10 +138,27 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
       tss.SetThetaResolution(40);
       tss.SetPhiResolution(40);
 
+      double[] translate = {0,0,0};
+     // int[] myIntArray = {1,2,3};
+
+
+      vtkTransformTextureCoords transformTexture = new vtkTransformTextureCoords();
+      
+      transformTexture.SetInputConnection(tss.GetOutputPort());
+      transformTexture.SetPosition(translate);
+
+    //vtkSmartPointer<vtkTransformTextureCoords> transformTexture =
+  //  vtkSmartPointer<vtkTransformTextureCoords>::New();
+  //  transformTexture->SetInputConnection(source->GetOutputPort());
+   // transformTexture->SetPosition(translate);
+
+      
       // scale the texture
     vtk.vtkTransformTextureCoords trans = new vtk.vtkTransformTextureCoords();
       trans.SetInputConnection(tss.GetOutputPort());
-      trans.SetScale(.25, 1, 1);
+      trans.SetScale(0.25, 1, 1); // FKJN Debug!!°!
+      trans.SetOrigin(0, 0.5, 0); // vtk expects maps from -180° to +180°
+
       // map to graphics library
     vtkPolyDataMapper earthMapper = new vtkPolyDataMapper();
       earthMapper.SetInputConnection(trans.GetOutputPort());
