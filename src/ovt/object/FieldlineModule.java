@@ -140,7 +140,11 @@ implements MagPropsChangeListener {
         updateToCurrentCS();
         Enumeration e = actors_to_show.elements();
         while (e.hasMoreElements())
+        {
             getRenderer().AddActor((vtkActor)e.nextElement());
+           // ((vtkActor)e.nextElement()).GetProperty().SetColor(0,0,0);
+        }
+    
     }
     
     public void hide() {

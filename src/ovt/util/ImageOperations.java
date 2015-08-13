@@ -59,6 +59,7 @@ import java.awt.image.RenderedImage;
 import java.io.File; 
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FilenameUtils;
+import ovt.graphics.BmpDecoder;
 
 
 /**
@@ -640,7 +641,7 @@ public class ImageOperations {
     public static void exportImageDialog(OVTCore core) {
         XYZWindow frameOwner = core.getXYZWin();
         vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
-        
+       
         String defaultFile = OVTCore.getGlobalSetting(DEFAULT_IMAGE_FILE, core.getUserDir());
                 
         JFileChooser chooser = new JFileChooser(new File(defaultFile));
@@ -692,13 +693,52 @@ public class ImageOperations {
             else outputLabel.setLabelText(COPYRIGHT);
             outputLabel.setVisible(true);
             /* ********/
-            exportImage(renderWindow, fname);
-            
-            makeScreenshot(frameOwner.getRenpanel());
-            
+            //exportImage(renderWindow, fname);
+
+            //makeScreenshot(frameOwner.getRenpanel());
             try{
-                screenCapture(fname);//this thing actually works, but is not preferred
-                exportImage2(core, fname); //this kinda works, but makes window unusable.
+                
+                
+                        String tmpDir = System.getProperty("java.io.tmpdir");
+        if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataDir();
+        String tempFile = Utils.getRandomFilename(tmpDir, ".bmp");
+        tempFile = "xyz.bmp";
+
+         //write to temporary bmp file
+        vtkBMPWriter writer = new vtkBMPWriter();
+        vtkWindowToImageFilter windowToImageFilter = new vtkWindowToImageFilter();
+        windowToImageFilter.ReadFrontBufferOff();
+        windowToImageFilter.SetMagnification(1);
+        windowToImageFilter.SetInput(renderWindow);
+        windowToImageFilter.SetInputBufferTypeToRGBA();
+        windowToImageFilter.ReadFrontBufferOff();
+        frameOwner.Render();
+
+        //renderWindow.Render();
+        windowToImageFilter.Update();
+        windowToImageFilter.Modified();
+
+        windowToImageFilter.ShouldRerenderOn();
+
+        //writer.SetInputData(windowToImageFilter.GetOutput()); //FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+        writer.SetInputConnection(windowToImageFilter.GetOutputPort());
+        writer.SetFileName(tempFile);
+        writer.Write();
+
+        Image image = null;
+        try {
+            image = BmpDecoder.getImage(tempFile);    // throws IOException
+        } catch (java.io.IOException e) {
+            System.err.println("Error loading image in BmpDecoder - " + e);
+        }
+        new File(tempFile).delete();    // delete temprorary file
+               // renderWindow.getImage();
+        ImageIO.write(toBufferedImage(image), "png",new File(fname));
+
+                //ImageIO.write((RenderedImage) core.getRenPanel().getImage(), "png",new File(fname));
+
+                //screenCapture(fname);//this thing actually works, but is not preferred
+                //exportImage2(core, fname); //this kinda works, but makes window unusable.
                 } catch (Exception ex) {System.out.println(ex.getMessage());
              }
             /* ********/
@@ -708,7 +748,25 @@ public class ImageOperations {
         }
         
     }
-    
+      
+    public static BufferedImage toBufferedImage(Image img)
+{
+    if (img instanceof BufferedImage)
+    {
+        return (BufferedImage) img;
+    }
+
+    // Create a buffered image with transparency
+    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+    // Draw the image on to the buffered image
+    Graphics2D bGr = bimage.createGraphics();
+    bGr.drawImage(img, 0, 0, null);
+    bGr.dispose();
+
+    // Return the buffered image
+    return bimage;
+}
     public static void print(OVTCore core) {
         OutputLabel outputLabel = core.getOutputLabel();
         boolean oldVisible = outputLabel.isVisible();

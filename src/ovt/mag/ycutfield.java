@@ -30,7 +30,7 @@ Khotyaintsev
 
 =========================================================================*/
 
-package ovt.datatypes;
+package ovt.datatype;
 
 public class ycutfield       //  ycut
 {  
