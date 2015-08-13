@@ -129,8 +129,6 @@ public class SpinData {
          inData=new BufferedReader(new FileReader(fileName));
       } catch (FileNotFoundException e){
          throw new IOException("File "+fileName+" not found.");
-      } catch (IOException e){
-         throw new IOException("IO error with "+fileName+" datafile.");
       }
 
       while(inData.ready() && isFound==false){

@@ -226,8 +226,6 @@ public class IgrfModel extends AbstractMagModel {
         inData=new BufferedReader(new FileReader(DatFile));
      } catch (FileNotFoundException e){
         throw new IOException("File "+DatFile+" not found.");
-     } catch (IOException e){
-        throw new IOException("IO error with "+DatFile+" datafile.");
      }
 
      str=inData.readLine();        //Getting first Line (header)
@@ -249,6 +247,8 @@ public class IgrfModel extends AbstractMagModel {
      }
      
      //Checking for corrected year number
+     // Why does code check for yy not divisible by five?!
+     // Is the model only valid with a five-year resolution?
      if((yy%5)!=0 || yy<minY || yy>maxY)
         throw new IOException("Invalid number of year in IGRF init.");
      

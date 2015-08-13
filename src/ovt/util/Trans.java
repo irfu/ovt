@@ -409,9 +409,11 @@ public class Trans {
     //System.out.println("ct="+ct+" st="+st);
 
     int i, j;
-    for (i=0; i<3; i++)
-    for (j=0; j<3; j++)
-    m[i][j] = 0;
+    for (i=0; i<3; i++) {
+        for (j=0; j<3; j++) {
+            m[i][j] = 0;
+        }
+    }
 
     m[0][0] = ct;  m[0][1] = -st;
     m[1][0] = st;  m[1][1] = ct;

@@ -109,7 +109,8 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   public void setStartMjd(double startMjd) throws IllegalArgumentException {
       double oldStartMjd = this.startMjd;
       if (startMjd == oldStartMjd) return;
-      if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970");
+      if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970.");
+      //if (startMjd < Time.Y1950) throw new IllegalArgumentException("Start time could not be earlier then 1950.");
       this.startMjd = startMjd;
       firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }

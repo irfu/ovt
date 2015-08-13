@@ -112,8 +112,6 @@ public class Tle {
          inData=new BufferedReader(new FileReader(orbitTLEFile));
       } catch (FileNotFoundException e){
          throw new IOException("File "+orbitTLEFile+" not found.");
-      } catch (IOException e){
-         throw new IOException("IO error with "+orbitTLEFile+" datafile.");
       }
 
       while(inData.ready()) {
@@ -207,8 +205,6 @@ public class Tle {
          inData=new BufferedReader(new FileReader(filename));
       } catch (FileNotFoundException e){
          throw new IOException("File "+filename+" not found.");
-      } catch (IOException e){
-         throw new IOException("IO error with "+filename+" datafile.");
       }
 
       while(inData.ready()  && found==false){

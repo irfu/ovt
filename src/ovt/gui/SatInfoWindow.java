@@ -39,25 +39,16 @@ Khotyaintsev
 package ovt.gui;
 
 
-import ovt.*;
-import ovt.mag.*;
-import ovt.util.*;
-import ovt.event.*;
 import ovt.beans.*;
 import ovt.object.*;
 import ovt.datatype.*;
-import ovt.interfaces.*;
-import ovt.object.editor.*;
 
 import java.io.*;
-import java.util.*;
-import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  *
@@ -75,13 +66,13 @@ public class SatInfoWindow extends JDialog implements Customizer {
     public SatInfoWindow(JFrame owner) {
         super(owner, true); 
         
-        JPanel cont = new JPanel();
+        final JPanel cont = new JPanel();
         // create layout : new java.awt.GridLayout (4, 1, 5, 5)
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
         cont.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10));
         
         
-        JButton okButton = new JButton("  OK  ");
+        final JButton okButton = new JButton("  OK  ");
         okButton.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 //setVisible(false);
@@ -111,8 +102,8 @@ public class SatInfoWindow extends JDialog implements Customizer {
         pack();  // "Causes this Window to be sized to fit the preferred size and layouts of its subcomponents."
         
         // senter the window
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
+        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension windowSize = getSize();
         setLocation(scrnSize.width/2 - windowSize.width/2,
             scrnSize.height/2 - windowSize.height/2);
     }

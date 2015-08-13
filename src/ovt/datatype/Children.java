@@ -46,7 +46,6 @@ import ovt.interfaces.*;
 import java.util.*;
 
 /** 
- *
  * @author  root
  * @version 
  */
@@ -109,8 +108,7 @@ public class Children {
   } */
 
   public void remove(OVTObject obj) {
-    int index = values.indexOf(obj);
-    //System.out.println("index=" + index);
+    final int index = values.indexOf(obj);
     if (index != -1) {
       keys.removeElementAt(index);
       values.removeElementAt(index);
@@ -121,13 +119,20 @@ public class Children {
     remove(obj);
   }
   
-  /** Child getter by name */
+  /** Child getter by name.
+   * 
+   * @param Return null if there is no such child.
+   
+   */
   public OVTObject getChild(String name) { 
     Log.log("Children ::  get(" + name + ")", 7);
     int index = keys.indexOf(name);
     //System.out.println("index=" + index);
-    if (index == -1) return null;
-    return (OVTObject)values.elementAt(index); 
+    if (index == -1) {
+        return null;
+    } else {
+        return (OVTObject) values.elementAt(index);
+    }
   }
 
   public boolean containsChild(String name) {

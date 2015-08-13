@@ -91,7 +91,7 @@ public class Vect {
      
      double v2_perp_magnitude = dot(v2,e_perp);
      
-     // project vasis vector e3 to rotation Axis (dot(.,.)), if projection < 0
+     // project basis vector e3 to rotation Axis (dot(.,.)), if projection < 0
      // it means that basis vector e3 was wrongly directed (it should be reverted)
      // one could revert it before or revert the result. We revert the result.
      if (dot(e3,rotationAxis) < 0) v2_perp_magnitude = -1*v2_perp_magnitude;
@@ -131,6 +131,27 @@ public static double absv(double vec[]) {
     return Math.sqrt(sum);
 }
 
+/**
+ * @author Erik P G Johansson
+ *
+ * Calculate distance between two coordinates in an arbitrary orthonormal
+ * coordinate system, with arbitrary unit (and not necessarily 3D).
+ *
+ * @param pos1
+ * @param pos2
+ * @return Distance between cordinates pos1 and pos2.
+ */
+public static double distance(double[] pos1, double[] pos2) {
+    double s = 0;
+    for (int i = 0; i < pos1.length; i++) {
+        final double d = pos2[i] - pos1[i];
+        s += d * d;
+    }
+    return Math.sqrt(s);
+}
+
+
+    
 /** Square of absolute value of 3-vector. */
 public static double absv2(double vec[]) {
     double sum = 0;
@@ -144,22 +165,18 @@ public static double absv2(double vec[]) {
 
 /** change the length of vector vec(3) to norm */
 public static void normf(double vec[], double norm) {
-    double s;
-
-    /* Function Body */
-
-    s = absv(vec);
-
-    /*for (d1 = vec; d1 < vec + 3; ++d1)
-        *d1 *= norm / s;*/
-	for (int i=0; i<3; i++)
-		vec[i] *= norm / s;
+    final double s = absv(vec);
+    for (int i=0; i<3; i++) {
+        vec[i] *= norm / s;
+    }
 }
 
 /** Get the vector normalized by norm */
 public static double[] norm(double vec[], double norm) {
     double res[] = new double[3];
-    for (int i=0; i<3; i++) res[i] = vec[i];
+    for (int i=0; i<3; i++) {
+        res[i] = vec[i];
+    }
     normf(res, norm);
     return res;
 }
@@ -168,7 +185,9 @@ public static double[] norm(double vec[], double norm) {
 /** Get the vector normalized by 1 */
 public static double[] norm(double vec[]) {
     double res[] = new double[3];
-    for (int i=0; i<3; i++) res[i] = vec[i];
+    for (int i=0; i<3; i++) {
+        res[i] = vec[i];
+    }
     normf(res, 1.);
     return res;
 }
@@ -176,12 +195,10 @@ public static double[] norm(double vec[]) {
 
 /** Scalar product of two vectors. */
 public static double  dot(double a[], double b[]) {
-
     double  ret_val = 0.0;
-
-	for(int i=0; i<3; i++)
-		ret_val += a[i] * b[i]; 
-
+    for (int i=0; i<3; i++) {
+        ret_val += a[i] * b[i]; 
+    }
     return (ret_val);
 }
 
@@ -291,12 +308,5 @@ public static boolean contains(int[] vect, int value) {
     return false;
 }
 
-
-  public static void main(String[] args){
-    
-    double[] x = new double[]{ 1, 0, 0};
-    double[] y = new double[]{ 2, 2, 0};
-    System.out.println("angleof2vect="+angleOf2vect(x,y)/Math.PI*180.);
-  }
 
 }

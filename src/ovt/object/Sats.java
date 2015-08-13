@@ -33,24 +33,20 @@ Khotyaintsev
 package ovt.object;
 
 import ovt.*;
-import ovt.gui.*;
 import ovt.util.*;
 import ovt.event.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
 
 
-import java.beans.*;
 import java.util.*;
-import java.io.*;
-import java.lang.*;
-import java.util.*;
-//import java.lang.reflect.Array;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultMutableTreeNode;
-import java.awt.event.*;
 
+/**
+ * Class which somehow represents the instances of "Sat" (without "s) which are
+ * in the GUI tree.
+ */
 public class Sats extends BasicObject implements TimeChangeListener, 
     CoordinateSystemChangeListener, MagPropsChangeListener, MenuItemsSource {
     
@@ -84,7 +80,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
     }
     
     
-    public Hashtable getVisibleSats() {
+    /*public Hashtable getVisibleSats() {
         Hashtable res = new Hashtable();
         Enumeration e = getChildren().elements();
         while (e.hasMoreElements()) {
@@ -94,11 +90,11 @@ public class Sats extends BasicObject implements TimeChangeListener,
             if (sat.isVisible()) res.put(sat.getName(), sat);
         }
         return res;
-    }
+    }*/
     
     
-  /** Returns a hashtable of all sats */
-    public Children getAllSats() {
+  /** Returns a hash table of all sats. */
+    /*public Children getAllSats() {
         Children res = new Children(this);
         Enumeration e = getChildren().elements();
         Enumeration e2;
@@ -117,7 +113,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
             }
         }
         return res;
-    }
+    }*/
     
     
     public void timeChanged(TimeEvent evt) {
@@ -131,7 +127,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
         }
     }
     
-  /** Tell all sats about cs change */
+  /** Tell all sats about cs change. */
     public void coordinateSystemChanged(CoordinateSystemEvent evt) {
         clusterSats.coordinateSystemChanged(evt);
         
@@ -177,7 +173,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
      * @return Value of the property at <CODE>index</CODE>.
  */
     public Sat getSat(int index) {
-        return (Sat)sats.get(index);
+        return (Sat) sats.get(index);
     }
     
     /** Indexed setter for property sat.
@@ -198,25 +194,26 @@ public class Sats extends BasicObject implements TimeChangeListener,
     
     public void removeSat(Sat sat) {
         sat.dispose();
-        //Log.log("Tot mem. before removeing = "+Runtime.getRuntime().totalMemory());
+        //Log.log("Tot mem. before removing = "+Runtime.getRuntime().totalMemory());
         sats.removeElement(sat);
-        getChildren().removeChild(sat);
-        //Log.log("Tot mem.  after removeing = "+Runtime.getRuntime().totalMemory());
+        getChildren().removeChild(sat);   // getChildren() defined in OVTObject.
+        //Log.log("Tot mem. after removing = "+Runtime.getRuntime().totalMemory());
         //System.gc();
-        //Log.log("Tot mem.  after garb. col = "+Runtime.getRuntime().totalMemory());
+        //Log.log("Tot mem. after garb. col = "+Runtime.getRuntime().totalMemory());
         //children.fireChildRemoved(sat);
     }
     
-    /** is run by XML parser to tell treePanel to update Satellites node */
+    /** Is run by XML parser to tell treePanel to update Satellites node */
     public void fireSatsChanged() {
         children.fireChildrenChanged();
     }
     
-    /** used by XML */
+    /** Used by XML */
     public ClusterSats getClusterSats() { return clusterSats; }
     
+    @Override
     public JMenuItem[] getMenuItems() {
-        JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createSatsList();
+        JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createLTOF_TLESatsMenuItemList();
         JMenuItem[] res = new JMenuItem[sats.length + 2];
         res[0] = getCore().getXYZWin().getXYZMenuBar().createImportSatelliteMenuItem();
         res[1] = null; // separator
@@ -225,7 +222,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
     }
 }
 
-/*  -- just to remmember how to use JOptionPane.showInputDialog
+/*  -- just to remember how to use JOptionPane.showInputDialog
   
 File[] files = new File(OVTCore.getOrbitDataDir()).listFiles( new FilenameFilter() {
                  public boolean accept(File dir, String file) {

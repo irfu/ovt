@@ -18,6 +18,7 @@ import gov.nasa.gsfc.spdf.ssc.client.DataFileRequest;
 import gov.nasa.gsfc.spdf.ssc.client.DataRequest;
 import gov.nasa.gsfc.spdf.ssc.client.DataResult;
 import gov.nasa.gsfc.spdf.ssc.client.DistanceUnits;
+import gov.nasa.gsfc.spdf.ssc.client.FileResult;
 import gov.nasa.gsfc.spdf.ssc.client.FilteredCoordinateOptions;
 import gov.nasa.gsfc.spdf.ssc.client.FormatOptions;
 import gov.nasa.gsfc.spdf.ssc.client.OutputOptions;
@@ -39,12 +40,21 @@ import java.util.EnumSet;
  * @author Erik P G Johansson, erik.johansson@irfu.se
  *
  * Class which supplies a small library of static functions for all accessing of
- * data from the SSC Web Services. The purpose of having this separate from
- * SSCWebServicesSat and the rest of OVT is to:<BR>
+ * data from the Satellite Situation Center (SSC) Web Services. The purpose of
+ * having this separate from SSCWSSat and the rest of OVT is to:<BR>
  * 1) as much as possible, isolate all dependence on gov.nasa.gsfc.spdf.ssc.*
  * (the SSC Web Services libraries),<BR>
  * 2) to make testing of this library easier, e.g. with external java code,<BR>
  * 3) make code easier to reuse in contexts other than OVT.<BR>
+ *
+ * NOTE: This class does not throw any SSC Web Services-specific exceptions to
+ * the minimize dependence on the SSCWS package.
+ *
+ * IMPLEMENTATION NOTE: Some things (satellite list, privacy and important
+ * notices, acknowledgements, sscService) could be initialized immediately in
+ * the constructor but that would (should) result in throwing exceptions which
+ * one does not want to throw since a static initializer is not permitted to
+ * throw (checked) exceptions.
  *
  * API documentation for "gov.nasa.gsfc.spdf.ssc" at
  * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/public/api/index.html
@@ -116,6 +126,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     private SatelliteSituationCenterService sscService = null;
 
     private List<SSCWSSatelliteInfo> allSatelliteInfoCache = null;
+    private List<String> privacyAndImportantNotices = null;
+    private List<String> acknowledgements = null;
 
     /**
      * Set the minimum log message level for this class.
@@ -127,6 +139,10 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * Private constructor to prevent instantiation.
      */
     private SSCWSLibraryImpl() {
+        /*try {
+         } catch (MalformedURLException | SSCExternalException_Exception e) {
+         throw new IOException("Can not retrieve SSC Privacy and Important Notices, or Acknowledgements.");
+         }*/
     }
 
 
@@ -180,10 +196,13 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * NOTE: Returns internal private instances of SatelliteDescription, not
      * copies.
      */
+    @Override
     public List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException {
-        /* NOTE: Judging from the SSC Web Services interface, it appears that one can
-         not download only selected satellite descriptions, only all of them at
-         once. */
+        /**
+         * * NOTE: Judging from the SSC Web Services interface, it appears that
+         * one can not download only selected satellite descriptions, only all
+         * of them at once.
+         */
         if (allSatelliteInfoCache == null) {
 
             final List<SatelliteDescription> satDescriptions;
@@ -212,39 +231,45 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     }
 
 
-    public double[][] getOrbitData(
+    @Override
+    public double[][] getTrajectory_GEI(
             String satID,
             double beginMjdInclusive, double endMjdInclusive,
             int resolutionFactor)
             throws IOException {
 
+        /* IMPLEMENTATION NOTE: De facto wrapper around the function that does the actual work.
+         Uses this structure to make sure that a log messsage is written for all exceptions
+         before rethrowing them. NOTE: They do keep the SAME stack trace.
+         */
         try {
-            return getOrbitDataRaw(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor);
+            return getTrajectoryRaw_GEI(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor);
         } catch (Exception e) {
-            Log.log("ERROR/EXCEPTION: "+e.getMessage(), DEBUG);
+            Log.log("ERROR/EXCEPTION: " + e.getMessage(), DEBUG);
             throw e;   // Re-throws the same exception but keeps the stack trace.
         }
     }
 
 
-    private double[][] getOrbitDataRaw(
+    private double[][] getTrajectoryRaw_GEI(
             String satID,
             double beginMjdInclusive, double endMjdInclusive,
             int resolutionFactor)
             throws IOException {
 
         /*======================================================================
-         Coordinate system used for the downloaded orbital positions.
+         Exact coordinate system used for the downloaded orbital positions.
          ============================================================
          The SSC Web Services API lists, among others, two different "GEI" coordinate systems.
          "GEI_J2000 : Geocentric Equatorial Inertial coordinate system with a Julian 2000 equinox epoch."
          "GEI_TOD : Geocentric Equatorial Inertial coordinate system with a true-of-date equinox epoch."
-         It is currently uncertain which one of these corresponds to GEI in OVT.
-         NOTE: The actual implementation uses the identifier "GEI_J_2000".
+         As it appears from comparisons of trajectories from LTOF files, none of these is 
+         exactly the same coordinate system.
          /Erik P G Johansson 2015-06-16.
          =====================================================================*/
-        final CoordinateSystem requestedCS = CoordinateSystem.GEI_TOD;
-        //final CoordinateSystem requestedCS = CoordinateSystem.GEI_J_2000;
+        //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEO;
+        //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;
+        final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_J_2000;
 
         final SatelliteSpecification satSpec = new SatelliteSpecification();
         satSpec.setId(satID);
@@ -274,10 +299,10 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          but not for other "coordinate components"
          (CoordinateComponent.LAT, .LOCAL_TIME, and .LON; gives error).
          =====================================================================*/
-        final List<FilteredCoordinateOptions> filtCoordOptionList = new ArrayList<FilteredCoordinateOptions>();
+        final List<FilteredCoordinateOptions> filtCoordOptionList = new ArrayList<>();
         for (CoordinateComponent component : EnumSet.of(CoordinateComponent.X, CoordinateComponent.Y, CoordinateComponent.Z)) {
             final FilteredCoordinateOptions filtCoordOption = new FilteredCoordinateOptions();
-            filtCoordOption.setCoordinateSystem(requestedCS);
+            filtCoordOption.setCoordinateSystem(REQUESTED_CS);
             filtCoordOption.setComponent(component);
             filtCoordOption.setFilter(null);   // Used in the SSC Web Services example code ("WsExample.java"). Necessary?
             filtCoordOptionList.add(filtCoordOption);
@@ -302,13 +327,13 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          ======================================================================*/
         final DataResult dataResult;
         try {
-            //Log.log(this.getClass().getSimpleName() + ".getOrbitData: Download orbit data from SSC Web Services.", DEBUG);
+            //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Download orbit data from SSC Web Services.", DEBUG);
             //final long t_start = System.nanoTime();
 
             dataResult = getSSCInterface().getData(dataFileReq);
 
             //final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
-            //Log.log(this.getClass().getSimpleName() + ".getOrbitData: Time used for downloading data: " + duration + " [s]", DEBUG);
+            //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Time used for downloading data: " + duration + " [s]", DEBUG);
         } catch (SSCDatabaseLockedException_Exception | SSCExternalException_Exception | SSCResourceLimitExceededException_Exception e) {
             throw new IOException("Attempt to download data from SSC Web Services failed: " + e.getMessage(), e);
         }
@@ -335,7 +360,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
             // Make sure the data uses a supported coordinate system.
             final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
-            if (!requestedCS.equals(receivedCS)) {
+            if (!REQUESTED_CS.equals(receivedCS)) {
                 throw new IOException("The orbit data downloaded from SSC Web Services "
                         + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
             }
@@ -347,18 +372,74 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
             final List<Double> Y = coordData.getY();
             final List<Double> Z = coordData.getZ();
             final List<XMLGregorianCalendar> timeList = satData.getTime(); // Define variable to reduce number of calls to satData.getTime() (or does the compiler figure that out itself?).
-            int N_coord = coordData.getX().size();
-            final double[][] coordinates = new double[4][N_coord];
-            for (int i = 0; i < N_coord; i++) {
-                coordinates[0][i] = X.get(i);
-                coordinates[1][i] = Y.get(i);
-                coordinates[2][i] = Z.get(i);
 
-                // NOTE: The call to convertXMLGregorianCalendarToMjd is possibly slow.
+            int N_coord = coordData.getX().size();
+            final double[][] coordinates_axisPos_kmMjd = new double[4][N_coord];   // axisPos = Indices [axis][position].
+
+            for (int i = 0; i < N_coord; i++) {
+                // NOTE: The call to convertXMLGregorianCalendarToMjd is conceivably
+                // slow but so far (2015-08-10), no concrete problem has been observed.
                 // One could in principle parallelize the call with something like java.util.Arrays.parallelSetAll.
-                coordinates[3][i] = convertXMLGregorianCalendarToMjd(timeList.get(i));
+                final double mjd = convertXMLGregorianCalendarToMjd(timeList.get(i));
+                double[] position = new double[]{X.get(i), Y.get(i), Z.get(i)};
+
+                // Change coordinate system from GEO to GEI.
+                //position = Trans.geo_gei_trans_matrix(mjd).multiply(position);
+                coordinates_axisPos_kmMjd[0][i] = position[0];
+                coordinates_axisPos_kmMjd[1][i] = position[1];
+                coordinates_axisPos_kmMjd[2][i] = position[2];
+                coordinates_axisPos_kmMjd[3][i] = mjd;
             }
-            return coordinates;
+            return coordinates_axisPos_kmMjd;
+        }
+
+    }
+
+
+    @Override
+    public List<String> getPrivacyAndImportantNotices() throws IOException {
+        if (privacyAndImportantNotices == null) {
+            try {
+                final FileResult fileResultPAN = getSSCInterface().getPrivacyAndImportantNotices();
+                privacyAndImportantNotices = Collections.unmodifiableList(fileResultPAN.getUrls());
+            } catch (SSCExternalException_Exception e) {
+                throw new IOException("Can not retrieve SSC Privacy and Important Notices.", e);
+            }
+        }
+        return privacyAndImportantNotices;
+    }
+
+
+    @Override
+    public List<String> getAcknowledgements() throws IOException {
+        if (acknowledgements == null) {
+            try {
+                final FileResult fileResultA = getSSCInterface().getAcknowledgements();
+                acknowledgements = Collections.unmodifiableList(fileResultA.getUrls());
+            } catch (SSCExternalException_Exception e) {
+                throw new IOException("Can not retrieve SSC Acknowledgments.", e);
+            }
+        }
+        return acknowledgements;
+    }
+
+
+    /**
+     * Informal test code.
+     */
+    public static void test() throws IOException {
+        SSCWSLibraryImpl lib = new SSCWSLibraryImpl();
+        List<String> listPIN = lib.getPrivacyAndImportantNotices();
+        List<String> listA = lib.getAcknowledgements();
+
+        System.out.println("getPrivacyAndImportantNotices: ");
+        for (String s : listPIN) {
+            System.out.println("   s = " + s);
+        }
+
+        System.out.println("getAcknowledgements: ");
+        for (String s : listA) {
+            System.out.println("   s = " + s);
         }
 
     }

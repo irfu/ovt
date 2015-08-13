@@ -6,12 +6,15 @@
 package ovt.util;
 
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import ovt.Const;
 import ovt.datatype.Time;
-import ovt.util.IndexedSegmentsCache.CacheSegment;
+import ovt.util.IndexedSegmentsCache.CacheSlotContents;
 import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 
 /**
@@ -23,16 +26,15 @@ import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
  * NOTE: Uncertain if this is the right package for the class.<BR>
  * NOTE: SSCWS = SSC Web Services
  *
- * IMPLEMENTATION NOTE: The cache unit size is not a STATIC constant to simplify
+ * IMPLEMENTATION NOTE: The cache slot size is not a STATIC constant to simplify
  * automated code testing.
  */
-// PROPOSAL: Use IndexObjectsCache through composition, not inheritance.
 public class SSCWSOrbitCache {
 
-    private static final int DEBUG = 1;   // Set the minimum log message level for this class.
-
+    private static final int DEBUG = 3;   // Set the minimum log message level for this class.
+    private static final boolean OUTSIDE_EARTH_ASSERTION = false;   // You probably want to disable this during automated testing.
     private final IndexedSegmentsCache segmentsCache;
-    private final double cacheUnitSizeMjd;    // Length of time that a cache unit covers.
+    private final double cacheSlotSizeMjd;    // Length of time that a cache slot covers.
     private final SSCWSLibrary sscwsLibrary;
     private final SSCWSSatelliteInfo satInfo;
     //private final File fileCache;   // When write to? When downloading? When OVT quits?
@@ -40,9 +42,21 @@ public class SSCWSOrbitCache {
     //##########################################################################
     public static class OrbitalData {
 
-        public double[][] orbit;
-        public int worstRequestedResolutionSeconds;  // Unit: seconds
-        public List<Integer> dataGaps;
+        private static final int UNDEFINED_TIME_RESOLUTION = -1;
+        /**
+         * Orbit positions. "axisPos" = Indices [axis X/Y/Z/time][position] in
+         * km & mjd.
+         */
+        public final double[][] coords_axisPos_kmMjd;
+        public final int worstRequestedResolutionSeconds;  // Unit: seconds
+        public final List<Integer> dataGaps;
+
+
+        public OrbitalData(double[][] mCoords_axisPos, int mWorstRequestedResolutionSeconds, List<Integer> mDataGaps) {
+            this.coords_axisPos_kmMjd = mCoords_axisPos;
+            this.worstRequestedResolutionSeconds = mWorstRequestedResolutionSeconds;
+            this.dataGaps = mDataGaps;
+        }
     }
     //##########################################################################
 
@@ -54,14 +68,14 @@ public class SSCWSOrbitCache {
      */
     public SSCWSOrbitCache(
             SSCWSLibrary mSSCWSLibrary, String SSCWSSatID,
-            double mCacheUnitSizeMjd, int proactiveFillMargin) throws Exception {
+            double mCacheSlotSizeMjd, int proactiveFillMargin) throws IOException {
 
-        if (mCacheUnitSizeMjd <= 0) {
-            throw new IllegalArgumentException();
+        if (mCacheSlotSizeMjd <= 0) {
+            throw new IllegalArgumentException("mCacheSlotSizeMjd <= 0");
         }
         this.satInfo = mSSCWSLibrary.getSatelliteInfo(SSCWSSatID);
         this.sscwsLibrary = mSSCWSLibrary;
-        this.cacheUnitSizeMjd = mCacheUnitSizeMjd;
+        this.cacheSlotSizeMjd = mCacheSlotSizeMjd;
         this.segmentsCache = new IndexedSegmentsCache(
                 new CacheDataSource(),
                 satInfo.availableBeginTimeMjd, satInfo.availableEndTimeMjd,
@@ -76,40 +90,43 @@ public class SSCWSOrbitCache {
 
     public OrbitalData getOrbitData(
             double beginMjdInclusive, double endMjdInclusive,
+            RoundingMode tBeginRoundingMode, RoundingMode tEndRoundingMode,
             int beginIndexMargin, int endIndexMargin,
-            int newRequestedResolution)
+            int callerRequestedResolution)
             throws IOException {
 
-        if (newRequestedResolution <= 0) {
-            throw new IllegalArgumentException("Illegal requested time resolution. newRequestedResolution = " + newRequestedResolution);
+        if (callerRequestedResolution <= 0) {
+            throw new IllegalArgumentException("Illegal requested time resolution. callerRequestedResolution = " + callerRequestedResolution);
         }
 
         /**
          * Limit requested solution to the best possible. May otherwise
          * unnecessarily reject old cached data and fetch new data that can not
-         * possible have a higher resolution anyway. Since the accept-cache-unit
-         * function is defined here, the check also has to be done here.
+         * possible have a higher resolution anyway. Since the
+         * accept-cache-slot-contents function is defined here, the check also
+         * has to be done here.
          *
          * NOTE: Need to define "final" variable so that the value can be used
          * in the lambda function (anonymous class).
          */
-        final int actualRequestedResolution = Math.max(newRequestedResolution, satInfo.bestTimeResolution);
+        final int actualRequestedResolution = Math.max(callerRequestedResolution, satInfo.bestTimeResolution);
 
-        final Predicate ACCEPT_CACHED_UNIT_FUNCTION = (Predicate) (Object o) -> {
-            final CacheUnit unit = (CacheUnit) o;
+        final Predicate ACCEPT_CACHED_SLOT_CONTENTS_FUNCTION = (Predicate) (Object o) -> {
+            final LocalCacheSlotContents unit = (LocalCacheSlotContents) o;
             return (unit.requestedTimeResolutionSeconds <= actualRequestedResolution);
         };
 
         final Object data = this.segmentsCache.getData(
                 beginMjdInclusive, endMjdInclusive,
+                tBeginRoundingMode, tEndRoundingMode,
                 beginIndexMargin, endIndexMargin,
-                ACCEPT_CACHED_UNIT_FUNCTION, actualRequestedResolution);
+                ACCEPT_CACHED_SLOT_CONTENTS_FUNCTION, actualRequestedResolution);
 
         return (OrbitalData) data;
     }
 
     //##########################################################################
-    private static class CacheUnit implements IndexedSegmentsCache.CacheSegment {
+    private static class LocalCacheSlotContents implements IndexedSegmentsCache.CacheSlotContents {
 
         /**
          * The requested time resolution (after multiplying with the resolution
@@ -125,7 +142,7 @@ public class SSCWSOrbitCache {
 
 
         // NOTE: Only soft-copies mCoordinates.
-        public CacheUnit(int mResolutionFactor, double[][] mCoordinates) {
+        public LocalCacheSlotContents(int mResolutionFactor, double[][] mCoordinates) {
             this.requestedTimeResolutionSeconds = mResolutionFactor;
             this.coordinates = mCoordinates;
         }
@@ -152,66 +169,71 @@ public class SSCWSOrbitCache {
 
         @Override
         public int getCacheSlotIndex(double t) {
-            return SSCWSOrbitCache.this.getCacheUnitIndex(t);
+            return SSCWSOrbitCache.this.getCacheSlotIndex(t);
         }
 
 
         @Override
-        public Object extractDataFromCacheSegments(List<CacheSegment> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
-            return SSCWSOrbitCache.this.extractCacheUnitContents(requestedUnits, i_beginUnitArrayInclusive, i_endUnitArrayExclusive);
+        public Object getDataFromCacheSlotContents(List<CacheSlotContents> requestedCacheSlotsContents, int i_beginSlotArrayInclusive, int i_endSlotArrayExclusive) {
+            return SSCWSOrbitCache.this.getDataFromCacheSlotContents(requestedCacheSlotsContents, i_beginSlotArrayInclusive, i_endSlotArrayExclusive);
         }
 
 
         @Override
-        public List<CacheSegment> getCacheSegments(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
-            return SSCWSOrbitCache.this.createNewCacheUnits(i_beginInclusive, i_endExclusive, newUnitsArgument);
+        public List<CacheSlotContents> getCacheSlotContents(int i_beginInclusive, int i_endExclusive, Object getCacheSlotContentsArgument) throws IOException {
+            return SSCWSOrbitCache.this.getCacheSlotContents(i_beginInclusive, i_endExclusive, getCacheSlotContentsArgument);
         }
     }
 
 
     /**
-     * Return the time period for which this cache unit MAY contain data. The
+     * Return the time period for which this cache slot MAY contain data. The
      * method should be consistent with int getCacheSlotIndex(double mjd).<BR>
      *
      * NOTE: The returned values do NOT necessarily refer to the time span of
-     * the data that is actually in the cache unit. There might not be any data
+     * the data that is actually in the cache slot. There might not be any data
      * for the given time interval data or only partially because it is at the
      * beginning/end of the available time series (at SSC Web Services). This is
      * what "Span" refers to in the method name, as opposed to e.g. "data". <BR>
      *
      * NOTE: The min value should be regarded as inclusive, while the max value
      * is exclusive.<BR>
-     * NOTE: Method is independent of preexisting cache units since it needs to
+     * NOTE: Method is independent of preexisting cache slots since it needs to
      * be called when creating them.<BR>
      */
-    private double[] getCacheUnitSpanMjd(int i) {
-        return new double[]{i * cacheUnitSizeMjd, (i + 1) * cacheUnitSizeMjd};
+    private double[] getCacheSlotSpanMjd(int i) {
+        return new double[]{i * cacheSlotSizeMjd, (i + 1) * cacheSlotSizeMjd};
     }
 
 
-    private int getCacheUnitIndex(double mjd) {
-        if ((mjd < (Integer.MIN_VALUE / cacheUnitSizeMjd)) || ((Integer.MAX_VALUE / cacheUnitSizeMjd) < mjd)) {
+    private int getCacheSlotIndex(double mjd) {
+        if ((mjd < (Integer.MIN_VALUE / cacheSlotSizeMjd)) || ((Integer.MAX_VALUE / cacheSlotSizeMjd) < mjd)) {
             throw new RuntimeException("Can not convert modified Julian Day (mjd) value to int."
                     + "This (probably) indicates a bug.");
         }
-        return (int) Math.floor(mjd / cacheUnitSizeMjd);  // NOTE: Typecasting with (int) implies rounding toward zero, not negative infinity.
+        return (int) Math.floor(mjd / cacheSlotSizeMjd);  // NOTE: Typecasting with (int) implies rounding toward zero, not negative infinity.
     }
 
 
     /**
-     * Fill specified cache units with new data downloaded from SSC Web
+     * Fill specified cache slots with new data downloaded from SSC Web
      * Services.
      */
-    private List<CacheSegment> createNewCacheUnits(int i_beginInclusive, int i_endExclusive, Object newUnitsArgument) throws IOException {
+    private List<CacheSlotContents> getCacheSlotContents(
+            int i_beginInclusive, int i_endExclusive,
+            Object getCacheSlotContentsArgument)
+            throws IOException {
 
-        Log.log(this.getClass().getSimpleName() + ".createNewCacheUnits(i_beginInclusive=" + i_beginInclusive + ", i_endExclusive=" + i_endExclusive + ", ...)", DEBUG);
+        Log.log(this.getClass().getSimpleName()
+                + ".getCacheSlotContents(i_beginInclusive=" + i_beginInclusive
+                + ", i_endExclusive=" + i_endExclusive + ", ...)", DEBUG);
 
-        final int requestedTimeResolution = (int) newUnitsArgument;
-        final double requestBeginMjd = getCacheUnitSpanMjd(i_beginInclusive)[0];
-        final double requestEndMjd = getCacheUnitSpanMjd(i_endExclusive - 1)[1];
-        final List<CacheSegment> filledUnits = new ArrayList();
+        final int requestedTimeResolution = (int) getCacheSlotContentsArgument;
+        final double requestBeginMjd = getCacheSlotSpanMjd(i_beginInclusive)[0];
+        final double requestEndMjd = getCacheSlotSpanMjd(i_endExclusive - 1)[1];
+        final List<CacheSlotContents> filledSlots = new ArrayList();
 
-        Log.log(this.getClass().getSimpleName() + ".createNewCacheUnits: " + Time.toString(requestBeginMjd) + " (" + requestBeginMjd + ") to " + Time.toString(requestEndMjd) + " (" + requestEndMjd + ")", DEBUG);
+        Log.log(this.getClass().getSimpleName() + ".getCacheSlotContents: " + Time.toString(requestBeginMjd) + " (" + requestBeginMjd + ") to " + Time.toString(requestEndMjd) + " (" + requestEndMjd + ")", DEBUG);
 
         /*======================================================================
          Download data        
@@ -223,79 +245,121 @@ public class SSCWSOrbitCache {
         final int resolutionFactor = Math.max(requestedTimeResolution / this.satInfo.bestTimeResolution, 1);
         System.out.println("Downloading data from SSC Web Services.");   // Printout (not log message) is here to cover the SSCWSLibrary for testing.
         final long t_start = System.nanoTime();
-        final double[][] coords = sscwsLibrary.getOrbitData(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
+        final double[][] coords_axisPos = sscwsLibrary.getTrajectory_GEI(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
         System.out.println("   Time used for downloading data: " + duration + " [s]");
 
-        /* Create cache units containing sections of data. */
-        for (int i = i_beginInclusive; i < i_endExclusive; i++) {
-            final double[] unitBeginEndMjd = getCacheUnitSpanMjd(i);
-            double[][] unitCoordinates;
-            if (coords[3].length != 0) {
-                unitCoordinates = new double[4][];
-                final int[] n_unitInterval = Utils.findInterval(coords[3], unitBeginEndMjd[0], unitBeginEndMjd[1], true, false);
-
-                for (int k = 0; k < 4; k++) {
-                    unitCoordinates[k] = Arrays.copyOfRange(coords[k], n_unitInterval[0], n_unitInterval[1]);   // Parameters are inclusive+exclusive.
+        /*==============
+         Check assertion
+         ==============*/
+        if (OUTSIDE_EARTH_ASSERTION) {
+            final double[] origin = new double[]{0, 0, 0};
+            for (int i = 0; i < coords_axisPos[3].length; i++) {
+                double[] x_km = new double[]{
+                    coords_axisPos[0][i],
+                    coords_axisPos[1][i],
+                    coords_axisPos[2][i]};
+                double r_km = Vect.distance(origin, x_km);
+                if (r_km < Const.RE) {
+                    //System.out.print();
+                    Log.log("Encountered satellite position inside Earth, r_km = " + r_km + " [km].", DEBUG);
                 }
-            } else {
-                unitCoordinates = new double[4][0];   // Important to create zero-length sub-arrays rather than keep null(s).
             }
-            filledUnits.add(new CacheUnit(requestedTimeResolution, unitCoordinates));
         }
 
-        return filledUnits;
+        /*===============================================
+         Create cache slots containing sections of data.
+         ===============================================*/
+        for (int i = i_beginInclusive; i < i_endExclusive; i++) {
+            final double[] slotBeginEndMjd = getCacheSlotSpanMjd(i);
+            double[][] slotCoords_axisPos;
+            if (coords_axisPos[3].length != 0) {
+                slotCoords_axisPos = new double[4][];
+                final int[] n_slotInterval = Utils.findInterval(coords_axisPos[3], slotBeginEndMjd[0], slotBeginEndMjd[1], true, false);
+
+                for (int k = 0; k < 4; k++) {
+                    slotCoords_axisPos[k] = Arrays.copyOfRange(coords_axisPos[k], n_slotInterval[0], n_slotInterval[1]);   // Parameters are inclusive+exclusive.
+                }
+            } else {
+                slotCoords_axisPos = new double[4][0];   // Important to create zero-length sub-arrays rather than keep null(s).
+            }
+            filledSlots.add(new LocalCacheSlotContents(requestedTimeResolution, slotCoords_axisPos));
+        }
+
+        return filledSlots;
     }
 
 
-    private Object extractCacheUnitContents(List<CacheSegment> requestedUnits, int i_beginUnitArrayInclusive, int i_endUnitArrayExclusive) {
-        /* Merge and clip time series from the various units into one long
+    private Object getDataFromCacheSlotContents(
+            List<CacheSlotContents> slotContentsList,
+            int i_beginSlotTArrayInclusive,
+            int i_endSlotTArrayExclusive) {
+        /* Merge and clip time series from the various cache slot into one long
          time series (array) for every component X/Y/Z/mjd.
          -----------------------------------------------------------------
          NOTE: Returning the whole array unclipped (returning more data than
          requested) is probably OK for the purposes of OVT,
          but clipping simplifies automated testing since it makes the output more
          predictable and directly comparable with the return value of a simple
-         call to SSCWSLibrary#getOrbitData.
+         call to SSCWSLibrary#getTrajectory_GEI.
          */
 
-        final double[][][] coordUnmerged = new double[4][requestedUnits.size()][];  // Indices [component X/Y/Z/mjd][unit][position index]
+        // Argument checks
+        if (i_beginSlotTArrayInclusive < 0) {
+            throw new IllegalArgumentException("Illegal argument i_beginSlotTArrayInclusive=" + i_beginSlotTArrayInclusive);
+        } else if ((slotContentsList == null) && !((i_beginSlotTArrayInclusive == 0) && (i_endSlotTArrayExclusive == 0))) {
+            throw new IllegalArgumentException("requestedSlotContents == null");
+        }
+
+        // Return special empty set of data.
+        if (slotContentsList == null) {
+            if ((i_beginSlotTArrayInclusive == 0) & (i_endSlotTArrayExclusive == 0)) {
+                return new OrbitalData(new double[4][0], OrbitalData.UNDEFINED_TIME_RESOLUTION, new ArrayList<>());
+            }
+            throw new IllegalArgumentException("requestedSlotContents == null.");
+        }
+
+        // Indices [component X/Y/Z/mjd][cache slot][position index]
+        final double[][][] coordUnmerged_axisSlotPos = new double[4][slotContentsList.size()][];
+
         int worstResolutionSeconds = 0;
-        for (int i_unitInList = 0; i_unitInList < requestedUnits.size(); i_unitInList++) {
-            final CacheUnit unit = (CacheUnit) requestedUnits.get(i_unitInList);   // NOTE: Typecasting
-            worstResolutionSeconds = Math.max(worstResolutionSeconds, unit.requestedTimeResolutionSeconds);
+        for (int i_slotInList = 0; i_slotInList < slotContentsList.size(); i_slotInList++) {
+            final LocalCacheSlotContents slotContents = (LocalCacheSlotContents) slotContentsList.get(i_slotInList);   // NOTE: Typecasting
+            worstResolutionSeconds = Math.max(worstResolutionSeconds, slotContents.requestedTimeResolutionSeconds);
 
             // Construct indices to copy from this particular unit.
-            // NOTE: A unit may be BOTH FIRST AND LAST in the list.
+            // NOTE: A slot may be BOTH FIRST AND LAST in the list.
             int j_begin = 0;
-            int j_end = unit.coordinates[3].length;
+            int j_end = slotContents.coordinates[3].length;
 
-            if (i_unitInList == 0) {
-                // CASE: Unit is FIRST in list.
-                //j_begin = Math.max(i_beginDataPointInclusive, j_begin);   // beginDataPointInclusive might be negative.
-                j_begin = i_beginUnitArrayInclusive;
+            if (i_slotInList == 0) {
+                // CASE: slot is FIRST in list.
+                j_begin = i_beginSlotTArrayInclusive;
             }
 
-            if (i_unitInList == requestedUnits.size() - 1) {
-                // CASE: Unit is LAST in list.
-                //j_end = Math.min(i_endDataPointExclusive, j_end);   // endDataPointExclusive might be greater than length of array.
-                j_end = i_endUnitArrayExclusive;
+            if (i_slotInList == slotContentsList.size() - 1) {
+                // CASE: slot is LAST in list.
+                j_end = i_endSlotTArrayExclusive;
             }
 
             for (int k_comp = 0; k_comp < 4; k_comp++) {
-                coordUnmerged[k_comp][i_unitInList] = Utils.selectArrayIntervalMC(unit.coordinates[k_comp], j_begin, j_end);
+                coordUnmerged_axisSlotPos[k_comp][i_slotInList] = Utils.selectArrayIntervalMC(slotContents.coordinates[k_comp], j_begin, j_end);
             }
         }
 
-        final double[][] coordMerged = new double[4][];     // Indices [component X/Y/Z/mjd][position index]
+        final double[][] coordMerged_axisPos = new double[4][];  // AxisPos = Indices [axis X/Y/Z/mjd][position index]
         for (int k_comp = 0; k_comp < 4; k_comp++) {
-            coordMerged[k_comp] = Utils.concatDoubleArrays(coordUnmerged[k_comp]);
+            coordMerged_axisPos[k_comp] = Utils.concatDoubleArrays(coordUnmerged_axisSlotPos[k_comp]);
         }
 
-        final List<Integer> dataGaps = findJumps(coordMerged[3], worstResolutionSeconds * 2 * Time.DAYS_IN_SECOND);
-
+        /*========================
+         Detect data gaps
+         ----------------
+         Move code to OrbitalData?
+         ========================*/
+        final List<Integer> dataGaps = Utils.findJumps(coordMerged_axisPos[3], worstResolutionSeconds * 2 * Time.DAYS_IN_SECOND);
         if (DEBUG > 0) {
-            final double[] t = coordMerged[3];
+            final double[] t = coordMerged_axisPos[3];
             for (int i_dg = 0; i_dg < dataGaps.size(); i_dg++) {  // dg = data gap
                 int i = dataGaps.get(i_dg);
                 final Time dgBegin = new Time(t[i]);
@@ -306,34 +370,12 @@ public class SSCWSOrbitCache {
             }
         }
 
-        final OrbitalData data = new OrbitalData();
-        data.orbit = coordMerged;
-        data.worstRequestedResolutionSeconds = worstResolutionSeconds;
-        data.dataGaps = dataGaps;
+        final OrbitalData data = new OrbitalData(coordMerged_axisPos, worstResolutionSeconds, dataGaps);
         return data;
     }
 
 
-    /**
-     * Look for jumps greater or equal to threshold. Return list of indices for
-     * which a[i + 1] - a[i] >= minJumpGap.
-     *
-     * Behaviour is undefined for NaN, +Inf, -Inf.
-     */
-    // PROPOSAL: Move to Utils?
-    private static List<Integer> findJumps(double[] a, double minJumpGap) {
-        final List<Integer> dataGaps = new ArrayList();
-        for (int i = 0; i < a.length - 1; i++) {
-            // Check if there is a (positive) jump.
-            if (a[i + 1] - a[i] >= minJumpGap) {
-                dataGaps.add(i);
-            }
-        }
-        return dataGaps;
-    }//*/
-
-
-    //########################################################################
+    //##########################################################################
     /**
      * Informal test code.
      */
@@ -342,7 +384,6 @@ public class SSCWSOrbitCache {
         class SSCWSLibraryEmul extends SSCWSLibrary {
 
             private final double data[][];
-            //private double availableBeginTimeMjd , availableEndTimeMjd;
             private final SSCWSSatelliteInfo satInfo;
 
 
@@ -361,35 +402,51 @@ public class SSCWSOrbitCache {
 
 
             @Override
-            public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int reqResolution) {
+            public double[][] getTrajectory_GEI(String satID, double beginInclusiveMjd, double endInclusiveMjd, int reqResolution) {
                 System.out.println(this.getClass().getSimpleName() + ".SSCWSLibraryEmul#getOrbitData("
                         + beginInclusiveMjd + ", " + endInclusiveMjd + ", " + reqResolution + ")");
-                return getOrbitData(satID, beginInclusiveMjd, endInclusiveMjd, 0, 0, reqResolution);
+                final double[][] data = getOrbitData(satID, beginInclusiveMjd, endInclusiveMjd, 0, 0, reqResolution);
+                //System.out.println("    getTrajectory_GEI(..)[3] = "+Arrays.toString(data[3]));
+                return data;
+
             }
 
 
             /**
-             * This method is not prescribed by SSCWSLibrary but is useful for
+             * NOTE: This method is not prescribed by SSCWSLibrary but is useful for
              * testing since it should return exactly what the cache method
              * should return.
              *
              * NOTE: Currently ignores the requested resolution, but the cache
              * still cares about the requested value when deciding whether to
-             * keep old cache units or replace them.
+             * keep old cache slot contents or replace them.
              */
             public double[][] getOrbitData(String satID, double beginInclusiveMjd, double endInclusiveMjd, int beginIndexMargin, int endIndexMargin, int reqResolution) {
 
                 // Select and extract data range.
                 int[] i_interval = Utils.findInterval(data[3], beginInclusiveMjd, endInclusiveMjd, true, true);   // NOTE: inclusive + INclusive.
-                final int i_begin = Math.max(i_interval[0] - beginIndexMargin, 0);
-                final int i_end = Math.min(i_interval[1] + endIndexMargin, data[3].length);
-                final int N_request = i_end - i_begin;
+                final int i_lowerBoundInclusive = i_interval[0] - beginIndexMargin;
+                final int i_upperBoundExclusive = i_interval[1] + endIndexMargin;
+                if ((i_lowerBoundInclusive < 0) | (i_upperBoundExclusive > data[3].length)) {
+                    return new double[4][0];
+                }
+                final int N_request = i_upperBoundExclusive - i_lowerBoundInclusive;
 
                 double[][] returnData = new double[4][N_request];
                 for (int k_axis = 0; k_axis < 4; k_axis++) {
-                    System.arraycopy(data[k_axis], i_begin, returnData[k_axis], 0, N_request);
+                    System.arraycopy(data[k_axis], i_lowerBoundInclusive, returnData[k_axis], 0, N_request);
                 }
                 return returnData;
+            }
+
+
+            public List<String> getPrivacyAndImportantNotices() {
+                return null;
+            }
+
+
+            public List<String> getAcknowledgements() {
+                return null;
             }
         }
         //======================================================================
@@ -422,22 +479,22 @@ public class SSCWSOrbitCache {
             }
         }
         //======================================================================
-        double[][] data1;
+        final double[][] data1;
         {
-            int N_data = 5 * 10 + 1;
+            final int N_data = 5 * 10 + 1;
             data1 = new double[4][N_data];
             for (int i = 0; i < N_data; i++) {
                 data1[0][i] = 0;
                 data1[1][i] = 0;
                 data1[2][i] = 0;
-                data1[3][i] = i / 5.0;
+                data1[3][i] = i / 5.0;   // 0.0, 0.2, ..., 5.0
             }
         }
         //======================================================================
-        double[][] data2 = new double[4][];
+        final double[][] data2 = new double[4][];
         {
             data2[3] = new double[]{0.1, 0.3, 0.9, 1.5};
-            int N_data = data2[3].length;
+            final int N_data = data2[3].length;
             data2[0] = new double[N_data];
             data2[1] = new double[N_data];
             data2[2] = new double[N_data];
@@ -455,7 +512,9 @@ public class SSCWSOrbitCache {
         double[][][] dataList = new double[][][]{data1, data2};
         double[][] dataLimitsList = new double[][]{{0, 10}, {0, 2}};
         for (int i = 0; i < 2; i++) {
-            SSCWSLibraryEmul lib = new SSCWSLibraryEmul(dataList[i], new SSCWSSatelliteInfo("TestSat", "Test Satellite", dataLimitsList[i][0], dataLimitsList[i][1], reqResolution));
+            final SSCWSLibraryEmul lib = new SSCWSLibraryEmul(
+                    dataList[i],
+                    new SSCWSSatelliteInfo("TestSat", "Test Satellite", dataLimitsList[i][0], dataLimitsList[i][1], reqResolution));
             testRuns.add(new TestRun(
                     lib,
                     new SSCWSOrbitCache(
@@ -465,9 +524,9 @@ public class SSCWSOrbitCache {
 
         for (TestRun run : testRuns) {
             final List<TestCall> newCalls = new ArrayList();
-            newCalls.add(new TestCall(4.5, 5.5, 0, run.lib.getOrbitData(null, 4.5, 5.5, reqResolution)));
-            newCalls.add(new TestCall(5.0, 7.0, 0, run.lib.getOrbitData(null, 5.0, 7.0, reqResolution)));
-            newCalls.add(new TestCall(0.0, 2.0, 0, run.lib.getOrbitData(null, 0.0, 2.0, reqResolution)));
+            newCalls.add(new TestCall(4.5, 5.5, 0, run.lib.getTrajectory_GEI(null, 4.5, 5.5, reqResolution)));
+            newCalls.add(new TestCall(5.0, 7.0, 0, run.lib.getTrajectory_GEI(null, 5.0, 7.0, reqResolution)));
+            newCalls.add(new TestCall(0.0, 2.0, 0, run.lib.getTrajectory_GEI(null, 0.0, 2.0, reqResolution)));
             newCalls.add(new TestCall(1.0, 2.0, 1, run.lib.getOrbitData(null, 1.0, 2.0, 1, 1, reqResolution)));
             newCalls.add(new TestCall(2.0, 3.0, 7, run.lib.getOrbitData(null, 2.0, 3.0, 7, 7, reqResolution)));
             newCalls.add(new TestCall(2.3, 3.7, 7, run.lib.getOrbitData(null, 2.3, 3.7, 7, 7, reqResolution)));
@@ -488,16 +547,18 @@ public class SSCWSOrbitCache {
 
                 final OrbitalData actualResult = run.orbitCache.getOrbitData(
                         call.beginMjd, call.endMjd,
+                        RoundingMode.CEILING, RoundingMode.FLOOR, // NOTE: Not varying these parameters.
                         call.beginEndIndexMargin, call.beginEndIndexMargin,
                         reqResolution);
                 //System.out.println("actualResult[3] = " + Arrays.toString(actualResult[3]));
 
-                if (Arrays.deepEquals(actualResult.orbit, call.result)) {
+                if (Arrays.deepEquals(actualResult.coords_axisPos_kmMjd, call.result)) {
                     System.out.println("OK");
                 } else {
                     System.out.println("#############################################");
                     System.out.println("orbitCache.getOrbitData(" + call.beginMjd + ", " + call.endMjd + ", " + call.beginEndIndexMargin + ", " + reqResolution + ");");
-                    System.out.println("ERROR: actualResult.orbit[3] = " + Arrays.toString(actualResult.orbit[3]));
+                    System.out.println("ERROR: actualResult.orbit[3] = " + Arrays.toString(actualResult.coords_axisPos_kmMjd[3]));
+                    System.out.println("       call.result[3]        = " + Arrays.toString(call.result[3]));
                     System.out.println("#############################################");
                     System.exit(1);
                 }

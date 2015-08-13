@@ -7,6 +7,8 @@ package ovt.util;
 
 import gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
@@ -25,7 +27,12 @@ import ovt.datatype.Time;
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se
  */
-// PROPOSAL: Remake into interface (for the purpose of facilitating different data sources).
+// PROPOSAL: Change to model where satellite descriptions are (technically) not
+//           cached, but can be refreshed with a special command at any point.
+//           Can refresh list at instantiation and then never bother again, except
+//           possibly wth button in the SSCWS Satellites list window.
+//    PRO: No IOException for getAllSatelliteInfo(...) (two functions).
+// 
 public abstract class SSCWSLibrary {
 
     /**
@@ -36,7 +43,9 @@ public abstract class SSCWSLibrary {
     private static DatatypeFactory datatypeFactory = null;
 
     /**
-     * IMPLEMENTATION NOTE: In practice a read-only replacement for
+     * Stores basic satellite information. Immutable.
+     * 
+     * IMPLEMENTATION NOTE: In practice an immutable replacement for
      * gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription. Reasons for having
      * this class instead of SatelliteDescription: (1) Reduce the number of
      * locations in OVT which are dependent on SatelliteDescription (since it
@@ -78,11 +87,25 @@ public abstract class SSCWSLibrary {
             this.availableEndTimeMjd = mAvailableEndTimeMjd;
             this.bestTimeResolution = mNormalTimeResolution;
         }
+        
+        /*@Override
+        public boolean equals(Object o) {
+            if (o==null) {
+                return false;
+            } else if (o==this)  {
+                return true;
+            } else if (o.getClass().equals(this.getClass())) {
+                return false;
+            } else {
+                final SSCWSSatelliteInfo si = (SSCWSSatelliteInfo) o;
+                return (si.);
+            }
+        }*/
     }
 
 
     /**
-     * Retrieve list of satellite descriptions.
+     * Retrieve (unmodifiable) list of satellite descriptions.
      */
     public abstract List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException;
 
@@ -95,7 +118,8 @@ public abstract class SSCWSLibrary {
         if (satID == null) {
             throw new NullPointerException("satID is null.");
         }
-        for (SSCWSSatelliteInfo satInfo : getAllSatelliteInfo()) {
+        for (SSCWSSatelliteInfo satInfo : getAllSatelliteInfo())  // throws IOException
+        {
             if (satInfo.ID.equals(satID)) {
                 return satInfo;
             }
@@ -105,7 +129,7 @@ public abstract class SSCWSLibrary {
 
 
     /**
-     * Return orbit data (GEI_xxx) for a given Earth satellite.<BR>
+     * Return trajectory data for a given Earth satellite.<BR>
      *
      * NOTE: One can NOT assume that the first and last coordinate points are
      * exactly at beginMjd/endMjd since (1) the specified time interval may
@@ -117,19 +141,25 @@ public abstract class SSCWSLibrary {
      * @param satID String referring to a satellite as returned by
      * gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription.getID().
      *
-     * @return 2D array where the indices refer to [X/Y/Z/time (mjd)][position
-     * index].
+     * @return 2D array where the indices refer to [X/Y/Z/time][position index].
+     * Units: km, mjd.
      */
     // PROPOSAL: Return empty arrays when there is no data.
-    //    NOTE: SSC Web Services returns error when requestion data from entirely outside the available time interval.
+    //    NOTE: SSC Web Services returns error when requesting data from entirely outside the available time interval.
     // PROPOSAL: Remove check for coordinate system of returned data.
     //
     // TODO: Check which coordinate system to use: CoordinateSystem.GEI_J_2000, or .GEI_TOD or some other which is unambiguous.
     // TODO: formatOptions.setDistanceUnits(DistanceUnits.KM); or at least check with units are actually returned.
-    public abstract double[][] getOrbitData(
+    public abstract double[][] getTrajectory_GEI(
             String satID, double beginMjdInclusive, double endMjdInclusive, int resolutionFactor)
             throws IOException;
 
+
+    public abstract List<String> getPrivacyAndImportantNotices() throws IOException;
+
+    public abstract List<String> getAcknowledgements() throws IOException;
+        
+        
     // PROPOSAL: Move to Utils or Time?
     //    CON: Is the time conversion used by data from the SSC Web Servies. Therefore one wants to keep it close to that code.
     /**
@@ -174,7 +204,11 @@ public abstract class SSCWSLibrary {
      */
     public static XMLGregorianCalendar convertMjdToXMLGregorianCalendar(double mjd) throws DatatypeConfigurationException {
         if (datatypeFactory == null) {
-            datatypeFactory = DatatypeFactory.newInstance();
+            //try {
+            datatypeFactory = DatatypeFactory.newInstance();   // throws DatatypeConfigurationException
+            //} catch(DatatypeConfigurationException e) {
+                //throw new RuntimeException("Call to DatatypeFactory.newInstance() failed.", e);
+            //}
         }
 
         final Time time = new Time(mjd);

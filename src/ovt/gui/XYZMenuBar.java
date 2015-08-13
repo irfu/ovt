@@ -36,6 +36,7 @@ import ovt.mag.*;
 import ovt.util.*;
 import ovt.object.*;
 import ovt.interfaces.*;
+import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -43,14 +44,19 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 import java.io.*;
-import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.List;
 
 public class XYZMenuBar extends JMenuBar {
 
-    final private Font font = Style.getMenuFont();
+    private final Font font = Style.getMenuFont();
     private OVTCore core;
-    public XYZWindow xyzWin;
-    private JMenuItem importSatelliteMenuItem;
+    private final XYZWindow xyzWin;
+    private JMenuItem importSatelliteMenuItem;                   // Rationalize away?
+    private JMenuItem sscwsSatellitesSelectionWindowMenuItem;    // Rationalize away?
     private ovt.object.editor.SettingsEditor renPanelSizeEditor;
 
 
@@ -241,7 +247,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                FieldlineMapper flm = new FieldlineMapper(getCore());
+                final FieldlineMapper flm = new FieldlineMapper(getCore());
                 flm.setBindCS(CoordinateSystem.GEO);
                 flm.setName("New FL Mapper [GEO]");
                 getCore().getChildren().addChild(flm);
@@ -256,7 +262,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                FieldlineMapper flm = new FieldlineMapper(getCore());
+                final FieldlineMapper flm = new FieldlineMapper(getCore());
                 flm.setBindCS(CoordinateSystem.SM);
                 flm.setName("New FL Mapper [SMC]");
                 getCore().getChildren().addChild(flm);
@@ -278,9 +284,8 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                HTMLBrowser hw = getVW().getHTMLBrowser();
-                String url = "file:" + getCore().getDocsDir() + "about.html";
-                //String url = "http://www.yahoo.com";
+                final HTMLBrowser hw = getVW().getHTMLBrowser();
+                final String url = "file:" + getCore().getDocsDir() + "about.html";
                 try {
                     hw.setPage(url);
                 } catch (IOException e) {
@@ -296,32 +301,56 @@ public class XYZMenuBar extends JMenuBar {
 
 
     public JMenuItem createImportSatelliteMenuItem() {
-        JMenuItem menuItem = new JMenuItem("Import Satellite ...");
+        final JMenuItem menuItem = new JMenuItem("Import Satellite ...");
         menuItem.setFont(Style.getMenuFont());
+
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
-                Sat sat = wizard.start();
+                final ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
+                final Sat sat = wizard.start();
                 if (sat != null) {
-                    core.getSats().addSat(sat);
-                    core.getSats().getChildren().fireChildAdded(sat);
-                    core.Render();
+                    xyzWin.addSatAction(sat);
                 }
             }
         });
+
+        return menuItem;
+    }
+
+
+    public JMenuItem createSSCWSSatellitesSelectionWindowMenuItem() {
+        final JMenuItem menuItem = new JMenuItem("Select SSC-based Satellites ...");
+        menuItem.setFont(Style.getMenuFont());
+
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                try {
+                    getCore().getXYZWin().getSSCWSSatellitesSelectionWindow().setVisible(true);
+                } catch (IOException e) {
+                    getCore().sendErrorMessage(e);
+
+                }
+            }
+        });
+
         return menuItem;
     }
 
 
     /**
-     * Create Satellites menu data structure. NOTE: The method only creates a JMenu and a
-     * MenuListener immediately, but no JMenuItems. The actual JMenuItems are
-     * created and added dynamically to the JMenu every time the "Satellites"
-     * menu is clicked. Any previous JMenuItems are destroyed first.
+     * Create Satellites menu data structure.<BR>
+     *
+     * NOTE: The method only creates a JMenu and a MenuListener immediately, but
+     * no JMenuItems. The actual JMenuItems are created and added dynamically to
+     * the JMenu every time the "Satellites" menu is clicked. Any previous
+     * JMenuItems are destroyed first.
      */
     private JMenu createSatsMenu() {
         if (importSatelliteMenuItem == null) {
             importSatelliteMenuItem = createImportSatelliteMenuItem();
+        }
+        if (sscwsSatellitesSelectionWindowMenuItem == null) {
+            sscwsSatellitesSelectionWindowMenuItem = createSSCWSSatellitesSelectionWindowMenuItem();
         }
         final JMenu menu = new JMenu("Satellites");
         menu.setFont(font);
@@ -341,21 +370,21 @@ public class XYZMenuBar extends JMenuBar {
                 // Import Satellite ...
                 satsMenu.add(importSatelliteMenuItem);
 
-                // List of satellites
+                // SSC Satellites Selection Window
+                satsMenu.add(sscwsSatellitesSelectionWindowMenuItem);
+
+                // List of TLE/LTOF (file-based) satellites.
                 satsMenu.addSeparator();
-                JMenuItem[] items = createSatsList();
+                JMenuItem[] items = createLTOF_TLESatsMenuItemList();
                 for (JMenuItem item : items) {
                     satsMenu.add(item);
                 }
 
-                // DEBUG
+                // List of SSCWS satellites (online data).
                 satsMenu.addSeparator();
-                try {
-                    for (SSCWSSatelliteInfo satInfo : OVTCore.SSCWS_LIBRARY.getAllSatelliteInfo()) {
-                        satsMenu.add(createSSCWSTestSatMenuItem_TEST(satInfo.ID));
-                    }
-                } catch (IOException exc) {
-                    getCore().sendErrorMessage(exc);
+                items = createSSCWSSatsMenuItemsList();
+                for (JMenuItem item : items) {
+                    satsMenu.add(item);
                 }
             }
         });
@@ -364,85 +393,100 @@ public class XYZMenuBar extends JMenuBar {
 
 
     /**
-     * TEST / DEBUG
-     *
      * Create menu item for _ONE_ SSC WS satellite to put in the data structures
      * describing the GUI.
      *
-     * NOTE: Maybe inefficient to have one ActionListener per satellite. Add all
-     * satellites at once as with the preexisting OVT file-based satellites?
+     * NOTE: Fails silently and returns null if (1) SSCWS_satID does not exist
+     * or (2) obtaining satellites list fails (indirect). It is best to just
+     * fail to display menu items for satellites which existence in the
+     * satellite list can not be confirmed.
+     *
+     * @return Returns JMenuItem, or null if the SSCWS satellite can not be
+     * found.
      */
-    public JMenuItem createSSCWSTestSatMenuItem_TEST(String SSCWS_satID) {
-        JMenuItem newMenuItem = null;
+    private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) {
+        final String satName;
         try {
-            final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;
-
-            final ActionListener actionListener = (ActionEvent evt) -> {
-                final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
-
-                if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
-                    addSSCWSSatAction(SSCWS_satID);
-                } else {
-                    // remove Sat from OVTCore.Sats 
-                    removeSSCWSSatAction(SSCWS_satID);
-                }
-                core.Render();
-            };
-
-            newMenuItem = new JCheckBoxMenuItem(satName);
-            newMenuItem.setFont(Style.getMenuFont());
-            newMenuItem.addActionListener(actionListener);
-            newMenuItem.setSelected(core.getSats().getChildren().containsChild(satName));  // Select if sat is already added to OVT.
+            satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException
         } catch (IOException e) {
-            getCore().sendErrorMessage(e);
+
+            //getCore().sendErrorMessage(e);
+            return null;
         }
-        return newMenuItem;
+
+        final ActionListener actionListener = (ActionEvent evt) -> {
+            final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
+
+            if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
+                xyzWin.addSSCWSSatAction(SSCWS_satID);
+            } else {
+                // remove Sat from OVTCore.Sats 
+                xyzWin.removeSSCWSSatAction(SSCWS_satID);
+            }
+            core.Render();
+        };
+
+        final JMenuItem newMenuItem = new JCheckBoxMenuItem(satName);
+        newMenuItem.setFont(Style.getMenuFont());
+        newMenuItem.addActionListener(actionListener);
+
+        try {
+            // Select if sat is already added to OVT.
+            newMenuItem.setSelected(xyzWin.sscwsSatAlreadyAdded(SSCWS_satID));   // throws IOException if can not get satellites list.
+            return newMenuItem;
+
+        } catch (IOException e) {
+            // getCore().sendErrorMessage(e);
+            return null;
+        }
+    }
+
+
+    private JMenuItem[] createSSCWSSatsMenuItemsList() {
+        final Set<String> satIDs;
+        //try {
+        satIDs = xyzWin.getSSCWSBookmarks().getBookmarkedSSCWSSatIds();
+        //} catch (IOException exc) {
+        //    getCore().sendErrorMessage(exc);
+        //    return new JMenuItem[0];   // Return empty array instead of null.
+        //}
+
+        //final JMenuItem[] menuItems = new JMenuItem[satIDs.size()];
+        final List<JMenuItem> menuItems = new ArrayList();
+
+        int i = 0;
+        for (String satID : satIDs) {
+            //menuItems[i] = createSSCWSSatMenuItem(satID);
+            //i++;
+            final JMenuItem menuItem = createSSCWSSatMenuItem(satID);
+            if (menuItem != null) {
+                // Only add if menu item could be created. This is useful for 
+                menuItems.add(menuItem);
+            }
+            // NOTE: Does NOT remove the satellite ID from the bookmarks if it
+            // is invalid. See comments in the SSCWSSatelliteBookmarks class.
+        }
+        final JMenuItem[] menuItemsArray = new JMenuItem[menuItems.size()];
+        menuItems.toArray(menuItemsArray);
+        sortMenuItemsByText(menuItemsArray);
+        return menuItemsArray;
     }
 
 
     /**
-     * Method that represents the action of adding a SSC Web Services satellite
-     * to the "GUI tree", as if this action was triggered in the
-     * GUI.
-     *
-     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
-     * Services to reference satellites, SatelliteDescription#getId().
+     * @param Array of menu items that is to sorted. The result is also stored
+     * in this array.
      */
-    public void addSSCWSSatAction(String SSCWS_satID) {
-        final Sat sat;
-        try {
-            sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
-
-            /* NOTE: The string value appears in the GUI tree node, but is also
-             used to find the satellite when removing it from the tree(?). */
-            sat.setName(OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name);
-            sat.setOrbitFile(null);
-        } catch (IOException e) {
-            getCore().sendErrorMessage(e);
-            return;
-        }
-        getCore().getSats().addSat(sat);
-        getCore().getSats().getChildren().fireChildAdded(sat);
-    }
-
-
-    /**
-     * Method that represents the action of removing a SSC Web Services
-     * satellite from the "GUI tree", as if this action was
-     * triggered in the GUI.
-     *
-     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
-     * Services to reference satellites, SatelliteDescription#getId().
-     */
-    public void removeSSCWSSatAction(String SSCWS_satID) {
-        try {
-            final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;
-            final Sat sat = (Sat) core.getSats().getChildren().getChild(satName);
-            core.getSats().removeSat(sat);
-            core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.
-        } catch (IOException e) {
-            getCore().sendErrorMessage(e);
-        }
+    private void sortMenuItemsByText(JMenuItem[] menuItems) {
+        // Sort menu items based on text.
+        Arrays.sort(menuItems, new Comparator() {
+            @Override
+            public int compare(Object o1, Object o2) {
+                final String text1 = ((JMenuItem) o1).getText();
+                final String text2 = ((JMenuItem) o2).getText();
+                return text1.compareTo(text2);
+            }
+        });
     }
 
 
@@ -452,34 +496,36 @@ public class XYZMenuBar extends JMenuBar {
      *
      * @return Array with JMenuItem to put in JMenu.
      */
-    public JMenuItem[] createSatsList() {
+    public JMenuItem[] createLTOF_TLESatsMenuItemList() {
+        /*=====================================
+         Look for files in odata in user home.
+         =====================================*/
         File[] files = null;
-        final FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
-                || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
-        
-        // Look for files in odata in user home.
-        final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
-        if (userOrbitDir != null) {
-            files = userOrbitDir.listFiles(filter);
-        }
-        
-        // Look for files in system level odata.
-        final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
-        if (sysOrbitDir != null) {
-            File[] sysFiles = sysOrbitDir.listFiles(filter);
-            if (files == null) {
-                files = sysFiles;
-            } else {
-                files = Utils.concat(files, sysFiles);
+        {
+            final FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
+                    || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
+
+            final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
+            if (userOrbitDir != null) {
+                files = userOrbitDir.listFiles(filter);
+            }
+
+            // Look for files in system level odata.
+            final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
+            if (sysOrbitDir != null) {
+                File[] sysFiles = sysOrbitDir.listFiles(filter);
+                if (files == null) {
+                    files = sysFiles;
+                } else {
+                    files = Utils.concat(files, sysFiles);
+                }
             }
         }
 
-        JMenuItem[] items = null;
         if (files == null) {
-            return items;
-        } else {
-            items = new JMenuItem[files.length];
+            return null;
         }
+        final JMenuItem[] menuItems = new JMenuItem[files.length];
 
         // ---------------------------------------------------
         // Create one ActionListener used for all Sat in list.
@@ -488,42 +534,37 @@ public class XYZMenuBar extends JMenuBar {
             final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
             final String satname = item.getText();    // Figure out which Sat is referred to.
             if (item.isSelected()) {
-                // Create Sat and ADD it to OVTCore.Sats
+                // Create Sat and ADD it to OVTCore.Sats.
 
                 try {
                     Sat sat;
-                    // check if TLE file exists
-                    String satName = OVTCore.getOrbitDataDir() + Utils.replaceSpaces(satname);
+                    // Check if TLE file exists
+                    final String satName = OVTCore.getOrbitDataDir() + Utils.replaceSpaces(satname);
                     File file = Utils.findFile(satName + ".tle");
                     if (file == null) {
-                        // check if LTOF file exists
+                        // Check if LTOF file exists
                         file = Utils.findFile(satName + ".ltof");
                         if (file == null) {
                             throw new IOException("Orbit file " + satName + ".tle/.ltof not found");
-                        } else {
-                            sat = new LTOFSat(getCore());
                         }
+                        sat = new LTOFSat(getCore());
                     } else {
                         sat = new TLESat(getCore());
                     }
                     sat.setName(satname);
                     sat.setOrbitFile(file);
-                    
-                    core.getSats().addSat(sat);
-                    core.getSats().getChildren().fireChildAdded(sat);
+
+                    xyzWin.addSatAction(sat);
                 } catch (IOException e2) {
                     core.sendErrorMessage(e2);
                 }
             } else {
-                // REMOVE Sat from OVTCore.Sats
-                final Sat sat = (Sat) core.getSats().getChildren().getChild(satname);
-                core.getSats().removeSat(sat);
-                core.getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
+                // REMOVE Sat from OVTCore.Sats.
+                xyzWin.removeSatAction(satname);
             }
-            core.Render();
         };
 
-        // Iterate over all found files and add one JCheckBoxMenuItem for each
+        // Iterate over all files found and add one JCheckBoxMenuItem for each
         // one using the ActionListener created above.
         for (int i = 0; i < files.length; i++) {
             final String filename = files[i].getName();
@@ -532,10 +573,12 @@ public class XYZMenuBar extends JMenuBar {
             menuItem.setFont(font);
             menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // select if sat is already added to OVT
             menuItem.addActionListener(actionListener);   // NOTE: Use previously constructed ActionListener.
-            items[i] = menuItem;
+            menuItems[i] = menuItem;
         }
 
-        return items;
+        sortMenuItemsByText(menuItems);
+
+        return menuItems;
     }
 
 

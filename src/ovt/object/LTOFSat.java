@@ -7,19 +7,8 @@
 package ovt.object;
 
 import ovt.*;
-import ovt.beans.*;
-import ovt.interfaces.*;
 import ovt.datatype.*;
-import ovt.gui.*;
-import ovt.mag.*;
-import ovt.util.*;
-import ovt.event.*;
-
-import java.beans.*;
 import java.io.*;
-import java.util.*;
-import java.awt.event.*;
-import javax.swing.*;
 
 /**
  *
@@ -32,18 +21,20 @@ public class LTOFSat extends Sat {
       super(core);
  }
     
-    
+
 
  /**
-  * Gets min/max Mjd from LTOF datafile (reads all file from the beginning to the end. can by probabny optimized by moveing the pointer)
+  * Gets min/max Mjd from LTOF datafile (reads all file from the beginning to the end.
+  * Can by probably be optimized by moving the pointer)
   */   
-protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
-    
+  @Override
+  protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
+
     String line, lastTimeLine = null;
     int lineCount=0;
     double firstTime=-1000.0, lastTime=-1000.0;
     
-     BufferedReader inData=new BufferedReader(new FileReader(orbitFile));
+    BufferedReader inData = new BufferedReader(new FileReader(orbitFile));
     
      /* taken from Fortran code:
      READ (CFILE_BUFFER,42,ERR=506)
@@ -59,7 +50,7 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
        
        if (line.startsWith("2")) { // this line contains time
           try {
-              if (firstTime == -1000) firstTime = new Double(line.substring(3,15)).doubleValue();  // set firstTime
+              if (firstTime == -1000) firstTime = Double.parseDouble(line.substring(3,15));  // set firstTime
               else lastTimeLine = line;
           } catch (NumberFormatException nfe) {
               throw new IOException("Can not extract time from "+orbitFile+" line " +lineCount);
@@ -79,96 +70,114 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
     //Log.log(""+rec);
     double evolPeriodDays = rec.oMotin *2*Math.PI/Time.SECONDS_IN_DAY;
     
-    int satNumber = new Integer(lastTimeLine.substring(1,3)).intValue();
+    int satNumber = Integer.parseInt(lastTimeLine.substring(1,3));
     
     return new double[] {  firstTime+Time.Y2000,  lastMjd,  evolPeriodDays,  satNumber}; 
  }
     
-/** Reads LTOFile, computes positions and velocities for given times. */
-protected void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
-    BufferedReader inData;
+  /**
+   * Reads LTOFile, computes positions and velocities for given times.
+   */
+  @Override
+  protected void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
+      //throw new RuntimeException("UNFINISHED IMPLEMENTATION.");
+      
+      try {
+        fill_GEI_VEI_Raw(orbitFile, timeMjdMap, gei_arr, vei_arr);
+      } catch (FileNotFoundException e){
+        throw new IOException("File "+orbitFile.getAbsolutePath()+" not found.");
+      }  /*catch (IOException e){
+        throw new IOException("IO error with "+orbitFile+" datafile");
+      }*/
+  }
+
+
+  /**
+   * Read arbitrary LTOF file.
+   * The structure of the LTOF is given in docs/LTOF.pdf
+   * 
+   * IMPLEMENTATION NOTE: This method is only used by the method fill_GEI_VEI
+   * (and test code). It is however useful
+   * to separate the code that reads and interprets the actual file from
+   * the rest of the class. The LTOFSat class itself can not be instantiated without an
+   * OVTCore object which (probably) can not easily be instantiated without launching
+   * the whole OVT GUI. With this method separate, automatic test code can call it
+   * to read LTOF files without having to launch the whole OVT GUI.
+   */
+  public static void fill_GEI_VEI_Raw(File LTOFFile, double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr)
+          throws IOException {
     String line;
-    int codeOfLine,i,j, k=0,lineNumber=0;
+    int i,j, k=0,lineNumber=0;
     double mjd = timeMjdMap[k];
 
-    try {
-        inData = new BufferedReader(new FileReader(orbitFile));
-    } catch (FileNotFoundException e){
-        throw new IOException("File "+orbitFile+" not found.");
-    } catch (IOException e){
-        throw new IOException("IO error with "+orbitFile+" datafile.");
-    }
-    
-    // the structure of the the LTOF is given in docs/LTOF.pdf
-    
-
-    while (inData.ready() && k<timeMjdMap.length) {
-        LTOFRecord rec = new LTOFRecord();
-        line = inData.readLine();    // Read 1st record
-        lineNumber++;
-        //if (line == null) throw new IOException("Can not read line "+lineNumber+", file '"+orbitFile.getAbsolutePath()+"'");
-        if(line.length()<40)
-            throw new IOException("Error in the line "+lineNumber+", file '"+orbitFile.getAbsolutePath()+"': line.length < 40");
-        
-        char c = line.charAt(5);
-        if (c != 'P' && c != 'R') continue; // search for the 1-st record. It contains the number of a satellite +2spaces +  P or R - Predict or Recon.
-        // I3,X2,A1,... (Integer 123, two spaces, 1 char,...
-        
-        codeOfLine = new Integer(line.substring(0,3).trim()).intValue(); // trim to remove leading spaces
-        //Log.log("mjd["+k+"] codeOfLine="+codeOfLine);
-        
-        //if (codeOfLine>=1 && codeOfLine<99 ){   //Satellite ID (sc_id)
-        
-        rec.sc_id=codeOfLine;  // Set up number of satellite (sc_id)!!!
-        
-        line = inData.readLine(); // Read 2nd record: 200+satin ...
-        lineNumber++;
-        try {
-            rec.set2ndRecord(line);
-        } catch (IllegalArgumentException e2) {
-             throw new IOException("Error in the line "+lineNumber+" of file '"+orbitFile.getAbsolutePath()+"' : "+e2);
-        }
-        
-        if ( mjd < rec.dayBeg )
-            throw new IOException("The requested time ("+new Time(mjd)+") is  earlier than the data time.  "+lineNumber+", file '"+orbitFile.getAbsolutePath()+"'");
-        
-        if (   rec.dayEnd < mjd  )
-            continue; // too early to fo forward... too early... the required record has not been reached yet.
-        
-        line = inData.readLine(); // Reading 3rd record: 30X ...
-        lineNumber++;
-        try {
-            rec.set3rdRecord(line);
-        } catch (Exception e2) { // why not IllegalArgumentException ???????????????????? hmm.....
-            throw new IOException("Error in the line "+lineNumber+", file '"+orbitFile.getAbsolutePath()+"' : "+e2.getMessage());
-        }
-        
-        for (i=1,j=0; i<=rec.coeffLinesNumber; ++i) { // Read lines with polynomial coefficients of x-y-z components of position vector
-            line = inData.readLine();
-            lineNumber++;
-            if (rec.setDataRecord(i,line) !=0 )
-                 throw new IOException("Error reading polynomial coefficients : "+orbitFile.getAbsolutePath()+": line "+lineNumber);
-            /*{
-                j=1;
-                break; //Just skipping bad data lines
-            }*/
-        }
-        
-        // calculate and fill in gei_arr vei_arr  for the time valid for this record
-        while (mjd<=rec.dayEnd && k<timeMjdMap.length) {  //Treatment of MJDs as much as possible.
-            //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
-            mjd = timeMjdMap[k];
-            double[] posAndVel = solveKepler(mjd, rec);
-            for (int jx=0; jx<3; jx++) {
-                gei_arr[k][jx] = posAndVel[jx];
-                vei_arr[k][jx] = posAndVel[jx+3];                
-            }
-           // Log.log("pos="+Vect.toString(gei_arr[k])); 
-            k++;
-        }
-        
-    } 
-    inData.close();
+      try (BufferedReader inData = new BufferedReader(new FileReader(LTOFFile))) {
+          while (inData.ready() && k<timeMjdMap.length) {
+              final LTOFRecord rec = new LTOFRecord();
+              line = inData.readLine();    // Read 1st record
+              lineNumber++;
+              //if (line == null) throw new IOException("Can not read line "+lineNumber+", file '"+orbitFile.getAbsolutePath()+"'");
+              if(line.length()<40)
+                  throw new IOException("Error in the line "+lineNumber+", file '"+LTOFFile.getAbsolutePath()+"': line.length < 40");
+              
+              final char c = line.charAt(5);
+              if (c != 'P' && c != 'R') continue; // search for the 1-st record. It contains the number of a satellite +2spaces +  P or R - Predict or Recon.
+              // I3,X2,A1,... (Integer 123, two spaces, 1 char,...
+              
+              final int codeOfLine = Integer.parseInt(line.substring(0,3).trim()); // trim to remove leading spaces
+              //Log.log("mjd["+k+"] codeOfLine="+codeOfLine);
+              
+              //if (codeOfLine>=1 && codeOfLine<99 ){   //Satellite ID (sc_id)
+              
+              rec.sc_id = codeOfLine;  // Set up number of satellite (sc_id)!!!
+              
+              line = inData.readLine(); // Read 2nd record: 200+satin ...
+              lineNumber++;
+              try {
+                  rec.set2ndRecord(line);
+              } catch (IllegalArgumentException e2) {
+                  throw new IOException("Error in the line "+lineNumber+" of file '"+LTOFFile.getAbsolutePath()+"' : "+e2);
+              }
+              
+              if ( mjd < rec.dayBeg )
+                  throw new IOException("The requested time ("+new Time(mjd)+") is  earlier than the data time.  "+lineNumber+", file '"+LTOFFile.getAbsolutePath()+"'");
+              
+              if (   rec.dayEnd < mjd  )
+                  continue; // too early to fo forward... too early... the required record has not been reached yet.
+              
+              line = inData.readLine(); // Reading 3rd record: 30X ...
+              lineNumber++;
+              try {
+                  rec.set3rdRecord(line);
+              } catch (Exception e2) { // why not IllegalArgumentException ???????????????????? hmm.....
+                  throw new IOException("Error in the line "+lineNumber+", file '"+LTOFFile.getAbsolutePath()+"' : "+e2.getMessage());
+              }
+              
+              for (i=1,j=0; i<=rec.coeffLinesNumber; ++i) { // Read lines with polynomial coefficients of x-y-z components of position vector
+                  line = inData.readLine();
+                  lineNumber++;
+                  if (rec.setDataRecord(i,line) !=0 )
+                      throw new IOException("Error reading polynomial coefficients : "+LTOFFile.getAbsolutePath()+": line "+lineNumber);
+                  /*{
+                  j=1;
+                  break; //Just skipping bad data lines
+                  }*/
+              }
+              
+              // calculate and fill in gei_arr vei_arr  for the time valid for this record
+              while (mjd<=rec.dayEnd && k<timeMjdMap.length) {  //Treatment of MJDs as much as possible.
+                  //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
+                  mjd = timeMjdMap[k];
+                  double[] posAndVel = solveKepler(mjd, rec);
+                  for (int jx=0; jx<3; jx++) {
+                      gei_arr[k][jx] = posAndVel[jx];
+                      vei_arr[k][jx] = posAndVel[jx+3];
+                  }
+                  // Log.log("pos="+Vect.toString(gei_arr[k]));
+                  k++;
+              }
+              
+          }
+      }  // End of try-with-resources
 }
 
 
@@ -177,7 +186,7 @@ protected void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] 
   * @param Mjd
   * @return double []
   */
- public static double[] solveKepler(double day, LTOFRecord x){
+ private static double[] solveKepler(double day, LTOFRecord x){
     double[] X=new double[6]; //Outout position (km) & velocity (km/s)
     double dmanom=(day-x.epoch)*86400.0/x.oMotin;
     double revnum=x.revEpo+dmanom/6.2831853072;

@@ -42,8 +42,13 @@ import java.awt.event.*;
 import java.io.IOException;
 import javax.swing.*;
 import ovt.object.Camera;
+import ovt.object.SSCWSSat;
+import ovt.object.Sat;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 
+/**
+ * Represents OVT's main window.
+ */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     static {
@@ -69,10 +74,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     public boolean windowResizable = true;
     protected XYZMenuBar menuBar;
     protected JSplitPane splitPane;
-
     private final ToolBarContainer toolBarContainer;
-
     protected HTMLBrowser htmlBrowser;
+    private SSCWSSatellitesSelectionWindow sscwsSatellitesSelectionWindow;
+
+    private final SSCWSSatellitesBookmarks sscwsBookmarks = new SSCWSSatellitesBookmarks();
 
     public static final String SETTING_VISUALIZATION_PANEL_WIDTH = "VisualizationPanel.width";
     public static final String SETTING_VISUALIZATION_PANEL_HEIGHT = "VisualizationPanel.height";
@@ -81,6 +87,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_HEIGHT = "XYZWindow.height";
     private static final String SETTING_XYZWINDOW_ORIGIN_X = "XYZWindow.originx";
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
+    private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
+
+    private static final int DEFAULT_VISUALIZATION_PANEL_WIDTH = 600;
+    private static final int DEFAULT_VISUALIZATION_PANEL_HEIGHT = 600;
+
 
     public XYZWindow() {
         super("Orbit Visualization Tool " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
@@ -117,11 +128,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
          One must therefore call OVTCore.getGlobalSetting(..) AFTER this command.
          NOTE: OVTCore(..) makes use of <XYZWindow.this>.renPanel. Therefore
          renPanel has to have been set BEFORE this command.
-         (NOTE: This is why one should not leak "this" form within a constructor.) */
+         (NOTE: This is why one should not leak "this" from within a constructor.) */
         core = new OVTCore(this);
 
-        int width = 600;
-        int height = 600;
+        int width = DEFAULT_VISUALIZATION_PANEL_WIDTH;
+        int height = DEFAULT_VISUALIZATION_PANEL_HEIGHT;
         try {
             width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
             height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
@@ -163,7 +174,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         if (treePanelWidth != 0) {
             treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
         }
-        treePanel.setMinimumSize(new Dimension(160, 10));
+        treePanel.setMinimumSize(new Dimension(200, 10));
 
 //--------Create a split pane with the two scroll panes in it
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, windowResizable);
@@ -185,6 +196,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         // create Help Window
         htmlBrowser = new HTMLBrowser(core);
 
+        sscwsBookmarks.loadFromGlobalSettingsValue(OVTCore.getGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS));
+
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -198,31 +211,38 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         if (!windowResizable) {
             setResizable(windowResizable);
         }
-        
-        //menuBar.addSSCWSSatAction("Enterprise");  // TEST
-        //menuBar.addSSCWSSatAction("DataGapSat");  // TEST
-        //menuBar.addSSCWSSatAction("DownloadFailSat");  // TEST
-        //menuBar.addSSCWSSatAction("astrid2");  // TEST
-        //menuBar.addSSCWSSatAction("ace");  // TEST
-        //menuBar.addSSCWSSatAction("TestSat");  // TEST
-        //menuBar.addSSCWSSatAction("UFO");  // TEST
+
+        // TEST/DEBUG
+        // Automatically add satellites in the GUI (add to the left-hand GUI tree) as if the user had done it.
+        //addSSCWSSatAction("Enterprise");
+        //menuBar.removeSSCWSSatAction("Enterprise");   // REMOVE SATELLITE
+        //menuBar.addSSCWSSatAction("DataGapSat");
+        //menuBar.addSSCWSSatAction("DownloadFailSat");
+        //addSSCWSSatAction("ZzzzSat10");
+        //addSSCWSSatAction("ZzzzSat11");
+        //addSSCWSSatAction("ZzzzSat12");
+        //addSSCWSSatAction("ZzzzSat13");
+        //---
+        //menuBar.addSSCWSSatAction("doublestar1");
+        //menuBar.addSSCWSSatAction("cluster1");
     }
+
 
     public void start() {
         //refreshGUI();
 
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
+        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension windowSize = getSize();
 
         try {
             final int x = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_X));
-            final int y = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_Y));            
-            
+            final int y = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_Y));
+
             // On Linux/KDE: It appears that this method always sets the window
             // inside the screen. Therefore one does not need to check for this.            
-            setLocation(x,y);
+            setLocation(x, y);
         } catch (NumberFormatException e2) {
-                    setLocation(scrnSize.width / 2 - windowSize.width / 2, scrnSize.height / 2 - windowSize.height / 2);
+            setLocation(scrnSize.width / 2 - windowSize.width / 2, scrnSize.height / 2 - windowSize.height / 2);
         }
 
         splashWindow.dispose();
@@ -238,8 +258,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     }
 
+
     /**
-     *
      * @return OVTCore instance
      */
     @Override
@@ -247,25 +267,31 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         return core;
     }
 
+
     @Override
     public void actionPerformed(ActionEvent e) {
     }
+
 
     public void Render() {
         renPanel.Render();
     }
 
+
     public JOGLVisPanel getRenpanel() {
         return renPanel;
     }
+
 
     public vtkRenderer getRenderer() {
         return renPanel.getRenderer();
     }
 
+
     public vtkRenderWindow getRenderWindow() {
         return renPanel.getRenderWindow();
     }
+
 
     /**
      * Is executed when the window closes
@@ -294,6 +320,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         OVTCore.setGlobalSetting("intervalMjd", "" + getCore().getTimeSettings().getTimeSet().getIntervalMjd());
         OVTCore.setGlobalSetting("stepMjd", "" + getCore().getTimeSettings().getTimeSet().getStepMjd());
         OVTCore.setGlobalSetting("currentMjd", "" + getCore().getTimeSettings().getTimeSet().getCurrentMjd());
+        OVTCore.setGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS, sscwsBookmarks.getGlobalSettingsValue());
         try {
             OVTCore.saveGlobalSettings();
         } catch (IOException e2) {
@@ -302,9 +329,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         System.exit(0);
     }
 
+
     public static void setStatus(String statusMessage) {
         statusLine.setStatus(statusMessage);
     }
+
 
     /**
      * Returns <code>true</code> if user pressed <code>Yes</code> else
@@ -320,6 +349,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         return n == JOptionPane.YES_OPTION;
     }
 
+
     /**
      * Main method. Here we launch OVT
      *
@@ -329,11 +359,19 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         XYZWindow XYZwin = new XYZWindow();
         XYZwin.start();
         //XYZwin.quit();   // DEBUG
+
     }
+
 
     public HTMLBrowser getHTMLBrowser() {
         return htmlBrowser;
     }
+
+
+    public SSCWSSatellitesBookmarks getSSCWSBookmarks() {
+        return sscwsBookmarks;
+    }
+
 
     protected final void addOriginActor() {
         vtkVectorText atext = new vtkVectorText();
@@ -356,26 +394,177 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      pack();
      }
      */
+
     public boolean isWindowResizable() {
         return windowResizable;
     }
+
 
     public RenPanel getVisualizationPanel() {
         return renPanel;
     }
 
+
     public XYZMenuBar getXYZMenuBar() {
         return menuBar;
     }
 
+
     public TreePanel getTreePanel() {
         return treePanel;
     }
-}
+
+
+    /**
+     * NOTE: Creates the JFrame-based object the first time it is requested and
+     * then "caches it".
+     */
+    public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() throws IOException {
+        if (sscwsSatellitesSelectionWindow == null) {
+            sscwsSatellitesSelectionWindow = new SSCWSSatellitesSelectionWindow(
+                    OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarks());
+        }
+        return sscwsSatellitesSelectionWindow;
+    }
+
+
+    /**
+     * Have SSCWSSatellitesSelectionWindow set the global settings, but ONLY if
+     * it has already been instantiated. One could call
+     * getSSCWSSatellitesSelectionWindow().setGlobalSettings() directly instead
+     * but that would instantiate the window (if it has not already been done)
+     * which in turn requires network traffic which slows down (and risks
+     * creating error messsages) which is unnecessary if the user does not work
+     * with SSCWS satellites.
+     */
+    /*public void sscwsSatellitesSelectionWindow_setGlobalSettings() {
+     if (sscwsSatellitesSelectionWindow != null) {
+     sscwsSatellitesSelectionWindow.setGlobalSettings();
+     }
+     }*/
+    /**
+     * Method representing the action of adding a satellite (of any type: LTOF,
+     * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
+     * user event in the GUI.
+     */
+    // PROPOSAL: Move to Sats?!! (Not getCore().Render().)
+    // PROPOSAL: Check for satellite with the same name.
+    public void addSatAction(Sat sat) {
+        final String satName = sat.getName();
+        final Sat preExistingSat = (Sat) getCore().getSats().getChildren().getChild(satName);  // null if there is no such satellite.
+        if (preExistingSat != null) {
+            // NOTE: Important to specify that we are speaking of adding a
+            // satellite to "GUI tree", not importing a file or any other form "adding".
+            //getCore().sendErrorMessage("Error", "Can not add satellite in the GUI since there already is a satellite with the same name (\"" + satName + "\").");
+            return;
+        }
+
+        getCore().getSats().addSat(sat);
+        getCore().getSats().getChildren().fireChildAdded(sat);
+
+        /* Include here or let the caller call it?!
+         Having the caller call this might be more efficient.
+         Including here might also have implications if automatically calling this function during launch/initialization.            
+         Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
+         */
+        getCore().Render();
+    }
+
+
+    /**
+     * Method representing the action of removing a satellite (of any type:
+     * LTOF, TLE, SSCWS) to the GUI tree panel, as if this action was triggered
+     * by a user event in the GUI.
+     *
+     * @param satName The satellite's name (in the GUI), i.e. Sat.getName().
+     */
+    public void removeSatAction(String satName) {
+        final Sat sat = (Sat) core.getSats().getChildren().getChild(satName);  // null if there is no such satellite.
+        if (sat == null) {
+            //getCore().sendErrorMessage("Error", "Can not find satellite to remove from GUI (\"" + satName + "\").");
+            return;
+        }
+        getCore().getSats().removeSat(sat);
+        getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
+
+        /* Include here or let the caller call it?!
+         Having the caller call this might be more efficient.
+         (Including here might also have implications if automatically calling this function during launch/initialization.)
+         Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
+         */
+        getCore().Render();
+    }
+
+
+    /**
+     * Method that represents the action of adding a SSC Web Services satellite
+     * to the "GUI tree", as if this action was triggered by a user event in the
+     * GUI.
+     *
+     * NOTE: This method does not check whether the satellite is already in the
+     * GUI tree. It is possible to add the same satellite multiple times,
+     * resulting in multiple tree nodes.
+     *
+     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
+     * Services to reference satellites, SatelliteDescription#getId().
+     */
+    public void addSSCWSSatAction(String SSCWS_satID) {
+        final Sat sat;
+        try {
+            sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
+
+            /* NOTE: The string value appears in the GUI tree node, but is also
+             used to find the satellite when removing it from the tree(?). */
+            sat.setName(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+            sat.setOrbitFile(null);
+        } catch (IOException e) {
+            getCore().sendErrorMessage(e);
+            return;
+        }
+        addSatAction(sat);
+    }
+
+
+    /**
+     * Method that represents the action of removing a SSC Web Services
+     * satellite from the "GUI tree", as if this action was triggered in the
+     * GUI.
+     *
+     * @param SSCWS_satID SSCWS_satID The satellite ID string used by SSC Web
+     * Services to reference satellites, SatelliteDescription#getId().
+     */
+    public void removeSSCWSSatAction(String SSCWS_satID) {
+        try {
+            if (!sscwsSatAlreadyAdded(SSCWS_satID)) {
+                // NOTE: This check will also capture the case of sat==null.
+                //getCore().sendErrorMessage("Error", "Can not find (SSC-based) satellite to remove (SCWS_satID=\""+SSCWS_satID+").");
+            } else {
+                removeSatAction(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+            }
+            /*getCore().getSats().removeSat(sat);
+             getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.*/
+        } catch (IOException e) {
+            getCore().sendErrorMessage(e);
+        }
+    }
+
+
+    /**
+     * @param True iff there is a SSCWSSat object corresponding to the argument
+     * in the GUI tree.
+     */
+    public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException {
+        // NOTE: Implementation assumes there is only one Sat by that exact name.
+        final Sat sat = (Sat) getCore().getSats().getChildren().getChild(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+        return (sat instanceof SSCWSSat);
+    }
+
+}   // XYZWindow
 
 class SplashWindow extends JWindow {
 
     JLabel imageLabel;
+
 
     public SplashWindow() {
         super();
@@ -420,7 +609,5 @@ class SplashWindow extends JWindow {
         setLocation(scrnSize.width / 2 - windowSize.width / 2,
                 scrnSize.height / 2 - windowSize.height / 2);
     }
-    
-    
-    
+
 }

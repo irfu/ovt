@@ -39,8 +39,6 @@ Khotyaintsev
 package ovt.gui;
 
 import ovt.*;
-import ovt.gui.*;
-import ovt.mag.*;
 import ovt.util.*;
 import ovt.beans.*;
 import ovt.event.*;
@@ -220,12 +218,12 @@ public class ClusterConfigurationPanel extends JPanel
     // Added by Erik P G Johansson 2015-04-22
     final double multiplier = Const.RE;
     //final double multiplier = 1;
-    dist[ 9].setText(title[9]  + (int) (Utils.distance(pos[0], pos[1]) * multiplier));
-    dist[10].setText(title[10] + (int) (Utils.distance(pos[0], pos[2]) * multiplier));
-    dist[11].setText(title[11] + (int) (Utils.distance(pos[0], pos[3]) * multiplier));    
-    dist[12].setText(title[12] + (int) (Utils.distance(pos[1], pos[2]) * multiplier));
-    dist[13].setText(title[13] + (int) (Utils.distance(pos[1], pos[3]) * multiplier));
-    dist[14].setText(title[14] + (int) (Utils.distance(pos[2], pos[3]) * multiplier));
+    dist[ 9].setText(title[9]  + (int) (Vect.distance(pos[0], pos[1]) * multiplier));
+    dist[10].setText(title[10] + (int) (Vect.distance(pos[0], pos[2]) * multiplier));
+    dist[11].setText(title[11] + (int) (Vect.distance(pos[0], pos[3]) * multiplier));    
+    dist[12].setText(title[12] + (int) (Vect.distance(pos[1], pos[2]) * multiplier));
+    dist[13].setText(title[13] + (int) (Vect.distance(pos[1], pos[3]) * multiplier));
+    dist[14].setText(title[14] + (int) (Vect.distance(pos[2], pos[3]) * multiplier));
   }
 
   public void propertyChange(PropertyChangeEvent evt) {

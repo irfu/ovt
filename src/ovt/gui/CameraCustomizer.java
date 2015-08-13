@@ -38,27 +38,18 @@ Khotyaintsev
 
 package ovt.gui;
 
-import ovt.*;
-import ovt.mag.*;
 import ovt.util.*;
 import ovt.event.*;
 import ovt.beans.*;
 import ovt.object.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
-import ovt.object.editor.*;
-
-import vtk.*;
 
 import java.io.*;
-import java.util.*;
-import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  *
@@ -73,7 +64,7 @@ public class CameraCustomizer extends JFrame implements PropertyChangeListener {
      * second - PERSPECTIVE_PROJECTION. Is used to indicate
      * panel in CardLayout container.
      */
-    private static final String[] SCALE_PANNEL = { "Parallel Scaler Pannel", "R Pannel"};
+    private static final String[] SCALE_PANEL = { "Parallel Scaler Pannel", "R Pannel"};
     /** The panel which holds R and ParallelScale panels in card layout*/
     private JPanel scalePanel;
     protected Camera cam;
@@ -251,8 +242,8 @@ private JPanel createPositionPanel() {
     // create container for r and parallelScale panels
     // with Card Layout
     scalePanel = new JPanel( new CardLayout());
-    scalePanel.add(pscPanel, SCALE_PANNEL[Camera.PARALLEL_PROJECTION]);
-    scalePanel.add(rPanel, SCALE_PANNEL[Camera.PERSPECTIVE_PROJECTION]);    
+    scalePanel.add(pscPanel, SCALE_PANEL[Camera.PARALLEL_PROJECTION]);
+    scalePanel.add(rPanel, SCALE_PANEL[Camera.PERSPECTIVE_PROJECTION]);    
     
     posPanel.add(scalePanel);
     
@@ -326,7 +317,7 @@ private JPanel createPositionPanel() {
 
 private void updateScalePanel() {
     CardLayout layout = (CardLayout)(scalePanel.getLayout());
-    layout.show(scalePanel, SCALE_PANNEL[cam.getProjection()]);
+    layout.show(scalePanel, SCALE_PANEL[cam.getProjection()]);
 }
 
 private JTextField createDoubleEditorComponent(BasicPropertyDescriptor pd) {

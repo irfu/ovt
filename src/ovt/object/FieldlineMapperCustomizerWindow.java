@@ -38,31 +38,18 @@ Khotyaintsev
 
 package ovt.object;
 
-import ovt.*;
-import ovt.mag.*;
 import ovt.util.*;
-import ovt.event.*;
-import ovt.beans.*;
 import ovt.beans.editor.*;
 import ovt.object.*;
-import ovt.datatype.*;
-import ovt.interfaces.*;
-import ovt.object.editor.*;
-
-import vtk.*;
 
 import java.io.*;
-import java.util.*;
-import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
-import java.awt.event.*;
 
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.table.*;
-import javax.swing.border.*;
 
 
 /**
@@ -73,7 +60,7 @@ import javax.swing.border.*;
 public class FieldlineMapperCustomizerWindow extends JFrame implements Customizer {
     
     private static final int DEBUG=9;
-    /** helps to create a name (ID) for the new point. It should be "new"+(newRowID++) */
+    /** Helps to create a name (ID) for the new point. It should be "new"+(newRowID++) */
     private int newRowID = 0;
     private FieldlineMapper fieldlineMapper;
     
@@ -97,10 +84,10 @@ public FieldlineMapperCustomizerWindow() {
         }
     });
 
-    // create table (TableModel editor)
+    // Create table (TableModel editor)
     table = new JTable ();
     
-    // add selection listener
+    // Add selection listener
     table.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
             //Ignore extra messages.

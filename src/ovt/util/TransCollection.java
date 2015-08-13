@@ -56,14 +56,14 @@ public class TransCollection extends Hashtable {
     this.igrfModel = igrfModel;
   }
 
-  /** Returns Trans setted up for mjd */
+  /** Returns Trans set up for mjd */
   public Trans getTrans(double mjd) {
     Trans trans = (Trans)(get(new Double(mjd)));
     if (trans == null) {
       // create new Trans
       trans = new Trans(mjd, igrfModel);
       // put to the hashtable
-      put(new Double(mjd), trans);
+      put(mjd, trans);
     }
     return trans;
   }

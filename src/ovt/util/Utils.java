@@ -447,25 +447,6 @@ public class Utils extends Object {
 
 
     /**
-     * @author Erik P G Johansson Calculate distance between two coordinates in
-     * an arbitrary orthonormal coordinate system, with arbitrary unit (and not
-     * necessarily 3D).
-     *
-     * @param pos1
-     * @param pos2
-     * @return Distance between cordinates pos1 and pos2.
-     */
-    public static double distance(double[] pos1, double[] pos2) {
-        double s = 0;
-        for (int i = 0; i < pos1.length; i++) {
-            final double d = pos2[i] - pos1[i];
-            s += d * d;
-        }
-        return Math.sqrt(s);
-    }
-
-
-    /**
      * Returns R, Delta, Alpha in degrees r*cos(delta)*cos(phi) = x
      * r*cos(delta)*sin(phi) = y r*sin(delta) = z c phi = atan(y/x) delta =
      * asin(z/r) r = sqrt(x*x + y*y + z*z)
@@ -580,8 +561,8 @@ public class Utils extends Object {
                 destFile.delete();
             }
 
-            // ensure that parent dir of dest file exists!
-            // not using getParentFile method to stay 1.1 compat
+            // Ensure that parent dir of dest file exists!
+            // not using getParentFile method to stay 1.1 compatible.
             File parent = new File(destFile.getParent());
             if (!parent.exists()) {
                 parent.mkdirs();
@@ -879,18 +860,18 @@ public class Utils extends Object {
      * Earth at an arbitrarily chosen instant. This should always yield the same
      * result for an idealized elliptical orbit. Only uses SI units.
      *
-     * @param r Distance from center of the Earth in meters.
-     * @param v Velocity in m/s in non-accelerating frame.
+     * @param r_SI Distance from center of the Earth in meters.
+     * @param v_SI Velocity in m/s in non-accelerating frame.
      * @return Orbital period in seconds.
      */
     // PROPOSAL: Incorporate into OrbitalState. Partial result semimajor axis fits in there to.
-    public static double orbitalPeriod(double r, double v) {
+    public static double orbitalPeriod(double r_SI, double v_SI) {
 
         /* Derive semimajor axis.
          This can (most likely) be derived from the expression for the effective
          potential for an orbit (average of min & max distance ==> semimajor axis). */
         final double mu = Const.GRAV_CONST * Const.ME;
-        final double epsilon = v * v / 2 - mu / r;
+        final double epsilon = v_SI * v_SI / 2 - mu / r_SI;
         final double a = -mu / (2 * epsilon);  // Semimajor axis
 
         /* Derive period from semimajor axis.
@@ -928,8 +909,9 @@ public class Utils extends Object {
 
 
     /**
-     * @author Erik P G Johansson Find index of a specified value.
+     * @author Erik P_SI G Johansson
      *
+     * Find index of a specified value.<BR>
      * NOTE: Behaviour is undefined for any appearance of NaN or Inf anywhere.
      *
      * @param a Sorted array, monotonically increasing values, i.e. no value
@@ -938,7 +920,9 @@ public class Utils extends Object {
      * @return The index i for which a[i]==x if there is any. If x lies between
      * any pair of elements, return the lower/higher index depending on rounding
      * mode. If x lies outside the range of the array, return -1 or a.length
-     * depending on rounding mode.
+     * depending on rounding mode. Empty arrays return 0 (RoundingMode.CEILING;
+     * a.length.) and -1 (RoundingMode.FLOOR; a.length-1) which should be
+     * consistent with other behaviour (sic!).
      */
     public static int findNearestMatch(double[] a, double x, RoundingMode indexRoundingMode) {
         if ((indexRoundingMode != RoundingMode.FLOOR) && (indexRoundingMode != RoundingMode.CEILING)) {
@@ -948,7 +932,7 @@ public class Utils extends Object {
         int i = java.util.Arrays.binarySearch(a, x);
         if (i < 0) {
             // CASE: No exact match.
-            i = -i - 1;  // "Insertion point" in "Arrays" API documentation <=> rounding up (ceil)
+            i = -i - 1;  // "Insertion point" in "Arrays" API documentation <=> rounding up (ceil).
             if (indexRoundingMode == RoundingMode.FLOOR) {
                 i--;
             }
@@ -961,7 +945,7 @@ public class Utils extends Object {
      * Find an interval of values in a sorted array.
      *
      * NOTE: Behaviour is undefined for any appearance of NaN or Inf anywhere.
-     * NOTE: This functio nis often used for copying intervals from arrays.
+     * NOTE: This function is often used for copying intervals from arrays.
      * Howver, one might still want to keep it separate from the copying so that
      * the derived indices can be used on other arrays than the parameter array.
      *
@@ -974,6 +958,7 @@ public class Utils extends Object {
      * define a valid interval that can be copied.
      */
     public static int[] findInterval(double[] a, double min, double max, boolean minInclusive, boolean maxInclusive) {
+        // Argument checks.
         if (((max == min) & !minInclusive & !maxInclusive) | (max < min)) {
             throw new IllegalArgumentException("Illegal combination of arguments which define no interval.");
         }
@@ -989,7 +974,17 @@ public class Utils extends Object {
         } else {
             i_last = findNearestMatch(a, max, RoundingMode.CEILING) - 1;
         }
-        return new int[]{i_first, i_last + 1};   // Add one to "i_last" to make return value exclusive.
+        return new int[]{i_first, i_last + 1};   // Inclusive-exclusive - Add one to "i_last" to make return value exclusive.
+    }
+
+
+    /**
+     * @param a Sorted array, monotonically increasing values, i.e. no value
+     * occurs multiple times.
+     */
+    public static double[] selectArrayIntervalMC(double[] a, double min, double max, boolean minInclusive, boolean maxInclusive) {
+        final int[] ii = findInterval(a, min, max, minInclusive, maxInclusive);
+        return selectArrayIntervalMC(a, ii[0], ii[1]);
     }
 
 
@@ -998,18 +993,96 @@ public class Utils extends Object {
      * array, then return the source array (same reference; shallow copy), if
      * not, then return new array with copied content. MC = maybe copy (only
      * copy if necessary)
-     * 
-     * @param i_start Start index, inclusive.
-     * @param i_end End index, exclusive.
+     *
+     * @param i_beginInclusive Start index, inclusive.
+     * @param i_endExclusive End index, exclusive.
      */
-    public static double[] selectArrayIntervalMC(double[] a, int i_start, int i_end) {
-        if ((i_start == 0) & (i_end == a.length)) {
+    // PROPOSAL: Add optional flag alwaysCopy/alwaysNewArray.
+    public static double[] selectArrayIntervalMC(double[] a, int i_beginInclusive, int i_endExclusive) {
+        // Argument checks.
+        if ((i_beginInclusive < 0) || (i_endExclusive < i_beginInclusive)) {
+            throw new IllegalArgumentException("i_start out of range.");
+        } else if (a.length < i_endExclusive) {
+            throw new IllegalArgumentException("i_end out of range.");
+        }
+
+        if ((i_beginInclusive == 0) & (i_endExclusive == a.length)) {
             return a;
         } else {
-            double[] ra = new double[i_end - i_start];  // ra = return array
-            System.arraycopy(a, i_start, ra, 0, i_end - i_start);
+            double[] ra = new double[i_endExclusive - i_beginInclusive];  // ra = return array
+            System.arraycopy(a, i_beginInclusive, ra, 0, i_endExclusive - i_beginInclusive);
             return ra;
         }
+    }
+
+
+    /**
+     * Get "distance from interval".
+     *
+     * NOTE: For empty intervals (lowerBoundInclusive==upperBoundExclusive), the
+     * interval boundaries should really be thought of as being the located
+     * between integers.
+     *
+     * @param lowerBoundInclusive Defines beginning of interval. The actual
+     * boundary is located between this integer and the next lower one
+     * (important distinction to make understand the behaviour for intervals).
+     * @param upperBoundExclusive Defines the upper end of interval. The actual
+     * boundary is located between this integer and the next lower one.
+     *
+     * @return Zero if i inside interval. Negative/positive number if i is
+     * lower/higher than interval. The magnitude defines the distance to then
+     * nearest integer within the interval.
+     */
+    public static int distanceFromInterval(int lowerBoundInclusive, int upperBoundExclusive, int i) {
+        // Argument checks.
+        if (lowerBoundInclusive > upperBoundExclusive) {
+            throw new IllegalArgumentException("Illegal arguments.");
+        }
+
+        if (i < lowerBoundInclusive) {
+            return i - lowerBoundInclusive;   // Always returns negative value.
+        } else if (upperBoundExclusive <= i) {
+            return i - (upperBoundExclusive - 1);   // Always returns positive value.
+        } else {
+            return 0;
+        }
+    }
+
+
+    /**
+     * Construct array with linearly increasing/decreasing values.
+     */
+    public static double[] newLinearArray(double first, double last, int N) {
+        if (N < 0) {
+            throw new IllegalArgumentException("Negative N.");
+        }
+
+        final double[] a = new double[N];
+        for (int i = 0; i < N; i++) {
+            a[i] = first + (last - first) / (N - 1) * i;
+        }
+        return a;
+    }
+
+
+    /**
+     * Look for jumps greater or equal to threshold. Return list of indices for
+     * which a[i + 1] - a[i] >= minJumpGap. NOTE: Does not check for negative
+     * jumps.
+     *
+     * Behaviour is undefined for NaN, +Inf, -Inf.
+     *
+     * @a Array of numbers. Not necessarily increasing.
+     */
+    public static List<Integer> findJumps(double[] a, double minJumpGap) {
+        final List<Integer> dataGaps = new ArrayList();
+        for (int i = 0; i < a.length - 1; i++) {
+            // Check if there is a (positive) jump.
+            if (a[i + 1] - a[i] >= minJumpGap) {
+                dataGaps.add(i);
+            }
+        }
+        return dataGaps;
     }
 
 
@@ -1018,6 +1091,23 @@ public class Utils extends Object {
             throw new IllegalArgumentException("Can not convert the double " + x + " to int.");
         }
         return (long) x;
+    }
+
+
+    /**
+     * Returns a Random object seeded with a string.
+     */
+    public static Random getRandomFromString(String s) {
+        /* IMPLEMENTATION NOTE: String#hashCode produces similar results for
+         strings with the same beginning. The first call (and maybe second call)
+         to nextDouble after initializing with similar random seeds return similar
+         results. Therefore one wants to call Random#nextDouble() at least once
+         and throw away the result.
+         */
+        final Random rand = new Random(s.hashCode());
+        rand.nextDouble();   // Ignore result.
+        rand.nextDouble();   // Ignore result.
+        return rand;
     }
 
     /**
@@ -1033,7 +1123,8 @@ public class Utils extends Object {
      * elliptical orbits such during launch, which might give not very useful
      * results.<BR>
      *
-     * NOTE: r_perigee and r_apogee should be NaN for unbound orbits(?).<BR>
+     * NOTE: r_perigee_SI and r_apogee_SI should be NaN for unbound
+     * orbits(?).<BR>
      *
      * IMPLEMENTATION NOTE: These calculations are implemented as one single
      * calculation (and class) since the calculations of various quantities
@@ -1044,76 +1135,70 @@ public class Utils extends Object {
      */
     public static class OrbitalState {
 
-        public final double r_perigee;
-        public final double r_apogee;
+        public final double r_perigee_SI;
+        public final double r_apogee_SI;
         /**
          * Satellite orbital energy divided by satellite mass (norm=normalized).
          */
-        public final double E_orbital_norm;
+        public final double E_orbital_norm_SI;
         /**
          * Satellite angular momentum divided by satellite mass
          * (norm=normalized).
          */
-        public final double L_norm;
+        public final double L_norm_SI;
         /**
-         * omega_perigee = angular velocity at r_perigee [Unit: s^-1]. Possibly
-         * useful for determining minimum required time resolution.
+         * omega_perigee_SI = angular velocity at r_perigee_SI [Unit: s^-1].
+         * Possibly useful for determining minimum required time resolution.
          */
-        public final double omega_perigee;
+        public final double omega_perigee_SI;
         /**
          * Orbital period (Unit: seconds)
          */
-        public final double P;
+        public final double P_SI;
 
 
         /**
-         * @param r Position vector relative the Earth's center of mass. Unit: meter.
-         * @param v Velocity vector in a non-accelerating frame/coordinate
+         * @param r_SI Position vector relative the Earth's center of mass.
+         * Unit: meter.
+         * @param v_SI Velocity vector in a non-accelerating frame/coordinate
          * system, e.g. GEI. Unit: m/s
          */
         // PROPOSAL: Separate bound from unbound (E>0) orbits explicitly?
-        public OrbitalState(double[] r, double[] v) {
+        public OrbitalState(double[] r_SI, double[] v_SI) {
             final int DEBUG = 3;
-            
-            final double v_abs = Vect.absv(v);
-            final double r_abs = Vect.absv(r);
-            E_orbital_norm = 0.5 * v_abs * v_abs - Const.GRAV_CONST * Const.ME / r_abs;
-            final double[] c = new double[3];
-            Vect.cross(r, v, c);
-            L_norm = Vect.absv(c);
+
+            final double v_abs_SI = Vect.absv(v_SI);
+            final double r_abs_SI = Vect.absv(r_SI);
+            E_orbital_norm_SI = 0.5 * v_abs_SI * v_abs_SI - Const.GRAV_CONST * Const.ME / r_abs_SI;
+            final double[] rxv_SI = new double[3];
+            Vect.cross(r_SI, v_SI, rxv_SI);
+            L_norm_SI = Vect.absv(rxv_SI);
 
             /**
              * Can be derived from the expressions for orbital energy and
              * angular momentum (both constant over the orbit) and effective
              * potential.
              */
-            final double A = -Const.GRAV_CONST * Const.ME / (2 * E_orbital_norm);
-            final double B = Math.sqrt(A * A + L_norm * L_norm / (2 * E_orbital_norm));   // NOTE: Will return NaN for less than zero.
-            r_perigee = A - B;
-            r_apogee = A + B;
+            final double A = -Const.GRAV_CONST * Const.ME / (2 * E_orbital_norm_SI);
+            final double B = Math.sqrt(A * A + L_norm_SI * L_norm_SI / (2 * E_orbital_norm_SI));   // NOTE: Will return NaN for less than zero.
+            r_perigee_SI = A - B;
+            r_apogee_SI = A + B;
 
-            omega_perigee = L_norm / (r_perigee * r_perigee);
-            P = Utils.orbitalPeriod(r_abs, v_abs);
-            
+            omega_perigee_SI = L_norm_SI / (r_perigee_SI * r_perigee_SI);
+            P_SI = Utils.orbitalPeriod(r_abs_SI, v_abs_SI);
+
             //Log.log("OrbitalState constructor: r_abs     = " + r_abs, DEBUG);
             //Log.log("                          v_abs     = " + v_abs, DEBUG);
-            //Log.log("                          r_perigee = " + r_perigee, DEBUG);
-            //Log.log("                          r_apogee  = " + r_apogee, DEBUG);
+            //Log.log("                          r_perigee_SI = " + r_perigee_SI, DEBUG);
+            //Log.log("                          r_apogee_SI  = " + r_apogee_SI, DEBUG);
         }
     }
 
 
     /**
-     * Informal test code.
+     * Test code.
      */
-    public static void main(String args) {
-        //test_findNearestMatch();
-        //test_linearInterpolation();
-        test_findInterval();
-    }
-
-
-    private static void test_findInterval() {
+    public static void test_findInterval() {
         class Test {
 
             double[] a;
@@ -1159,7 +1244,7 @@ public class Utils extends Object {
     /**
      * Test code.
      */
-    private static void test_findNearestMatch() {
+    public static void test_findNearestMatch() {
         class Test {
 
             double[] a;
@@ -1216,7 +1301,7 @@ public class Utils extends Object {
     /**
      * Test code.
      */
-    private static void test_linearInterpolation() {
+    public static void test_linearInterpolation() {
         class Test {
 
             // Y_int, dYdX_int are the results.
@@ -1237,7 +1322,12 @@ public class Utils extends Object {
         tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{10}, new double[]{20}, new double[]{2}));
         tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{15}, new double[]{30}, new double[]{2}));
         tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{11, 12.5, 13.5}, new double[]{22, 25, 27}, new double[]{2, 2, 2}));
-        tests.add(new Test(new double[]{10, 15, 25}, new double[]{20, 30, 35}, new double[]{10, 11, 12.5, 13.5, 20, 25}, new double[]{20, 22, 25, 27, 32.5, 35}, new double[]{2, 2, 2, 2, 0.5, 0.5}));
+        tests.add(new Test(
+                new double[]{10, 15, 25},
+                new double[]{20, 30, 35},
+                new double[]{10, 11, 12.5, 13.5, 20, 25},
+                new double[]{20, 22, 25, 27, 32.5, 35},
+                new double[]{2, 2, 2, 2, 0.5, 0.5}));
 
         for (Test test : tests) {
             final double[] actual_Y_int = Arrays.copyOf(test.Y_int, test.Y_int.length);
@@ -1251,4 +1341,48 @@ public class Utils extends Object {
         }
     }
 
+
+    public static void test_distanceFromInterval() {
+        final int[][] tests = new int[][]{
+            {0, 0, 1, 2},
+            {0, 0, 0, 1},
+            {0, 0, -1, -1},
+            {3, 5, 0, -3},
+            {3, 5, 2, -1},
+            {3, 5, 3, 0},
+            {3, 5, 4, 0},
+            {3, 5, 5, 1},
+            {3, 5, 7, 3}
+        };
+
+        for (int[] test : tests) {
+            int actualResult = distanceFromInterval(test[0], test[1], test[2]);
+            if (actualResult == test[3]) {
+                System.out.println("OK");
+            } else {
+                System.out.println("====================================================  ERROR");
+                System.out.println("actualResult = " + actualResult);
+                System.out.println("test[3]      = " + test[3]);
+            }
+        }
+    }
+
+
+    /**
+     * Test code. Can see that Random#nextDouble() produces similar results for
+     * the first call after initializing with strings with the same beginning
+     * (unless the implementation of getRandomFromString() does not make those
+     * calls itself).
+     */
+    public static void test_getRandomFromString() {
+        final String cs = "qwerty";
+        final String[] strings = {"A" + cs, "B" + cs, "C" + cs, cs + "A", cs + "B", cs + "C"};
+        for (String s : strings) {
+            final Random r = getRandomFromString(s);
+            System.out.println("s = " + s);
+            for (int i = 0; i < 5; i++) {
+                System.out.println("   r.nextDouble() = " + r.nextDouble());
+            }
+        }
+    }
 }

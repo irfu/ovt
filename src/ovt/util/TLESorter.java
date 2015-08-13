@@ -55,7 +55,7 @@ public class TLESorter extends Object {
     }
     
     /** 
-     * Lines are treeted as duplicated if time gap is less than 0.5 day
+     * Lines are treated as duplicated if time gap is less than 0.5 day.
      */
     public static void sort(File infile, File outfile) throws IOException {
         BufferedReader in = new BufferedReader( new FileReader(infile) );

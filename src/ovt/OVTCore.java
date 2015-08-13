@@ -52,6 +52,7 @@ import javax.swing.*;
 
 /**
  * This is the main class of the OVT. 
+ * 
  * @author Mykola Khotyaintsev
  * @version %I% %E%
  * @see ...
@@ -72,8 +73,8 @@ GUIPropertyEditorListener {
      * Select what to use as a data source for the functionality/code that
      * handles SSC Web Services satellites.
     */
-    //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
-    public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
+    public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
+    //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
 
     
     private vtkRenderer renderer = null;
@@ -88,7 +89,6 @@ GUIPropertyEditorListener {
     // protected Properties properties = new Properties();
     
     private final XYZWindow XYZwin;
-    //protected int coordSystem = Const.GSM; // XYZ -  GSM, GSE, GEI, ..
     
     private static boolean guiPresent = false;
     
@@ -148,6 +148,7 @@ GUIPropertyEditorListener {
         this.renPanel = xyzwin.getVisualizationPanel();
         this.renderer = renPanel.getRenderer();
         
+        
         Initialize();
         
         isInitialized = true;
@@ -182,7 +183,9 @@ GUIPropertyEditorListener {
         return "conf" + File.separator;
     }
     
-    public RenPanel getRenPanel() { return renPanel;  }
+    public RenPanel getRenPanel() {
+        return renPanel;
+    }
     
     public vtkRenderer getRenderer()  {
         return renderer;
@@ -208,15 +211,12 @@ GUIPropertyEditorListener {
     /** Load properties from {@link #ovtPropertiesFile }
      */
     private static synchronized void loadGlobalSettings() throws IOException {
-        File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
-        
+        final File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
         if (confFile != null) {
             
             // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
             try (FileInputStream in = new FileInputStream(confFile)) {
-                if (confFile != null) {
-                    globalProperties.load(in);
-                }
+                globalProperties.load(in);
             }
         }
     }
@@ -228,7 +228,7 @@ GUIPropertyEditorListener {
     public static synchronized void saveGlobalSettings() throws IOException {
         /* NOTE: Utils.findFile will return null if it can NOT locate an already
         existing file, i.e. it will NOT suggest a path for where to create a new
-        config file if none already exists. Therefore, then, if no old config file
+        config file if none already exists. Therefore, if no old config file
         exists, no new one will be created. */
         //File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
         /*if (confFile == null) {
@@ -414,10 +414,12 @@ GUIPropertyEditorListener {
         timeSettings.addTimeChangeListener(camera);
         coordinateSystem.addCoordinateSystemChangeListener(camera);
         
-        // notify camera about sat's change
-        // will be removed in future (when OVT will be build on start from XML)
+        // Motify camera about sat's change
+        // Will be removed in future (when OVT will be build on start from XML).
         getSats().fireSatsChanged(); // or .getChildren().fireChildrenChanged() doesn't matter
         getGroundBasedStations().getChildren().fireChildrenChanged();
+        
+        
 	
 	// load time settings
 	try{
@@ -496,7 +498,7 @@ GUIPropertyEditorListener {
         }
     }
     
-        public void sendErrorMessage(String title, String msg) {
+    public void sendErrorMessage(String title, String msg) {
         if (isGuiPresent() == true){
             javax.swing.JOptionPane.showMessageDialog(null, msg, title,
             javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -506,8 +508,8 @@ GUIPropertyEditorListener {
     }
 
     /** Method to be used when informing user about the warning
-     *When in GUI produces a popup window with <CODE>msghead</CODE>
-     *as window title and <CODE>msg</CODE> as message.
+     * When in GUI produces a popup window with <CODE>msghead</CODE>
+     *a s window title and <CODE>msg</CODE> as message.
      * @param title message title
      * @param msg Warning message
      */
@@ -585,7 +587,7 @@ GUIPropertyEditorListener {
         }
     }
     
-    /** Returns true if OVT is runed in server mode
+    /** Returns true if OVT is run in server mode.
      * @return Value of property server.
      */
     public static boolean isServer() {

@@ -145,8 +145,9 @@ public class Matrix3x3 {
    */
   public double[] multiply(double[] vector) {    
     double[] res = new double[3];
-    for(int i=0; i<3; i++)
+    for(int i=0; i<3; i++) {
       res[i] = get(i,0)*vector[0] + get(i,1)*vector[1] + get(i,2)*vector[2];
+    }
     return res;
   }
   
@@ -156,10 +157,11 @@ public class Matrix3x3 {
   public Matrix3x3 multiply(Matrix3x3 matrix) {
     Matrix3x3 res = new Matrix3x3();
     double value;
-    for(int i=0; i<3; i++)
+    for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
-       value = get(i,0)*matrix.get(0,j) + get(i,1)*matrix.get(1,j) + get(i,2)*matrix.get(2,j);
-       res.set(i, j, value);
+        value = get(i,0)*matrix.get(0,j) + get(i,1)*matrix.get(1,j) + get(i,2)*matrix.get(2,j);
+        res.set(i, j, value);
+      }
     }
     return res;
   }

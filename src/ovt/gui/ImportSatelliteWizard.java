@@ -39,26 +39,17 @@ Khotyaintsev
 package ovt.gui;
 
 import ovt.*;
-import ovt.beans.*;
 import ovt.util.*;
-import ovt.event.*;
 import ovt.object.*;
-import ovt.datatype.*;
-import ovt.interfaces.*;
-import ovt.model.magnetopause.*;
 
 import java.beans.*;
 
 import java.io.*;
-import java.util.*;
-import java.text.DecimalFormat;
 
 import java.awt.*;
 import java.awt.event.*;
 
 import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.border.*;
 
 /**
  *
@@ -82,9 +73,9 @@ public class ImportSatelliteWizard extends JDialog {
     
 
     /** Creates new ImportSatelliteWizard */
-    public ImportSatelliteWizard(Sats saats, JFrame owner) {
+    public ImportSatelliteWizard(Sats mSats, JFrame owner) {
         super(owner, "Import Satellite", true);
-        this.sats = saats;
+        this.sats = mSats;
         
         okButton.setText("Import");
         getRootPane().setDefaultButton(okButton);
@@ -189,7 +180,7 @@ public class ImportSatelliteWizard extends JDialog {
                     File outfile = new File(OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satName)+ext);
                     if (outfile.exists()) {
                         int res = JOptionPane.showConfirmDialog(sats.getCore().getXYZWin(),
-                                "Satellite alredy exists. Replace?",
+                                "Satellite already exists. Replace?",
                                 "Replace?",
                                 JOptionPane.YES_NO_OPTION);
                         if ( res == JOptionPane.NO_OPTION) return;
@@ -204,7 +195,7 @@ public class ImportSatelliteWizard extends JDialog {
                         sat = new LTOFSat(sats.getCore());
                     }
                     sat.setName(satName);
-                    sat.setOrbitFile(outfile); // also checks if the file is valid
+                    sat.setOrbitFile(outfile); // Also checks if the file is valid
                     
                     
                     sats.getCore().sendMessage("Success!", satName+" was successfuly validated and imported to \n"+
@@ -255,7 +246,7 @@ public class ImportSatelliteWizard extends JDialog {
     }
     
     /** Derives the file type on the basis of the filename (*.tle, *.ltof)
-     * @return  TLE or LTOF or -1
+     * @return  TLE or LTOF or -1.
      */
     private static int getOrbitDataType(String filename) {
         if (filename.toLowerCase().endsWith(".tle")) return TLE;
