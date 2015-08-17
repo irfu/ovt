@@ -20,6 +20,7 @@ import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 import ovt.util.SSCWSOrbitCache.OrbitalData;
 import ovt.util.Trans;
 import ovt.util.TransCollection;
+import ovt.util.Utils;
 import ovt.util.Utils.OrbitalState;
 import ovt.util.Vect;
 
@@ -109,7 +110,7 @@ public class SSCWSSat extends Sat {
     public static String deriveNameFromSSCWSSatID(String satID) throws IOException {
         final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(satID).name;   // throws IOException
 
-        return "(SSC) "+satName;
+        return "(SSC) " + satName;
         //return satID + " (SSC)";
     }
 
@@ -153,6 +154,12 @@ public class SSCWSSat extends Sat {
                 double[][] vei_arr_posAxis)
                 throws IOException {
 
+            // Nbr of points to require outside requested interval.
+            // Depends on what is optimal for the interpolation.
+            // Uses a value of at least "2" for cubic spline interpolation to
+            // reduce effects of boundary conditions.
+            final int INDEX_MARGIN = 3;
+
             /*=============
              Argument check.
              ==============*/
@@ -163,7 +170,6 @@ public class SSCWSSat extends Sat {
                 throw new IllegalArgumentException("Illegal array dimensions: vei_arr_posAxis[0].length != 3");
             }
 
-            final int INDEX_MARGIN = 1;   // Depends on what is optimal for the interpolation.
             final double beginReqMjd = timeMjdMap[0];     // Req = Request/requested
             final double endReqMjd = timeMjdMap[timeMjdMap.length - 1];
 
@@ -184,12 +190,34 @@ public class SSCWSSat extends Sat {
             final double[] interpCoords_pos_km = new double[timeMjdMap.length];      // For one X/Y/Z axis.
             final double[] interpVelocity_pos_kmMjd = new double[timeMjdMap.length];    // For one X/Y/Z axis.
             for (int i_axis = 0; i_axis < 3; i_axis++) {
-                ovt.util.Utils.linearInterpolation(
+                /* Concerning bad interpolation observed in the GUI:
+                 ---------------------------------------------------
+                 One can see bad interpolation at the orbit endpoints in the GUI
+                 when specifying low time resolution (in the GUI). This is not
+                 due to bugs in this method or the Utils#cubicSplineInterpolation
+                 but due to that there is also interpolation (probably cubic
+                 spline) used when plotting the orbit which INTERPOLATES THE
+                 (INTERPOLATED) RESULTS OF THIS FUNCTION. That other interpolation
+                 does NOT make use of any
+                 tabulated points outside of the (time) range that is actually
+                 used for plotting.
+                 */
+                /*ovt.util.Utils.linearInterpolation(
+                 data.coords_axisPos_kmMjd[3],
+                 data.coords_axisPos_kmMjd[i_axis],
+                 timeMjdMap,
+                 interpCoords_pos_km,
+                 interpVelocity_pos_kmMjd);*/
+                Utils.cubicSplineInterpolation(
                         data.coords_axisPos_kmMjd[3],
                         data.coords_axisPos_kmMjd[i_axis],
                         timeMjdMap,
                         interpCoords_pos_km,
-                        interpVelocity_pos_kmMjd);
+                        interpVelocity_pos_kmMjd,
+                        //Utils.SplineInterpolationBC.SET_SECOND_DERIV,
+                        Utils.SplineInterpolationBC.EQUAL_SECOND_DERIV,
+                        Utils.SplineInterpolationBC.SET_SECOND_DERIV
+                );
 
                 for (int i_pos = 0; i_pos < gei_arr_posAxis_km.length; i_pos++) {
                     gei_arr_posAxis_km[i_pos][i_axis] = interpCoords_pos_km[i_pos];

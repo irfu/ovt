@@ -42,9 +42,10 @@ public abstract class SSCWSLibrary {
      */
     private static DatatypeFactory datatypeFactory = null;
 
+    //##########################################################################
     /**
      * Stores basic satellite information. Immutable.
-     * 
+     *
      * IMPLEMENTATION NOTE: In practice an immutable replacement for
      * gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription. Reasons for having
      * this class instead of SatelliteDescription: (1) Reduce the number of
@@ -53,6 +54,10 @@ public abstract class SSCWSLibrary {
      * SatelliteDescription, (3) it can store five+ different variables as one
      * single variable but still have fast access to availableBegin/EndTimeMjd
      * (does not need to call convertXMLGregorianCalendarToMjd).
+     *
+     * NOTE: The class does not yet have new implementations of Object#equals,
+     * and Object#hashCode yet, making it unsuitable for use in many Java
+     * standard collections classes.
      */
     public static class SSCWSSatelliteInfo {
 
@@ -87,25 +92,31 @@ public abstract class SSCWSLibrary {
             this.availableEndTimeMjd = mAvailableEndTimeMjd;
             this.bestTimeResolution = mNormalTimeResolution;
         }
-        
-        /*@Override
+
+
+        @Override
         public boolean equals(Object o) {
-            if (o==null) {
-                return false;
-            } else if (o==this)  {
-                return true;
-            } else if (o.getClass().equals(this.getClass())) {
-                return false;
-            } else {
-                final SSCWSSatelliteInfo si = (SSCWSSatelliteInfo) o;
-                return (si.);
-            }
-        }*/
+            throw new RuntimeException("Method not supported yet.");
+        }
+
+
+        @Override
+        public int hashCode() {
+            throw new RuntimeException("Method not supported yet.");
+        }
     }
 
+    //##########################################################################
 
     /**
      * Retrieve (unmodifiable) list of satellite descriptions.
+     *
+     * NOTE: Implementations of the function are supposed to return identical
+     * lists for every successful call. That means the satellite list can never
+     * change or be updated during a session (except by creating a new
+     * SSCWSLibraryImpl object, but one is not supposed to do that). OVT assumes
+     * this behaviour and can therefore presently use the MVC pattern for the
+     * satellite list. Change this?
      */
     public abstract List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException;
 
@@ -118,7 +129,7 @@ public abstract class SSCWSLibrary {
         if (satID == null) {
             throw new NullPointerException("satID is null.");
         }
-        for (SSCWSSatelliteInfo satInfo : getAllSatelliteInfo())  // throws IOException
+        for (SSCWSSatelliteInfo satInfo : getAllSatelliteInfo()) // throws IOException
         {
             if (satInfo.ID.equals(satID)) {
                 return satInfo;
@@ -157,9 +168,10 @@ public abstract class SSCWSLibrary {
 
     public abstract List<String> getPrivacyAndImportantNotices() throws IOException;
 
+
     public abstract List<String> getAcknowledgements() throws IOException;
-        
-        
+
+
     // PROPOSAL: Move to Utils or Time?
     //    CON: Is the time conversion used by data from the SSC Web Servies. Therefore one wants to keep it close to that code.
     /**
@@ -207,7 +219,7 @@ public abstract class SSCWSLibrary {
             //try {
             datatypeFactory = DatatypeFactory.newInstance();   // throws DatatypeConfigurationException
             //} catch(DatatypeConfigurationException e) {
-                //throw new RuntimeException("Call to DatatypeFactory.newInstance() failed.", e);
+            //throw new RuntimeException("Call to DatatypeFactory.newInstance() failed.", e);
             //}
         }
 

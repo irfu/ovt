@@ -445,8 +445,8 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
 
     /**
-     * Returns the vector wich lays in the orbit plane and perpendicular to
-     * trajectory
+     * Returns the vector which lies in the orbit plane and perpendicular to
+     * trajectory.
      */
     public double[] getTrajectoryNormal(double mjd) {
         return getTrajectory().getNormal(mjd, getCS());

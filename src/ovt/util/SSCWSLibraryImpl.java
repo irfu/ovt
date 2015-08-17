@@ -191,9 +191,10 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
 
     /**
-     * Cached during the program session.<BR>
+     * NOTE: Cached during the program session to avoid multiple connection
+     * attempts (that may produce errors/exceptions). <BR>
      *
-     * NOTE: Returns internal private instances of SatelliteDescription, not
+     * NOTE: Returns internal private (immutable) instances of SatelliteDescription, not
      * copies.
      */
     @Override

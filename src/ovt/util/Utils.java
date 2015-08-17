@@ -34,6 +34,8 @@
  * Utils.java
  *
  * Created on March 23, 2000, 2:11 PM
+ * 
+ * Test code can be found in ovt.util.UtilsTests.java
  */
 package ovt.util;
 
@@ -794,68 +796,6 @@ public class Utils extends Object {
 
 
     /**
-     * Linear interpolation of array. Interpolates a sequence/line of points
-     * (X[i], Y[i]) to a sequence of points (X_int[i], Y_int[i]).
-     *
-     * Although the primary purpose of this function is to interpolate orbital
-     * positions (one coordinate axis at a time) and calculate approximate
-     * velocities, the function itself is generic and the result is in the units
-     * used by the caller.
-     *
-     * NOTE: The dYdX value on points between line segments comes from the
-     * preceeding line segment.
-     *
-     * @param X Array with X values. Values increase monotonically.
-     * @param Y Array with one Y value for every X value.
-     * @param X_int Array with X values for which interpolated Y values are
-     * requested. Values increase monotonically. All values must be within the
-     * range of X.
-     * @param Y_int Array into which interpolated data will be put.
-     * @param dYdX Array into which interpolated data will be put.
-     */
-    // PROPOSAL: Replace with better interpolation (splines)?
-    public static void linearInterpolation(double[] X, double[] Y, double[] X_int, double[] Y_int, double[] dYdX_int) {
-        // Naming convention:
-        //   Suffix "_int" = Interpolated/interpolation data
-        //   No suffix = Data to interpolate from
-        //   Lower case x/y = Specific points.
-        //   Upper case X/Y = Entire array.
-
-        if (X.length < 2) {
-            throw new IllegalArgumentException("X array is too short (length<2) for this function.");
-        } else if (Y_int.length != X_int.length) {
-            throw new IllegalArgumentException("Y_int has an incompatible length.");
-        } else if (dYdX_int.length != X_int.length) {
-            throw new IllegalArgumentException("dXdX_int has an incompatible length.");
-        } else if (X_int[0] < X[0]) {
-            throw new IllegalArgumentException("Trying to interpolate outside data, X_int[0] < X[0]");
-        } else if (X[X.length - 1] < X_int[X_int.length - 1]) {
-            throw new IllegalArgumentException("Trying to interpolate outside data, X[X.length-1] < X_int[X_int.length-1]");
-        }
-
-        int i2 = 0;
-        for (int i_int = 0; i_int < X_int.length; i_int++) {
-
-            // Find the lowest "i2" such that X[i2] >= X_int[i_int] and i2>0.
-            while ((X[i2] < X_int[i_int]) || (i2 == 0)) {
-                i2++;
-            }
-
-            // Interpolate between points (x1, y1) and (x2, y2) and find
-            // the derivative at that point.
-            final int i1 = i2 - 1;
-            final double x_int = X_int[i_int];
-            final double x1 = X[i1], x2 = X[i2];
-            final double y1 = Y[i1], y2 = Y[i2];
-            final double weight2 = (x_int - x1) / (x2 - x1);
-            final double weight1 = 1 - weight2;
-            Y_int[i_int] = weight1 * y1 + weight2 * y2;
-            dYdX_int[i_int] = (y2 - y1) / (x2 - x1);
-        }
-    }
-
-
-    /**
      * Calculate orbital period from a satellite's velocity and distance to
      * Earth at an arbitrarily chosen instant. This should always yield the same
      * result for an idealized elliptical orbit. Only uses SI units.
@@ -1066,6 +1006,20 @@ public class Utils extends Object {
 
 
     /**
+     * Find min and max values in array.
+     */
+    public static double[] minMax(double[] a) {
+        double min = Double.POSITIVE_INFINITY;
+        double max = Double.NEGATIVE_INFINITY;
+        for (int i = 0; i < a.length; i++) {
+            min = Math.min(min, a[i]);
+            max = Math.max(max, a[i]);
+        }
+        return new double[]{min, max};
+    }
+
+
+    /**
      * Look for jumps greater or equal to threshold. Return list of indices for
      * which a[i + 1] - a[i] >= minJumpGap. NOTE: Does not check for negative
      * jumps.
@@ -1083,6 +1037,300 @@ public class Utils extends Object {
             }
         }
         return dataGaps;
+    }
+
+
+    /**
+     * Solve linear system of equations (LSE) Ax=r with a tridiagonal matrix A
+     * using Thomas' method. NOTE: Not stable for everything, but almost. This
+     * is useful for doing cubic spline interpolation.
+     *
+     * Based on manual derivation (approximately Wikipedia's derivation).
+     *
+     * @param af Elements to the left of the matrix diagonal. Note that it is
+     * one element smaller than the matrix diagonal. Note that the index equals
+     * row minus one. (f=first=first row omitted)
+     * @param b Matrix diagonal.
+     * @param cl Elements to the right of the matrix diagonal. Note that it is
+     * one element smaller than the matrix diagonal. (l=last=last row omitted)
+     * @param r Right-hand side vector.
+     *
+     * @return x vector (solution to LSE).
+     */
+    public static double[] solveLSE_thomasAlgorithm(double[] af, double[] b, double[] cl, double[] r) {
+        // Argument check.
+        if ((b.length != af.length + 1) | (b.length != cl.length + 1) | (b.length != r.length)) {
+            throw new IllegalArgumentException("Array sizes do not match.");
+        }
+
+        final int N = b.length;
+        final double[] x = new double[N];
+
+        // af has index one lower than in algorithm.
+        final double[] cp = new double[N - 1];    // cp = c-prime
+        final double[] rp = new double[N];        // rp = r-prime
+
+        // "af[-1] == 0" but this component is not stored.
+        cp[0] = cl[0] / b[0];
+        rp[0] = r[0] / b[0];
+
+        for (int i = 1; i < N - 1; i++) {
+            cp[i] = cl[i] / (b[i] - af[i - 1] * cp[i - 1]);
+            rp[i] = (r[i] - af[i - 1] * rp[i - 1]) / (b[i] - af[i - 1] * cp[i - 1]);
+        }
+
+        final int k = N - 1;
+        // "cp[N - 1] = 0;"  but this component is not stored.
+        rp[k] = (r[k] - af[k - 1] * rp[k - 1]) / (b[k] - af[k - 1] * cp[k - 1]);
+
+        x[N - 1] = rp[N - 1];   //   x[N-1] = rp[N-1] - cp[N-1]*x[N]; where x[N] == 0
+        for (int i = N - 2; i >= 0; i--) {
+            x[i] = rp[i] - cp[i] * x[i + 1];
+        }
+
+        return x;
+    }
+
+    /**
+     * BC = Boundary condition
+     */
+    public enum SplineInterpolationBC {
+
+        /**
+         * Set the second derivative on the boundary to an arbitrary value.
+         */
+        SET_SECOND_DERIV,
+        /**
+         * Set the two second derivatives closest to the boundary to be equal to
+         * each other.
+         */
+        EQUAL_SECOND_DERIV
+    };
+
+
+    /**
+     * For a tabulated function y(x), find the cubic spline second-derivatives
+     * of y(x) at the points x. This is useful when doing cubic spline
+     * interpolation.
+     *
+     * Based on section 3.3 "Cubic Spline Interpolation", "Numerical Recipes in
+     * C - The Art of Scientific Computing", Second Edition, 1992, William H.
+     * Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery.
+     *
+     * Naming convention: ypp = y'' = second derivative of y(x) ('=prime).
+     *
+     * @param yppL Second derivative at x[0] (L=lower boundary).
+     * @param yppU Second derivative at x[N-1] (U=Upper boundary).
+     */
+    public static double[] find2ndDeriv_cubicSplineInterpolation(
+            double[] x, double[] y,
+            SplineInterpolationBC bcL, SplineInterpolationBC bcU,
+            double yppL, double yppU) {
+        if (x.length != y.length) {
+            throw new IllegalArgumentException("Array sizes do not match.");
+        } else if (x.length < 2) {
+            throw new IllegalArgumentException("Fewer than two data points.");
+        } else if (x[1] - x[0] <= 0) {
+            throw new IllegalArgumentException("x is not monotonically increasing.");
+            // The remainding line segments are checked in the algorithm loop.
+        }
+
+        final int N = x.length;
+        final double[] af = new double[N - 1];
+        final double[] b = new double[N];
+        final double[] cl = new double[N - 1];
+        final double[] r = new double[N];
+
+        /*==================================================
+         Configure linear system of equations to be solved.
+         =================================================*/
+        // Configure lower boundary.
+        // Note: af[0] Does not belong to the boundary.
+        if (bcL == SplineInterpolationBC.SET_SECOND_DERIV) {
+            b[0] = 1;
+            cl[0] = 0;
+            r[0] = yppL;
+        } else if (bcL == SplineInterpolationBC.EQUAL_SECOND_DERIV) {
+            b[0] = 1;
+            cl[0] = -1;
+            r[0] = 0;
+        } else {
+            // Check in case new values are added to SplineInterpolationBC.
+            throw new IllegalArgumentException("Illegal boundary condition.");
+        }
+
+        // Configure interior.
+        for (int i = 1; i < N - 1; i++) {
+            final double h1 = x[i] - x[i - 1];  // Value could be taken from the previous iteration.
+            final double h2 = x[i + 1] - x[i];
+            if (h2 <= 0) {
+                throw new IllegalArgumentException("x is not monotonically increasing.");
+                // The remaining line segment is checked at the beginning of the method.
+            }
+            af[i - 1] = 1.0 / 6.0 * h1;
+            b[i] = 2.0 / 6.0 * (h1 + h2);
+            cl[i] = 1.0 / 6.0 * h2;
+            r[i] = -(y[i] - y[i - 1]) / h1 + (y[i + 1] - y[i]) / h2;
+        }
+
+        // Configure upper boundary.
+        // Note: cl[N-2] does not belong to the boundary.
+        if (bcU == SplineInterpolationBC.SET_SECOND_DERIV) {
+            af[N - 2] = 0;
+            b[N - 1] = 1;
+            r[N - 1] = yppU;
+        } else if (bcU == SplineInterpolationBC.EQUAL_SECOND_DERIV) {
+            af[N - 2] = 1;
+            b[N - 1] = -1;
+            r[N - 1] = 0;
+        } else {
+            // Check in case new values are added to SplineInterpolationBC.
+            throw new IllegalArgumentException("Illegal boundary condition.");
+        }
+
+        return solveLSE_thomasAlgorithm(af, b, cl, r);
+    }
+
+
+    /**
+     * Use cubic splines for interpolating tabulated curve.
+     *
+     * If SplineInterpolationBC.SET_SECOND_DERIV is selected, then uses zero for
+     * first and last 2nd derivatives.
+     *
+     * Based on section 3.3 "Cubic Spline Interpolation", "Numerical Recipes in
+     * C - The Art of Scientific Computing", Second Edition, 1992, William H.
+     * Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery.
+     *
+     * Naming convention: _int = interpolated (interpolation) point. p = prime = firts derivative
+     *
+     * @param X X values for tabulated function (monotonically increasing).
+     * @param Y Y values for tabulated function.
+     * @param X_int X values for the interpolated curve.
+     * @param Y_int_result Array in which the Y values for the interpolated
+     * curve are put.
+     * @param Yp_int_result Array in which the derivative for the interpolated
+     * curve are put.
+     * @param bcL Boundary condition for lower (x) boundary.
+     * @param bcU Boundary condition for upper (x) boundary.
+     */
+    public static void cubicSplineInterpolation(
+            double[] X, double[] Y,
+            double[] X_int,
+            double[] Y_int_result,
+            double[] Yp_int_result,
+            SplineInterpolationBC bcL, SplineInterpolationBC bcU) {
+        /* Naming convention:
+         _int = interpolated (interpolation) point.
+         Lower case initial = individual nbr (scalar).
+         Upper case initial = array.
+         */
+
+        // Argument checks
+        if ((X.length != Y.length)
+                | (X_int.length != Y_int_result.length)
+                | (X_int.length != Yp_int_result.length)) {
+            throw new IllegalArgumentException("Array sizes do not match.");
+        } else if ((X_int[0] < X[0]) | (X[X.length - 1] < X_int[X_int.length - 1])) {
+            throw new IllegalArgumentException("X_int contains values outside the x range of the tabulated funcion.");
+        }
+
+        final double[] Ypp = find2ndDeriv_cubicSplineInterpolation(X, Y, bcL, bcU, 0, 0);
+        final int N = X.length;
+        final int N_int = X_int.length;
+        final double x_last = X[X.length - 1];
+
+        for (int i_int = 0; i_int < N_int; i_int++) {
+            final double x_int = X_int[i_int];
+            final int j;
+            if (x_int == x_last) {
+                // Special treatment of the last (highest) x value which otherwise
+                // would generate an index for which the algorithm fails.
+                j = N - 2;
+            } else {
+                // CASE: x_int[i_int] is NOT the last tabulated x value.
+                j = Utils.findNearestMatch(X, x_int, RoundingMode.FLOOR);
+            }
+            final double h = X[j + 1] - X[j];
+            final double A = (X[j + 1] - x_int) / h;
+            final double B = 1 - A;
+            final double C = 1 / 6.0 * (A * A - 1) * A * h * h;
+            final double D = 1 / 6.0 * (B * B - 1) * B * h * h;
+            Y_int_result[i_int]
+                    = A * Y[j] + B * Y[j + 1]
+                    + C * Ypp[j] + D * Ypp[j + 1];
+            Yp_int_result[i_int]
+                    = (Y[j + 1] - Y[j]) / h
+                    - (3 * A * A - 1) / 6.0 * h * Ypp[j]
+                    + (3 * B * B - 1) / 6.0 * h * Ypp[j + 1];
+        }
+    }
+
+
+    /**
+     * Linear interpolation of array. Interpolates a sequence/line of points
+     * (X[i], Y[i]) to a sequence of points (X_int[i], Y_int[i]).
+     *
+     * Although the primary purpose of this function is to interpolate orbital
+     * positions (one coordinate axis at a time) and calculate approximate
+     * velocities, the function itself is generic and the result is in the units
+     * used by the caller.
+     *
+     * NOTE: The dYdX value on points between line segments comes from the
+     * preceeding line segment.
+     *
+     * @param X Array with X values. Values increase monotonically.
+     * @param Y Array with one Y value for every X value.
+     * @param X_int Array with X values for which interpolated Y values are
+     * requested. Values increase monotonically. All values must be within the
+     * range of X.
+     * @param Y_int Array into which interpolated data will be put.
+     * @param dYdX Array into which interpolated data will be put.
+     */
+    public static void linearInterpolation(
+            double[] X, double[] Y,
+            double[] X_int, double[] Y_int,
+            double[] dYdX_int) {
+        // Naming convention:
+        //   Suffix "_int" = Interpolated/interpolation data
+        //   No suffix = Data to interpolate from
+        //   Lower case x/y = Specific points.
+        //   Upper case X/Y = Entire array.
+
+        if (X.length < 2) {
+            throw new IllegalArgumentException("X array is too short (length<2) for this function.");
+        } else if (Y_int.length != X_int.length) {
+            throw new IllegalArgumentException("Y_int has an incompatible length.");
+        } else if (dYdX_int.length != X_int.length) {
+            throw new IllegalArgumentException("dXdX_int has an incompatible length.");
+        } else if (X_int[0] < X[0]) {
+            throw new IllegalArgumentException("Trying to interpolate outside data, X_int[0] < X[0]");
+        } else if (X[X.length - 1] < X_int[X_int.length - 1]) {
+            throw new IllegalArgumentException("Trying to interpolate outside data, X[X.length-1] < X_int[X_int.length-1]");
+        }
+
+        /* IMPLEMENTATION NOTE: The way of finding the line section kind of
+         assumes that X_int.length is of the same order of magnitude as, or
+         greater than, X.length to be efficient.*/
+        int i2 = 0;
+        for (int i_int = 0; i_int < X_int.length; i_int++) {
+
+            // Find the lowest "i2" such that X[i2] >= X_int[i_int] and i2>0.
+            while ((X[i2] < X_int[i_int]) || (i2 == 0)) {
+                i2++;
+            }
+
+            // Interpolate between points (x1, y1) and (x2, y2) and find
+            // the derivative at that point.
+            final int i1 = i2 - 1;
+            final double x_int = X_int[i_int];
+            final double x1 = X[i1], x2 = X[i2];
+            final double y1 = Y[i1], y2 = Y[i2];
+            final double weight2 = (x_int - x1) / (x2 - x1);
+            final double weight1 = 1 - weight2;
+            Y_int[i_int] = weight1 * y1 + weight2 * y2;
+            dYdX_int[i_int] = (y2 - y1) / (x2 - x1);
+        }
     }
 
 
@@ -1194,195 +1442,4 @@ public class Utils extends Object {
         }
     }
 
-
-    /**
-     * Test code.
-     */
-    public static void test_findInterval() {
-        class Test {
-
-            double[] a;
-            double min, max;
-            boolean minIncl, maxIncl;
-            int[] result;
-
-
-            Test(double[] a, double min, double max, boolean minIncl, boolean maxIncl, int[] result) {
-                this.a = a;
-                this.min = min;
-                this.max = max;
-                this.minIncl = minIncl;
-                this.maxIncl = maxIncl;
-                this.result = result;
-            }
-        }
-        //===================================
-        final List<Test> tests = new ArrayList();
-        tests.add(new Test(new double[]{}, 2, 3, true, true, new int[]{0, 0}));
-        tests.add(new Test(new double[]{}, 2, 3, false, false, new int[]{0, 0}));
-        tests.add(new Test(new double[]{5, 6, 7}, 2, 3, false, false, new int[]{0, 0}));
-        tests.add(new Test(new double[]{5, 6, 7}, 2, 3, true, true, new int[]{0, 0}));
-        tests.add(new Test(new double[]{5, 6, 7}, 5, 6, true, false, new int[]{0, 1}));
-        tests.add(new Test(new double[]{5, 6, 7}, 5, 6, false, true, new int[]{1, 2}));
-        tests.add(new Test(new double[]{5, 6, 7}, 5, 6, false, false, new int[]{1, 1}));
-        //===================================
-        for (Test test : tests) {
-            System.out.println("findInterval(" + Arrays.toString(test.a) + ", " + test.min + ", " + test.max + ", " + test.minIncl + ", " + test.maxIncl + ");");
-
-            final int[] actualResult = findInterval(test.a, test.min, test.max, test.minIncl, test.maxIncl);
-            if (Arrays.equals(actualResult, test.result)) {
-                System.out.println("=== OK");
-            } else {
-                System.out.println("##############################");
-                System.out.println("ERROR: actualResult = " + Arrays.toString(actualResult));
-                System.out.println("##############################");
-            }
-        }
-    }
-
-
-    /**
-     * Test code.
-     */
-    public static void test_findNearestMatch() {
-        class Test {
-
-            double[] a;
-            double x;
-            RoundingMode indexRoundingMode;
-            int result;
-
-
-            Test(double[] a, double divider, RoundingMode indexRoundingMode, int result) {
-                this.a = a;
-                this.x = divider;
-                this.indexRoundingMode = indexRoundingMode;
-                this.result = result;
-            }
-        }
-        final List<Test> tests = new ArrayList();
-
-        tests.add(new Test(new double[]{}, 4.0, RoundingMode.CEILING, 0));
-        tests.add(new Test(new double[]{}, 4.0, RoundingMode.FLOOR, -1));
-        //
-        tests.add(new Test(new double[]{5.0}, 4.0, RoundingMode.CEILING, 0));
-        tests.add(new Test(new double[]{5.0}, 5.0, RoundingMode.CEILING, 0));
-        tests.add(new Test(new double[]{5.0}, 6.0, RoundingMode.CEILING, 1));
-        //
-        tests.add(new Test(new double[]{5.0}, 4.0, RoundingMode.FLOOR, -1));
-        tests.add(new Test(new double[]{5.0}, 5.0, RoundingMode.FLOOR, 0));
-        tests.add(new Test(new double[]{5.0}, 6.0, RoundingMode.FLOOR, 0));
-        //
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 0.0, RoundingMode.CEILING, 0));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 1.5, RoundingMode.CEILING, 1));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 3.0, RoundingMode.CEILING, 2));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 5.0, RoundingMode.CEILING, 4));
-        //
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 0.0, RoundingMode.FLOOR, -1));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 1.5, RoundingMode.FLOOR, 0));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 3.0, RoundingMode.FLOOR, 2));
-        tests.add(new Test(new double[]{1.0, 2.0, 3.0, 4.0}, 5.0, RoundingMode.FLOOR, 3));
-
-        for (Test test : tests) {
-            System.out.println("findNearestMatch(" + Arrays.toString(test.a) + ", " + test.x + ", " + test.indexRoundingMode + ");");
-
-            final int actualResult = findNearestMatch(test.a, test.x, test.indexRoundingMode);
-            if (actualResult == test.result) {
-                System.out.println("=== OK");
-            } else {
-                System.out.println("##############################");
-                System.out.println("ERROR: actualResult = " + actualResult);
-                System.out.println("##############################");
-            }
-        }
-    }
-
-
-    /**
-     * Test code.
-     */
-    public static void test_linearInterpolation() {
-        class Test {
-
-            // Y_int, dYdX_int are the results.
-            final double[] X, Y, X_int, Y_int, dYdX_int;
-
-
-            public Test(double[] X, double[] Y, double[] X_int, double[] Y_int, double[] dYdX_int) {
-                this.X = X;
-                this.Y = Y;
-                this.X_int = X_int;
-                this.Y_int = Y_int;
-                this.dYdX_int = dYdX_int;
-            }
-        }
-        //======================================================================
-        List<Test> tests = new ArrayList();
-        tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{11}, new double[]{22}, new double[]{2}));
-        tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{10}, new double[]{20}, new double[]{2}));
-        tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{15}, new double[]{30}, new double[]{2}));
-        tests.add(new Test(new double[]{10, 15}, new double[]{20, 30}, new double[]{11, 12.5, 13.5}, new double[]{22, 25, 27}, new double[]{2, 2, 2}));
-        tests.add(new Test(
-                new double[]{10, 15, 25},
-                new double[]{20, 30, 35},
-                new double[]{10, 11, 12.5, 13.5, 20, 25},
-                new double[]{20, 22, 25, 27, 32.5, 35},
-                new double[]{2, 2, 2, 2, 0.5, 0.5}));
-
-        for (Test test : tests) {
-            final double[] actual_Y_int = Arrays.copyOf(test.Y_int, test.Y_int.length);
-            final double[] actual_dYdX_int = Arrays.copyOf(test.dYdX_int, test.dYdX_int.length);
-            linearInterpolation(test.X, test.Y, test.X_int, actual_Y_int, actual_dYdX_int);
-            if (Arrays.equals(test.Y_int, actual_Y_int) && Arrays.equals(test.dYdX_int, actual_dYdX_int)) {
-                System.out.println("OK");
-            } else {
-                System.out.println("====================================================  ERROR");
-            }
-        }
-    }
-
-
-    public static void test_distanceFromInterval() {
-        final int[][] tests = new int[][]{
-            {0, 0, 1, 2},
-            {0, 0, 0, 1},
-            {0, 0, -1, -1},
-            {3, 5, 0, -3},
-            {3, 5, 2, -1},
-            {3, 5, 3, 0},
-            {3, 5, 4, 0},
-            {3, 5, 5, 1},
-            {3, 5, 7, 3}
-        };
-
-        for (int[] test : tests) {
-            int actualResult = distanceFromInterval(test[0], test[1], test[2]);
-            if (actualResult == test[3]) {
-                System.out.println("OK");
-            } else {
-                System.out.println("====================================================  ERROR");
-                System.out.println("actualResult = " + actualResult);
-                System.out.println("test[3]      = " + test[3]);
-            }
-        }
-    }
-
-
-    /**
-     * Test code. Can see that Random#nextDouble() produces similar results for
-     * the first call after initializing with strings with the same beginning
-     * (unless the implementation of getRandomFromString() does not make those
-     * calls itself).
-     */
-    public static void test_getRandomFromString() {
-        final String cs = "qwerty";
-        final String[] strings = {"A" + cs, "B" + cs, "C" + cs, cs + "A", cs + "B", cs + "C"};
-        for (String s : strings) {
-            final Random r = getRandomFromString(s);
-            System.out.println("s = " + s);
-            for (int i = 0; i < 5; i++) {
-                System.out.println("   r.nextDouble() = " + r.nextDouble());
-            }
-        }
-    }
 }

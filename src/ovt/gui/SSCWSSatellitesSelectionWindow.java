@@ -10,16 +10,9 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.StringTokenizer;
-import java.util.TreeSet;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
@@ -32,7 +25,6 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 import ovt.OVTCore;
-import static ovt.XYZWindow.SETTING_VISUALIZATION_PANEL_WIDTH;
 
 import ovt.datatype.Time;
 import ovt.event.ChildrenEvent;
@@ -79,7 +71,9 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     /**
      * NOTE: xyzWin == null can be used for test code.
      */
-    public SSCWSSatellitesSelectionWindow(SSCWSLibrary mSSCWSLib, OVTCore core, SSCWSSatellitesBookmarks bookmarks) throws IOException {
+    public SSCWSSatellitesSelectionWindow(
+            SSCWSLibrary mSSCWSLib, OVTCore core, SSCWSSatellitesBookmarks bookmarks)
+            throws IOException {
         sscwsLib = mSSCWSLib;
         setTitle(WINDOW_TITLE);
 
@@ -150,7 +144,8 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
          Unknown why extra small margin is needed even without scroll pane
          (the command changes the content pane, not the window; an otherwie common mistake).
          Added additional extra arbitrary width margin to cover vertical scroll pane.
-         This is probably not how one is supposed to, but lacking something better, it will have to do.
+         This is probably not how one is supposed to, but lacking something better,
+         it will have to do.
          */
         this.getContentPane().setPreferredSize(
                 new Dimension(table.getPreferredSize().width + 10 + 50,
@@ -171,10 +166,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     }
 
 
-    /*@Override
-     public Dimension getPreferredSize() {
-     return new Dimension(table.getPreferredSize().width + 10, super.getPreferredSize().height);
-     }*/
     /**
      * Should in theory set the (preferred) column widths to the width needed to
      * fit the widest cell content in each column. In practice, this does not
@@ -214,7 +205,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     }
 
     //##########################################################################
-
     /**
      * NOTE: The row indices still refer to the same row of data even when the
      * table is sorted by a column (because that is how JTable uses TableModel).
@@ -223,7 +213,8 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
         private final List<SSCWSLibrary.SSCWSSatelliteInfo> localSatInfoList;
         private final OVTCore core;
-        private final SSCWSSatellitesBookmarks bookmarks;  
+        private final SSCWSSatellitesBookmarks bookmarks;
+
 
         /**
          * NOTE: mCore == null can be used for test code.
@@ -365,7 +356,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                 final int row = getSatIndex(sat.dataSource.satInfo.ID);
                 fireTableCellUpdated(row, COLUMN_INDEX_GUI_TREE_ADDED);
             }
-            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
 

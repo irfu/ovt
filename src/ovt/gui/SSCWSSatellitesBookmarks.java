@@ -11,20 +11,29 @@ import ovt.OVTCore;
 
 /**
  * Set of SSCWS satellites that are "bookmarked", i.e. shortlisted to also
- * appear on the Satellites menu (or similar).
+ * appear on the Satellites menu (or conceivably similar uses in the future).
  *
  * IMPLEMENTATION NOTE: Stores satellite IDs instead of
- * SSCWSLibrary.SSCWSSatelliteInfo objects since the class probably should have
- * proper implementations of equals, hashCode etc which the latter does not
- * have.
+ * SSCWSLibrary.SSCWSSatelliteInfo objects since (1) the class probably should
+ * have proper implementations of equals, hashCode etc which the latter does not
+ * have, (2) we want to be able to easily store all the satellite "identities"
+ * as one string in the global settings (properties; config file), (3) we want
+ * to be able to store satellites which are not present in the currently
+ * available SSCWS satellite list (SSCWSLibrary#getAllSatelliteInfo) (if e.g.
+ * switching between SSCWS data source, i.e. SSCWSLibrary implementations).
  *
  * NOTE: This class does not check whether the satellite IDs are actually valid.
  * The intention is for the list to store bookmarks also when (1) the satellite
  * IDs can not be found in the current (SSCWSLibrary) satellite list, or when it
  * is not available (network failure). One could imagine that code could check
- * for the validity of the stored satellite IDs but one does not want bookmarks to be
- * removed just because of network failure or because of switching between real
- * SSCWSLibrary and a test emulator one.
+ * for the validity of the stored satellite IDs but one does not want bookmarks
+ * to be removed just because of network failure or because of switching between
+ * real SSCWSLibrary and a test emulator one.
+ *
+ * NOTE: Ideally, this class should be the model in the MVC pattern and have
+ * "listeners" which get updates about changes, but that has not been need so
+ * far since the only class that modifies it is the only one that needs to be
+ * immediately informed of changes.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se
  */
@@ -57,7 +66,7 @@ public class SSCWSSatellitesBookmarks {
      *
      * IMPLEMENTATION NOTE: Handles null value since OVTCore.getGlobalSetting
      * may returs null if it does not find a property.
-     * 
+     *
      * @param value String as it is stored in global settings, representing the
      * contents of the class. null means empty.
      */
@@ -78,7 +87,9 @@ public class SSCWSSatellitesBookmarks {
     }
 
 
-    /** @returns Satellite IDs as a list. Always returns a string, also when empty (needed for setting global settings).
+    /**
+     * @returns Satellite IDs as a list. Always returns a string, also when
+     * empty (needed for setting global settings).
      */
     public String getGlobalSettingsValue() {
         String list = "";
