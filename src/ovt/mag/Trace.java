@@ -102,9 +102,9 @@ protected static native void mdirectoryJNI(String Dir);
 
 static {
     
-    mdirectoryJNI(Utils.findFile(OVTCore.getMdataDir() +"igrf.d").getAbsolutePath());
-    //mdirectoryJNI(Utils.findFile(OVTCore.getMdataDir() +"igrf.d").getAbsolutePath().substring(0,42));
-    //    mdirectoryJNI(OVTCore.getMdataDir());
+    mdirectoryJNI(Utils.findFile(OVTCore.getMdataSubdir() +"igrf.d").getAbsolutePath());
+    //mdirectoryJNI(Utils.findFile(OVTCore.getMdataSubdir() +"igrf.d").getAbsolutePath().substring(0,42));
+    //    mdirectoryJNI(OVTCore.getMdataSubdir());
 }
 
 public static void lastline (MagProps magProps, double mjd, double rv[], double dir[], int idir, double alt) {

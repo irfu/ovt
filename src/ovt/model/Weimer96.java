@@ -57,7 +57,7 @@ public class Weimer96 {
   public Weimer96(String _path){ cWeimer96(_path); }
 
   //this constructor is used in OVT
-  public Weimer96(){ cWeimer96(ovt.OVTCore.getUserdataDir()); }
+  public Weimer96(){ cWeimer96(ovt.OVTCore.getUserdataSubdir()); }
 
 
   public double EpotVal(double gLAT, double gMLT){

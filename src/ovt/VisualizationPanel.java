@@ -33,7 +33,7 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
    * @return Image from vtkRenderWindow*/
     public Image getImage() {
         String tmpDir = System.getProperty("java.io.tmpdir");
-        if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataDir();
+        if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataSubdir();
         String tempFile = Utils.getRandomFilename(tmpDir, ".bmp");
         //tempFile = "xyz.bmp";
 

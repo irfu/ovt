@@ -58,15 +58,15 @@ import javax.swing.*;
  * @see ...
  */
 
-public final class OVTCore extends OVTObject implements
-GUIPropertyEditorListener {
-    
+public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
+    public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "March 2015";
     public static final int BUILD = 4;
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "DefaultSettingsFile";
     public static final Properties globalProperties = new Properties();
+    public static final String OVT_HOMEPAGE ="http://ovt.irfu.se/";
     public static int DEBUG = 0;
     
     /**
@@ -116,7 +116,6 @@ GUIPropertyEditorListener {
     
     public static String ovtUserDir;
     
-    public static final String ovtHomePage ="http://ovt.irfu.se/";
     
     /** Holds value of property server. */
     private static boolean server = false;
@@ -159,27 +158,27 @@ GUIPropertyEditorListener {
         return ovtUserDir;
     }
     
-    public static String getDocsDir(){
+    public static String getDocsSubdir(){
         return "docs" + File.separator;
     }
     
-    public static String getImagesDir(){
+    public static String getImagesSubdir(){
         return "images" + File.separator;
     }
     
-    public static String getUserdataDir(){
+    public static String getUserdataSubdir(){
         return "userdata" + File.separator;
     }
     
-    public static String getMdataDir(){
+    public static String getMdataSubdir(){
         return "mdata" + File.separator;
     }
     
-    public static final String getOrbitDataDir(){
+    public static final String getOrbitDataSubdir(){
         return "odata" + File.separator;
     }
     
-    public static String getConfDir(){
+    public static String getConfSubdir(){
         return "conf" + File.separator;
     }
     
@@ -211,7 +210,7 @@ GUIPropertyEditorListener {
     /** Load properties from {@link #ovtPropertiesFile }
      */
     private static synchronized void loadGlobalSettings() throws IOException {
-        final File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
+        final File confFile = Utils.findFile(getConfSubdir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
         if (confFile != null) {
             
             // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
@@ -229,14 +228,15 @@ GUIPropertyEditorListener {
         /* NOTE: Utils.findFile will return null if it can NOT locate an already
         existing file, i.e. it will NOT suggest a path for where to create a new
         config file if none already exists. Therefore, if no old config file
-        exists, no new one will be created. */
-        //File confFile = Utils.findFile(getConfDir() + globalSettingsFileName);  
+        exists, no new one will be created.
+        */
+        //File confFile = Utils.findFile(getConfSubdir() + globalSettingsFileName);  
         /*if (confFile == null) {
             throw new IOException("Can not find a global settings file to overwrite. ");
         }*/
         
         /* Try saving to user directory, otherwise do not save at all. */
-        File confFile = new File(OVTCore.getUserDir() + getConfDir() + globalSettingsFileName);
+        final File confFile = new File(OVTCore.getUserDir() + getConfSubdir() + globalSettingsFileName);
 
         try (FileOutputStream out = new FileOutputStream(confFile)) {
             globalProperties.save(out, "OVT properties file.");
@@ -264,40 +264,44 @@ GUIPropertyEditorListener {
             setIcon(new ImageIcon(Utils.findResource("images/ovt.gif")));
 	} catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
         
-        String osName;
-        osName = System.getProperty("os.name").toLowerCase();
-        boolean isMacOs = osName.startsWith("mac os x");
-        if (isMacOs) 
         {
-          ovtUserDir = System.getProperty("user.home") + File.separator + 
+            /*==================================================================
+             Derive and assign this.ovtUserDir (String, path) and make sure
+             the corresponding actual directory exists.
+            ==================================================================*/
+            final String osName = System.getProperty("os.name").toLowerCase();
+            final boolean isMacOs = osName.startsWith("mac os x");
+            if (isMacOs) {
+                ovtUserDir = System.getProperty("user.home") + File.separator + 
                   "Library" + File.separator + "ovt" + File.separator + 
                   VERSION + File.separator;
-        } else {
-          ovtUserDir = System.getProperty("user.home") + File.separator + 
+            } else {
+                ovtUserDir = System.getProperty("user.home") + File.separator + 
                   ".ovt" + File.separator + VERSION + File.separator;
-        }
-        File userDir = new File(ovtUserDir);
-        if (!userDir.exists()) {
-          if (userDir.mkdirs()) {
-            Log.log("Created:" + ovtUserDir,3);
-          } else {
-            Log.log("Failed to create:" + ovtUserDir,3);
-          }
-        }
+            }
+            final File userDir = new File(ovtUserDir);
+            if (!userDir.exists()) {
+                if (userDir.mkdirs()) {
+                    Log.log("Created:" + ovtUserDir,3);
+                } else {
+                    Log.log("Failed to create:" + ovtUserDir,3);
+                }
+            }
         
-        File userConfDir = new File(ovtUserDir + getConfDir());   // Must create this directory in order to be able to save ovt.conf there.
-        if (!userConfDir.exists()) {
-          if (userConfDir.mkdirs()) {
-            Log.log("Created:" + userConfDir.getAbsolutePath(),3);
-          } else {
-            Log.log("Failed to create:" + userConfDir.getAbsolutePath(),3);
-          }
+            final File userConfDir = new File(ovtUserDir + getConfSubdir());   // Must create this directory in order to be able to save ovt.conf there.
+            if (!userConfDir.exists()) {
+                if (userConfDir.mkdirs()) {
+                    Log.log("Created:" + userConfDir.getAbsolutePath(),3);
+                } else {
+                    Log.log("Failed to create:" + userConfDir.getAbsolutePath(),3);
+                }
+            }
         }
-
         
         
         /* Load global settings
-           NOTE: This code indirectly uses ovtUserDir which therefore has to
+           --------------------
+           NOTE: This code indirectly uses this.ovtUserDir which therefore has to
            have been previously initialized. */
         if (globalProperties.size() == 0) {
             try {
@@ -485,10 +489,11 @@ GUIPropertyEditorListener {
         sendErrorMessage("Error", e);
     }
     /** Method to be used when informing user about the error occured
-     *When in GUI produces a popup window with <CODE>msghead</CODE>
-     *as window title and <CODE>msg</CODE> as message.
-   * @param title Message title
-   * @param e Exceprion
+     * When in GUI produces a popup window with <CODE>msghead</CODE>
+     * as window title and <CODE>msg</CODE> as message.
+     * 
+     * @param title Message title. NOTE: Only used for the (alternative) log message.
+     * @param e Exceprion
      */
     public void sendErrorMessage(String title, Exception e) {
         if (isGuiPresent() == true){

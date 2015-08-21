@@ -79,7 +79,7 @@ public class Dumper {
     DumperPanel panel;
     
     /** Holds value of property file. */
-    private File file = new File(OVTCore.getUserdataDir()+"untitled.dat");
+    private File file = new File(OVTCore.getUserdataSubdir()+"untitled.dat");
     
     /** Utility field used by bound properties. */
     private java.beans.PropertyChangeSupport propertyChangeSupport =  new java.beans.PropertyChangeSupport (this);
@@ -342,7 +342,7 @@ public class Dumper {
   private void chooseFile() {
         JFileChooser chooser = null;
     if ( file == null ) 
-      chooser = new JFileChooser(OVTCore.getUserdataDir());
+      chooser = new JFileChooser(OVTCore.getUserdataSubdir());
     else 
       chooser = new JFileChooser(file);
     

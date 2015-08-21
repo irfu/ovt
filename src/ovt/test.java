@@ -37,20 +37,9 @@
 package ovt;
 
 import vtk.vtkActor;
-import vtk.vtkBoxRepresentation;
-import vtk.vtkBoxWidget2;
-import vtk.vtkCell;
-import vtk.vtkCellPicker;
-import vtk.vtkConeSource;
-import vtk.vtkLookupTable;
 import vtk.vtkNativeLibrary;
 import vtk.vtkPolyDataMapper;
-import vtk.vtkScalarBarRepresentation;
-import vtk.vtkScalarBarWidget;
 import vtk.vtkSphereSource;
-import vtk.vtkTransform;
-import vtk.rendering.vtkAbstractEventInterceptor;
-import vtk.rendering.vtkEventInterceptor;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 import vtk.rendering.jogl.vtkJoglCanvasComponent;
 import vtk.rendering.jogl.vtkJoglPanelComponent;

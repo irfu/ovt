@@ -11,7 +11,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Toolkit;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
@@ -39,7 +38,11 @@ import ovt.util.SSCWSLibraryTestEmulator;
  *
  * NOTE: The class stores "bookmarked" SSCWS satellites. This should maybe be
  * moved to OVTCore (or XYZWindow)?! (Bad for testing?) Would make storing
- * properties when quitting more natural (using getCore().saveSettings())?! .
+ * properties when quitting more natural (using getCore().saveSettings())?!
+ *
+ * NOTE: The class does NOT use any dynamic ("Updateable") model of the SSCWS
+ * satellites list but relies on the list being static and the constructor
+ * failing if the list can not be obtained.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se
  */
@@ -54,7 +57,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     private static final String WINDOW_TITLE = "Satellite data offered online by NASA SSC";
     private static final String INFO_TEXT = "Satellite data offered online by NASA's Satellite Situation Center (SSC)"
             + " and available through OVT. Note that some of these \"satellites\" may be located at Lagrange points "
-            + "(e.g. ACE) or be balloons (e.g. BARREL-*).";
+            + "(e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN).";
     private static final String[] COLUMN_GUI_TITLES = {"Bookmarked", "Added", "Name", "Data begins", "Data ends"};
     //private final String[] COLUMN_GUI_TITLES = {".", ".", ".", "."};
     private static final int COLUMN_INDEX_BOOKMARK = 0;
@@ -70,9 +73,15 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
     /**
      * NOTE: xyzWin == null can be used for test code.
+     *
+     * @throws IOException if the initialization can not obtain list of SSCWS
+     * satellites. There should NEVER be a window with an empty list since OVT
+     * will reuse the window (the object) when the user asks for it again AND
+     * the class is not able to tell that a later attempt to obtain the
+     * satellites list has succeeded.
      */
     public SSCWSSatellitesSelectionWindow(
-            SSCWSLibrary mSSCWSLib, OVTCore core, SSCWSSatellitesBookmarks bookmarks)
+            SSCWSLibrary mSSCWSLib, OVTCore core, SSCWSSatellitesBookmarksModel bookmarks)
             throws IOException {
         sscwsLib = mSSCWSLib;
         setTitle(WINDOW_TITLE);
@@ -211,24 +220,24 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
      */
     private class LocalTableModel extends AbstractTableModel implements ChildrenListener {
 
+        /**
+         * Used for local copy of
+         * SSCWSSatellitesSelectionWindow.this.sscwsLib.getAllSatelliteInfo();
+         * Could probably be abolished but it is important that the constructor
+         * fails if it can not obtain the satellites list.
+         */
         private final List<SSCWSLibrary.SSCWSSatelliteInfo> localSatInfoList;
         private final OVTCore core;
-        private final SSCWSSatellitesBookmarks bookmarks;
+        private final SSCWSSatellitesBookmarksModel bookmarks;
 
 
         /**
          * NOTE: mCore == null can be used for test code.
          */
-        public LocalTableModel(OVTCore mCore, SSCWSSatellitesBookmarks mBookmarks) {
+        public LocalTableModel(OVTCore mCore, SSCWSSatellitesBookmarksModel mBookmarks) throws IOException {
             List<SSCWSLibrary.SSCWSSatelliteInfo> tempSatInfoList;
             core = mCore;
-            try {
-                tempSatInfoList = SSCWSSatellitesSelectionWindow.this.sscwsLib.getAllSatelliteInfo();
-            } catch (IOException e) {
-                core.sendErrorMessage("Can not initialize table model since can not obtain list of SSC-based satellites.", e);
-                tempSatInfoList = new ArrayList<>();  // Empty list
-            }
-            localSatInfoList = tempSatInfoList;
+            localSatInfoList = SSCWSSatellitesSelectionWindow.this.sscwsLib.getAllSatelliteInfo();
             bookmarks = mBookmarks;
         }
 
@@ -279,7 +288,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                 throw new IllegalArgumentException("No value at col=" + col + ", row=" + row + ".");
                 //return "(" + row + ", " + col + ")";
             }
-            //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
         }
 
 
@@ -303,11 +311,11 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                     }
 
                 } else {
-                    // Do nothing.
+                    // For debugging / test code. Do nothing.
                 }
 
             } else {
-                throw new IllegalArgumentException("Function not defined for this column.");
+                throw new IllegalArgumentException("Function is not defined for this column.");
             }
         }
 
@@ -341,7 +349,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
             if (evt.getChild() instanceof SSCWSSat) {
                 SSCWSSat sat = (SSCWSSat) evt.getChild();
 
-                final int row = getSatIndex(sat.dataSource.satInfo.ID);
+                final int row = getSatIndex(sat.getSSCWSSatelliteID());
                 fireTableCellUpdated(row, COLUMN_INDEX_GUI_TREE_ADDED);
             }
         }
@@ -353,7 +361,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
             if (evt.getChild() instanceof SSCWSSat) {
                 SSCWSSat sat = (SSCWSSat) evt.getChild();
 
-                final int row = getSatIndex(sat.dataSource.satInfo.ID);
+                final int row = getSatIndex(sat.getSSCWSSatelliteID());
                 fireTableCellUpdated(row, COLUMN_INDEX_GUI_TREE_ADDED);
             }
         }
@@ -409,7 +417,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
         //final SSCWSLibrary lib = SSCWSLibraryImpl.DEFAULT_INSTANCE;        
         final SSCWSLibrary lib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;
 
-        final JFrame frame = new SSCWSSatellitesSelectionWindow(lib, null, new SSCWSSatellitesBookmarks());
+        final JFrame frame = new SSCWSSatellitesSelectionWindow(lib, null, new SSCWSSatellitesBookmarksModel());
         frame.setVisible(true);
     }
 

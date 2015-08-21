@@ -119,7 +119,7 @@ protected void validate() {
 	// Here we go!
 
     try {
-      File f = Utils.findFile(OVTCore.getMdataDir()+"coastline.dat");
+      File f = Utils.findFile(OVTCore.getMdataSubdir()+"coastline.dat");
         ContinentsReader cr = new ContinentsReader(f);
         vtkPolyDataMapper mapper = new vtkPolyDataMapper();
             mapper.SetInputData(cr.GetOutput());
@@ -131,7 +131,7 @@ protected void validate() {
 
         
     } catch (IOException e) {
-        Log.err("Error loading coastline from "+OVTCore.getMdataDir()+"coastline.dat", 0);
+        Log.err("Error loading coastline from "+OVTCore.getMdataSubdir()+"coastline.dat", 0);
     }
     super.validate();
 }

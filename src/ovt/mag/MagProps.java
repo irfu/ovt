@@ -175,7 +175,7 @@ public MagProps(OVTCore core) {
   super("MagModels");
   setParent(core);
   Log.log("MagProps :: init ...", 3);
-  setIcon(new ImageIcon(OVTCore.getImagesDir()+"magnet.gif"));
+  setIcon(new ImageIcon(OVTCore.getImagesSubdir()+"magnet.gif"));
   showInTree(false);
   this.core = core;
   

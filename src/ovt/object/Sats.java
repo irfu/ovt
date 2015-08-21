@@ -73,7 +73,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
         try {
           setIcon(new ImageIcon(Utils.findResource("images/satellites.gif")));
         } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-        satsConfigFile = getCore().getConfDir() + "sats.conf";
+        satsConfigFile = getCore().getConfSubdir() + "sats.conf";
         
         clusterSats = new ClusterSats(this);
         addChild(clusterSats);
@@ -224,7 +224,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
 
 /*  -- just to remember how to use JOptionPane.showInputDialog
   
-File[] files = new File(OVTCore.getOrbitDataDir()).listFiles( new FilenameFilter() {
+File[] files = new File(OVTCore.getOrbitDataSubdir()).listFiles( new FilenameFilter() {
                  public boolean accept(File dir, String file) {
                     return file.endsWith(".tle");
                  }
@@ -248,7 +248,7 @@ File[] files = new File(OVTCore.getOrbitDataDir()).listFiles( new FilenameFilter
                 Sat sat = new Sat(getCore());
                 try {
                     sat.setName(filename);
-                    sat.setOrbitFile(new File(OVTCore.getOrbitDataDir()+filename+".tle"));
+                    sat.setOrbitFile(new File(OVTCore.getOrbitDataSubdir()+filename+".tle"));
                     addSat(sat);
                     getChildren().fireChildAdded(sat);
                 } catch (IOException e2) {

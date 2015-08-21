@@ -37,15 +37,36 @@ import ovt.datatype.Time;
  */
 public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
 
-    private static final int DEBUG = 1;   // Set the minimum log message level for this class.
     public static final SSCWSLibrary DEFAULT_INSTANCE = new SSCWSLibraryTestEmulator();
+    private static final int DEBUG = 1;   // Set the minimum log message level for this class.
 
-    private static final int DATAGAPSAT_PERIOD = 2;
+    private final double dataBeginMjd = Time.getMjd(1950, 1, 1, 0, 0, 1);
+    private final double dataEndMjd = Time.getMjd(2300, 1, 1, 0, 0, 0);
+
+    //#####################################################################
     /**
-     * Numbers (labels) the current call for data for DownloadFailSat. First
-     * call is "1" (sic!).
+     * Number of times getAllSatelliteInfo has been called.
      */
-    private int downloadFailSatRequests = 0;
+    private int getAllSatelliteInfo_nbrOfRequests = 0;
+    /**
+     * Number of calls to getAllSatelliteInfo that should fail before
+     * succeeding.
+     */
+    private static final int getAllSatelliteInfo_NBR_OF_INITIAL_FAILS = 0;
+    //#####################################################################
+
+    /**
+     * Frequency of day-long data gaps. One day-long data gap per this many
+     * days.
+     */
+    private static final int DATAGAPSAT_PERIOD_MJD = 2;
+
+    /**
+     * Counts (labels) the current call for data for DownloadFailSat. First call
+     * is represented by "1" (sic!) but it is still initialized to zero.
+     */
+    //#####################################################################
+    private int downloadFailSat_nbrOfRequests = 0;
     private static final int DOWNLOADFAILSAT_FAIL_PERIOD = 2;
     /**
      * Determines which DownloadFailSat download request should be the first to
@@ -53,22 +74,31 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
      * calculation) from failing.
      */
     private static final int DOWNLOADFAILSAT_FIRST_FAIL = 2;
+    //#####################################################################
 
     final double COMP_ORBIT_SAT_2A_PERTURBATION_RMS_KM = 1.0;   // RMS for every axis separately.
     final double COMP_ORBIT_SAT_2B_TIME_SHIFT_MJD = Time.DAYS_IN_SECOND * 1.0;
+    //#####################################################################
 
     final int N_GENERIC_SATELLITES = 100;
-
-    private final double dataBeginMjd = Time.getMjd(1950, 1, 1, 0, 0, 1);
-    private final double dataEndMjd = Time.getMjd(2300, 1, 1, 0, 0, 0);
+    //#####################################################################
 
 
+    /**
+     * Private constructor to prevent instantiation.
+     */
     private SSCWSLibraryTestEmulator() {
     }
 
 
     @Override
-    public List<SSCWSSatelliteInfo> getAllSatelliteInfo() {
+    public List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException {
+        getAllSatelliteInfo_nbrOfRequests++;
+        if (getAllSatelliteInfo_nbrOfRequests <= getAllSatelliteInfo_NBR_OF_INITIAL_FAILS) {
+            throw new IOException("Can not obtain list with SSCWS satellites. "
+                    + "(getAllSatelliteInfo_nbrOfRequests="+getAllSatelliteInfo_nbrOfRequests+"; getAllSatelliteInfo_NBR_OF_INITIAL_FAILS="+getAllSatelliteInfo_NBR_OF_INITIAL_FAILS+")");
+        }
+
         final List<SSCWSSatelliteInfo> satInfos = new ArrayList<>();
         final int bestTimeResolution = 60;
 
@@ -174,7 +204,7 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
                 final double[] t = coords[3];
                 int j = 0;
                 for (int i = 0; i < t.length; i++) {
-                    if (((int) t[i]) % DATAGAPSAT_PERIOD != 0) {
+                    if (((int) t[i]) % DATAGAPSAT_PERIOD_MJD != 0) {
                         // CASE: Even odd mjd number (when rounded to integer).
                         // ==> Include this data point.
                         for (int k = 0; k < 4; k++) {
@@ -195,9 +225,9 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
                  */
                 /* NOTE: OVT presently does not try to retrieve data for a time
                  interval a second time if the fist time fails and the OVT time interval is not changed.*/
-                downloadFailSatRequests++;
-                if ((downloadFailSatRequests >= DOWNLOADFAILSAT_FIRST_FAIL)
-                        && ((downloadFailSatRequests - DOWNLOADFAILSAT_FIRST_FAIL) % DOWNLOADFAILSAT_FAIL_PERIOD == 0)) {
+                downloadFailSat_nbrOfRequests++;
+                if ((downloadFailSat_nbrOfRequests >= DOWNLOADFAILSAT_FIRST_FAIL)
+                        && ((downloadFailSat_nbrOfRequests - DOWNLOADFAILSAT_FIRST_FAIL) % DOWNLOADFAILSAT_FAIL_PERIOD == 0)) {
                     final String msg = "Can not download data from SSC Web Services (DownloadFailSat; Test exception).";
                     Log.log("EXCEPTION: " + msg, DEBUG);
                     throw new IOException(msg);
@@ -246,10 +276,10 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
             double beginMjdInclusive, double endMjdInclusive,
             int timeResolution) {
 
-        Log.log(SSCWSLibraryTestEmulator.class.getSimpleName() + " getPhysicallyCorrectCircularOrbit("
+        /*Log.log(SSCWSLibraryTestEmulator.class.getSimpleName() + " getPhysicallyCorrectCircularOrbit("
                 + "rand=..."
                 + ", beginMjdInclusive=" + beginMjdInclusive
-                + ", endMjdInclusive+" + endMjdInclusive + ", ...)", DEBUG);
+                + ", endMjdInclusive+" + endMjdInclusive + ", ...)", DEBUG);*/
 
         // NOTE: Gravitational constant (m^3 * kg^-1 * s^-2; does not use km!).
         final double yzAngle_radians = rand.nextDouble() * Math.PI * 2;

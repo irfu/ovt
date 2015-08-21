@@ -69,7 +69,7 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
   public ClusterSats(Sats sats) {
     super(sats.getCore(), "Cluster", "images/cluster.gif", true);
     Log.log("ClusterSats :: init ...", 3);
-    clusterConfOutFileName = OVTCore.getUserdataDir()+"clusters.conf";
+    clusterConfOutFileName = OVTCore.getUserdataSubdir()+"clusters.conf";
     setParent(sats);
     //setChildren(new Children());
     try {
@@ -93,7 +93,7 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     // load sats
     for (int i=0; i<4; i++) {
         String satName = "Cluster "+(i+1);
-        File orbitFile = Utils.findFile(OVTCore.getOrbitDataDir()+"Cluster"+(i+1)+".ltof" );
+        File orbitFile = Utils.findFile(OVTCore.getOrbitDataSubdir()+"Cluster"+(i+1)+".ltof" );
         if (orbitFile==null) {
             System.out.println("[ FAILED ] (" + orbitFile + ")");
             continue;

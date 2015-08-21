@@ -41,26 +41,21 @@ package ovt.gui;
 
 import ovt.*;
 import ovt.beans.*;
-import ovt.object.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import javax.swing.*;
-import javax.swing.tree.*;
-import javax.swing.event.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.*;
 
 /**
- *
+ * Class for only static method and no variables.
+ * 
  * @author  root
  * @version 
  */
 public class MenuUtils extends Object {
 
-    /** Creates new MenuUtils */
-    public MenuUtils() {
+    /** Creates new MenuUtils. */
+    private MenuUtils() {
     }
     
     public static void addMenuItemsFromDescriptors(JMenu menu, DescriptorsSource source, OVTCore core) {

@@ -96,12 +96,12 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfDir());
+                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfSubdir());
                 String file = Settings.showOpenDialog(xyzWin, new File(defaultFile));
                 if (file != null) {
                     try {
                         // hide all objects
-                        //Settings.load(core.getConfDir() + "hideall.xml", core);
+                        //Settings.load(core.getConfSubdir() + "hideall.xml", core);
                         getCore().hideAllVisibleObjects();
                         // load new settings
                         Settings.load(file, core);
@@ -122,7 +122,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfDir());
+                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfSubdir());
                 String file = Settings.showSaveDialog(xyzWin, new File(defaultFile));
                 if (file != null) {
                     try {
@@ -285,7 +285,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 final HTMLBrowser hw = getVW().getHTMLBrowser();
-                final String url = "file:" + getCore().getDocsDir() + "about.html";
+                final String url = "file:" + getCore().getDocsSubdir() + "about.html";
                 try {
                     hw.setPage(url);
                 } catch (IOException e) {
@@ -301,7 +301,7 @@ public class XYZMenuBar extends JMenuBar {
 
 
     public JMenuItem createImportSatelliteMenuItem() {
-        final JMenuItem menuItem = new JMenuItem("Import Satellite ...");
+        final JMenuItem menuItem = new JMenuItem("Import Satellite File...");
         menuItem.setFont(Style.getMenuFont());
 
         menuItem.addActionListener(new ActionListener() {
@@ -324,12 +324,7 @@ public class XYZMenuBar extends JMenuBar {
 
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                try {
-                    getCore().getXYZWin().getSSCWSSatellitesSelectionWindow().setVisible(true);
-                } catch (IOException e) {
-                    getCore().sendErrorMessage(e);
-
-                }
+                getCore().getXYZWin().getSSCWSSatellitesSelectionWindow().setVisible(true);
             }
         });
 
@@ -393,26 +388,18 @@ public class XYZMenuBar extends JMenuBar {
 
 
     /**
-     * Create menu item for _ONE_ SSC WS satellite to put in the data structures
-     * describing the GUI.
+     * Create one menu item for _ONE_ SSC WS satellite which the caller can put
+     * in the data structures describing the GUI.
      *
-     * NOTE: Fails silently and returns null if (1) SSCWS_satID does not exist
-     * or (2) obtaining satellites list fails (indirect). It is best to just
-     * fail to display menu items for satellites which existence in the
-     * satellite list can not be confirmed.
-     *
-     * @return Returns JMenuItem, or null if the SSCWS satellite can not be
-     * found.
+     * @return Always returns valid JMenuItem (if no Exception).
+     * @throws IOException for every failure: (1) SSCWS_satID does not exist, or
+     * (2) obtaining the online SSCWS satellites list fails (indirect).
      */
-    private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) {
+    // Throw exceptions on failure and let the caller decide what to do?
+    private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) throws IOException {
         final String satName;
-        try {
-            satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException
-        } catch (IOException e) {
-
-            //getCore().sendErrorMessage(e);
-            return null;
-        }
+        //try {
+        satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException
 
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
@@ -430,38 +417,31 @@ public class XYZMenuBar extends JMenuBar {
         newMenuItem.setFont(Style.getMenuFont());
         newMenuItem.addActionListener(actionListener);
 
-        try {
-            // Select if sat is already added to OVT.
-            newMenuItem.setSelected(xyzWin.sscwsSatAlreadyAdded(SSCWS_satID));   // throws IOException if can not get satellites list.
-            return newMenuItem;
+        //try {
+        // Select if sat is already added to OVT.
+        newMenuItem.setSelected(xyzWin.sscwsSatAlreadyAdded(SSCWS_satID));   // throws IOException if can not get satellites list.
+        return newMenuItem;
 
-        } catch (IOException e) {
-            // getCore().sendErrorMessage(e);
-            return null;
-        }
     }
 
 
     private JMenuItem[] createSSCWSSatsMenuItemsList() {
         final Set<String> satIDs;
-        //try {
-        satIDs = xyzWin.getSSCWSBookmarks().getBookmarkedSSCWSSatIds();
-        //} catch (IOException exc) {
-        //    getCore().sendErrorMessage(exc);
-        //    return new JMenuItem[0];   // Return empty array instead of null.
-        //}
+        satIDs = xyzWin.getSSCWSBookmarksModel().getBookmarkedSSCWSSatIds();
 
-        //final JMenuItem[] menuItems = new JMenuItem[satIDs.size()];
         final List<JMenuItem> menuItems = new ArrayList();
 
         int i = 0;
         for (String satID : satIDs) {
-            //menuItems[i] = createSSCWSSatMenuItem(satID);
-            //i++;
-            final JMenuItem menuItem = createSSCWSSatMenuItem(satID);
-            if (menuItem != null) {
-                // Only add if menu item could be created. This is useful for 
+            try {
+                final JMenuItem menuItem = createSSCWSSatMenuItem(satID);
                 menuItems.add(menuItem);
+            } catch (IOException e) {
+                /* NOTE: Fails silently (does not throw Exception) if can not create menu item.
+                 * Overall, it is best to just fail to display menu items for satellites
+                 * which existence in the satellite list can not be confirmed.
+                 */
+                // Do nothing. Does not want warning message while creating menu??!!
             }
             // NOTE: Does NOT remove the satellite ID from the bookmarks if it
             // is invalid. See comments in the SSCWSSatelliteBookmarks class.
@@ -502,16 +482,17 @@ public class XYZMenuBar extends JMenuBar {
          =====================================*/
         File[] files = null;
         {
-            final FilenameFilter filter = (File dir, String file) -> file.endsWith(".tle")
-                    || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
+            final FilenameFilter filter
+                    = (File dir, String file)
+                    -> file.endsWith(".tle") || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
 
-            final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataDir());
+            final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
             if (userOrbitDir != null) {
                 files = userOrbitDir.listFiles(filter);
             }
 
             // Look for files in system level odata.
-            final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataDir());
+            final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataSubdir());
             if (sysOrbitDir != null) {
                 File[] sysFiles = sysOrbitDir.listFiles(filter);
                 if (files == null) {
@@ -537,15 +518,15 @@ public class XYZMenuBar extends JMenuBar {
                 // Create Sat and ADD it to OVTCore.Sats.
 
                 try {
-                    Sat sat;
-                    // Check if TLE file exists
-                    final String satName = OVTCore.getOrbitDataDir() + Utils.replaceSpaces(satname);
-                    File file = Utils.findFile(satName + ".tle");
+                    final Sat sat;
+                    // Check if TLE file exists.
+                    final String satFilePathPrefix = OVTCore.getOrbitDataSubdir() + Utils.replaceSpaces(satname);
+                    File file = Utils.findFile(satFilePathPrefix + ".tle");
                     if (file == null) {
                         // Check if LTOF file exists
-                        file = Utils.findFile(satName + ".ltof");
+                        file = Utils.findFile(satFilePathPrefix + ".ltof");
                         if (file == null) {
-                            throw new IOException("Orbit file " + satName + ".tle/.ltof not found");
+                            throw new IOException("Orbit file " + satFilePathPrefix + ".tle/.ltof not found");
                         }
                         sat = new LTOFSat(getCore());
                     } else {

@@ -69,7 +69,7 @@ public class CGMC {
   public CGMC(String _path, String _typ){ cCGMC(_path,_typ); }
 
   //this constructor is used in OVT
-  public CGMC(OVTCore core, String _typ){ cCGMC(core.getUserdataDir(),_typ); }
+  public CGMC(OVTCore core, String _typ){ cCGMC(core.getUserdataSubdir(),_typ); }
 
 
   public void loadYear(int _year) throws IOException {

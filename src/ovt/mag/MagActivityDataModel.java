@@ -101,10 +101,10 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
     this.columnNumber = this.columnNames.length; 
     // set default values
     this.defaultValues = new MagActivityDataRecord(Time.Y2000, defaultValues);
-    this.file = new File(OVTCore.getGlobalSetting(name+".File", OVTCore.getUserdataDir()+name+".dat"));
+    this.file = new File(OVTCore.getGlobalSetting(name+".File", OVTCore.getUserdataSubdir()+name+".dat"));
     
     try {
-        //file = new File(ovt.OVTCore.getUserdataDir(), param + magDataExt);
+        //file = new File(ovt.OVTCore.getUserdataSubdir(), param + magDataExt);
         load();
     } catch (IOException e2) {  }
     if (data.size() == 0) data.addElement(getDefaultValues().clone());

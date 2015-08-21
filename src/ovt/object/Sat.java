@@ -169,13 +169,12 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
 
     /**
-     * Sets orbitFile, firstMjd, lastMjd, revolutionPeriod and spinData. * If a
+     * Sets orbitFile, firstMjd, lastMjd, revolutionPeriod and spinData. If a
      * file is given, then it assumes that there is a corresponding spin file
      * with other suffix, ".spin".
      *
      * @param orbitFile Null means there is no file (i.e. another data source is
      * used).
-     *
      */
     public void setOrbitFile(File orbitFile) throws IOException {
         if (orbitFile != null) {
@@ -197,7 +196,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             this.spinFileName = null;
             this.spinData = new SpinData(null);
         }
-        double firstLastMjdPeriodSatNumber[] = getFirstLastMjdPeriodSatNumber();
+        final double firstLastMjdPeriodSatNumber[] = getFirstLastMjdPeriodSatNumber();
         firstDataMjd = firstLastMjdPeriodSatNumber[0];
         lastDataMjd = firstLastMjdPeriodSatNumber[1];
         revolutionPeriod = firstLastMjdPeriodSatNumber[2];

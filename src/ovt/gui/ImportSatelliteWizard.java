@@ -160,8 +160,8 @@ public class ImportSatelliteWizard extends JDialog {
             public void actionPerformed(ActionEvent evt) {
                 // set
                 try {
-                    String satName = satNameTF.getText();
-                    File file = filePanel.getFile();
+                    final String satName = satNameTF.getText();
+                    final File file = filePanel.getFile();
                     OVTCore.setGlobalSetting(RECENT_ORBIT_FILE, file.getAbsolutePath());
                     
                     // check the sat name
@@ -177,7 +177,7 @@ public class ImportSatelliteWizard extends JDialog {
                     else throw new Exception("Orbit file should end with .tle or .ltof");
                     
                     
-                    File outfile = new File(OVTCore.getOrbitDataDir()+Utils.replaceSpaces(satName)+ext);
+                    final File outfile = new File(OVTCore.getOrbitDataSubdir()+Utils.replaceSpaces(satName)+ext);
                     if (outfile.exists()) {
                         int res = JOptionPane.showConfirmDialog(sats.getCore().getXYZWin(),
                                 "Satellite already exists. Replace?",
@@ -187,11 +187,11 @@ public class ImportSatelliteWizard extends JDialog {
                     }
                     
                     if (dataType == TLE)   {                  
-                        TLESorter.sort(file, outfile); // check the tle file and copy it to $USER_HOME/odata/
+                        TLESorter.sort(file, outfile); // Check the tle file and COPY FILE to $USER_HOME/odata/ (or at least create new).
                         sat = new TLESat(sats.getCore());
                         
                     } else { // dataType == LTOF
-                        Utils.copyFile(file, outfile, true, true);
+                        Utils.copyFile(file, outfile, true, true);   // NOTE: COPY FILE.
                         sat = new LTOFSat(sats.getCore());
                     }
                     sat.setName(satName);
@@ -199,7 +199,7 @@ public class ImportSatelliteWizard extends JDialog {
                     
                     
                     sats.getCore().sendMessage("Success!", satName+" was successfuly validated and imported to \n"+
-                                            OVTCore.getOrbitDataDir());
+                                            OVTCore.getOrbitDataSubdir());
                     
                 } catch (IOException e2) {
                     sats.getCore().sendErrorMessage("Error", e2.getMessage());

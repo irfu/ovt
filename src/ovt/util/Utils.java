@@ -362,12 +362,12 @@ public class Utils extends Object {
 
     //******* following code added by kono ********
     /**
-     * Calculates axes of ellipsoide
+     * Calculates axes of ellipsoid.
      *
      * @param N - number of points
      * @param Data Nx3 array of coordinates
      */
-    public static double[] getEllipsoide(int N, double[][] Data) {
+    public static double[] getEllipsoid(int N, double[][] Data) {
         double[] R = new double[3 * (3 + 1) / 2];
         double[] res = new double[3], mean = new double[3], V = new double[9];
         int j, k, b, a;
@@ -519,74 +519,10 @@ public class Utils extends Object {
     }
 
 
-    /**
-     * Returns the unique filename.
-     *
-     * @param prefix can be "/tmp/tmpImage"
-     * @param sufix typicaly - dot + extension ".bmp"
-     * @return String filename, like "/tmp/tmpImage32397371.bmp"
-     */
-    public static synchronized String getRandomFilename(String prefix, String sufix) {
-        Random random = new Random();
-        int n = random.nextInt();
-        String res = prefix + Math.abs(n) + sufix;
-        File file = new File(res);
-        if (file.exists()) {
-            return getRandomFilename(prefix, sufix);
-        } else {
-            return res;
-        }
-    }
-
-
     public static <T> T[] concat(T[] first, T[] second) {
         T[] result = Arrays.copyOf(first, first.length + second.length);
         System.arraycopy(second, 0, result, first.length, second.length);
         return result;
-    }
-
-
-    /**
-     * Method to copy a file from a source to a destination specifying if source
-     * files may overwrite newer destination files and the last modified time of
-     * <code>destFile</code> file should be made equal to the last modified time
-     * of <code>sourceFile</code>.
-     *
-     * @throws IOException
-     */
-    public static void copyFile(File sourceFile, File destFile, boolean overwrite, boolean preserveLastModified)
-            throws IOException {
-
-        if (overwrite || !destFile.exists() || destFile.lastModified() < sourceFile.lastModified()) {
-
-            if (destFile.exists() && destFile.isFile()) {
-                destFile.delete();
-            }
-
-            // Ensure that parent dir of dest file exists!
-            // not using getParentFile method to stay 1.1 compatible.
-            File parent = new File(destFile.getParent());
-            if (!parent.exists()) {
-                parent.mkdirs();
-            }
-
-            FileInputStream in = new FileInputStream(sourceFile);
-            FileOutputStream out = new FileOutputStream(destFile);
-
-            byte[] buffer = new byte[8 * 1024];
-            int count = 0;
-            do {
-                out.write(buffer, 0, count);
-                count = in.read(buffer, 0, buffer.length);
-            } while (count != -1);
-
-            in.close();
-            out.close();
-
-            if (preserveLastModified) {
-                destFile.setLastModified(sourceFile.lastModified());
-            }
-        }
     }
 
 
@@ -657,7 +593,7 @@ public class Utils extends Object {
 
 
     /**
-     * If the String str is in the list - return true.
+     * Iff the String str is in the list - return true.
      */
     public static boolean inTheList(String str, String[] list) {
         for (int i = 0; i < list.length; i++) {
@@ -670,14 +606,78 @@ public class Utils extends Object {
 
 
     /**
-     * Returns URL of the resource
+     * Returns URL of the resource.
      */
     public static java.net.URL findResource(String file) throws FileNotFoundException {
-        java.net.URL url = OVTCore.class.getClassLoader().getResource(file);
+        final java.net.URL url = OVTCore.class.getClassLoader().getResource(file);
         if (url == null) {
             throw new FileNotFoundException("File not found (" + file + ")");
         }
         return url;
+    }
+
+
+    /**
+     * Returns the unique filename.
+     *
+     * @param prefix can be "/tmp/tmpImage"
+     * @param suffix typicaly - dot + extension ".bmp"
+     * @return String filename, like "/tmp/tmpImage32397371.bmp"
+     */
+    public static synchronized String getRandomFilename(String prefix, String suffix) {
+        Random random = new Random();
+        int n = random.nextInt();
+        String res = prefix + Math.abs(n) + suffix;
+        File file = new File(res);
+        if (file.exists()) {
+            return getRandomFilename(prefix, suffix);
+        } else {
+            return res;
+        }
+    }
+
+
+    /**
+     * Method to copy a file from a source to a destination specifying whether
+     * source files may overwrite newer destination files and the last modified
+     * time of <code>destFile</code> file should be made equal to the last
+     * modified time of <code>sourceFile</code>.
+     *
+     * @throws IOException
+     */
+    public static void copyFile(File sourceFile, File destFile, boolean overwrite, boolean preserveLastModified)
+            throws IOException {
+
+        if (overwrite || !destFile.exists() || destFile.lastModified() < sourceFile.lastModified()) {
+
+            if (destFile.exists() && destFile.isFile()) {
+                destFile.delete();
+            }
+
+            // Ensure that parent dir of dest file exists!
+            // not using getParentFile method to stay 1.1 compatible.
+            File parent = new File(destFile.getParent());
+            if (!parent.exists()) {
+                parent.mkdirs();
+            }
+
+            FileInputStream in = new FileInputStream(sourceFile);
+            FileOutputStream out = new FileOutputStream(destFile);
+
+            byte[] buffer = new byte[8 * 1024];
+            int count = 0;
+            do {
+                out.write(buffer, 0, count);
+                count = in.read(buffer, 0, buffer.length);
+            } while (count != -1);
+
+            in.close();
+            out.close();
+
+            if (preserveLastModified) {
+                destFile.setLastModified(sourceFile.lastModified());
+            }
+        }
     }
 
 
@@ -719,6 +719,8 @@ public class Utils extends Object {
     /*public static File findFile(String fileName) {
      return findFile(fileName, true);
      }*/
+    //
+    //
     /**
      * Will only return a File object for a file (non-directory) that already
      * exists, otherwise null. Hence there is no need for the caller to check if
@@ -750,24 +752,25 @@ public class Utils extends Object {
 
 
     /**
-     * Return instance of File based on argument. fileName is interpreted as a
-     * URL to a dir in OVT installadion directory.
+     * Return instance of File based on argument.
      *
-     * @param dirName
-     * @return
+     * @param dirName Interpreted as a URL to a dir in the OVT installation
+     * directory.
+     * @return A File object representing the directory. Null, if (1)
+     * dirName==null, or (2) can not interpret dirName as a "resource", or (3)
+     * the _directory_ (as represented by the argument) does NOT exist.
      */
     public static File findSysDir(String dirName) {
         if (dirName == null) {
             return null;
         }
 
-        ClassLoader classLoader = OVTCore.class.getClassLoader();
-        java.net.URL fn = classLoader.getResource(dirName);
+        final ClassLoader classLoader = OVTCore.class.getClassLoader();
+        final java.net.URL fn = classLoader.getResource(dirName);
         if (fn == null) {
             return null;
         }
-        File file;
-        file = new File(fn.getFile());
+        File file = new File(fn.getFile());
         if (!file.exists() | !file.isDirectory()) {
             file = null;
         }
@@ -777,50 +780,22 @@ public class Utils extends Object {
 
     /**
      * Return instance of File based on argument. dirName is interpreted as a
-     * relative path under the user's OVT config directory.
+     * relative path under the user's OVT config directory. Will ONLY return a
+     * path to an existing directory.
      *
-     * @param dirName
-     * @return File
+     * @param subDirName
+     * @return The directory. Null if the derived path does not exist or is not
+     * a directory.
      */
-    public static File findUserDir(String dirName) {
-        if (dirName == null) {
+    public static File findUserDir(String subDirName) {
+        if (subDirName == null) {
             return null;
         }
-        File file;
-        file = new File(OVTCore.getUserDir() + dirName);
+        File file = new File(OVTCore.getUserDir() + subDirName);
         if (!file.exists() | !file.isDirectory()) {
             file = null;
         }
         return file;
-    }
-
-
-    /**
-     * Calculate orbital period from a satellite's velocity and distance to
-     * Earth at an arbitrarily chosen instant. This should always yield the same
-     * result for an idealized elliptical orbit. Only uses SI units.
-     *
-     * @param r_SI Distance from center of the Earth in meters.
-     * @param v_SI Velocity in m/s in non-accelerating frame.
-     * @return Orbital period in seconds.
-     */
-    // PROPOSAL: Incorporate into OrbitalState. Partial result semimajor axis fits in there to.
-    public static double orbitalPeriod(double r_SI, double v_SI) {
-
-        /* Derive semimajor axis.
-         This can (most likely) be derived from the expression for the effective
-         potential for an orbit (average of min & max distance ==> semimajor axis). */
-        final double mu = Const.GRAV_CONST * Const.ME;
-        final double epsilon = v_SI * v_SI / 2 - mu / r_SI;
-        final double a = -mu / (2 * epsilon);  // Semimajor axis
-
-        /* Derive period from semimajor axis.
-         Uses Kepler's third law. The constant in Kepler's third law (C_K3) can
-         be derived using a circular orbit. */
-        final double C_K3 = 4 * Math.PI * Math.PI / (Const.GRAV_CONST * Const.ME);
-        final double P = Math.sqrt(C_K3 * a * a * a);
-
-        return P;
     }
 
 
@@ -865,6 +840,11 @@ public class Utils extends Object {
      * consistent with other behaviour (sic!).
      */
     public static int findNearestMatch(double[] a, double x, RoundingMode indexRoundingMode) {
+        /* Argument check.
+         ---------------
+         Important since RoundingMode has many confusing forms of rounding.
+         NOTE: RoundingMode.FLOOR/.CEILING round toward negative/positive
+         infinity as opposed to RoundingMode.DOWN/.UP. */
         if ((indexRoundingMode != RoundingMode.FLOOR) && (indexRoundingMode != RoundingMode.CEILING)) {
             throw new IllegalArgumentException("Illegal \"indexRoundingMode\" value.");
         }
@@ -1202,7 +1182,8 @@ public class Utils extends Object {
      * C - The Art of Scientific Computing", Second Edition, 1992, William H.
      * Press, Saul A. Teukolsky, William T. Vetterling, Brian P. Flannery.
      *
-     * Naming convention: _int = interpolated (interpolation) point. p = prime = firts derivative
+     * Naming convention: _int = interpolated (interpolation) point. p = prime =
+     * first derivative
      *
      * @param X X values for tabulated function (monotonically increasing).
      * @param Y Y values for tabulated function.
@@ -1358,11 +1339,41 @@ public class Utils extends Object {
         return rand;
     }
 
+
+    /**
+     * Calculate orbital period from a satellite's velocity and distance to
+     * Earth at an arbitrarily chosen instant. This should always yield the same
+     * result for an idealized elliptical orbit. Only uses SI units.
+     *
+     * @param r_SI Distance from center of the Earth in meters.
+     * @param v_SI Velocity in m/s in non-accelerating frame.
+     * @return Orbital period in seconds.
+     */
+    // PROPOSAL: Incorporate into OrbitalState. Partial result semimajor axis fits in there to.
+    public static double orbitalPeriod(double r_SI, double v_SI) {
+
+        /* Derive semimajor axis.
+         This can (most likely) be derived from the expression for the effective
+         potential for an orbit (average of min & max distance ==> semimajor axis). */
+        final double mu = Const.GRAV_CONST * Const.ME;
+        final double epsilon = v_SI * v_SI / 2 - mu / r_SI;
+        final double a = -mu / (2 * epsilon);  // Semimajor axis
+
+        /* Derive period from semimajor axis.
+         Uses Kepler's third law. The constant in Kepler's third law (C_K3) can
+         be derived using a circular orbit. */
+        final double C_K3 = 4 * Math.PI * Math.PI / (Const.GRAV_CONST * Const.ME);
+        final double P = Math.sqrt(C_K3 * a * a * a);
+
+        return P;
+    }
+
     /**
      * Return various orbital state values given instantaneous position and
      * velocity vectors and assuming an elliptical orbit.
      *
-     * NOTE: Only uses SI units without prefixes (meter, seconds etc).<BR>
+     * NOTE: Only uses SI units without prefixes (meter, seconds etc). The
+     * suffix "_SI" refers to this.<BR>
      *
      * NOTE: There are orbits which are far from approximately elliptical. SSC
      * Web Services lists at least one satellite in a Lissajous orbit, "ACE" at
@@ -1400,12 +1411,20 @@ public class Utils extends Object {
          */
         public final double omega_perigee_SI;
         /**
-         * Orbital period (Unit: seconds)
+         * Orbital period. (Unit: seconds)
          */
         public final double P_SI;
 
+        /**
+         * Approximate radius of Hill sphere.
+         */
+        private final double R_HILL_SPHERE_SI = 1.5e9;
+
 
         /**
+         * Represents orbital state assuming an orbit (elliptic/bound, parabolic
+         * & hyperbolic/escape orbits) around a point gravity source.
+         *
          * @param r_SI Position vector relative the Earth's center of mass.
          * Unit: meter.
          * @param v_SI Velocity vector in a non-accelerating frame/coordinate
@@ -1418,9 +1437,11 @@ public class Utils extends Object {
             final double v_abs_SI = Vect.absv(v_SI);
             final double r_abs_SI = Vect.absv(r_SI);
             E_orbital_norm_SI = 0.5 * v_abs_SI * v_abs_SI - Const.GRAV_CONST * Const.ME / r_abs_SI;
-            final double[] rxv_SI = new double[3];
-            Vect.cross(r_SI, v_SI, rxv_SI);
-            L_norm_SI = Vect.absv(rxv_SI);
+            {
+                final double[] rxv_SI = new double[3];
+                Vect.cross(r_SI, v_SI, rxv_SI);
+                L_norm_SI = Vect.absv(rxv_SI);
+            }
 
             /**
              * Can be derived from the expressions for orbital energy and
@@ -1435,10 +1456,39 @@ public class Utils extends Object {
             omega_perigee_SI = L_norm_SI / (r_perigee_SI * r_perigee_SI);
             P_SI = Utils.orbitalPeriod(r_abs_SI, v_abs_SI);
 
-            //Log.log("OrbitalState constructor: r_abs     = " + r_abs, DEBUG);
-            //Log.log("                          v_abs     = " + v_abs, DEBUG);
-            //Log.log("                          r_perigee_SI = " + r_perigee_SI, DEBUG);
-            //Log.log("                          r_apogee_SI  = " + r_apogee_SI, DEBUG);
+            //Log.log("OrbitalState constructor: r_abs       /R_Earth = " + r_abs_SI / (Const.RE * 1e3), DEBUG);
+            //Log.log("                          v_abs                = " + v_abs_SI, DEBUG);
+            //Log.log("                          r_perigee_SI/R_Earth = " + r_perigee_SI / (Const.RE * 1e3), DEBUG);
+            //Log.log("                          r_apogee_SI /R_Earth = " + r_apogee_SI / (Const.RE * 1e3), DEBUG);
+        }
+
+
+        public boolean isEllipticOrbit() {
+            return (E_orbital_norm_SI < 0);
+        }
+
+
+        public boolean isReasonableEllipticOrbit() {
+            if (!isEllipticOrbit()) {
+                return false;
+            }
+
+            // Should be unnecessary. Just for safety.
+            if (!Double.isFinite(r_perigee_SI) | !Double.isFinite(r_apogee_SI)) {
+                return false;
+            }
+
+            // Check if orbit goes below ground level.
+            if (r_perigee_SI <= Const.RE * 1e3) {
+                return false;
+            }
+
+            // Check if orbit goes beyond the Hill sphere, e.g. to a Lagrange point or to Mars.
+            if (r_apogee_SI > R_HILL_SPHERE_SI) {
+                return false;
+            }
+
+            return true;
         }
     }
 

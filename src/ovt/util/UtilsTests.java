@@ -25,7 +25,7 @@ import static ovt.util.Utils.getRandomFromString;
 import static ovt.util.Utils.linearInterpolation;
 
 /**
- * Test code for miscellaneous ovt.util.Utils functions.
+ * Test code for miscellaneous ovt.util.Utils functions, but not all.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se
  */
@@ -279,6 +279,7 @@ public class UtilsTests {
     }
 
 
+    /** Test code for cubicSplineInterpolation. Still based on user interaction. */
     // PROPOSAL: Add markings for the points which are actually tabulated (for the original tabulated curve).
     public static void test_cubicSplineInterpolation() {
         //final double[] x = {2, 3, 4, 5, 6, 7, 8, 9, 10};

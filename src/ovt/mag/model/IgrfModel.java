@@ -29,7 +29,7 @@ import ovt.mag.model.GandHcoefs;
  
 public class IgrfModel extends AbstractMagModel {
 
-  protected String igrfDatFileName=OVTCore.getMdataDir()+"igrf.d";
+  protected String igrfDatFileName=OVTCore.getMdataSubdir()+"igrf.d";
   public final static int ERROR_YEAR = -10000;
   protected int year = ERROR_YEAR;
   

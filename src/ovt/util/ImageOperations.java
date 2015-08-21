@@ -68,7 +68,7 @@ import ovt.graphics.BmpDecoder;
  * @version
  */
 public class ImageOperations {
-    public static final String COPYRIGHT = "Produced by OVT ("+ovt.OVTCore.ovtHomePage+")";
+    public static final String COPYRIGHT = "Produced by OVT ("+ovt.OVTCore.OVT_HOMEPAGE+")";
     public static final String PRINT_JOB_NAME = "OVT printing";
     
     private static final String DEFAULT_IMAGE_FILE = "Image.File";
@@ -700,7 +700,7 @@ public class ImageOperations {
                 
                 
                         String tmpDir = System.getProperty("java.io.tmpdir");
-        if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataDir();
+        if (tmpDir == null) tmpDir = ovt.OVTCore.getUserdataSubdir();
         String tempFile = Utils.getRandomFilename(tmpDir, ".bmp");
         tempFile = "xyz.bmp";
 

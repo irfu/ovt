@@ -7,6 +7,7 @@ package ovt.util;
 
 import gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription;
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -59,7 +60,7 @@ public abstract class SSCWSLibrary {
      * and Object#hashCode yet, making it unsuitable for use in many Java
      * standard collections classes.
      */
-    public static class SSCWSSatelliteInfo {
+    public static class SSCWSSatelliteInfo implements Serializable {
 
         public final String ID;
         public final String name;
@@ -115,7 +116,7 @@ public abstract class SSCWSLibrary {
      * lists for every successful call. That means the satellite list can never
      * change or be updated during a session (except by creating a new
      * SSCWSLibraryImpl object, but one is not supposed to do that). OVT assumes
-     * this behaviour and can therefore presently use the MVC pattern for the
+     * this behaviour and can therefore presently NOT use the MVC pattern for the
      * satellite list. Change this?
      */
     public abstract List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException;
@@ -162,7 +163,10 @@ public abstract class SSCWSLibrary {
     // TODO: Check which coordinate system to use: CoordinateSystem.GEI_J_2000, or .GEI_TOD or some other which is unambiguous.
     // TODO: formatOptions.setDistanceUnits(DistanceUnits.KM); or at least check with units are actually returned.
     public abstract double[][] getTrajectory_GEI(
-            String satID, double beginMjdInclusive, double endMjdInclusive, int resolutionFactor)
+            String satID,
+            double beginMjdInclusive,
+            double endMjdInclusive,
+            int resolutionFactor)
             throws IOException;
 
 

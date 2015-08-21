@@ -176,7 +176,7 @@ public class ClusterConfigurationPanel extends JPanel
     
     //*********** following code added by kono ************
     //Calculating semiaxises of CLUSTER' ellipsoide
-    double[] elipsoid = Utils.getEllipsoide(4,pos);
+    double[] elipsoid = Utils.getEllipsoid(4,pos);
     for (j=0; j<3; j++) {
       elipsoid[j]*=Const.RE;
       dist[j+3].setText(title[j+3] + (int)elipsoid[j]);

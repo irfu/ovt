@@ -224,7 +224,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
   }//GEN-LAST:event_backBtnPressed
 
   private void homeBtnPressed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnPressed
-    String url = ovt.OVTCore.ovtHomePage; 
+    String url = ovt.OVTCore.OVT_HOMEPAGE; 
     try {
       browserPane.setPage(url);
       history.putUrl(url);

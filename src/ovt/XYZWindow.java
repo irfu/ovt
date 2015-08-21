@@ -40,6 +40,8 @@ import vtk.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import ovt.object.Camera;
 import ovt.object.SSCWSSat;
@@ -78,7 +80,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     protected HTMLBrowser htmlBrowser;
     private SSCWSSatellitesSelectionWindow sscwsSatellitesSelectionWindow;
 
-    private final SSCWSSatellitesBookmarks sscwsBookmarks = new SSCWSSatellitesBookmarks();
+    private final SSCWSSatellitesBookmarksModel sscwsBookmarks = new SSCWSSatellitesBookmarksModel();
 
     public static final String SETTING_VISUALIZATION_PANEL_WIDTH = "VisualizationPanel.width";
     public static final String SETTING_VISUALIZATION_PANEL_HEIGHT = "VisualizationPanel.height";
@@ -94,7 +96,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     public XYZWindow() {
-        super("Orbit Visualization Tool " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
+        super(OVTCore.SIMPLE_APPLICATION_NAME + " " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
         try {
             setIconImage(Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getResource("images/ovt.gif")));
         } catch (NullPointerException npe) {
@@ -214,17 +216,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         // TEST/DEBUG
         // Automatically add satellites in the GUI (add to the left-hand GUI tree) as if the user had done it.
+        //addSSCWSSatAction("ace");
         //addSSCWSSatAction("Enterprise");
-        //menuBar.removeSSCWSSatAction("Enterprise");   // REMOVE SATELLITE
-        //menuBar.addSSCWSSatAction("DataGapSat");
-        //menuBar.addSSCWSSatAction("DownloadFailSat");
         //addSSCWSSatAction("ZzzzSat10");
         //addSSCWSSatAction("ZzzzSat11");
-        //addSSCWSSatAction("ZzzzSat12");
-        //addSSCWSSatAction("ZzzzSat13");
-        //---
-        //menuBar.addSSCWSSatAction("doublestar1");
-        //menuBar.addSSCWSSatAction("cluster1");
     }
 
 
@@ -294,17 +289,26 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
-     * Is executed when the window closes
+     * Is executed when the window closes.
      */
     public void quit() {
+
+        for (SSCWSSat sat : getSSCWSSats()) {
+            try {
+                sat.saveCacheToFile();
+            } catch (IOException e) {
+                core.sendErrorMessage("Error saving Orbit cache file: "+e.getMessage(), e);
+            }
+        }
 
         try {
             getCore().saveSettings();
         } catch (IOException e2) {
             getCore().sendErrorMessage("Error Saving Settings", e2);
         }
+
         // save VisualizationPanel's size
-        Dimension d = renPanel.getComponent().getSize();
+        final Dimension d = renPanel.getComponent().getSize();
         if (isResizable()) {
             OVTCore.setGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH, "" + d.width);
             OVTCore.setGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT, "" + d.height);
@@ -321,6 +325,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         OVTCore.setGlobalSetting("stepMjd", "" + getCore().getTimeSettings().getTimeSet().getStepMjd());
         OVTCore.setGlobalSetting("currentMjd", "" + getCore().getTimeSettings().getTimeSet().getCurrentMjd());
         OVTCore.setGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS, sscwsBookmarks.getGlobalSettingsValue());
+
         try {
             OVTCore.saveGlobalSettings();
         } catch (IOException e2) {
@@ -368,7 +373,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     }
 
 
-    public SSCWSSatellitesBookmarks getSSCWSBookmarks() {
+    public SSCWSSatellitesBookmarksModel getSSCWSBookmarksModel() {
         return sscwsBookmarks;
     }
 
@@ -419,10 +424,18 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * NOTE: Creates the JFrame-based object the first time it is requested and
      * then "caches it".
      */
-    public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() throws IOException {
+    public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() {
         if (sscwsSatellitesSelectionWindow == null) {
-            sscwsSatellitesSelectionWindow = new SSCWSSatellitesSelectionWindow(
-                    OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarks());
+            try {
+                final SSCWSSatellitesSelectionWindow temp = new SSCWSSatellitesSelectionWindow(
+                        OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarksModel());
+                sscwsSatellitesSelectionWindow = temp;
+            } catch (IOException e) {
+                /**
+                 * NOTE: Important to catch IOException here. If
+                 */
+                getCore().sendErrorMessage(e);
+            }
         }
         return sscwsSatellitesSelectionWindow;
     }
@@ -454,7 +467,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         final Sat preExistingSat = (Sat) getCore().getSats().getChildren().getChild(satName);  // null if there is no such satellite.
         if (preExistingSat != null) {
             // NOTE: Important to specify that we are speaking of adding a
-            // satellite to "GUI tree", not importing a file or any other form "adding".
+            // satellite to the "GUI tree", not importing a file or any other form "adding".
             //getCore().sendErrorMessage("Error", "Can not add satellite in the GUI since there already is a satellite with the same name (\"" + satName + "\").");
             return;
         }
@@ -550,13 +563,28 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
-     * @param True iff there is a SSCWSSat object corresponding to the argument
-     * in the GUI tree.
+     * @param True if-and-only-if there is a SSCWSSat object corresponding to
+     * the argument in the GUI tree.
      */
     public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException {
         // NOTE: Implementation assumes there is only one Sat by that exact name.
         final Sat sat = (Sat) getCore().getSats().getChildren().getChild(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
         return (sat instanceof SSCWSSat);
+    }
+
+
+    /**
+     * Obtain list of SSCWSSat objects added to the "GUI tree".
+     */
+    public List<SSCWSSat> getSSCWSSats() {
+        final Object[] satObjects = getCore().getSats().getChildren().toArray();
+        final List<SSCWSSat> sscwsSatList = new ArrayList();
+        for (Object satObj : satObjects) {
+            if (satObj instanceof SSCWSSat) {
+                sscwsSatList.add((SSCWSSat) satObj);
+            }
+        }
+        return sscwsSatList;
     }
 
 }   // XYZWindow

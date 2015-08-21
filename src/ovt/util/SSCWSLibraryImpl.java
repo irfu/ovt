@@ -177,7 +177,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
              your application."
              http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
              */
-            System.setProperty("http.agent", "Orbit Visualization Tool (OVT; " + ovt.OVTCore.ovtHomePage + ") ("
+            System.setProperty("http.agent", "Orbit Visualization Tool (OVT; " + ovt.OVTCore.OVT_HOMEPAGE + ") ("
                     + System.getProperty("os.name") + " "
                     + System.getProperty("os.arch") + ")");
 

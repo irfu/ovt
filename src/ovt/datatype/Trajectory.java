@@ -45,7 +45,7 @@ import java.lang.*;
 public class Trajectory extends Timetable {
 
     /**
-     * holds {int CoordSystem, vtkCardinalSpline[3]} pairs
+     * Holds {int CoordSystem, vtkCardinalSpline[3]} pairs.
      */
     protected Hashtable splines = new Hashtable();
 

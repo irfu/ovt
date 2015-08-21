@@ -6,9 +6,12 @@
 package ovt.util;
 
 import java.io.IOException;
+import java.io.ObjectInput;
+import java.io.ObjectOutput;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
@@ -20,9 +23,9 @@ import java.util.TreeMap;
  *
  * NOTE: null also works instead of an object.
  *
- * The term "cache slot" inside the class refers to a "place"/"slot"/"site"
- * where one object returned from the function (correspongin to a specific
- * integer) may or may not already be cached.
+ * DEFINITION: "Cache slot", or just "slot" refers to a "place"/"slot"/"site" in
+ * the cache where one object returned from the function (corresponding to a
+ * specific integer) may or may not already be cached.
  *
  * NOTE: The current implementation does not assume there are any min/max limits
  * on meaningful integer intervals. It just caches returned objects from calls
@@ -41,7 +44,12 @@ import java.util.TreeMap;
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, 2015
  */
-public class DiscreteIntervalToListCache<O> {
+// PROPOSAL: Use WeakHashMap as basis for cache.
+//    PRO: No need to manually restrict size of cache.
+//    CON: Weak references probably do not take the usage of the object into account.
+//       Ex: How often a cached object is used, or how recently it was used, does not
+//           influence how likely it is to be garbage collected.
+public class DiscreteIntervalToListCache<O extends Serializable> {
 
     /**
      * Number of extra cache slots to fill (below and above) when completing a
@@ -49,8 +57,8 @@ public class DiscreteIntervalToListCache<O> {
      * intentionally filling more cache slots than immediately needed to satisfy
      * the current request for data.
      */
-    private final int proactiveFillMargin;
-    private final DataSource dataSource;
+    private int proactiveCachingFillMargin;
+    private final transient DataSource dataSource;
     private final TreeMap<Integer, O> cachedObjects = new TreeMap<>();  // NOTE: HashMap/TreeMap permit null values.
 
     /**
@@ -65,10 +73,15 @@ public class DiscreteIntervalToListCache<O> {
         /**
          * Method that returns requested objects from the source.
          *
-         * NOTE: Must create all objects, even if an objects ends up with no
-         * data due to e.g. data gap.
+         * NOTE: An implementing class must not throw exception merely because
+         * it is known that there is no data for the specified interval, e.g.
+         * data gap or outside some natural interval for which there is data.
+         * Instead it must return something that represents the absence of data.
          *
-         * @param getListArgument Argument passed on from the call to the cache
+         * @param getListArgument Argument passed on from the call to the cache.
+         * Can be used to e.g. specify extra parameters, e.g. resolution.
+         * @return List of objects of class O. These objects should be treated
+         * as immutable by all code.
          */
         // IMPLEMENTATION NOTE: Java will not permit using "O" for return type (List<U>).
         public List getList(
@@ -82,17 +95,78 @@ public class DiscreteIntervalToListCache<O> {
     /**
      * Constructor.
      */
-    public DiscreteIntervalToListCache(DataSource mDataSource, int mProactiveFillMargin) {
-        if (mProactiveFillMargin < 0) {
-            throw new IllegalArgumentException("mProactiveFillMargin is negative.");
+    public DiscreteIntervalToListCache(DataSource mDataSource, int mProactiveCachingFillMargin) {
+
+        if (mProactiveCachingFillMargin < 0) {
+            throw new IllegalArgumentException("Proactive caching fill margin is negative.");
+        } else if (mDataSource == null) {
+            throw new NullPointerException("Data source is null.");
         }
-        this.proactiveFillMargin = mProactiveFillMargin;
+
+        this.proactiveCachingFillMargin = mProactiveCachingFillMargin;
         this.dataSource = mDataSource;
+    }
+
+
+    /**
+     * Constructor.
+     */
+    public DiscreteIntervalToListCache(
+            ObjectInput in, DataSource mDataSource, int mProactiveCachingFillMargin)
+            throws IOException {
+
+        if (mProactiveCachingFillMargin < 0) {
+            throw new IllegalArgumentException("Proactive caching fill margin is negative.");
+        } else if (mDataSource == null) {
+            throw new NullPointerException("Data source is null.");
+        }
+
+        final int N = in.readInt();
+        try {
+            for (int i = 0; i < N; i++) {
+                final int key = in.readInt();        // NOTE: Read primitive "int", not "Integer" object.
+                final O value = (O) in.readObject();
+                this.cachedObjects.put(key, value);
+            }
+        } catch (ClassNotFoundException e) {
+            throw new IOException("The Java class needed for reading stream could not be found.", e);
+        }
+
+        this.dataSource = mDataSource;
+        this.proactiveCachingFillMargin = mProactiveCachingFillMargin;
+    }
+
+
+    /**
+     * IMPLEMENTATION NOTE: The writing to stream captures the class of cached
+     * objects, not the class specified through Java generics when instantiating
+     * this class ("O").
+     */
+    public void writeToStream(ObjectOutput out) throws IOException {
+        out.writeInt(cachedObjects.size());
+        for (Map.Entry<Integer, O> entry : cachedObjects.entrySet()) {
+            out.writeInt(entry.getKey());     // NOTE: Write primitive "int", not "Integer" object.
+            out.writeObject(entry.getValue());
+        }
     }
 
 
     public void setCachingEnabled(boolean mCachingEnabled) {
         this.cachingEnabled = mCachingEnabled;
+    }
+
+
+    public void setProactiveCachingFillMargin(int mProactiveCachingFillMargin) {
+        if (mProactiveCachingFillMargin < 0) {
+            throw new IllegalArgumentException("Proactive caching fill margin is negative.");
+        }
+        this.proactiveCachingFillMargin = mProactiveCachingFillMargin;
+    }
+
+
+    /** Only supplied to give some sort of basic statistic on how full the cache is. */
+    public int getNbrOfFilledCacheSlots() {
+        return this.cachedObjects.size();
     }
 
 
@@ -136,7 +210,7 @@ public class DiscreteIntervalToListCache<O> {
                  objects are to be retrieved at all.
                  =============================================================*/
                 fillUncachedSlots(
-                        i_beginInclusive - this.proactiveFillMargin, i_endExclusive + this.proactiveFillMargin,
+                        i_beginInclusive - this.proactiveCachingFillMargin, i_endExclusive + this.proactiveCachingFillMargin,
                         acceptCachedObject, getListArgument);
             }
         }
@@ -149,9 +223,6 @@ public class DiscreteIntervalToListCache<O> {
         final List<O> requestedObjects = new ArrayList<>();
         for (int i = i_beginInclusive; i < i_endExclusive; i++) {
             final O cachedObject = this.cachedObjects.get(i);
-            if (cachedObject == null) {
-                throw new RuntimeException("Cache failed to fill up all cache slots. This indicates a pure code bug.");
-            }
             requestedObjects.add(cachedObject);
         }
 
@@ -166,6 +237,8 @@ public class DiscreteIntervalToListCache<O> {
      * @param getIndexedObjectsArgument Object that is passed on in calls to
      * DataSource#getList.
      */
+    // PROPOSAL: Reimplement using new generic utility function that identifies sequences of incrementing integers in array/list.
+    //    PRO: Would simplify/clarify the algorithm.
     private void fillUncachedSlots(
             int i_beginInclusive, int i_endExclusive,
             java.util.function.Predicate<O> acceptCachedObject,
@@ -247,69 +320,4 @@ public class DiscreteIntervalToListCache<O> {
         }
     }
 
-
-    //##########################################################################
-    /**
-     * Informal test code.
-     */
-    public static void main2(String[] args) throws Exception {
-        //======================================================================
-        class TestDataSource implements DiscreteIntervalToListCache.DataSource {
-
-            @Override
-            public List getList(int i_beginInclusive, int i_endExclusive, Object getIndexedObjectsArgument) {
-                System.out.println("getIndexedObjects(" + i_beginInclusive + ", " + i_endExclusive + ", " + getIndexedObjectsArgument + ")");
-
-                final List<Integer> objects = new ArrayList<>();   // ArrayList permits null.
-                for (int i = i_beginInclusive; i < i_endExclusive; i++) {
-                    if (i == 7) {
-                        objects.add(null);
-                    } else {
-                        objects.add(1000 + i);
-                    }
-                }
-                return objects;
-            }
-        }
-        //======================================================================
-        class TestCall {
-
-            int a, b;
-            List result;
-
-
-            TestCall(int a, int b, Object... mResult) {
-                this.a = a;
-                this.b = b;
-                this.result = new ArrayList();
-                result.addAll(Arrays.asList(mResult));
-            }
-        }
-        //======================================================================
-
-        final List<TestCall> testCalls = new ArrayList();
-        //testCalls.add(new TestCall(3, 5, 1003, 1004));
-        //testCalls.add(new TestCall(2, 4, 1002, 1003));
-        //testCalls.add(new TestCall(0, 6, 1000, 1001, 1002, 1003, 1004, 1005));
-        //testCalls.add(new TestCall(3, 5, 1003, 1004));
-        testCalls.add(new TestCall(5, 10, 1005, 1006, null, 1008, 1009));
-        //testCalls.add(new TestCall(-5, -3, 995, 996));
-
-        final DiscreteIntervalToListCache cache = new DiscreteIntervalToListCache(new TestDataSource(), 0);
-        for (TestCall call : testCalls) {
-            System.out.println("cache.getIndexedObjects(" + call.a + ", " + call.b + ", " + null + ", " + null + ");");
-            final List<Integer> actualResult = cache.getList(call.a, call.b, null, null);
-            if (actualResult.equals(call.result)) {
-                System.out.println("== OK ==");
-            } else {
-                System.out.println("====================================================  ERROR");
-                System.out.println("actualResult = " + actualResult);
-                System.out.println("call.result  = " + call.result);
-            }
-        }
-    } // main
-
-
-    public static void test() {
-    }
 }

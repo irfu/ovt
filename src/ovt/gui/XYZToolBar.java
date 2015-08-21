@@ -87,7 +87,7 @@ public XYZWindow getVW()
 
 	JButton button = null;
 
-        String imgDir = OVTCore.getImagesDir();
+        //String imgDir = OVTCore.getImagesSubdir();  // Not used?!
         
 	/*button = new JButton(new ImageIcon(imgDir+"Save.gif"));
 	button.setName("Export");

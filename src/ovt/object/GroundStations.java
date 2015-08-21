@@ -61,7 +61,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
 
     /** if <CODE>true</CODE> it is not possible to rename, remove*/
     private boolean isRootNode = false;
-    private static final String xml_file = OVTCore.getUserdataDir()+"gb_stations.xml";
+    private static final String xml_file = OVTCore.getUserdataSubdir()+"gb_stations.xml";
     private final File gbStationsFile;
     
     public GroundStations(OVTCore core) {

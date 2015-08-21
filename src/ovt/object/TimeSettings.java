@@ -55,10 +55,10 @@ import ovt.interfaces.*;
 public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
 
   private final int NBR_OF_STEPS_BEFORE_WARNING = 1000;
-  private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");
-  private final double INITIAL_INTERVAL_MJD = 1;
-  private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");   
-  private final double INITIAL_CURRENT_MJD = Time.getMjd("2012-12-30 00:00:00");
+  private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");   // Initial value used in constructor.
+  private final double INITIAL_INTERVAL_MJD = 1;                                 // Initial value used in constructor.
+  private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");     // Initial value used in constructor.
+  private final double INITIAL_CURRENT_MJD = Time.getMjd("2012-12-30 00:00:00");  // Initial value used in constructor.
 
   /** Holds value of property customizerVisible. */
   private boolean customizerVisible = false;
@@ -108,7 +108,7 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     
     final int nbrOfSteps = ts.getNumberOfValues();
     if (nbrOfSteps > NBR_OF_STEPS_BEFORE_WARNING)
-        getCore().sendWarningMessage("Warning", "Number of steps ("+nbrOfSteps+") exceeds "+NBR_OF_STEPS_BEFORE_WARNING+".");
+        getCore().sendWarningMessage("Warning", "Number of steps ("+nbrOfSteps+") exceeds "+NBR_OF_STEPS_BEFORE_WARNING+". This may slow down the application.");
     
     ts.adjustInterval();
     ts.adjustCurrentMjd();
@@ -151,19 +151,21 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   public double getStepMjd() {
     return timeSet.getStepMjd();
   }
+    
+  
   /** Setter for property stepMjd.
    * @param stepMjd New value of property stepMjd.
    *
-   * @throws PropertyVetoException
-   
-  public void setStepMjd(double stepMjd) throws IllegalArgumentException {
+   * @throws PropertyVetoException   
+   */
+  /*public void setStepMjd(double stepMjd) throws IllegalArgumentException {
       double oldStepMjd = this.stepMjd;
       if ( intervalMjd / stepMjd < 1) throw new IllegalArgumentException("Number of steps is less then 1");
       // check number of points
       if ( intervalMjd / stepMjd > 400) getCore().sendWarningMessage("Warning", "Number of steps exceeds 400");
       this.stepMjd = stepMjd;
       firePropertyChange("stepMjd", new Double(oldStepMjd), new Double(stepMjd));
-  }*/
+  }//*/
   
   /** Getter for property currentMjd.
    * @return Value of property currentMjd.

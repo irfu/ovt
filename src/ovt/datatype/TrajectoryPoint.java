@@ -39,7 +39,7 @@ import ovt.object.CoordinateSystem;
  */
 
 public class TrajectoryPoint {
-/** modified Julian day (mjd = 0 for 1950) */
+/** Modified Julian day (mjd = 0 for 1950) */
    public double mjd;   
 /** GEI coordinates (RE) of the satellite */
    public double gei[] = new double[3];       

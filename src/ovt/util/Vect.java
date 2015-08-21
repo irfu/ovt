@@ -193,7 +193,7 @@ public static double[] norm(double vec[]) {
 }
 
 
-/** Scalar product of two vectors. */
+/** Scalar product (dot product) of two vectors. */
 public static double  dot(double a[], double b[]) {
     double  ret_val = 0.0;
     for (int i=0; i<3; i++) {
@@ -215,7 +215,7 @@ public static double  dot(double a[], double b[]) {
 /** Vector product c = a x b.
  * @deprecated since 0.0001
  */
-// Why deprecated?!
+// Why deprecated?! Because there is another "cross" method?
 public static void cross(double a[], double b[], double c[]) {	
     c[0] = a[1] * b[2] - a[2] * b[1];
     c[1] = a[2] * b[0] - a[0] * b[2];
