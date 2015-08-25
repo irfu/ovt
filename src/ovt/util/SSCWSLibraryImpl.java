@@ -194,8 +194,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * NOTE: Cached during the program session to avoid multiple connection
      * attempts (that may produce errors/exceptions). <BR>
      *
-     * NOTE: Returns internal private (immutable) instances of SatelliteDescription, not
-     * copies.
+     * NOTE: Returns internal private (immutable) instances of
+     * SatelliteDescription, not copies.
      */
     @Override
     public List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException {
@@ -267,6 +267,13 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          As it appears from comparisons of trajectories from LTOF files, none of these is 
          exactly the same coordinate system.
          /Erik P G Johansson 2015-06-16.
+        
+         GEI_J_2000 (compared to GEI_TOD) decreases the difference between Cluster1 trajectories
+         (LTOF file vs SSC Web Services), and reduces it to be only in the velocity
+         direction (but it is not a constant time difference).
+         Therefore GEI_J_2000 seems to the same coordinate system as (or the one
+         closest to) the one used in LTOF files.
+         /Erik P G Johansson 2015-08-25.
          =====================================================================*/
         //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEO;
         //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;

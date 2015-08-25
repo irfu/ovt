@@ -112,7 +112,7 @@ public class Vect {
   }
 
 
-  
+  /** Multiply vector by scalar. */
   public static double[] multiply(double[] vector, double v) {
     double[] res = new double[vector.length];
     for (int i=0; i<vector.length; i++)
@@ -163,7 +163,7 @@ public static double absv2(double vec[]) {
 }
 
 
-/** change the length of vector vec(3) to norm */
+/** Normalize the length of vector vec(3) in-place. */
 public static void normf(double vec[], double norm) {
     final double s = absv(vec);
     for (int i=0; i<3; i++) {
@@ -171,7 +171,7 @@ public static void normf(double vec[], double norm) {
     }
 }
 
-/** Get the vector normalized by norm */
+/** Get the vector normalized by norm. */
 public static double[] norm(double vec[], double norm) {
     double res[] = new double[3];
     for (int i=0; i<3; i++) {
@@ -215,7 +215,7 @@ public static double  dot(double a[], double b[]) {
 /** Vector product c = a x b.
  * @deprecated since 0.0001
  */
-// Why deprecated?! Because there is another "cross" method?
+// Why deprecated?! Because there is another "cross" method? /Erik P G Johansson
 public static void cross(double a[], double b[], double c[]) {	
     c[0] = a[1] * b[2] - a[2] * b[1];
     c[1] = a[2] * b[0] - a[0] * b[2];
@@ -225,14 +225,15 @@ public static void cross(double a[], double b[], double c[]) {
 
 /** Normalized vector product. */
 public static double[] crossn(double a[], double b[]) {
-  double c[] = new double[3];
-  double x;
-  cross(a, b, c);
-  x = absv(c);
+    final double c[] = new double[3];    
+    cross(a, b, c);
+    final double x = absv(c);
 
-    if (x >= 1e-30)
-  for (int i=0; i<3; i++) 
-	c[i] = c[i] / x;
+    if (x >= 1e-30){
+        for (int i=0; i<3; i++) {
+            c[i] = c[i] / x;
+        }
+    }
     return c;
 }
 
@@ -250,12 +251,14 @@ public static void crossn(double a[], double b[], double c[]) {
 
   }
 
+
 /** Returns true if vectors are equal. */
 public static boolean equal(double[] vector1, double[] vector2) {
     for (int i=0; i<3; i++)
         if (vector1[i] != vector2[i]) return false;
     return true;
 }
+
 
 /** Returns true if vectors are equal within the eps tolorance. */
 public static boolean equal(double[] vector1, double[] vector2, double eps) {
