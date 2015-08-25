@@ -199,7 +199,7 @@ public class LTOFSat extends Sat {
                 while (mjd <= rec.dayEnd && k < timeMjdMap.length) {  //Treatment of MJDs as much as possible.
                     //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
                     mjd = timeMjdMap[k];
-                    
+                   
                     // BUG FIX. /Erik P G Johansson 2015-08-24
                     if (mjd > rec.dayEnd) {
                         break;
