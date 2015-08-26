@@ -783,15 +783,15 @@ public class Utils extends Object {
      * relative path under the user's OVT config directory. Will ONLY return a
      * path to an existing directory.
      *
-     * @param subDirName
+     * @param subdirName
      * @return The directory. Null if the derived path does not exist or is not
      * a directory.
      */
-    public static File findUserDir(String subDirName) {
-        if (subDirName == null) {
+    public static File findUserDir(String subdirName) {
+        if (subdirName == null) {
             return null;
         }
-        File file = new File(OVTCore.getUserDir() + subDirName);
+        File file = new File(OVTCore.getUserDir() + subdirName);
         if (!file.exists() | !file.isDirectory()) {
             file = null;
         }

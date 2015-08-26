@@ -265,6 +265,8 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
             // Determine whether the current cache slot needs to be filled.
             boolean fillCurrentSlot;
             if (hasCachedObject) {
+                // Set to "true" iff there is an acceptCachedObject, AND it rejects the cached data in the slot.
+                // No acceptCachedObject ==> Accept cached data.
                 fillCurrentSlot = (acceptCachedObject != null) && (!acceptCachedObject.test(cachedObject));
             } else {
                 fillCurrentSlot = true;

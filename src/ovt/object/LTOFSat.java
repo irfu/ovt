@@ -122,14 +122,6 @@ public class LTOFSat extends Sat {
      * can not easily be instantiated without launching the whole OVT GUI. With
      * this method separate, automatic test code can call it to read LTOF files
      * without having to launch the whole OVT GUI.
-     *
-     * NOTE: I suspect that there is a bug in this code that is often triggered
-     * for short timeMjdMap arrays (e.g. length=2) and produces coordinates with
-     * great errors.<BR>
-     * Example: {Time.getMjd(2010, 01, 01, 00, 00, 00), Time.getMjd(2011, 01,
-     * 01, 00, 00, 00)} (length=2 array)
-     * WILD GUESS: while loop at the end. There was a bug there before.
-     * /Erik P G Johansson 2015-08-24
      */
     public static void fill_GEI_VEI_Raw(File LTOFFile, double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr)
             throws IOException {
@@ -220,87 +212,107 @@ public class LTOFSat extends Sat {
 
 
     /**
-     * Kepler solver. Returns S/C position & velocity for input mjd
+     * Kepler solver. Returns S/C position & velocity for input mjd.
      *
      * @param Mjd
-     * @return double []
+     * @return Six component-array. The first three components are the position,
+     * the last three components are the velocity.
      */
-    private static double[] solveKepler(double day, LTOFRecord x) {
-        double[] X = new double[6]; //Outout position (km) & velocity (km/s)
-        double dmanom = (day - x.epoch) * 86400.0 / x.oMotin;
-        double revnum = x.revEpo + dmanom / 6.2831853072;
-        double arin, arm, rvwam, tam, comp, b, g0 = 0.0, g1 = 0.0, bet, d = 0.0, g2, g3, fx,
-                gx, rx, ft, gt, daymid, scale, s, pa, p, pb;
-        int i, l;
+    private static double[] solveKepler(double day, LTOFRecord rec) {
+        final int N_MAX_KEPLERS_EQUATION_ITERATIONS = 15;
+        final double[] pos_vel = new double[6]; //  Output position (km) & velocity (km/s)
+        //final double revnum = x.revEpo + dmanom / 6.2831853072;   // Not used?!!
 
-        arin = x.smAxis / x.rDist;
-        arm = (x.rDist - x.smAxis) / x.smAxis;
-        rvwam = (x.Y[0] * x.Y[3] + x.Y[1] * x.Y[4] + x.Y[2] * x.Y[5]) * x.oMotin / (x.smAxis * x.smAxis);
+        {
+            // rec.oMotin = Inverse mean motion.
+            // rec.smAxis = Semimajor axis.
+            // rec.rDist = Absolute value of the reference Kepler orbit position vector (distance to origin).
+            final double dmanom = (day - rec.epoch) / (rec.oMotin * Time.DAYS_IN_SECOND);  // Mean anomaly, counting since "rec.epoch". Unit: day/(day/rad)= rad
+            final double arin = rec.smAxis / rec.rDist;                  // Unit: None
+            final double arm = (rec.rDist - rec.smAxis) / rec.smAxis;    // Unit: None      
+            final double rvwam = (
+                    rec.Y[0] * rec.Y[3] +
+                    rec.Y[1] * rec.Y[4] +
+                    rec.Y[2] * rec.Y[5])
+                    * rec.oMotin / (rec.smAxis * rec.smAxis);  // Unit: km^2/s * s/rad / km = km/rad
 
-        // Calc. of ECC anomaly by Newton's iteration
-        tam = dmanom - rvwam;
-        comp = 1.0e-7 + 1.0e-10 * Math.abs(tam);
-        b = tam;
+            // Calc. of ECC anomaly by Newton's iteration.
+            final double tam = dmanom - rvwam;
 
-        //Iterations to solve Kepler's equation
-        for (i = 1; i <= 15; ++i) {
-            g0 = Math.cos(b);
-            g1 = Math.sin(b);
-            bet = tam - arm * g1 + rvwam * g0;
-            d = (bet - b) / (1.0 + arm * g0 + rvwam * g1);
-            b += d;
-            //This gives the accuracy 1.0e-14 in b & g's
-            if (Math.abs(d) <= comp) {
-                break;
+            // Iterate to solve Kepler's equation.
+            double b = tam;
+            double g0 = 0.0;
+            double g1 = 0.0;
+            double d = 0.0;
+            final double comp = 1.0e-7 + 1.0e-10 * Math.abs(tam);
+            for (int i = 1; i <= N_MAX_KEPLERS_EQUATION_ITERATIONS; ++i) {
+                g0 = Math.cos(b);
+                g1 = Math.sin(b);
+                final double bet = tam - arm * g1 + rvwam * g0;
+                d = (bet - b) / (1.0 + arm * g0 + rvwam * g1);
+                b += d;
+                // This gives the accuracy 1.0e-14 in b & g's.
+                if (Math.abs(d) <= comp) {
+                    break;
+                }
             }
-        }
-        g0 -= d * g1;
-        g1 += d * g0;
-        g2 = 1.0 - g0;
-        g3 = b - g1;
-        fx = 1.0 - g2 * arin;
-        gx = (dmanom - g3) * x.oMotin;
+            g0 -= d * g1;
+            g1 += d * g0;
+            final double g2 = 1.0 - g0;
+            final double g3 = b - g1;
+            final double fx = 1.0 - g2 * arin;
+            final double gx = (dmanom - g3) * rec.oMotin;
 
-        for (i = 0; i < 3; ++i) {
-            X[i] = fx * x.Y[i] + gx * x.Y[i + 3];
-        }
+            // Set POSITION.
+            for (int i = 0; i < 3; ++i) {
+                pos_vel[i] = fx * rec.Y[i] + gx * rec.Y[i + 3];  // NOTE: Uses both position and velocity information.
+            }
 
-        rx = Math.sqrt(X[0] * X[0] + X[1] * X[1] + X[2] * X[2]);
-        ft = -g1 * x.smAxis * arin / (x.oMotin * rx);
-        gt = 1.0 - g2 * x.smAxis / rx;
+            final double rx = Math.sqrt(
+                    pos_vel[0] * pos_vel[0] +
+                    pos_vel[1] * pos_vel[1] +
+                    pos_vel[2] * pos_vel[2]);  // Distance to origin.
+            final double ft = -g1 * rec.smAxis * arin / (rec.oMotin * rx);
+            final double gt = 1.0 - g2 * rec.smAxis / rx;
 
-        for (i = 3; i < 6; ++i) {
-            X[i] = ft * x.Y[i - 3] + gt * x.Y[i];
-        }
-
-        //Check if polynomial coefs. are required
-        if (x.coeffLinesNumber <= 1) {
-            return X;
-        }
-        daymid = 0.5 * (x.dayBeg + x.dayEnd);
-        scale = 4.0 / (x.dayEnd - x.dayBeg);
-        //Add chebyshev polynomial to kepler state vector
-        s = scale * (day - daymid);
-        pa = 1.0;
-        p = s * 0.5;
-        for (i = 0; i < 6; ++i) {
-            X[i] += x.Coefs[0][i] + x.Coefs[1][i] * p;
+            // Set VELOCITY.
+            for (int i = 3; i < 6; ++i) {
+                pos_vel[i] = ft * rec.Y[i - 3] + gt * rec.Y[i];  // NOTE: Uses both position and velocity information.
+            }        
         }
 
-        if (x.coeffLinesNumber <= 2) {
-            return X;
+        // Check if polynomial coeffs. are required.
+        if (rec.coeffLinesNumber <= 1) {
+            return pos_vel;    // EXIT function.
         }
 
-        for (l = 2; l < x.coeffLinesNumber; ++l) {
-            pb = pa;
+        final double daymid = 0.5 * (rec.dayBeg + rec.dayEnd);
+        final double scale = 4.0 / (rec.dayEnd - rec.dayBeg);
+        // Add chebyshev polynomial to kepler state vector.
+        final double s = scale * (day - daymid);
+
+        double p = s * 0.5;
+
+        for (int i = 0; i < 6; ++i) {
+            pos_vel[i] += rec.Coefs[0][i] + rec.Coefs[1][i] * p;  // Add to POSITION and VELOCITY.
+        }
+
+        if (rec.coeffLinesNumber <= 2) {
+            return pos_vel;    // EXIT function.
+        }
+
+        double pa = 1.0;
+        for (int l = 2; l < rec.coeffLinesNumber; ++l) {
+            final double pb = pa;
             pa = p;
             p = s * pa - pb;
 
-            for (i = 0; i < 6; ++i) {
-                X[i] += x.Coefs[l][i] * p;
+            for (int i = 0; i < 6; ++i) {
+                pos_vel[i] += rec.Coefs[l][i] * p;  // Add to POSITION and VELOCITY.
             }
         }
-        return X;
+        
+        return pos_vel;    // EXIT function.
     }
 
 

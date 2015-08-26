@@ -41,7 +41,7 @@ import java.util.*;
  * @author  ko
  */
 public  class LTOFRecord  {
-    /** Thr maximum number of polynomial coefficient lines */
+    /** The maximum number of polynomial coefficient lines. */
     public final int MaxCoefs=10;
 
     /** S/c number */
@@ -59,7 +59,8 @@ public  class LTOFRecord  {
     public double revEpo = -1;
     /** Semimajor axis 'a' in km, of the reference Kepler orbit */
     public double smAxis = -1;
-    /** Inverse mean motion = a*sqrt(a/miu) of the reference Kepler orbit in sec/rad, miu = central Earth potential. */
+    /** Inverse mean motion = a*sqrt(a/miu) of the reference Kepler orbit in sec/rad, miu = central Earth potential.
+     * NOTE: The "Cluster Data Delivery Interface Document (DDID)" actually calls the variable "OMOTIN", i.e. it is not a misspelling. */
     public double oMotin = -1;
 
     /** 3rd record: x-y-z components of the position and velocity of the reference Kepler orbit [km], [km/sec] */
@@ -79,37 +80,37 @@ public  class LTOFRecord  {
      * The format of the line : <code>I3, F12.6, F12.6, F15.9, F11.3, F13.5, F13.5, A1</code> */
     public void set2ndRecord(String line) throws IllegalArgumentException {
         try {   
-            recID         = new Integer(line.substring(0,3)).intValue(); 
+            recID = Integer.parseInt(line.substring(0,3)); 
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong recID");
         }
         try {
-        dayBeg      = new Double(line.substring(3,15)).doubleValue() + Time.Y2000;
+            dayBeg = Double.parseDouble(line.substring(3,15)) + Time.Y2000;
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong dayBeg");
         }
         try {
-            dayEnd      = new Double(line.substring(15,27)).doubleValue() + Time.Y2000;
+            dayEnd = Double.parseDouble(line.substring(15,27)) + Time.Y2000;
          } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong dayEnd");
         }
         try {
-            epoch       = new Double(line.substring(27,42)).doubleValue() + Time.Y2000;
+            epoch = Double.parseDouble(line.substring(27,42)) + Time.Y2000;
          } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong epoch");
         }
         try {
-            revEpo     = new Double(line.substring(42, 53)).doubleValue();
+            revEpo = Double.parseDouble(line.substring(42, 53));
          } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong revEpo");
         }
         try {
-            smAxis    = new Double(line.substring(53,66)).doubleValue();
+            smAxis = Double.parseDouble(line.substring(53,66));
          } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong smAxis");
         }
         try {
-            oMotin     = new Double(line.substring(66, 79)).doubleValue();
+            oMotin = Double.parseDouble(line.substring(66, 79));
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Wrong oMotin");
         }
@@ -161,7 +162,7 @@ public  class LTOFRecord  {
           String s1 = stok.nextToken();
           switch (i) {
              case 0: //coeffLinesNumber;
-                tmp_coeffLinesNumber = new Integer(s1).intValue();
+                tmp_coeffLinesNumber = Integer.parseInt(s1);
                 coeffLinesNumber=tmp_coeffLinesNumber-300;
                 if (coeffLinesNumber<0 || coeffLinesNumber>MaxCoefs)
                     throw new IllegalArgumentException("Wrong number of polynomial coefficient lines : "+coeffLinesNumber+" . ");
@@ -169,14 +170,14 @@ public  class LTOFRecord  {
                 Coefs=new double[coeffLinesNumber][6];  // Init. array!
                 break;
              case 1:
-                Y[i-1]=new Double(s1).doubleValue(); break;
+                Y[i-1] = Double.parseDouble(s1); break;
              default:
                 if(i>=1 && i<=6){
-                   Y[i-1]=new Double(s1).doubleValue();
+                   Y[i-1] = Double.parseDouble(s1);
                    break;
                 } else {
                    if(i==7)
-                      rDist=new Double(s1).doubleValue();
+                      rDist = Double.parseDouble(s1);
                    break;
                 }
           }
@@ -195,16 +196,16 @@ public  class LTOFRecord  {
        int i=0;  //Elements counter
        
        while(stok.hasMoreTokens() && i<7){
-          String s1=new String(stok.nextToken());
+          String s1 = stok.nextToken();
           switch(i){
              case 0: //nrec4Check;
-                nRec4Check=new Integer(s1).intValue();
+                nRec4Check = Integer.parseInt(s1);
                 if(nRec4Check!=(11*id+coeffLinesNumber))   //cheking for error
                    return 1;
                 else break;
              default: //setting data record
                 if(i>=1 && i<=6){
-                   Coefs[id-1][i-1] = new Double(s1).doubleValue();
+                   Coefs[id-1][i-1] = Double.parseDouble(s1);
                    break;
                 } else return 0;
           }

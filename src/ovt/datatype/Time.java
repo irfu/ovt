@@ -194,8 +194,8 @@ public class Time {
 
     /**
      * Convert from mjd to "Time". Uncertain what the actual time limits (min &
-     * max) are for this function to work. Conversion double-to-int is one
-     * limit. It is known empirically that something goes wrong with
+     * max) are for the formulas to work. Conversion double-to-int is one limit.
+     * It is known empirically that something goes wrong with
      * date-to-mjd-to-date for times before 1950-01-01, 00:00.00 (i.e. negative
      * mjd values).
      *
@@ -254,7 +254,7 @@ public class Time {
      * /Erik P G Johansson 2015-06-25.
      *
      * NOTE: There is at least one OVT function that converts in the opposite
-     * direction: public void setTime(double mjd)<BR>
+     * direction: Time#setTime(double mjd)<BR>
      * (non-static) which should be modified if this function is modified. As
      * long as both functions use the same offset the technicalites are probably
      * not that important. <BR>
@@ -575,54 +575,53 @@ public class Time {
         //final ovt.util.TimeFormat tf = new ovt.util.TimeFormat();
 
         System.out.println("mjd=0   : " + new Time(0.0));   // Determine epoch (back conversion not checked here).
-
+        System.out.println("--");
+        
         {
-            System.out.println("Test whether conversions mjd-->Time-->mjd are consistent, or if they drift (much or little).");
-            // Starts with mjd value.
-            final int N_iterations = 2;
-            final double[] mjdTestValues = new double[]{0, 1000, new Time(2004, 02, 11, 00, 00, 00).getMjd()};
-            for (double mjdTestValue : mjdTestValues) {
-                double mjd1 = mjdTestValue;
-
-                for (int i = 0; i < N_iterations; i++) {
-                    final Time time = new Time(mjd1);
-                    final double mjd2 = time.getMjd();
-                    //System.out.println("mjd1=" + mjd1 + ";  time=" + time + ";  mjd2=" + mjd2);
-                    System.out.println(String.format("mjd1=%12f;  time=%-39s;  mjd2=%12f", mjd1, time, mjd2));
-                    mjd1 = mjd2;
-                }
-            }
-        }
-
-        {
-            System.out.println("Test whether conversions Time-->mjd-->Time are consistent, or if they drift (much or little).");
+            // Test whether conversion and reverse conversion match each other.
+            // NOTE: Does not check whether the actual mjd values correspond to the normal dates.
+            System.out.println("Test whether conversions Time-->mjd-->Time-->... are consistent, or if they drift (much or little).");
             // Starts with Time (year-month-...) value.
             final int N_iterations = 1;
             final Time[] timeTestValues = new Time[]{
-                new Time(2004, 02, 11, 00, 00, 00),
-                new Time(2015, 4, 9, 00, 00, 00),
-                new Time(1900, 1, 1, 00, 00, 00),
-                new Time(1901, 1, 1, 00, 00, 00),
-                new Time(1902, 1, 1, 00, 00, 00),
-                new Time(1910, 1, 1, 00, 00, 00),
-                new Time(1920, 1, 1, 00, 00, 00),
-                new Time(1930, 1, 1, 00, 00, 00),
-                new Time(1940, 1, 1, 00, 00, 00),
-                new Time(1949, 12, 31, 23, 59, 59),
+                new Time(1999, 12, 31, 00, 00, 00),
+                new Time(1999, 12, 31, 23, 59, 59),
+                new Time(2001, 11, 9, 15, 59, 06),
+                new Time(2004, 02, 11, 17, 34, 39),
+                new Time(2015, 04, 9, 23, 59, 59),
+                //new Time(1900, 1, 1, 00, 00, 00),
+                //new Time(1901, 1, 1, 00, 00, 00),
+                //new Time(1902, 1, 1, 00, 00, 00),
+                //new Time(1910, 1, 1, 00, 00, 00),
+                //new Time(1920, 1, 1, 00, 00, 00),
+                //new Time(1930, 1, 1, 00, 00, 00),
+                //new Time(1940, 1, 1, 00, 00, 00),
+                //new Time(1949, 12, 31, 23, 59, 59),
                 new Time(1950, 1, 1, 00, 00, 00),
                 new Time(1960, 1, 1, 00, 00, 00),
                 new Time(1970, 1, 1, 00, 00, 00),
                 new Time(1980, 1, 1, 00, 00, 00),
-                new Time(1990, 1, 1, 00, 00, 00)
+                new Time(1990, 1, 1, 00, 00, 00),
+                new Time(2000, 1, 1, 00, 00, 00),
+                new Time(2010, 1, 1, 00, 00, 00),
+                new Time(2020, 1, 1, 00, 00, 00)
             };
             for (Time timeTestValue : timeTestValues) {
-                Time time1 = timeTestValue;
+                final Time timeStart = timeTestValue;
 
+                double mjd1 = timeStart.getMjd();
+                System.out.printf("timeStart=%-39s\n", timeStart);
                 for (int i = 0; i < N_iterations; i++) {
-                    final double mjd = time1.getMjd();
-                    Time time2 = new Time(mjd);
-                    System.out.println(String.format("time1=%-39s;  mjd=%12f;  time2=%-39s", time1, mjd, time2));
-                    time1 = time2;
+                    Time time = new Time(mjd1);
+                    double mjd2 = time.getMjd();
+                    final double mjdDiff = mjd2 - mjd1;
+
+                    System.out.printf("mjd1=%12f;  time=%s;  mjd2=%12f;  mjd2-mjd1=%e\n", mjd1, time, mjd2, mjdDiff);
+
+                    if (mjdDiff > 1e-20) {
+                        throw new AssertionError();
+                    }
+                    mjd1 = mjd2;   // Prepare for next iteration.
                 }
                 System.out.println("--");
             }

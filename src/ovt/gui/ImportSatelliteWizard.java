@@ -166,7 +166,7 @@ public class ImportSatelliteWizard extends JDialog {
                     
                     // check the sat name
                     if ("".equals(satName)) 
-                        throw new Exception("Please specify satellite name");
+                        throw new Exception("Please specify satellite name.");
                     
                     
                     int dataType = getOrbitDataType(file.getName());
@@ -174,10 +174,13 @@ public class ImportSatelliteWizard extends JDialog {
                     String ext="";
                     if (dataType == TLE) ext = ".tle";
                     else if (dataType ==  LTOF) ext = ".ltof";
-                    else throw new Exception("Orbit file should end with .tle or .ltof");
-                    
-                    
-                    final File outfile = new File(OVTCore.getOrbitDataSubdir()+Utils.replaceSpaces(satName)+ext);
+                    else throw new Exception("Orbit file should end with \".tle\" or \".ltof\".");                    
+
+                    // NOTE: The file should probably be copied to a location where
+                    // XYZMenuBar#createLTOF_TLESatsMenuItemList can find it.
+                    final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
+                    final File outfile = new File(userOrbitDir, Utils.replaceSpaces(satName)+ext);
+                    //final File outfile = new File(OVTCore.getOrbitDataSubdir()+Utils.replaceSpaces(satName)+ext);
                     if (outfile.exists()) {
                         int res = JOptionPane.showConfirmDialog(sats.getCore().getXYZWin(),
                                 "Satellite already exists. Replace?",

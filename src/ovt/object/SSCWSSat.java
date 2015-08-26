@@ -29,6 +29,18 @@ import ovt.util.Utils.OrbitalState;
  *
  * Sat subclass for satellites where OVT itself downloads data from SSC Web
  * Services (SSC WS) via the internet and caches the data internally.<BR>
+ *
+ * IMPLEMENTATION NOTE: The code is originally written to handle that (1) the
+ * time resolution requested from SSC can vary between requested and thus vary
+ * between different cache slots, and (2) that the time resolution requested
+ * from SSC for a given cache slot can be increased, thus replacing older data
+ * with lower time resolution in cache slot. Neither of these two features is
+ * however presently used and the same a constant time resolution is requested
+ * from the SSC DURING A SESSION. However, the derived time resolution can
+ * however still change from session to session due to updated SSC data or
+ * changes in the code which is relevant if the code reads cached data from disk
+ * from another session.
+ *
  */
 // PROPOSAL: Change name? 
 //    PRO: The common thread is not SSC Web Services?
@@ -36,25 +48,28 @@ import ovt.util.Utils.OrbitalState;
 //
 public class SSCWSSat extends Sat {
 
-    private static final int DEBUG = 3;   // The minimum log message level for this class.
+    private static final int DEBUG = 1;   // The minimum log message level for this class.
+    private static final boolean ALWAYS_REQUEST_BEST_TIME_RESOLUTION = false;   // For debugging.
     /**
      * See DiscreteIntervalToListCache to understand the variable.
      */
     private static final double CACHE_SLOT_SIZE_MJD = 1.0;
+
     /**
-     * See DiscreteIntervalToListCache to understand the variable.
+     * See DiscreteIntervalToListCache to understand this variable.
      */
     private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 10;
     private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";  // Include period.
-    private static final int SATELLITE_NBR = 1;     // Made-up value. Should be OK for single satellites(?).
+    private static final int SATELLITE_NBR = 1;  // Made-up value. Assumed to be OK for single satellites(?).
 
-    private final SSCWSSat.DataSource dataSource;
-
+    //##########################################################################
     /**
      * Cache file. Read (if it exists) and overwritten when quitting.
      */
     private final File cacheFile;
+    private final SSCWSSat.DataSource dataSource;
 
+    //##########################################################################
 
     /**
      * @param SSCWS_satID The satellite ID string used by SSC Web Services to
@@ -67,7 +82,7 @@ public class SSCWSSat extends Sat {
 
         /*==============================================
          Determine where a previous cache should be.
-         ===============================================*/        
+         ===============================================*/
         final String dir = OVTCore.getUserDir() + OVTCore.getOrbitDataSubdir();
         cacheFile = new File(dir + Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
         Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
@@ -113,9 +128,6 @@ public class SSCWSSat extends Sat {
     /**
      * NOTE: GEI=Geocentric Equatorial Inertial, VEI=Velocity in GEI
      * (presumably).
-     *
-     * NOTE: Presently uses only LINEAR interpolation to produce positions for
-     * the requested points in time.
      */
     void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
         this.dataSource.fill_GEI_VEI(timeMjdMap, gei_arr, vei_arr);
@@ -154,8 +166,8 @@ public class SSCWSSat extends Sat {
      * trajectories for the same satellite but from different source to verify
      * the coordinate system.
      *
-     * Boundary between this class and SSCWSOrbitCache is maybe vague. This
-     * class interpolates to requested times. SSCWSOrbitCache tries to
+     * NOTE: The boundary between this class and SSCWSOrbitCache is maybe vague.
+     * This class interpolates to requested times. SSCWSOrbitCache tries to
      * encapsulate the cache that is stored between sessions.
      *
      * PROPOSAL: Move this to separate (public) class?<BR>
@@ -186,8 +198,22 @@ public class SSCWSSat extends Sat {
 
             /*==============================================
              Read old cache if available and try to figure
-             out whether to use the old cache data.
-             ===============================================*/
+             out whether to use the old cache data, or not.
+             ----------------------------------------------
+             NOTE: SSC Web Services does not offer any way of knowing whether orbit data
+             has been updated at the SSC. Therefore there is no strict way of
+             knowing whether the locally cached data is identical to that at the SSC.
+             Therefore one has to make some guesses.
+             --
+             "Unfortunately, there is currently no way to find out when the orbital
+             data was updated through the web services.  I'll have to look into how
+             difficult that would be to implement.  For most active spacecraft,
+             checking the time range (particularly the end time) might be good enough
+             (since most updates are to extend the time covered). But we do
+             occasionally update past times with better data and I do not know how to
+             determine that."
+             /Bernie Harris, Bernard.T.Harris@nasa.gov, NASA SSC, e-mail 2015-05-21
+             =====================================================================*/
             SSCWSOrbitCache newCache = null;
             boolean createNewCache = true;
             if ((cacheFile != null) && (cacheFile.isFile())) {
@@ -261,12 +287,12 @@ public class SSCWSSat extends Sat {
          * Analogous to Sat#fill_GEI_VEI. Its implementation should delegate to
          * this one.
          *
-         * @param vei_arr_posAxis
+         * @param vei_arr_posAxis_kms
          */
         public void fill_GEI_VEI(
                 double[] timeMjdMap,
                 double[][] gei_arr_posAxis_km,
-                double[][] vei_arr_posAxis)
+                double[][] vei_arr_posAxis_kms)
                 throws IOException {
 
             /* Nbr of points to require outside requested interval.
@@ -284,7 +310,7 @@ public class SSCWSSat extends Sat {
             if ((gei_arr_posAxis_km.length > 0) && (gei_arr_posAxis_km[0].length != 3)) {
                 throw new IllegalArgumentException("Illegal array dimensions: gei_arr_posAxis[0].length != 3");
             }
-            if ((vei_arr_posAxis.length > 0) && (vei_arr_posAxis[0].length != 3)) {
+            if ((vei_arr_posAxis_kms.length > 0) && (vei_arr_posAxis_kms[0].length != 3)) {
                 throw new IllegalArgumentException("Illegal array dimensions: vei_arr_posAxis[0].length != 3");
             }
             //Log.log(this.getClass().getSimpleName() + ".fill_GEI_VEI", DEBUG);
@@ -340,13 +366,13 @@ public class SSCWSSat extends Sat {
                         interpCoords_pos_km,
                         interpVelocity_pos_kmMjd,
                         //Utils.SplineInterpolationBC.SET_SECOND_DERIV,
-                        Utils.SplineInterpolationBC.EQUAL_SECOND_DERIV,
+                        Utils.SplineInterpolationBC.SET_SECOND_DERIV,
                         Utils.SplineInterpolationBC.SET_SECOND_DERIV
                 );
 
                 for (int i_pos = 0; i_pos < gei_arr_posAxis_km.length; i_pos++) {
                     gei_arr_posAxis_km[i_pos][i_axis] = interpCoords_pos_km[i_pos];
-                    vei_arr_posAxis[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos];
+                    vei_arr_posAxis_kms[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos] * Time.SECONDS_IN_DAY;
                 }
             }
 
@@ -359,6 +385,8 @@ public class SSCWSSat extends Sat {
          * This function could in principle be redesigned to give different
          * results over time and be called directly when requesting data (and
          * thus take the request into account?).
+         *
+         * See the comments on time resolution for the entire class.
          */
         private int getTimeResolutionToRequest() throws IOException {
             final double PERIGEE_TRAJECTORY_TIMESCALE_FRACTION = 0.1;
@@ -371,6 +399,13 @@ public class SSCWSSat extends Sat {
              * useful, then select what to actually use.
              */
 
+            if (ALWAYS_REQUEST_BEST_TIME_RESOLUTION) {
+                final String msg = "DEBUGGING SETTING: getTimeResolutionToRequest: Using best time resolution = " + satInfo.bestTimeResolution + " [s] (return value)";
+                System.out.println(msg);
+                //Log.log(msg, DEBUG);
+                return satInfo.bestTimeResolution;
+            }
+            
             // NOTE: Should be unnecessary if perigeeTimeScale works.
             final OrbitalState orbitalState = getRepresentativeOrbitalState();  // Useful variable for debugging.
 
@@ -392,7 +427,8 @@ public class SSCWSSat extends Sat {
                         perigeeLimit,
                         coordSysRotationLimit);
             } else {
-                timeResolution = coordSysRotationLimit;
+                //timeResolution = coordSysRotationLimit;
+                timeResolution = satInfo.bestTimeResolution;
             }
 
             //timeResolution = this.satInfo.bestTimeResolution;   // TEST            
@@ -408,14 +444,16 @@ public class SSCWSSat extends Sat {
                         + "This indicates a pure OVT code bug.", DEBUG);
                 //throw new RuntimeException("Calculated timeResolution is non-finite (e.g. NaN). This indicates a pure OVT code bug.");
             }
+            
+            
 
             //Log.log(this.getClass().getSimpleName() + ".getTimeResolutionToRequest (satInfo.ID=\"" + satInfo.ID + "\")", DEBUG);
-            //Log.log("   timeResolution             = " + timeResolution + " [s] (return value before rounding)", DEBUG);
-            //Log.log("   perigeeTimescale           = " + perigeeTimescale + " [s]", DEBUG);
-            //Log.log("   coordSysRotationPeriod     = " + coordSysRotationPeriod + " [s]", DEBUG);
-            //Log.log("   satInfo.bestTimeResolution = " + satInfo.bestTimeResolution + " [s]", DEBUG);
-            //Log.log("   orbitalState.P_SI          = " + orbitalState.P_SI + " [s] = "+orbitalState.P_SI/3600.0 + " [h]", DEBUG);
-            //Log.log("   orbitalState.isReasonableEllipticOrbit() = " + orbitalState.isReasonableEllipticOrbit(), DEBUG);
+            Log.log("   timeResolution             = " + timeResolution + " [s] (return value before rounding)", DEBUG);
+            Log.log("   perigeeTimescale           = " + perigeeTimescale + " [s]", DEBUG);
+            Log.log("   coordSysRotationPeriod     = " + coordSysRotationPeriod + " [s]", DEBUG);
+            Log.log("   satInfo.bestTimeResolution = " + satInfo.bestTimeResolution + " [s]", DEBUG);
+            Log.log("   orbitalState.P_SI          = " + orbitalState.P_SI + " [s] = " + orbitalState.P_SI / 3600.0 + " [h]", DEBUG);
+            Log.log("   orbitalState.isReasonableEllipticOrbit() = " + orbitalState.isReasonableEllipticOrbit(), DEBUG);
             return (int) Math.floor(timeResolution);
         }
 

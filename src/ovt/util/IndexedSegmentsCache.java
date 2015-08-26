@@ -294,7 +294,10 @@ public class IndexedSegmentsCache {
                 acceptCacheSlotContentsFunction, newCacheSlotContentsArgument);
 
         if ((tpos1 == null) | (tpos2 == null)) {
-            throw new NoSuchTPositionException("Can not satisfy the request. The requested positions do not exist (rounding to non-existing position, or index margins are too great.");
+            throw new NoSuchTPositionException(
+                    "Can not satisfy the request. "
+                            + "The requested positions do not exist (rounding to "
+                            + "non-existing position, or index margins are too great).");
         }
 
         final int slot_beginInclusive = tpos1[0];

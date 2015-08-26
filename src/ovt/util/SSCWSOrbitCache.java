@@ -120,10 +120,6 @@ public class SSCWSOrbitCache {
 
     /**
      * Constructor. Construct empty cache.
-     *
-     * IMPLEMENTATION NOTE: Constructor uses SSC Web Services satellite ID
-     * string to identify satellite instead of SSCWSSatelliteInfo to make
-     * automated testing more convenient.
      */
     public SSCWSOrbitCache(
             SSCWSLibrary mSSCWSLibrary,
@@ -180,7 +176,8 @@ public class SSCWSOrbitCache {
     public SSCWSOrbitCache(
             ObjectInput in,
             SSCWSLibrary mSSCWSLibrary, String SSCWSSatID,
-            double approxProactiveCachingFillMarginMjd) throws IOException, ClassNotFoundException {
+            double approxProactiveCachingFillMarginMjd)
+            throws IOException, ClassNotFoundException {
 
         /* IMPLEMENTATION NOTE: Lets the caller set the proactive caching fill
          margin in units of (approximate) TIME, NOT SLOTS. 
@@ -214,7 +211,10 @@ public class SSCWSOrbitCache {
         }
         final SSCWSSatelliteInfo oldSatInfo;
         try {
-            final String streamComment = (String) in.readObject();   // Never used, but must be read.
+            // The return value is never used, but the object must be read.
+            // The return value should be a String so there is a point in checking for that.
+            final String streamComment = (String) in.readObject();
+
             oldSatInfo = (SSCWSSatelliteInfo) in.readObject();
         } catch (ClassCastException e) {
             throw new IOException("Read object of the wrong class: " + e.getMessage(), e);
@@ -227,26 +227,9 @@ public class SSCWSOrbitCache {
                 new CacheDataSource(),
                 0);   // Temporary proactive caching fill margin. Set later.
 
-
-        /*======================================================================
-         Decide what to do - Accept/reject old cache?
-         --------------------------------------------
-         NOTE: SSC Web Services does not offer any way of knowing whether orbit data
-         has been updated att the SSC. Therefore there is no strict way of
-         knowing whether the locally cached data is identical to that at the SSC.
-         Therefore one has to make some guesses.
-         --
-         "Unfortunately, there is currently no way to find out when the orbital
-         data was updated through the web services.  I'll have to look into how
-         difficult that would be to implement.  For most active spacecraft,
-         checking the time range (particularly the end time) might be good enough
-         (since most updates are to extend the time covered). But we do
-         occasionally update past times with better data and I do not know how to
-         determine that."
-         /Bernie Harris, Bernard.T.Harris@nasa.gov, NASA SSC, e-mail 2015-05-21
-         =====================================================================*/
         // Proactive caching fill margin.
-        final int proactiveCachingSlots = (int) (approxProactiveCachingFillMarginMjd / segmentsCache.getSlotSize());  // Rounding toward zero.
+        final int proactiveCachingSlots
+                = (int) (approxProactiveCachingFillMarginMjd / segmentsCache.getSlotSize());  // (int) yields rounding toward zero.
         this.segmentsCache.setProactiveCachingFillMargin(proactiveCachingSlots);
     }
 
@@ -306,10 +289,12 @@ public class SSCWSOrbitCache {
          */
         final int actualRequestedResolution = Math.max(callerRequestedResolution, satInfo.bestTimeResolution);
 
-        final Predicate ACCEPT_CACHED_SLOT_CONTENTS_FUNCTION = (Predicate) (Object o) -> {
-            final LocalCacheSlotContents unit = (LocalCacheSlotContents) o;
-            return (unit.requestedTimeResolutionSeconds <= actualRequestedResolution);
-        };
+        // NOTE: This function can not be moved outside since it relies on a locally defined (final) variable.
+        final Predicate ACCEPT_CACHED_SLOT_CONTENTS_FUNCTION
+                = (Predicate) (Object o) -> {
+                    final LocalCacheSlotContents unit = (LocalCacheSlotContents) o;
+                    return (unit.requestedTimeResolutionSeconds <= actualRequestedResolution);
+                };
 
         final Object data = this.segmentsCache.getData(
                 beginMjdInclusive, endMjdInclusive,
@@ -428,7 +413,7 @@ public class SSCWSOrbitCache {
         final long t_start = System.nanoTime();
         final double[][] coords_axisPos = sscwsLibrary.getTrajectory_GEI(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
-        System.out.println("   Time used for downloading data: " + duration + " [s]");
+        System.out.printf("   Time used for downloading data: %.1f [s]\n", duration);
 
         /*==============
          Check assertion

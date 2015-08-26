@@ -268,16 +268,26 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          exactly the same coordinate system.
          /Erik P G Johansson 2015-06-16.
         
-         GEI_J_2000 (compared to GEI_TOD) decreases the difference between Cluster1 trajectories
-         (LTOF file vs SSC Web Services), and reduces it to be only in the velocity
-         direction (but it is not a constant time difference).
-         Therefore GEI_J_2000 seems to the same coordinate system as (or the one
+         1) GEI_J_2000 (compared to GEI_TOD) combined with a constant time difference
+         decreases the difference between Cluster1-4 trajectories
+         (LTOF files vs SSC Web Services) to ~1 km.
+         Therefore GEI_J_2000 seems to be the same coordinate system as (or the one
          closest to) the one used in LTOF files.
+         2) When comparing with akebono.tle, both coordinate systems yield
+         differences of 80-90 km (standard deviation ~90 km)
+         when comparing TLE with SSCWS, with no coordinate system clearly better
+        than the other.
          /Erik P G Johansson 2015-08-25.
          =====================================================================*/
         //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEO;
         //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;
         final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_J_2000;
+        if (REQUESTED_CS != CoordinateSystem.GEI_J_2000) {
+            System.out.println("WARNING! Downloading satellite orbit data from SSC in a coordinate "
+                    + "system different from GEI_J_2000. This setting has probably "
+                    + "been made for testing purposes but should not be used in an "
+                    + "official version.");
+        }
 
         final SatelliteSpecification satSpec = new SatelliteSpecification();
         satSpec.setId(satID);
