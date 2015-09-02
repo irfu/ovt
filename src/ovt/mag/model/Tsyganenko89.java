@@ -19,8 +19,9 @@ public class Tsyganenko89 extends AbstractMagModel {
     super(magProps);
   }
   
+  @Override
   public double[] bv(double[] gsm, double mjd) {
-    double[] b = new double[3];
+    final double[] b = new double[3];
     tsyganenko89JNI(gsm, magProps.getKPIndex(mjd), getSint(mjd), getCost(mjd), b);
     return b;
   }

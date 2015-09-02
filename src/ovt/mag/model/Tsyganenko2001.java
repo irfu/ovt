@@ -34,6 +34,7 @@ public class Tsyganenko2001 extends AbstractMagModel {
     super(magProps);
   }
   
+  @Override   // interface MagModel
   public double[] bv(double[] gsm, double mjd) {
     double[] bv = new double[3];
     double swp = magProps.getSWP(mjd);

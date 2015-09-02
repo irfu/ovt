@@ -8,15 +8,12 @@ package ovt.util;
 import java.io.IOException;
 import java.io.ObjectInput;
 import java.io.ObjectOutput;
-import java.io.Serializable;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
@@ -50,10 +47,11 @@ public class SSCWSOrbitCache {
 
     /**
      * Version number of cached data in an object stream. This number always
-     * comes first in the stream. Code will reject data with the wrong number.
-     * This is a functionality to make it possible to change the format without
-     * needind to eliminate old cache files to avoid errors due to mismatch in
-     * stream format.
+     * comes first in the stream. The Code will reject data with the wrong
+     * version number. This is a functionality to make it possible to change the
+     * stream format without needing to manually remove old cache files just to
+     * avoid errors due to mismatch in stream format (the code will know to
+     * reject them).
      */
     private static final long STREAM_FORMAT_VERSION = 0;
 

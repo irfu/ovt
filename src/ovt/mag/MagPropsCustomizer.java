@@ -33,6 +33,8 @@ Khotyaintsev
 /*
  * MagPropsEditor.java
  *
+ * Class for a window that offers magnetic field settings.
+ *
  * Created on den 3 april 2000, 16:06
  */
 
@@ -342,6 +344,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     applyBtnActionPerformed();
   }
 
+  /** Execute actions that should follow when pressing the "Apply" button. */
   private void applyBtnActionPerformed () {
       if (valuesChanged()) {
         magProps.setInternalModelType(getIntModel());
@@ -463,8 +466,9 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     applyBtn.setEnabled(valuesChanged());
   }
   
+  /** Disable/enable buttonts depending on the chosen external model. */
   private void refreshActivityButtons() {
-      int extModel = getExtModel();
+      final int extModel = getExtModel();
       switch (extModel) {
           case MagProps.T87 : 
               kpindexEditBtn.setEnabled (true);

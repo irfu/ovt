@@ -25,7 +25,7 @@ public class Tsyganenko87 extends AbstractMagModel {
   }
   
 
-protected static native void tsyganenko87JNI(double[] gsm, double kp, double sint, double cost, double[] bv);
+  protected static native void tsyganenko87JNI(double[] gsm, double kp, double sint, double cost, double[] bv);
 
 }
 

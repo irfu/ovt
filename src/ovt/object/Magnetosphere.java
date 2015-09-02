@@ -59,7 +59,7 @@ public class Magnetosphere extends VisualObject implements
    TimeChangeListener, CoordinateSystemChangeListener, MagPropsChangeListener {
 
 
-   private static final int debug = 9;
+   private static final int DEBUG = 9;
   //Hashtable mpause_edge;
  // Fieldline f_line[][] = new Fieldline[MAXE][4]; /* coordinates of f-lines */
 
@@ -234,11 +234,11 @@ private void calculate() {
         }
 
 	Trace.lastline(getMagProps(), getMjd(), gsm, dir, xmin, altc, sense, Const.ERR_MP);
-        Log.log("y=0 : ["+is+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",debug);
+        Log.log("y=0 : ["+is+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",DEBUG);
         step = sigz * stepin;
         f_l = Trace.traceline(getMagProps(), getMjd(), gsm, step, Trace.SQRT_STEP_SIZE);
         n = f_l.size();
-        Log.log("["+is+"] -> "+ n +" points!",debug);
+        Log.log("["+is+"] -> "+ n +" points!",DEBUG);
         //for (i=0; i<3; i++) dir[i] = f_l.lastPoint().gsm[i];
 
         y_eq_zero_fl[is] = f_l;
@@ -259,11 +259,11 @@ private void calculate() {
                dir[2] = gsm[2] = 0.0;
 
 	       Trace.lastline(getMagProps(), getMjd(), gsm, dir, xmin, altc, sense, Const.ERR_MP);
-               Log.log("Front : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",debug);
+               Log.log("Front : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",DEBUG);
 	       step = sigz * stepin;
                f_l = Trace.traceline(getMagProps(), getMjd(), gsm, step, Trace.SQRT_STEP_SIZE);
 	       n = f_l.size();
-               Log.log("["+m+"] -> "+ n +" points!",debug);
+               Log.log("["+m+"] -> "+ n +" points!",DEBUG);
                for (i=0; i<3; i++) dir[i] = f_l.lastPoint().gsm[i];
                front_fl[m][is] = f_l;
            }
@@ -276,11 +276,11 @@ private void calculate() {
                dir[0] = dir[2] = gsm[2] = 0.0;
                dir[1] = sigy * 2.0;
                Trace.lastline(getMagProps(), getMjd(), gsm, dir, xmin, altc, sense, Const.ERR_MP);
-               Log.log("LIM : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",debug);
+               Log.log("LIM : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",DEBUG);
 	       step = sigz * stepin;
                f_l = Trace.traceline(getMagProps(), getMjd(), gsm, step, Trace.SQRT_STEP_SIZE);
 	       n = f_l.size();
-               Log.log("["+m+"] -> "+ n +" points!",debug);
+               Log.log("["+m+"] -> "+ n +" points!",DEBUG);
                for (i=0; i<3; i++) dir[i] = f_l.lastPoint().gsm[i];
                lim_fl[m][is] = f_l;
            }
@@ -293,11 +293,11 @@ private void calculate() {
                dir[2] = gsm[2] = sigz * r * Math.sin(tail_dangle * (m + 1));
                dir[0] = 0.0;
                Trace.lastline(getMagProps(), getMjd(), gsm, dir, xmin, altc, sense, Const.ERR_MP);
-               Log.log("TAIL : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",debug);
+               Log.log("TAIL : ["+is+","+m+"] "+gsm[0]+"\t"+gsm[1]+"\t"+gsm[2]+"\n",DEBUG);
 	       step = sigz * stepin;
                f_l = Trace.traceline(getMagProps(), getMjd(), gsm, step, Trace.SQRT_STEP_SIZE);
 	       n = f_l.size();
-               Log.log("["+m+"] -> "+ n +" points!",debug);
+               Log.log("["+m+"] -> "+ n +" points!",DEBUG);
                for (i=0; i<3; i++) dir[i] = f_l.lastPoint().gsm[i];
                tail_fl[m][is] = f_l;
            }

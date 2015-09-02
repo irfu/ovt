@@ -43,11 +43,11 @@ import ovt.util.*;
 import ovt.interfaces.*;
 
 /** 
+ * Abstract ancestor for magnetic field models.
  *
  * @author  Yuri Khotyaintsev
  * @version 
  */
-
 public abstract class AbstractMagModel implements MagModel {
   
   protected MagProps magProps = null;
@@ -56,7 +56,9 @@ public abstract class AbstractMagModel implements MagModel {
     this.magProps = magProps;
   }
   
-  public abstract double[] bv(double[] gsm, double mjd);
+  // Unncessary?
+  //@Override
+  //public abstract double[] bv(double[] gsm, double mjd);
   
   public Trans getTrans(double mjd) {
     return magProps.getTrans(mjd);

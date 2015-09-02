@@ -108,7 +108,7 @@ static {
 }
 
 public static void lastline (MagProps magProps, double mjd, double rv[], double dir[], int idir, double alt) {
-        lastline(magProps, mjd, rv, dir, MagProps.xlim, alt, idir, Const.ERR_MP);
+        lastline(magProps, mjd, rv, dir, magProps.xlim, alt, idir, Const.ERR_MP);
 }
 
 // mjd time

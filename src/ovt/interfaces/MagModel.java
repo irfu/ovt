@@ -31,7 +31,8 @@ Khotyaintsev
 =========================================================================*/
 
 /*
- * MagModel.java
+ * Presumably just an interface for sources of magnetic field.
+ * Only implemented by AbstractMagModel (2015-09-02).
  *
  * Created on March 25, 2000, 9:23 PM
  */
@@ -39,12 +40,14 @@ Khotyaintsev
 package ovt.interfaces;
 
 /** 
+ * Apparently interface for "things" which can return a magnetic field vector
  *
  * @author  root
  * @version 
  */
 public interface MagModel {
 
+    /** Return magnetic field vector. */
   public double[] bv(double[] gsm, double mjd);
   
 }

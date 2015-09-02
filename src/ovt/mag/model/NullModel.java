@@ -41,7 +41,7 @@ package ovt.mag.model;
 import ovt.mag.*;
 
 /** 
- * The class is used to return zerro  field
+ * The class is used to return zero field
  * @author  root
  * @version 
  */

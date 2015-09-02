@@ -56,7 +56,7 @@ public class SSCWSSat extends Sat {
     private static final double CACHE_SLOT_SIZE_MJD = 1.0;
 
     /**
-     * See DiscreteIntervalToListCache to understand this variable.
+     * See DiscreteIntervalToListCache to understand this variable. Must be non-negative.
      */
     private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 10;
     private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";  // Include period.

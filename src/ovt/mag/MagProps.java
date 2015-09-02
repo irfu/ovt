@@ -47,6 +47,13 @@ import java.util.*;
 import javax.swing.*;
 
 /** Class contains time INdependent magnetic field properties.
+ * Contains references to the (currently) eight activity indexes
+ * (MagActivityDataModel, MagActivityDataEditor) which are time-DEpenedent.
+ * 
+ * 
+ * MagProps = Magnetic(?) properties. Name is somewhat misleading since not all
+ * indexes have anything to do with magnetism (and not all indexes are 
+ * non-dimensional).
  */
 public class MagProps extends OVTObject 
     implements MagModel {
@@ -84,14 +91,15 @@ public static final int T2001 =  2001;
  *  Field = internalField  +  ModelFactor * externalFiels
  *  @see ovt.calc.MagPack#magbv(double[])
  */
-
 public static double modelFactor=1.0;
 
 public static double mSub=11.0;
 public static double bSub=13.5;
 
-/** Minimum distance in the tail. Should be negative. */
-public static double xlim = -30;
+private static final double xlim_default = -30;
+/** Minimum distance in the tail. Should be negative.
+ * Should be made into a private instance variable (i.e. non-static) with a get method? */
+public /*static*/ double xlim = xlim_default;
 
 /** Altitude (km) for footprint tracing */
 public static double alt = 100;
@@ -109,7 +117,7 @@ protected AbstractMagModel internalModel = null;
 protected AbstractMagModel externalModel = null;
 
 
-/* Magnetic Activity */
+/* Indices representing activity indexes (values that represent some form of quantity in some physical model). */
 public static final int KPINDEX     = 1;
 public static final int IMF         = 2;
 public static final int SWP         = 3;
@@ -118,7 +126,7 @@ public static final int MACHNUMBER  = 5;
 public static final int SW_VELOCITY = 6;
 public static final int G1 = 7;
 public static final int G2 = 8;
-public static final int MAX_ACTIVITY_INDEX = G2;   // Highest/last magnetic activity index. Used for iterating.
+public static final int MAX_ACTIVITY_INDEX = G2;   // Highest/last index for a activity index. Used for iterating.
 
 public static final int MAG_FIELD        = 30;
 public static final int INTERNAL_MODEL   = 31;
@@ -142,7 +150,7 @@ public static final String G2_STR = "G2";
 
 public static final String MPCLIP = "MP Clipping";  //Added by kono
 
-private MagActivityDataModel[] activity = new MagActivityDataModel[MAX_ACTIVITY_INDEX + 1];
+private MagActivityDataModel[] activityDataModels = new MagActivityDataModel[MAX_ACTIVITY_INDEX + 1];
 
 public static final double KPINDEX_DEFAULT = 0;
 public static final double[] IMF_DEFAULT = {0,0,0};
@@ -176,25 +184,25 @@ public MagProps(OVTCore core) {
   showInTree(false);
   this.core = core;
   
-  activity[KPINDEX] = new MagActivityDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
-  activity[IMF] = new MagActivityDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
-  activity[SWP] = new MagActivityDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
-  activity[DSTINDEX] = new MagActivityDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
-  activity[MACHNUMBER] = new MagActivityDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
-  activity[SW_VELOCITY] = new MagActivityDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
-  activity[G1] = new MagActivityDataModel( G1, 0, 50, 6, "G1");
-  activity[G2] = new MagActivityDataModel( G2, 0, 50, 10, "G2");
+  activityDataModels[KPINDEX] = new MagActivityDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
+  activityDataModels[IMF] = new MagActivityDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
+  activityDataModels[SWP] = new MagActivityDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
+  activityDataModels[DSTINDEX] = new MagActivityDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
+  activityDataModels[MACHNUMBER] = new MagActivityDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
+  activityDataModels[SW_VELOCITY] = new MagActivityDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
+  activityDataModels[G1] = new MagActivityDataModel( G1, 0, 50, 6, "G1");
+  activityDataModels[G2] = new MagActivityDataModel( G2, 0, 50, 10, "G2");
   
   
   if (!OVTCore.isServer()) {
-      activityEditors[KPINDEX] = new MagActivityDataEditor(activity[KPINDEX], this);
-      activityEditors[IMF] = new MagActivityDataEditor(activity[IMF], this);
-      activityEditors[SWP] = new MagActivityDataEditor(activity[SWP], this);
-      activityEditors[DSTINDEX] = new MagActivityDataEditor(activity[DSTINDEX], this);
-      activityEditors[MACHNUMBER] = new MagActivityDataEditor(activity[MACHNUMBER], this);
-      activityEditors[SW_VELOCITY] = new MagActivityDataEditor(activity[SW_VELOCITY], this);
-      activityEditors[G1] = new MagActivityDataEditor(activity[G1], this);
-      activityEditors[G2] = new MagActivityDataEditor(activity[G2], this);
+      activityEditors[KPINDEX] = new MagActivityDataEditor(activityDataModels[KPINDEX], this);
+      activityEditors[IMF] = new MagActivityDataEditor(activityDataModels[IMF], this);
+      activityEditors[SWP] = new MagActivityDataEditor(activityDataModels[SWP], this);
+      activityEditors[DSTINDEX] = new MagActivityDataEditor(activityDataModels[DSTINDEX], this);
+      activityEditors[MACHNUMBER] = new MagActivityDataEditor(activityDataModels[MACHNUMBER], this);
+      activityEditors[SW_VELOCITY] = new MagActivityDataEditor(activityDataModels[SW_VELOCITY], this);
+      activityEditors[G1] = new MagActivityDataEditor(activityDataModels[G1], this);
+      activityEditors[G2] = new MagActivityDataEditor(activityDataModels[G2], this);
       magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
       addMagPropsChangeListener(magPropsCustomizer);
   }
@@ -257,14 +265,17 @@ public double getModelFactor() {
   public void setExternalModelType(int externalModelType) {
       System.out.println("Setting exteral model to " + externalModelType);
       if (externalModelType!=NOMODEL && externalModelType!=T87 && 
-                externalModelType!=T89 && externalModelType!=T96 && externalModelType!=T2001)
+                externalModelType!=T89 && externalModelType!=T96 && externalModelType!=T2001) {
           throw new IllegalArgumentException("Invalid external field model type");
+      }
       if (externalModelType == T2001) { // set xlim to -15 ! This model is not valid for x < -15Re
           xlim = -15;
+      } else {
+          xlim = xlim_default;
       }
       int oldExternalModelType = this.externalModelType;
       this.externalModelType = externalModelType;
-      propertyChangeSupport.firePropertyChange ("externalModelType", new Integer (oldExternalModelType), new Integer (externalModelType));
+      propertyChangeSupport.firePropertyChange ("externalModelType", oldExternalModelType, externalModelType);
   }
 
 
@@ -313,20 +324,23 @@ public AbstractMagModel getExternalModel() {
 
 
 
-/** returns magnetic field vector
+/** Return magnetic field vector.
+ * 
  * @param gsm Coordinate in GSM
  * @param mjd time
  * @param internalModel internal model type
  * @param externalModel external model type
- * @return magnetic field vector in nT
+ * @return Magnetic field vector in nT
  */
 public double[] bv(double[] gsm, double mjd, int internalModel, int externalModel) {
-  Log.log("MagProps.bv(..) executed.",9);
-  double[] res = new double[3];
-  double[] intbv = getModel(internalModel).bv(gsm, mjd);
-  double[] extbv = getModel(externalModel).bv(gsm, mjd);
-  for (int i=0; i<3; i++) res[i] = intbv[i] + getModelFactor() * extbv[i];
-  return res;
+  Log.log("MagProps.bv(..) executed.",2);
+  final double[] result = new double[3];
+  final double[] intbv = getModel(internalModel).bv(gsm, mjd);
+  final double[] extbv = getModel(externalModel).bv(gsm, mjd);
+  for (int i=0; i<3; i++) {
+      result[i] = intbv[i] + getModelFactor() * extbv[i];
+  }
+  return result;
 }
 
 /** Returns magnetic field vector using current internal and external field models.
@@ -334,31 +348,36 @@ public double[] bv(double[] gsm, double mjd, int internalModel, int externalMode
  * @param mjd time
  * @return magnetic field vector in nT
  */
-public double[] bv(double[] gsm,double mjd) {
+@Override    // Interface MagModel
+public double[] bv(double[] gsm, double mjd) {
   return bv(gsm, mjd, getInternalModelType(), getExternalModelType());
 }
 
 /** Add a PropertyChangeListener to the listener list.
  * @param l The listener to add.
  */
+@Override
 public void addPropertyChangeListener(java.beans.PropertyChangeListener l) {
   propertyChangeSupport.addPropertyChangeListener (l);
 }
 /** Removes a PropertyChangeListener from the listener list.
  * @param l The listener to remove.
  */
+@Override
 public void removePropertyChangeListener(java.beans.PropertyChangeListener l) {
   propertyChangeSupport.removePropertyChangeListener (l);
 }
 /** Add a VetoableChangeListener to the listener list.
  * @param l The listener to add.
  */
+@Override
 public void addVetoableChangeListener(java.beans.VetoableChangeListener l) {
   vetoableChangeSupport.addVetoableChangeListener (l);
 }
 /** Removes a VetoableChangeListener from the listener list.
  * @param l The listener to remove.
  */
+@Override
 public void removeVetoableChangeListener(java.beans.VetoableChangeListener l) {
   vetoableChangeSupport.removeVetoableChangeListener (l);
 }
@@ -374,35 +393,38 @@ public void removeMagPropsChangeListener (MagPropsChangeListener listener) {
 //----------- DATA ---------------
 
 public double getKPIndex(double mjd) {
-   return activity[KPINDEX].getValues(mjd)[0];
+  Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);
+  final double value = activityDataModels[KPINDEX].getValues(mjd)[0];
+  Log.log("   value="+value, 2);
+  return activityDataModels[KPINDEX].getValues(mjd)[0];
 }
 
 public double[] getIMF(double mjd) {
-  return activity[IMF].getValues(mjd);
+  return activityDataModels[IMF].getValues(mjd);
 }
 
 public double getSWP(double mjd) {
-  return activity[SWP].getValues(mjd)[0];
+  return activityDataModels[SWP].getValues(mjd)[0];
 }
 
 public double getDSTIndex(double mjd) {
-  return activity[DSTINDEX].getValues(mjd)[0];
+  return activityDataModels[DSTINDEX].getValues(mjd)[0];
 }
 
 public double getMachNumber(double mjd) {
-  return activity[MACHNUMBER].getValues(mjd)[0];
+  return activityDataModels[MACHNUMBER].getValues(mjd)[0];
 }
 
 public double getSWVelocity(double mjd) {
-  return activity[SW_VELOCITY].getValues(mjd)[0];
+  return activityDataModels[SW_VELOCITY].getValues(mjd)[0];
 }
 
 public double getG1(double mjd) {
-  return activity[G1].getValues(mjd)[0];
+  return activityDataModels[G1].getValues(mjd)[0];
 }
 
 public double getG2(double mjd) {
-  return activity[G2].getValues(mjd)[0];
+  return activityDataModels[G2].getValues(mjd)[0];
 }
 
 public double getSint(double mjd) {
@@ -526,20 +548,25 @@ public Descriptors getDescriptors() {
           case G1           : return G1_STR;
           case G2           : return G2_STR;
       }
-      throw new IllegalArgumentException("Wrong index : " +index);
+      throw new IllegalArgumentException("Illegal index : " +index);
   }
   
-  /** @return activity.
-   *  The rule for requesting some component of activity, let's say
+  /** 
+   * Get either (1) all values (array) for specific activity index, or (2) one
+   * specific value for a specific activity index.
+   * 
+   * @return activity.
+   * The rule for requesting some component of activity, let's say
    * you need Z component of IMF (IMF[2]). <CODE>key = IMF*100 + 2</CODE>
    */
   public double[] getActivity(int key, double mjd) {
-    if (key <= 100) 
-            return activity[key].getValues(mjd);
+    Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
+    if (key <= 100)
+            return activityDataModels[key].getValues(mjd);
     else {
             int index = key/100;
             int component = key - index*100;
-            return new double[]{activity[index].getValues(mjd)[component]};
+            return new double[]{activityDataModels[index].getValues(mjd)[component]};
     }
   }
   
@@ -547,7 +574,7 @@ public Descriptors getDescriptors() {
    * INTERNAL_MODEL and EXTERNAL_MODEL are alse valid keys.
    */
   public Characteristics getCharacteristics(int[] keys, double mjd) {
-    Characteristics res = new Characteristics(mjd);
+    final Characteristics res = new Characteristics(mjd);
     double[] values = null;
     for (int i=0; i<keys.length; i++) {
         switch (keys[i]) {
@@ -578,21 +605,21 @@ public Descriptors getDescriptors() {
 
   
   /** used by XML */
-  public MagActivityDataModel getKPIndexDataModel() { return activity[KPINDEX]; }
+  public MagActivityDataModel getKPIndexDataModel() { return activityDataModels[KPINDEX]; }
   /** used by XML */
-  public MagActivityDataModel getIMFDataModel() { return activity[IMF]; }  
+  public MagActivityDataModel getIMFDataModel() { return activityDataModels[IMF]; }  
   /** used by XML */
-  public MagActivityDataModel getSWPDataModel() { return activity[SWP]; }  
+  public MagActivityDataModel getSWPDataModel() { return activityDataModels[SWP]; }  
   /** used by XML */
-  public MagActivityDataModel getDSTIndexDataModel() { return activity[DSTINDEX]; }  
+  public MagActivityDataModel getDSTIndexDataModel() { return activityDataModels[DSTINDEX]; }  
   /** used by XML */
-  public MagActivityDataModel getMachNumberDataModel() { return activity[MACHNUMBER]; }  
+  public MagActivityDataModel getMachNumberDataModel() { return activityDataModels[MACHNUMBER]; }  
   /** used by XML */
-  public MagActivityDataModel getSWVelocityDataModel() { return activity[SW_VELOCITY]; }  
+  public MagActivityDataModel getSWVelocityDataModel() { return activityDataModels[SW_VELOCITY]; }  
   /** used by XML */
-  public MagActivityDataModel getG1DataModel() { return activity[G1]; }  
+  public MagActivityDataModel getG1DataModel() { return activityDataModels[G1]; }  
   /** used by XML */
-  public MagActivityDataModel getG2DataModel() { return activity[G2]; }  
+  public MagActivityDataModel getG2DataModel() { return activityDataModels[G2]; }  
 
 }
 
