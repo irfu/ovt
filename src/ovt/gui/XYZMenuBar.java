@@ -36,7 +36,6 @@ import ovt.mag.*;
 import ovt.util.*;
 import ovt.object.*;
 import ovt.interfaces.*;
-import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -206,8 +205,8 @@ public class XYZMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        // Activity indexes
-        MagProps magProps = getCore().getMagProps();
+        // JMenuItems for the activity indexes (multiple menu items, one per index).
+        final MagProps magProps = getCore().getMagProps();
         for (int i = 1; i <= MagProps.MAX_ACTIVITY_INDEX; i++) {
             menuItem = new ActivityDataMenuItem(magProps, i);
             menu.add(menuItem);
@@ -575,6 +574,9 @@ public class XYZMenuBar extends JMenuBar {
 
 }
 
+
+
+/** JMenuItem for any of the (magnetic) activity indexes. */
 class ActivityDataMenuItem extends JMenuItem implements ActionListener {
 
     private int activityIndex;

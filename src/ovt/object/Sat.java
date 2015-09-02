@@ -124,7 +124,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             e2.printStackTrace(System.err);
         }
 
-    // Create Sat modules and put them to children.
+        // Create Sat modules and put them to children.
         satelliteModule = new SatelliteModule(this);
         addPropertyChangeListener(satelliteModule);
         addChild(satelliteModule);
@@ -297,7 +297,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         System.out.println("Computing orbit for " + getName() + " ... ");
 
         tra.clear();
-    //System.out.println(new TimeSet(getStartMjd(), getStopMjd(), getStepMjd()));
+        //System.out.println(new TimeSet(getStartMjd(), getStopMjd(), getStepMjd()));
 
         double[] timeMjdMap = getTimeSet().getValues();
         long start = System.currentTimeMillis();
@@ -321,7 +321,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         long fill_time = System.currentTimeMillis();
         Log.log("fill_GEI_VEI: " + (fill_time - start) / 1000.0 + " seconds", 3);
 
-    // Put orbit data in TrajectoryPoint objects ("trp") which in turn
+        // Put orbit data in TrajectoryPoint objects ("trp") which in turn
         // are put in a Trajectory object ("tra").
         for (int k = 0; k < N; k++) {
             final double mjd = timeMjdMap[k];
@@ -371,13 +371,13 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
      * caller does not check for data gaps (and can not easily be made to).
      *
      * @param geiarr Array in which the method puts satellite positions. The
-     * first index labels the coordinate tuple (the position). The second index represents the
-     * coordinate axis (x,y,z). [X/Y/Z][position]. Unit: km
-     * 
-     * @param veiarr Array in which the method puts satellite velocities.
-     * Unit: km/s according to TrajectoryPoint where the value ends up.
-     * NOTE: It is possible that is information is only used for better interpolation.
-     * 
+     * first index labels the coordinate tuple (the position). The second index
+     * represents the coordinate axis (x,y,z). [position][X/Y/Z]. Unit: km<BR>
+     *
+     * @param veiarr Array in which the method puts satellite velocities. Unit:
+     * km/s according to TrajectoryPoint where the value ends up. NOTE: It is
+     * possible that is information is only used for better interpolation.
+     *
      * @param timeMjdMap Points in times for which the method should return
      * positions.
      */
@@ -478,7 +478,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     }
 
 
-  //-----------------  FieldLine staff------------
+    //-----------------  FieldLine staff------------
     protected FieldlineCollection getFieldlineCollection(int type) {
         return mainFieldlineModule.getFieldlineCollection(type);
     }
@@ -505,7 +505,6 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
 
     //added by kono
-
     /**
      * @return null or spin vector in current CS (abs. value of vector is a spin
      * rate)
@@ -571,7 +570,6 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
 
     //added by kono
-
     public boolean isSpinAvailable() {
         return spinData.isAvailable();
     }

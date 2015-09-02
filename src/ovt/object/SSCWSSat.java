@@ -313,8 +313,12 @@ public class SSCWSSat extends Sat {
             if ((vei_arr_posAxis_kms.length > 0) && (vei_arr_posAxis_kms[0].length != 3)) {
                 throw new IllegalArgumentException("Illegal array dimensions: vei_arr_posAxis[0].length != 3");
             }
-            //Log.log(this.getClass().getSimpleName() + ".fill_GEI_VEI", DEBUG);
+            if ((timeMjdMap.length != gei_arr_posAxis_km.length)
+                    | (timeMjdMap.length != vei_arr_posAxis_kms.length)) {
+                throw new IllegalArgumentException("Illegal array dimensions. Lengths are not identical.");
+            }
 
+            //Log.log(this.getClass().getSimpleName() + ".fill_GEI_VEI", DEBUG);
             final double beginReqMjd = timeMjdMap[0];     // Req = Request/requested
             final double endReqMjd = timeMjdMap[timeMjdMap.length - 1];
 
@@ -405,7 +409,7 @@ public class SSCWSSat extends Sat {
                 //Log.log(msg, DEBUG);
                 return satInfo.bestTimeResolution;
             }
-            
+
             // NOTE: Should be unnecessary if perigeeTimeScale works.
             final OrbitalState orbitalState = getRepresentativeOrbitalState();  // Useful variable for debugging.
 
@@ -444,8 +448,6 @@ public class SSCWSSat extends Sat {
                         + "This indicates a pure OVT code bug.", DEBUG);
                 //throw new RuntimeException("Calculated timeResolution is non-finite (e.g. NaN). This indicates a pure OVT code bug.");
             }
-            
-            
 
             //Log.log(this.getClass().getSimpleName() + ".getTimeResolutionToRequest (satInfo.ID=\"" + satInfo.ID + "\")", DEBUG);
             Log.log("   timeResolution             = " + timeResolution + " [s] (return value before rounding)", DEBUG);

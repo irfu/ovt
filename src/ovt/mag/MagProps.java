@@ -42,23 +42,20 @@ import ovt.interfaces.*;
 import ovt.mag.model.*;
 import ovt.object.*;
 
-import java.io.*;
 import java.beans.*;
 import java.util.*;
 import javax.swing.*;
-import java.lang.reflect.*;
 
-/** Class contains time independent magnetic field properties
- * properties.
+/** Class contains time INdependent magnetic field properties.
  */
 public class MagProps extends OVTObject 
     implements MagModel {
 
 private ovt.OVTCore core;
 
-/** Minimum absolut value of magnetic field */
+/** Minimum absolute value of magnetic field */
 public static double BMIN = 3.6;
-/** Maximum absolut value of magnetic field */
+/** Maximum absolute value of magnetic field */
 public static double BMAX = 63500;
 /** magnetic moment of the earth for igrf1985 model */
 public static final double DIPMOM = -30483.03;
@@ -121,7 +118,7 @@ public static final int MACHNUMBER  = 5;
 public static final int SW_VELOCITY = 6;
 public static final int G1 = 7;
 public static final int G2 = 8;
-public static final int MAX_ACTIVITY_INDEX = G2;
+public static final int MAX_ACTIVITY_INDEX = G2;   // Highest/last magnetic activity index. Used for iterating.
 
 public static final int MAG_FIELD        = 30;
 public static final int INTERNAL_MODEL   = 31;

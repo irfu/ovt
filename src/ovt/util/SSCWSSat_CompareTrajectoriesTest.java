@@ -15,9 +15,9 @@ import ovt.object.SSCWSSat;
 import ovt.object.TLESat;
 
 /**
- * Informal test code for comparing trajectories to determine differences in
- * coordinate systems or time. Used in particular to verify the coordinate
- * system used by SSCWS satellites data.
+ * Informal test_compareTrajectories code for comparing trajectories to
+ * determine differences in coordinate systems or time. Used in particular to
+ * verify the coordinate system used by SSCWS satellites data.
  *
  * Theories for why trajectories may differ:<BR>
  * 1) Interpolation<BR>
@@ -48,14 +48,16 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
 
     public static void main(String[] args) throws IOException {
-        //DistributionEstimator.test();
+        //DistributionEstimator.test_compareTrajectories();
         //test_testCode();
-        test();
+        test_compareTrajectories();
+        //test_pointCalculation();
     }
 
 
     /**
-     * Test code for compareTrajectories (test code for the test code...).
+     * Test code for compareTrajectories (test_compareTrajectories code for the
+     * test_compareTrajectories code...).
      *
      * @throws IOException
      */
@@ -82,13 +84,33 @@ public class SSCWSSat_CompareTrajectoriesTest {
     }
 
 
+    public static void test_pointCalculation() throws IOException {
+        final double[] timeMjdMap = {Time.getMjd(1997, 01, 01, 00, 00, 00)};
+        TrajectoryDataSource tds = new LTOFFileDataSource(
+                "/home/erjo/work_files/ovt_diverse/ESOC_LTOF_validation/ltof.cl1"
+        );
+
+        /*final double[] timeMjdMap = {Time.getMjd(2005, 01, 01, 00, 00, 00)};
+         TrajectoryDataSource tds = new LTOFFileDataSource(
+         "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"
+         );*/
+        final double[][] gei_arr_posAxis_km = new double[1][3];
+        final double[][] vei_arr = new double[1][3];
+        tds.fill_GEI_VEI(timeMjdMap, gei_arr_posAxis_km, vei_arr);
+
+        System.out.printf("gei_arr : %f, %f, %f\n", gei_arr_posAxis_km[0][0], gei_arr_posAxis_km[0][1], gei_arr_posAxis_km[0][2]);
+        System.out.printf("vei_arr : %f, %f, %f\n", vei_arr[0][0], vei_arr[0][1], vei_arr[0][2]);
+    }
+
+
     /**
-     * Informal test code for comparing coords_axisPos_kmMjd data for the same
-     * satellite from two different sources (instance of "Sat").
+     * Informal test_compareTrajectories code for comparing coords_axisPos_kmMjd
+     * data for the same satellite from two different sources (instance of
+     * "Sat").
      */
     // PROPOSAL: Try trajectories of more satellites than cluster.
     // PROPOSAL: Verify coordinate system of LTOF files?
-    public static void test() throws IOException {
+    public static void test_compareTrajectories() throws IOException {
         /*
          -------- SSC Web Services --------
          getID(): cluster1;   getName(): Cluster-1 (FM5/Rumba)
@@ -117,28 +139,37 @@ public class SSCWSSat_CompareTrajectoriesTest {
          */
 
         final int N = 20000;   // Note: 1 day = 1440 min.
-        final double startMjd = Time.getMjd(2005, 01, 01, 00, 00, 00);
+        final double startMjd = Time.getMjd(2010, 1, 1, 0, 0, 0);
         final double lengthMjd = 120;
-        final double timeDifferenceMjd = Time.DAYS_IN_SECOND * 0;
-        /*compareTrajectories(
-                new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+        final double timeDifferenceMjd = Time.DAYS_IN_SECOND * 30;
+        compareTrajectories(
+                new SSCWSDataSource("cluster3", SSCWSLibraryImpl.DEFAULT_INSTANCE),
                 new LTOFFileDataSource(
                         //"/home/erjo/work_files/ovt/build/classes/odata/Cluster1.ltof"
-                        "/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"
+                        "/home/erjo/work_files/INBOX/SUPER_LTOF_C3.CR.ltof"
                 ),
                 Utils.newLinearArray(
                         startMjd,
                         startMjd + lengthMjd, N),
                 timeDifferenceMjd);//*/
-        compareTrajectories(
-                new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-                new LTOFFileDataSource(
-                        "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"
-                ),
-                Utils.newLinearArray(
-                        startMjd,
-                        startMjd + lengthMjd, N),
-                timeDifferenceMjd);//*/
+        /*compareTrajectories(
+         new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new LTOFFileDataSource(
+         "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_1.ltof"),
+         Utils.newLinearArray(
+         startMjd,
+         startMjd + lengthMjd, N),
+         timeDifferenceMjd);//*/
+        //--------------------------
+        /*compareTrajectories(
+         new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new LTOFFileDataSource(
+         "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"),
+         Utils.newLinearArray(
+         startMjd,
+         startMjd + lengthMjd, N),
+         timeDifferenceMjd);//*/
+        //--------------------------
         /*compareTrajectories(
          new LTOFFileDataSource(
          "/home/erjo/work_files/ovt/build/classes/odata/Cluster1.ltof"
@@ -150,6 +181,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
          startMjd,
          startMjd + lengthMjd, N),
          0.0);//*/
+        //--------------------------
         /*compareTrajectories(
          new SSCWSDataSource("polar", SSCWSLibraryImpl.DEFAULT_INSTANCE),
          new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Polar.tle"),
@@ -157,6 +189,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
          startMjd,
          startMjd + lengthMjd, N),
          timeDifferenceMjd);//*/
+        //--------------------------
         /*compareTrajectories(
          new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
          new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/akebono.tle"),
@@ -164,6 +197,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
          startMjd,
          startMjd + lengthMjd, N),
          timeDifferenceMjd);//*/
+        //--------------------------
     }
 
 
@@ -276,11 +310,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
          minMaxNotice = " - min/max";
          //System.out.println("min/max");
          }*/
-            //System.out.printf(time.toString() + ": d = %3.0f (%.2f), dPos_vp = "+dPos_vp_array[i]+""+minMaxNotice+"\n", dPos_abs_array[i], dPos_abs_array[i] - dPos_abs_array[i - 1]);
+        //System.out.printf(time.toString() + ": d = %3.0f (%.2f), dPos_vp = "+dPos_vp_array[i]+""+minMaxNotice+"\n", dPos_abs_array[i], dPos_abs_array[i] - dPos_abs_array[i - 1]);
         //System.out.printf("dPos_abs=%5.1f, vei=%8.1f, dPos_vp=%f\n", d_abs_array[i], Vect.absv(vei_arr[i]), d_vp_array[i]);
         //}
 
-        //System.out.println("---");
+        System.out.println("---");
         System.out.println("N = " + N);
         System.out.printf("Average time step: %.2f [s]\n", timeLengthMjd / (N - 1) * Time.SECONDS_IN_DAY);
         printStatistics("d_abs", new Statistics(d_abs_array, false));
@@ -291,18 +325,18 @@ public class SSCWSSat_CompareTrajectoriesTest {
         System.out.println("========");
         printStatistics("d_r", new Statistics(d_r_array, false));
         printStatistics("d_v2", new Statistics(d_v2_array, false));
-        printStatistics("d_rxv2", new Statistics(d_rxv2_array, false));
+        printStatistics("d_rxv2 (perp. to orbital plane)", new Statistics(d_rxv2_array, false));
         printStatistics("d_v2xrxv2", new Statistics(d_v2xrxv2_array, false));
         System.out.println("========");
         printStatistics("d_v2p", new Statistics(d_v2p_array, false));
-        printStatistics("dPos2dt_dot_v2_norm_array", new Statistics(dPos2dt_dot_v2_norm2_array, true));
-        printStatistics("v_dPos2dt_array", new Statistics(v_dPos2dt_array, true));
-        printStatistics("d_dPos2dtp_array", new Statistics(d_dPos2dtp_array, true));
-        System.out.println("========");
-        printStatistics("rotAxisX", new Statistics(rotAxisX_array, false));
-        printStatistics("rotAxisY", new Statistics(rotAxisY_array, false));
-        printStatistics("rotAxisZ", new Statistics(rotAxisZ_array, false));
-        printStatistics("rotAxis_abs", new Statistics(rotAxis_abs_array, false));
+        //printStatistics("dPos2dt_dot_v2_norm_array", new Statistics(dPos2dt_dot_v2_norm2_array, true));
+        //printStatistics("v_dPos2dt_array", new Statistics(v_dPos2dt_array, true));
+        //printStatistics("d_dPos2dtp_array", new Statistics(d_dPos2dtp_array, true));
+        //System.out.println("========");
+        //printStatistics("rotAxisX", new Statistics(rotAxisX_array, false));
+        //printStatistics("rotAxisY", new Statistics(rotAxisY_array, false));
+        //printStatistics("rotAxisZ", new Statistics(rotAxisZ_array, false));
+        //printStatistics("rotAxis_abs", new Statistics(rotAxis_abs_array, false));
     }
 
 
@@ -332,6 +366,10 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
         src1.fill_GEI_VEI(timeMjdList1, gei_arr_posAxis_km1, vei_arr1);
         src2.fill_GEI_VEI(timeMjdList2, gei_arr_posAxis_km2, vei_arr2);
+
+        System.out.println("Comparing:");
+        System.out.println("   src1 =" + src1);
+        System.out.println("   src2 =" + src2);
 
         compareTrajectories(gei_arr_posAxis_km1, gei_arr_posAxis_km2, vei_arr1, vei_arr2, timeMjdList1);
     }
@@ -409,6 +447,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
             }
         }
 
+
+        public String toString() {
+            return "SSCWS: " + satID;
+        }
+
     }
 
     //##########################################################################
@@ -428,6 +471,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
                 double[][] vei_arr) throws IOException {
 
             LTOFSat.fill_GEI_VEI_Raw(new File(filePath), timeMjdMap, gei_arr_posAxis_km, vei_arr);
+        }
+
+
+        public String toString() {
+            return "LTOF file: " + filePath;
         }
     }
 
@@ -449,6 +497,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
             System.loadLibrary("ovt-" + OVTCore.VERSION);   // Required for calling native code.
             TLESat.getSatPosJNI(filePath, timeMjdList, gei_arr_posAxis_km, vei_arr, timeMjdList.length);
+        }
+
+
+        public String toString() {
+            return "TLE file: " + filePath;
         }
     }
 
@@ -524,6 +577,6 @@ public class SSCWSSat_CompareTrajectoriesTest {
      * Defines file(s) one can use for SSCWS data caching.
      */
     public static File selectCacheFile(String SSCWS_satID) {
-        return new File("/home/erjo/temp/OVT." + SSCWS_satID + ".SSCWS.cache");
+        return new File("/home/erjo/work_files/ovt_diverse/temp/OVT." + SSCWS_satID + ".SSCWS.cache");
     }
 }

@@ -37,7 +37,14 @@ import java.util.*;
 
 /**
  * The record class of the Long Term Orbit Files, used by {@link ovt.object.LTOFSat}.
+ * Does MOST of the interpretation of LTOF files, but NOT all interpretation.
+ * 
  * For more information concerning LTOF format refer to docs/ltof.pdf.
+ * 
+ * Some information on the LTOF format can be found in the "CLUSTER
+ * Data Disposition System - Data Delivery Interface Document (DDID)"
+ * http://www.jsoc.rl.ac.uk/pub/fd_files/index.php
+ * 
  * @author  ko
  */
 public  class LTOFRecord  {
@@ -59,24 +66,28 @@ public  class LTOFRecord  {
     public double revEpo = -1;
     /** Semimajor axis 'a' in km, of the reference Kepler orbit */
     public double smAxis = -1;
-    /** Inverse mean motion = a*sqrt(a/miu) of the reference Kepler orbit in sec/rad, miu = central Earth potential.
-     * NOTE: The "Cluster Data Delivery Interface Document (DDID)" actually calls the variable "OMOTIN", i.e. it is not a misspelling. */
+    
+    /**
+     * Inverse mean motion = a*sqrt(a/miu) of the reference Kepler orbit in sec/rad, miu = central Earth potential.
+     * NOTE: The "Cluster Data Delivery Interface Document (DDID)"
+     * actually calls the variable "OMOTIN", i.e. it is not a misspelling.
+     */
     public double oMotin = -1;
 
     /** 3rd record: x-y-z components of the position and velocity of the reference Kepler orbit [km], [km/sec] */
     public double[] Y = new double[6];
     /** 3rd record: absolut value 'r' of the position vector of the reference Kepler orbit [km] */
     public double rDist;
-    /** 3rd record: Number of lines containing polynomial coefficents */
+    /** 3rd record: Number of lines containing polynomial coefficents. */
     public int coeffLinesNumber;
     
     //Data record
-    public double[][] Coefs;   //Data matrix with up to 10x6 coefs.
+    public double[][] coeffs;   //Data matrix with up to 10x6 coefs.
     
     public LTOFRecord() {
     }
     
-    /** The line wich starts with 201 or 2XX, it contains mjd start, mjd end, semimajor axis, mean motion. 
+    /** The line which starts with 201 or 2XX, it contains mjd start, mjd end, semimajor axis, mean motion. 
      * The format of the line : <code>I3, F12.6, F12.6, F15.9, F11.3, F13.5, F13.5, A1</code> */
     public void set2ndRecord(String line) throws IllegalArgumentException {
         try {   
@@ -151,23 +162,32 @@ public  class LTOFRecord  {
        
     }
     
-    /** Extracts from the line <code>ss</code>  the following parameters : {@link #coeffLinesNumber },  {@link #Y}, {@link #rDist } Initializes {@link #Coefs }. 
+    /** *  Extracts from the line <code>ss</code> the following parameters : {@link #coeffLinesNumber },  {@link #Y}, {@link #rDist } Initializes {@link #coeffs }. 
      * The format of the line : <code>I3, 3F11.3, 3F11.7, F11.3, A1 </code>
+     * 
+     * Old implementation of set3rdRecord. It has has proven to crash when trying to
+     * interpret ESOC's validation test for LTOF files. The bug lies in that it
+     * assumes there is whitespace between the (number) fields. The specification
+     * however refers to exact byte intervals without whitespace between them. 
+     * There happens to be whitespace anyway when the numbers are too small to fill the bytes for each field.
+     * Should be possible to delete when new code is tested.
+     * /Erik P G Johansson 2015-08-28
      */
-    public void set3rdRecord(String ss) throws IllegalArgumentException {
-       StringTokenizer stok=new StringTokenizer(ss);
-       int i=0,tmp_coeffLinesNumber;  //Elements counter
+    /*public void set3rdRecord_OLD(String ss) throws IllegalArgumentException {
+       final StringTokenizer stok = new StringTokenizer(ss);
+       int i = 0;   // Elements counter
        
-       while(stok.hasMoreTokens() && i<8){
-          String s1 = stok.nextToken();
+       while(stok.hasMoreTokens() && i<8) {
+          final String s1 = stok.nextToken();
           switch (i) {
              case 0: //coeffLinesNumber;
-                tmp_coeffLinesNumber = Integer.parseInt(s1);
-                coeffLinesNumber=tmp_coeffLinesNumber-300;
-                if (coeffLinesNumber<0 || coeffLinesNumber>MaxCoefs)
+                final int tmp_coeffLinesNumber = Integer.parseInt(s1);
+                coeffLinesNumber=tmp_coeffLinesNumber-300;             // Unknown constant 300. Why?
+                if (coeffLinesNumber<0 || coeffLinesNumber>MaxCoefs) {
                     throw new IllegalArgumentException("Wrong number of polynomial coefficient lines : "+coeffLinesNumber+" . ");
+                }
                 
-                Coefs=new double[coeffLinesNumber][6];  // Init. array!
+                coeffs = new double[coeffLinesNumber][6];  // Init. array!
                 break;
              case 1:
                 Y[i-1] = Double.parseDouble(s1); break;
@@ -183,31 +203,79 @@ public  class LTOFRecord  {
           }
           ++i;
        }
-       if(i<8)
+       if (i<8) {
            throw new IllegalArgumentException("Too few parameters in the line : "+i+" should be 8");
-       
+       }
+    }*/
+    
+    
+    /** 
+     * Reads one line of LTOF file data. See specification.
+     * Footnote: The number of decimals in the specification does not seem to always be correct. In reality they can vary.
+     * 
+     * New implementation of set3rdRecord to fix bugs.
+     * 
+     * @author Erik P G Johansson
+     */
+    public void set3rdRecord(String line) throws IllegalArgumentException {
+        
+        try {
+            final int UNKNOWN_CONSTANT = 300;
+            final double[] position_velocity = new double[6];
+            int i_fieldBegin = 0;
+        
+            final int tmp_coeffLinesNumber = Integer.parseInt(line.substring(i_fieldBegin, i_fieldBegin+3));
+            i_fieldBegin += 3;            
+            
+            // Subtraction with odd constant is needed to get the number
+            // of lines with coefficients (read in LTOFRecord#setDataRecord).
+            coeffLinesNumber = tmp_coeffLinesNumber - UNKNOWN_CONSTANT;
+            if (coeffLinesNumber<0 || coeffLinesNumber>MaxCoefs) {
+                throw new IllegalArgumentException("Wrong number of polynomial coefficient lines : "+coeffLinesNumber+" . ");
+            }
+            
+            final int FIELD_LENGTH = 11;
+            for (int i_posVel=0; i_posVel<6; i_posVel++) {
+                position_velocity[i_posVel] = Double.parseDouble(line.substring(i_fieldBegin, i_fieldBegin+FIELD_LENGTH));
+                i_fieldBegin += FIELD_LENGTH;
+            }
+            Y = position_velocity;
+            this.coeffs = new double[coeffLinesNumber][6];    // Initialize array to be fillew values later in LTOFRecord#setDataRecord.
+            rDist = Double.parseDouble(line.substring(i_fieldBegin, i_fieldBegin+11));
+            
+        } catch (NumberFormatException e2) {
+            throw new IllegalArgumentException("Wrong recID");
+        }
     }
 
-    /** id should be 1..10 */
+    
+    
+    /** 
+     * Read polynomial coefficients.
+     * @param id should be 1..10 */
     public int setDataRecord(int id, String ss) throws IllegalArgumentException {
-        if (id <1 || id>10) throw new IllegalArgumentException("Wrong record number : "+id+". Can be 1..10.");
-       StringTokenizer stok=new StringTokenizer(ss);
-       int nRec4Check;            // Just for checking
-       int i=0;  //Elements counter
+        if (id <1 || id>10) {
+            throw new IllegalArgumentException("Wrong record number : "+id+". Can be 1..10.");
+        }
+        final StringTokenizer stok=new StringTokenizer(ss);
+        int nRec4Check;            // Just for checking
+        int i=0;  //Elements counter
        
-       while(stok.hasMoreTokens() && i<7){
-          String s1 = stok.nextToken();
-          switch(i){
-             case 0: //nrec4Check;
-                nRec4Check = Integer.parseInt(s1);
-                if(nRec4Check!=(11*id+coeffLinesNumber))   //cheking for error
-                   return 1;
-                else break;
-             default: //setting data record
-                if(i>=1 && i<=6){
-                   Coefs[id-1][i-1] = Double.parseDouble(s1);
-                   break;
-                } else return 0;
+        while(stok.hasMoreTokens() && i<7){
+            final String s1 = stok.nextToken();
+            switch(i){
+                case 0: //nrec4Check;
+                    nRec4Check = Integer.parseInt(s1);
+                    if(nRec4Check!=(11*id+coeffLinesNumber)) {  // checking for error
+                        return 1;
+                    } else {
+                        break;
+                    }
+                default: //setting data record
+                    if(i>=1 && i<=6) {
+                        coeffs[id-1][i-1] = Double.parseDouble(s1);
+                        break;
+                    } else return 0;
           }
           ++i;
        }
