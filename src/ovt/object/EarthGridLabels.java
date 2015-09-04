@@ -120,8 +120,12 @@ protected void validate() {
             double r = R*Math.sin(Utils.toRadians(lat));
             if (r != 0) dPhi = Math.acos(1-labelWidth*labelWidth/(2*r*r));
             else dPhi = 0;
-            vtkPolyData label = getLabelPolyData(Utils.toRadians(lat), Utils.toRadians(lon) - dPhi, ""+Math.abs(90-lat));
-            appendPolyData.AddInputData(label);
+            //vtkPolyData label = getLabelPolyData(Utils.toRadians(lat), Utils.toRadians(lon) - dPhi, ""+Math.abs(90-lat));
+            //appendPolyData.AddInputData(label);
+            
+            appendPolyData.AddInputConnection(getLabelPolyData(Utils.toRadians(lat), Utils.toRadians(lon) - dPhi, ""+Math.abs(90-lat)));
+
+            
         }
     }
 
@@ -129,8 +133,13 @@ protected void validate() {
 
     for (int i=0; i<lat.length; i++) {
         for (int lon=0; lon<360; lon+=15) {
-            vtkPolyData label = getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon);
-            appendPolyData.AddInputData(label);
+            //vtkPolyData label = getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon);
+            //appendPolyData.AddInputData(label);   
+            appendPolyData.AddInputConnection(getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon));
+
+
+            
+
         }
     }
 
@@ -139,6 +148,7 @@ protected void validate() {
 
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
     //mapper.SetInputData(appendPolyData.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
+    
     mapper.SetInputConnection(appendPolyData.GetOutputPort());
     actor = new vtkActor();
     actor.SetMapper(mapper);
@@ -151,8 +161,11 @@ protected void validate() {
 
 
 /** Note! lat is a angle in radians between R and OZ */
-private vtkPolyData getLabelPolyData(double lat, double lon, String text) {
-    vtkVectorText atext = new vtkVectorText();
+// modded function to output OutputPort instaed of vtkPolyData
+//private vtkPolyData getLabelPolyData(double lat, double lon, String text) {
+private vtkAlgorithmOutput getLabelPolyData(double lat, double lon, String text) {
+
+vtkVectorText atext = new vtkVectorText();
         atext.SetText(text);
 
     // orient and move polyData, representing text to it's position
@@ -164,7 +177,8 @@ private vtkPolyData getLabelPolyData(double lat, double lon, String text) {
         transformPolyData.SetTransform(transform);
         //transformPolyData.SetInputData(atext.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
         transformPolyData.SetInputConnection(atext.GetOutputPort());
-    return transformPolyData.GetOutput();
+//    return transformPolyData.GetOutput();
+    return transformPolyData.GetOutputPort();
 }
 
 /** Returns tr.matrix for positioning and orienting labels.

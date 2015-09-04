@@ -1,0 +1,1017 @@
+# Complete List of Ground-Based Observing Instruments
+# ( http://www.wdc.rl.ac.uk/gbdc/station-list.html )
+#
+# This is a list of all the ground-based observing instruments that we know about. 
+# 
+# Instrument codes (R for riometer, M for magnetometer, .... etc) 
+# Group acronyms used for chains and networks of instruments, for data centres and for instruments. 
+# Station synonyms where a station is known by more than one name. 
+# The last column of the list is the e-mail address of a useful contact person for the station. 
+# 
+#   Station                     Code   lat      long    Instrument      Chain                     Contact
+#                                      (-90,+90)(0,360)                                           e-mail
+#---------------------------------------------------------------------------------------------------------------------------------
+#
+* AGO A77                     B1     -77.580 336.630  M               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A77                     B1     -77.580 336.630  MP              AGONET                    engebret@augsburg.edu         
+* AGO A77                     B1     -77.580 336.630  P               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A77                     B1     -77.580 336.630  R               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A80                     B2     -80.750 339.600  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* AGO A80                     B2     -80.750 339.600  M               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A80                     B2     -80.750 339.600  MP              AGONET                    engebret@augsburg.edu         
+* AGO A80                     B2     -80.750 339.600  P                                         jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A80                     B2     -80.750 339.600  R               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A80                     B2     -80.750 339.600  VLF             AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A81                     B3     -81.500   3.000  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* AGO A81                     B3     -81.500   3.000  M               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A81                     B3     -81.500   3.000  MP              AGONET                    engebret@augsburg.edu         
+* AGO A81                     B3     -81.500   3.000  P                                         jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A81                     B3     -81.500   3.000  R               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A81                     B3     -81.500   3.000  VLF             AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A84                     B4     -84.000 335.000  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* AGO A84                     B4     -84.000 335.000  M               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A84                     B4     -84.000 335.000  MP              AGONET                    engebret@augsburg.edu         
+* AGO A84                     B4     -84.000 335.000  R               AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO A84                     B4     -84.000 335.000  VLF             AGONET                    jrdu@pcmail.nerc-bas.ac.uk    
+* AGO I1                      I1     -74.070 164.120  M               AGONET                    candidi@sunago2.ifsi.rm.cnr.it
+* AGO J1                      J1     -70.000  39.500  M(p)            AGONET                    candidi@sunago2.ifsi.rm.cnr.it
+* Abisko                      ABK     68.350  18.820  ASC(4freq)      ALIS/MIRACLE              steen@irf.se                  
+* Abisko                      ABK     68.360  18.820  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Abisko                      ABK     68.350  18.820  R                                         jyrki.manninen@sgo.fi         
+* Adak                        AD651   51.900 183.400  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Adelaide                    ADL    -34.670 138.650  M                                                                       
+* Adelaide (Salisbury)               -34.700 138.600  FPI                                                                     
+* Adelaide (Salisbury)        SR53M  -34.700 138.600  ID              WDC-C1                    bruce.ward@dsto.defence.gov.au
+* Agua Verde                  AVJ2N  -25.400 290.000  ID(p)(c)        ULCAR                     reinisch@cae.uml.edu          
+* Ahmedabad                   AH223   23.000  72.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Aiken                       USC     34.000 279.000  M               MEASURE                   rassoul@pss.fit.edu           
+* Aire Sur L'Adour                    43.400 360.000  BLS                                                                     
+* Akita                       AK539   39.700 140.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Alert                       ALJ82   82.450 297.700  I(s)                                                                    
+* Alert                       ALE     82.450 297.700  ID                                        macdougall@canlon.physics.uwo.ca
+* Alert                       ALE     82.500 297.500  M                                         vanbeek@geolab.emr.ca         
+* Alfred Faure                       -46.430  51.870  M                                                                       
+* Alibag                      ABG     18.640  72.870  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Alice Springs               AE42L  -24.000 143.000  ID              ULCAR                     bruce.ward@dsto.defence.gov.au
+* Alice Springs               ASP    -23.770 133.880  M               NGDC                      sdennis@agso.gov.au           
+* Aligarh                             27.910  78.070  NM                                                                      
+* Alma Ata                    AA343   43.200  77.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Alma Ata                    AAA     43.250  76.920  M                                                                       
+* Alma Ata                    1670    43.250  76.920  NM                                                                      
+* Alma Ata                    3340    43.250  76.920  NM                                                                      
+* Alma Ata                            43.250  76.920  NM                                                                      
+* Almeria                     ALM     36.850 357.540  M                                                                       
+* Amderma                     AM269   69.460  61.410  I               WDC-C1                    m.wild@rl.ac.uk               
+* Amderma                     AMD     69.400  60.200  M                                         olegtro@geophys.spb.su        
+* Amderma (Calgary)           AMD     69.470  61.420  M                                                                       
+* Anchorage                   AN761   61.240 210.130  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Anchorage                   AMU     61.240 210.130  M                                         jvo@maxwell.gi.alaska.edu     
+* Andoya                              69.295  16.030  ASC                                       kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  ATV                                       kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  ELF                                       kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  ID(p)                                                                   
+* Andoya                              69.295  16.303  M(p)            IMAGE                     truls.hansen@phys.uit.no      
+* Andoya                      AND     69.295  16.030  M               IMAGE/MIRACLE             kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  MF(p)                                                                   
+* Andoya                              69.295  16.030  MP                                        kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  MSP                                       kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  R                                         kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  RR                                        kolbjorn@arr.nsc.no           
+* Andoya                              69.295  16.030  SIR                                                                     
+* Andoya                              69.295  16.030  SM                                                                      
+* Andoya                              69.295  16.030  VLF                                       kolbjorn@arr.nsc.no           
+* Angmagssalik                        65.600 322.400  R                                         pst@dmicvax.dmi.min.dk        
+* Anyang                      AN438   37.400 127.000  ID                                        yspyo@cc.rrl.go.kr            
+* Apatity                             67.550  33.330  NM                                                                      
+* Apia                        API    -13.810 188.230  M               WDC-A                     lester@geoserve.southern.co.nz
+* Arctic Village              AVI     68.130 213.430  M                                         jvo@maxwell.gi.alaska.edu     
+* Arctica (NP-06)             XG082   82.300   9.500  I(s)                                                                    
+* Arctica (NP-06)             XG483   82.300   9.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Arctowsi                           -62.150 301.530  M                                                                       
+* Arecibo                     ARO     18.350 293.250  FPI                                       craig@naic.edu                
+* Arecibo                     ARO     18.350 293.250  IS                                        zhou@naic.edu                 
+* Arecibo                     ARO     18.350 293.250  OS                                        craig@naic.edu                
+* Arequipa                           -16.500 288.500  FPI                                       biondi@vm3.cis.pitt.edu       
+* Argentia                    AFJ49   47.300 306.000  ID              ULCAR                     reinisch@cae.uml.edu          
+* Arkhangelsk                 AZ163   64.500  40.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Arkhangelsk                 ARK     64.600  40.500  M                                                                       
+* Arrival Heights                    -77.820 166.650  M                                         phbjf@cc.newcastle.edu.au     
+* Arrival Heights                    -77.820 166.650  MP                                        phbjf@cc.newcastle.edu.au     
+* Arti                        ARS     56.430  58.570  M                                                                       
+* Ascension Is.               ASC     -8.000 345.600  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Ashkhabad                   AS237   37.900  58.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Ashkhabad                   ASH     37.950  58.110  M                                                                       
+* Asuka                       ASU    -71.150  24.130  M                                         n.sato@nipr.ac.jp             
+* Athens                      AT138   38.000  23.600  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Attu                        ATU     67.930 306.430  M               Greenland                 jfw@dmi.dk                    
+* Auckland                    AU63P  -37.000 175.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Baguio                      BF416   16.400 120.600  I(s)                                                                    
+* Baguio                      BAG     16.400 120.600  M                                                                       
+* Baker Lake                  BL964   64.330 263.970  I(s)                                                                    
+* Baker Lake                  BLC     64.330 263.970  M               Intermagnet/CO            vanbeek@geolab.emr.ca         
+* Bangkok                     BK314   13.800 100.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Bangui                      BNG     18.570 356.880  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Barrow                      BW771   71.300 203.250  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Barrow                      BRW     71.300 203.250  M               NGDC/SO                   r.stamper@rl.ac.uk            
+* Bay St. Louis               BSL     30.400 270.600  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Bear Lake, Idaho                    42.000 248.660  ASC                                       rudy@stplists.ca              
+* Bear Lake, Idaho                    42.000 248.660  FPI                                       wickwar@aeronomy.cass.usu.edu 
+* Bear Lake, Idaho                    42.000 248.660  MI                                        rudy@stplists.ca              
+* Beijing                     BP440   39.900 116.500  ID              ULCAR                     reinisch@cae.uml.edu          
+* Beijing                             40.080 116.260  NM                                                                      
+* Bekescsaba                  BH148   46.700  21.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Belgrano                           -77.870 325.380  ASC             AGONET                    candidi@sunago2.ifsi.rm.cnr.it
+* Belgrano                    GEA7Q  -77.900 321.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Belgrano                    BLG    -77.870 325.380  M                                                                       
+* Beliy Island                BEY     73.300  70.000  M                                                                       
+* Belsk                       BEL     51.840  20.790  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Beograd                     BE145   44.800  20.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Berkeley                            37.530 237.830  OS                                                                      
+* Bermuda                     BJJ32   32.400 295.300  ID              ULCAR                     reinisch@cae.uml.edu          
+* Birdsville                  BRV    -25.830 139.330  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Bjorklinden                         68.400  18.700  ASC(p)          ALIS                      steen@irf.se                  
+* Bjornoya                    BJN     74.500  19.200  M               IMAGE/MIRACLE             truls.hansen@phys.uit.no      
+* Bjornoya                    BJN     74.500  19.200  RI(p)                                     pst@dmicvax.dmi.min.dk        
+* Bogota                      BGJ05    4.500 285.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Bombay                      BM219   19.000  72.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Boone                       DSO     36.220 278.320  M               MEASURE                   rassoul@pss.fit.edu           
+* Borok                       BOX     58.030  38.970  M                                                                       
+* Boulder                     BC840   40.000 254.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Boulder                     BOU     40.130 254.770  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Boulder                             40.020 254.840  OS                                                                      
+* Brisbane                    BR52P  -27.530 152.920  I               WDC-C1                    m.wild@rl.ac.uk               
+* Brisbane                           -27.420 153.080  NM                                                                      
+* Brorfelde                   BFE     55.630  11.670  M               Intermagnet               or@dmi.dk                     
+* Budapest                    BU147   47.400  19.000  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Budkov                      BDV     49.100  14.000  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Buenos Aires                BAJ3M  -34.500 301.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Bunia                       BN102    1.500  30.200  I(s)                                                                    
+* Byrd Station                BD88-  -80.000 240.000  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Cachoeira Paulista          CAJ2M  -23.200 314.200  ID              ULCAR                     reinisch@cae.uml.edu          
+* Cachoeira Paulista                 -22.400 315.000  PI                                                                      
+* Calcutta                    CU322   23.000  88.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Calgary                             61.000 246.000  FPI                                       cogger@phys.ucalgary.ca       
+* Calgary                             51.080 245.860  NM                                                                      
+* Cambridge                           52.200   0.100  IPS                                       r.harrison@rl.ac.uk           
+* Cambridge Bay               CRB     69.100 254.890  ID                                        macdougall@canlon.physics.uwo.ca
+* Cambridge Bay               CBB     69.100 255.000  M               Intermagnet               vanbeek@geolab.emr.ca         
+* Camden                      CN53L  -34.000 150.700  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Campbell Island             CI65K  -52.500 169.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Canberra                           -35.320 149.000  ASC                                                                     
+* Canberra                    CB53N  -35.320 149.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Canberra                    CNB    -35.320 149.360  M               NGDC                      sdennis@agso.gov.au           
+* Canberra                           -35.320 149.000  P                                                                       
+* Cape Chelyuskin             CCS     77.720 104.270  M                                         olegtro@geophys.spb.su        
+* Cape Chelyuskin             CCS     77.720 104.270  R                                         olegtro@geophys.spb.su        
+* Cape Dorset                 CDC     64.200 283.400  M               CO/MACCS                  hughes@buasta.bu.edu          
+* Cape Hallett                HT67K  -72.300 170.200  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Cape Kamenny                CKA     68.500  73.600  M                                                                       
+* Cape Kennedy                CC929   28.400 279.400  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Cape Parry                  CPY     70.170 235.280  M                                         jvo@maxwell.gi.alaska.edu     
+* Cape Schmidt                CE669   68.800 179.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Cape Schmidt                CPS     68.920 180.520  M                                                                       
+* Cape Schmidt                        68.920 180.530  NM                                                                      
+* Cape Town                   CT13M  -34.100  18.300  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Cape Wellen                 WE667   66.170 190.170  I               WDC-C1                    m.wild@rl.ac.uk               
+* Cape Wellen                 CWE     66.170 190.170  M                                         olegtro@geophys.spb.su        
+* Cape Zevgari                CV135   34.600  32.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Casablanca                  CA033   33.600 352.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Casey                       CSY    -66.280 110.500  ATV                                       ray_mor@antdiv.gov.au         
+* Casey                       CW46O  -66.280 110.500  ID                                        ray_mor@antdiv.gov.au         
+* Casey                       CSY    -66.280 110.500  M               NGDC                      ray_mor@antdiv.gov.au         
+* Casey                       CSY    -66.280 110.500  MP                                        ray_mor@antdiv.gov.au         
+* Casey                       CSY    -66.280 110.500  SC                                        ray_mor@antdiv.gov.au         
+* Casey                       CSY    -66.280 110.500  TEC                                       ray_mor@antdiv.gov.au         
+* Chacaltaya                         -16.310 291.850  NM                                                                      
+* Chambon-la-Foret            CLF     48.020   2.260  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Charters Towers             CTA    -20.080 146.250  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Chichijima                  CBI     27.150 142.300  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Chiclayo                    CY90P   -6.800 280.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Chilton                     RL052   51.600 358.700  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Chita                       CX452   52.000 113.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Chokurdakh                  CHD     70.620 149.890  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Chongqing                   09429   29.500 106.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Christchurch                GH64L  -43.420 172.340  I               WDC-C1                    w.baggaley@phys.canterbury.ac.nz
+* Chung-Li                    CL424   24.910 121.240  ID              WDC-C1                    jyliu@jupiter.ss.ncu.edu.tw   
+* Churchill                   CH958   58.800 265.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Churchill                           58.450 266.000  RR                                                                      
+* Climax                              39.370 253.820  NM                                                                      
+* Cloich                      CLO     55.700 356.400  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Clyde                       CY      70.500 291.400  M               MACCS                     hughes@buasta.bu.edu          
+* Cocos Is                    CS31K  -12.200  96.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* College                             64.700 218.900  FPI                                                                     
+* College                     CO764   64.800 212.200  ID              WDC-C1                    m.wild@rl.ac.uk               
+* College                     CMO     64.850 212.170  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Concepcion                  CPJ3O  -36.600 287.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Contwoyto Lake              CNL     65.750 248.750  M               CANOPUS/CO                r.stamper@rl.ac.uk            
+* Contwoyto Lake              CNL     65.750 248.750  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Coral Harbor                CHC     64.100 276.800  M               CO/MACCS                  hughes@buasta.bu.edu          
+* Cuba                        CD923   23.000 278.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Dakar                       DKA14   14.700 342.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Dakshin Gangotri                   -70.080  12.000  M                                                                       
+* Dalby                       DLB    -27.180 151.200  M                                                                       
+* Daneborg                    DNB     74.300 339.780  M               Greenland                 jfw@dmi.dk                    
+* Danmarkshavn                DMH     76.770 341.370  M               CO/Greenland              jfw@dmi.dk                    
+* Danmarkshavn                DMH     76.770 341.370  MSP                                       bjorn.jacobsen@fys.uio.no     
+* Danmarkshavn                DMH     76.770 341.370  R                                         pst@dmicvax.dmi.min.dk        
+* Danmarkshavn                DMH     76.770 341.370  RI                                        pst@dmicvax.dmi.min.dk        
+* Dartmouth                   GTF     43.760 287.750  M               MEASURE                   rassoul@pss.fit.edu           
+* Darwin                      DW41K  -12.450 130.950  ID              WDC-C1                    bruce.ward@dsto.defence.gov.au
+* Darwin                      DRW    -12.400 130.900  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Davis                       DVS    -68.580  78.000  ATV                                       ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  FPI                                       ray_mor@antdiv.gov.au         
+* Davis                       DV36Q  -68.580  78.000  I               WDC-C1                    ray_mor@antdiv.gov.au         
+* Davis                       DV169  -68.600  62.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Davis                       DVS    -68.580  78.000  M                                         ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  MF                                        ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  MP                                        ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  OS                                        ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  P                                         ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  R                                         ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  SUV                                       ray_mor@antdiv.gov.au         
+* Davis                       DVS    -68.580  78.000  TEC                                       ray_mor@antdiv.gov.au         
+* Dawson                      DAW     64.050 220.890  M               CANOPUS/SO                r.stamper@rl.ac.uk            
+* Dawson                      DAW     64.050 220.890  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* De Bilt                     DT053   52.100   5.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Deal                        65      40.250 285.970  I               WDC-C1                    m.wild@rl.ac.uk               
+* Del Rio                     DLR     29.940 259.080  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Delhi                       DH328   28.600  77.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Dixon Island                DIK     73.500  80.400  ID              DIMNET                    olegtro@geophys.spb.su        
+* Dixon Island                DI373   73.500  80.400  ID              WDC-C1                    olegtro@geophys.spb.su        
+* Dixon Island                DIK     73.500  80.400  M               SO/DIMNET                 olegtro@geophys.spb.su        
+* Dixon Island                DIK     73.500  80.400  R               DIMNET                    olegtro@geophys.spb.su        
+* Djibouti                    DJ111   11.500  42.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Djibouti                    DJB     11.700  43.400  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Dombas                      DOB     62.070   9.110  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Dourbes                     DB049   50.100   4.600  ID              WDC-C1                    jcjod@meteo.oma.be            
+* Dourbes                             50.100   4.600  NM                                                                      
+* Dumont d'Urville            DRV    -66.670 140.010  M               Intermagnet/NGDC          jbitterly@eopg.u-strasbg.fr   
+* Dumont d'Urville            DRW    -66.670 140.010  NM              WDC-A                     cclark@ngdc.noaa.gov          
+* Dumont d'Urville            DRV    -66.670 140.010  R                                         jean-jacques.berthelier@cetp.ipsl.fr
+* Durbanville                 66     -35.760  18.570  I               WDC-C1                    m.wild@rl.ac.uk               
+* Durham                              91.000 360.000  M                                         cgm@physics.att.com           
+* Durham                              43.100 289.170  NM                                                                      
+* Dyess AFB                   DS932   32.500 260.300  ID              ULCAR                     reinisch@cae.uml.edu          
+* Eglin AFB                   EG931   30.400 273.200  ID              ULCAR                     reinisch@cae.uml.edu          
+* Ekali                       57      48.000  23.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* El Arenosillo               EA036   37.100 353.270  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Elliot                      EL41Q  -17.600 133.500  ID              ULCAR                     bruce.ward@dsto.defence.gov.au
+* Ellsworth                   ELA7P  -77.800 318.900  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Erevan                              40.170  44.250  NM                                                                      
+* Erevan                      2000    40.170  44.250  NM                                                                      
+* Eskdalemuir                 ESK     55.320 356.800  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Eskimo Point                EKP     61.110 265.950  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Eskimo Point                EKP     61.110 265.950  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Eureka                              79.990 274.080  ASC                                       mcewen@skisas.usask.ca        
+* Eureka                              79.990 274.080  FPI                                       mcewen@skisas.usask.ca        
+* Eureka                      EU980   80.000 274.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Eureka                              79.990 274.080  ID                                        macdougall@canlon.physics.uwo.ca
+* Eureka                              79.990 274.080  M                                         mcewen@skisas.usask.ca        
+* Eureka                              79.990 274.080  MI                                        mcewen@skisas.usask.ca        
+* Eureka                              79.990 274.080  MSP(6 frq)                                mcewen@skisas.usask.ca        
+* Eusebio                     EUS     -3.890 321.560  M                                                                       
+* Ewa Beach                   EWA    -21.320 202.000  M                                                                       
+* Eyrewell                    EYR    -43.420 172.350  M               Intermagnet/NGDC          lmorris@ngdc.noaa.gov         
+* Faroes                      FAR     62.050 352.980  M               SAMNET                    dave@aurora.york.ac.uk        
+* Fletchers Ice               XC982   75.900 235.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Fort Churchill              FCC     58.760 265.910  M               Intermagnet/SO            vanbeek@geolab.emr.ca         
+* Fort Churchill              FCC     58.760 265.920  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Churchill              FCC     58.760 265.920  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort McMurray               FMC     56.660 248.790  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort McMurray               MCM     56.660 248.790  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Monmouth               FMJ40   40.400 285.900  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Fort Nelson                 FTN     58.820 237.260  M                                                                       
+* Fort Simpson                FSP     61.760 238.770  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Simpson                SIM     61.760 238.770  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Smith                  SMI     60.020 248.050  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Smith                  SMI     60.020 248.050  MSP(4freq)      CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Smith                  SMI     60.020 248.050  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Fort Yukon (Kirk)           FYK     66.570 214.700  M                                                                       
+* Fort Yukon (Kirk)           FYU     66.570 214.700  M                                         jvo@maxwell.gi.alaska.edu     
+* Fredricksburg               FRD     38.210 282.630  M               Intermagnet/NGDC/MEASURE  rassoul@pss.fit.edu           
+* Freiburg                    FR048   48.100   7.600  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Fresno                      FRN     37.090 240.280  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Frobisher Bay               FBJ63   63.800 291.400  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Fukushima                           37.750 140.480  NM                                                                      
+* Furstenfeldbruck            FUR     48.170  11.280  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Garchy                      GY042   47.300   3.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Geopole                             76.600 291.400  R                                         pst@dmicvax.dmi.min.dk        
+* Gibilmanna                  GM037   38.000  14.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Gif Sur Yvette                      48.680   2.130  NM                                                                      
+* Gillam                      GIM     56.380 265.360  ASC(3freq)      CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Gillam                      GIM     56.390 265.360  ID                                        macdougall@canlon.physics.uwo.ca
+* Gillam                      GIM     56.380 265.360  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Gillam                      GIM     56.380 265.360  MSP(4freq)      CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Gillam                      GIM     56.380 265.360  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Girardville                         92.000 360.000  M                                         cgm@physics.att.com           
+* Gjoa Haven                  GHC     68.600 264.100  M               MACCS                     hughes@buasta.bu.edu          
+* Glenlea                     GLN     49.600 262.900  M               Intermagnet/EO            vanbeek@geolab.emr.ca         
+* Glenmore                    GML     57.160 356.320  M               SAMNET                    dave@aurora.york.ac.uk        
+* Gnangara                    GNA    -31.780 115.950  M               Intermagnet/NGDC          lmorris@ngdc.noaa.gov         
+* Godhavn                     GOJ69   69.300 306.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Godhavn                             69.300 306.500  R                                         pst@dmicvax.dmi.min.dk        
+* Godthaab                    GHB     64.200 308.300  R                                         pst@dmicvax.dmi.min.dk        
+* Goose Bay                           53.300 299.500  CHF             SuperDARN                 mike_ruohoniemi@jhuapl.edu    
+* Goose Bay                   GSJ53   54.300 299.670  ID              WDC-C1                    bullett@plh.af.mil            
+* Goose Bay                           53.270 299.600  NM                                                                      
+* Gorky                       GK156   56.150  44.280  I               WDC-C1                    m.wild@rl.ac.uk               
+* Grahamstown                 GR13L  -33.300  26.500  ID              WDC-C1                    phap@giraffe.ru.ac.za         
+* Grand Bahama                GB926   26.600 281.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Graz                        GZ146   47.100  15.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Great Wall                         -62.220 301.040  I                                                                       
+* Great Wall                         -62.220 301.040  LF-HF                                                                   
+* Great Wall                         -62.220 301.040  M                                                                       
+* Great Wall                         -62.220 301.040  MP                                                                      
+* Great Wall                         -62.220 301.040  VLF                                                                     
+* Great Whale Riv.            GWC     55.270 282.220  M                                                                       
+* Guam Island                 GUA     13.580 144.870  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Guangzhou                   GU421   23.100 113.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Gulmarg                             34.070  74.420  NM                                                                      
+* Gyljen                              66.300  22.700  ASC(p)          ALIS                      steen@irf.se                  
+* Hafelekar                           47.320  11.380  NM                                                                      
+* Hainan Island               18419   21.600 109.300  ID              ULCAR                     guojszh@sun20.cssar.ac.cn     
+* Haleakala                           20.720 203.720  NM                                                                      
+* Halley                      HBA    -75.500 333.400  ASC                                       jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.500 333.400  CHF             SuperDARN                 jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.500 333.400  FPI                                       jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                             -75.520 333.320  FPI                                       jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA7N  -75.500 333.400  ID              WDC-C1                    jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.520 333.320  M                                         jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.520 333.320  P                                         jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.520 333.320  R                                         jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.520 333.320  RI(p)                                     jrdu@pcmail.nerc-bas.ac.uk    
+* Halley                      HBA    -75.500 333.400  VLF                                       jrdu@pcmail.nerc-bas.ac.uk    
+* Hankasalmi                  HAN     62.320  26.610  CHF             SuperDARN/CUTLASS/MIRACLE ect@ion.le.ac.uk              
+* Hankasalmi                          62.250  26.850  CVHF            STARE/MIRACLE             nielsen@mirage.mpae.gwdg.de   
+* Hankasalmi                  HAN     62.300  26.650  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Hartebeesthoek              HBK    -25.880  27.710  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Hartland                    HAD     51.060  55.520  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Heiss Island                HIS     80.620  58.050  I               DIMNET                    olegtro@geophys.spb.su        
+* Heiss Island                BT280   80.620  58.050  I               WDC-C1                    olegtro@geophys.spb.su        
+* Heiss Island                HIS     80.620  58.050  M               DIMNET                    olegtro@geophys.spb.su        
+* Heiss Island                HIS     80.620  58.050  R               DIMNET                    olegtro@geophys.spb.su        
+* Hermanus                    HE13N  -34.500  19.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Hermanus                    HER    -34.430  19.230  M               Intermagnet               lloubser@csir.co.za           
+* Hermanus                    HER    -34.430  19.230  MP                                        psutclif@csir.co.za           
+* Hermanus                           -34.420  19.230  NM                                                                      
+* Hobart                      HO54K  -42.920 147.320  I               WDC-C1                    m.wild@rl.ac.uk               
+* Hobart                             -42.900 147.330  NM                                                                      
+* Hong Kong                   HK423   22.330 114.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Honolulu                    HON     21.320 202.000  M               Intermagnet/NGDC          lmorris@ngdc.noaa.gov         
+* Honshu                      58      35.000 140.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Hopen Island                HOP     76.510  25.030  M               IMAGE/MIRACLE             truls.hansen@phys.uit.no      
+* Hopen Island                HOP     76.510  25.010  MSP                                       bjorn.jacobsen@fys.uio.no     
+* Hornsund                    HOR     77.000  15.600  ASC             FASCC                     tuija.pulkkinen@fmi.fi        
+* Hornsund                    HOR     77.000  15.600  M(p)                                      truls.hansen@phys.uit.no      
+* Hornsund                    HOR     77.000  15.600  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Hornsund                    HOR     77.000  15.600  MSP                                       bjorn.jacobsen@fys.uio.no     
+* Hornsund                    HOR     77.000  15.600  R                                         jyrki.manninen@sgo.fi         
+* Huancayo                    HU91K  -12.000 284.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Husafell                    HUS     64.470 338.970  M                                         n.sato@nipr.ac.jp             
+* Husafell                    HUS     64.670 338.970  RI                                        n.sato@nipr.ac.jp             
+* Hyderabad                   HY317   17.350  78.470  I               WDC-C1                    m.wild@rl.ac.uk               
+* Ibadan                      IB007    7.400   3.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Ibadan                      IIF      7.400   3.900  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Igloolik                    IGC     69.300 278.200  M               MACCS                     hughes@buasta.bu.edu          
+* Ilo                         ILJ1P  -17.400 288.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Inuvik                      INK     68.250 226.700  M                                         jvo@maxwell.gi.alaska.edu     
+* Inuvik                              68.350 226.280  NM                                                                      
+* Iqaluit                     IQA     63.750 291.480  M                                         vanbeek@geolab.emr.ca         
+* Iqaluit                     IQA     63.450 291.700  MP                                        engebret@augsburg.edu         
+* Iqaluit                     IQA     63.450 291.700  RI                                        rosenberg@uap.umd.edu         
+* Irkutsk                     IR352   52.500 104.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Irkutsk                     IRT     52.170 104.450  M                                                                       
+* Irkutsk                     3000    51.290 100.550  NM                                                                      
+* Irkutsk                             52.470 104.030  NM                                                                      
+* Irkutsk                     2000    51.370 100.550  NM                                                                      
+* Isafjordur                  ISA     66.080 336.820  M                                         n.sato@nipr.ac.jp             
+* Islamabad                   IS233   33.800  72.900  ID              ULCAR                     reinisch@cae.uml.edu          
+* Island Lake                 ISL     53.860 265.340  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Island Lake                 ISL     53.860 265.340  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Istanbul                    IS141   41.130  29.030  I               WDC-C1                    m.wild@rl.ac.uk               
+* Istanbul-Kandili            ISK     41.060  29.060  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Ittoqqortoormiit            SCO     70.480 338.030  M               Greenland                 jfw@dmi.dk                    
+* Ivalo                       IVA     68.650  27.270  MP                                        tilmann.bosinger@oulu.fi      
+* Ivalo                               68.550  27.280  R                                         jyrki.manninen@sgo.fi         
+* Izvestija                   IZV     75.870  83.080  M               DIMNET                    olegtro@geophys.spb.su        
+* Izvestija                   IZV     75.870  83.080  R               DIMNET                    olegtro@geophys.spb.su        
+* Jacksonville                JAX     30.330 278.340  M               MEASURE                   rassoul@pss.fit.edu           
+* Jamaica                     JA918   18.000 283.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Jan Mayen                   JAN     70.900 351.300  M                                         truls.hansen@phys.uit.no      
+* Jarama                              68.400  21.100  ASC(p)          ALIS                      steen@irf.se                  
+* Jicaarca                    JI91J  -11.950 283.140  ID              WDC-C1                    reinisch@cae.uml.edu          
+* Jicamarca                          -12.000 284.000  IS                                        wes@ee.cornell.edu            
+* Johannesburg                JO12O  -26.100  28.100  ID              ULCAR/WDC-C1              duncan.baker@ee.up.ac.za      
+* Juliaca                     JUJ1N  -15.500 289.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Juliusruh/Rugen             JR055   54.600  13.400  ID              WDC-C1                    singer@iap-kborn.d400.de      
+* Jungfraujoch                        46.550   7.980  NM                                                                      
+* Jyvaskyla                           62.420  25.280  R                                         jyrki.manninen@sgo.fi         
+* Kagoshima                   KAG     31.480 130.720  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Kakioka                     KAK     36.230 140.180  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Kaliningrad                 KL154   54.700  20.620  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kangerlussuaq               STF     67.020 309.280  M               Greenland                 jfw@dmi.dk                    
+* Kanoya                      KNY     31.420 130.880  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Kap Tobin                           70.400 338.000  R                                         pst@dmicvax.dmi.min.dk        
+* Kapuskasing                         49.400 277.700  CHF             SuperDARN                 ray.greenwald@jhuapl.edu      
+* Karachi                     KA225   25.000  67.100  ID              ULCAR                     reinisch@cae.uml.edu          
+* Karaganda                   KR250   49.820  73.080  I               WDC-C1                    m.wild@rl.ac.uk               
+* Karaganda                   KGD     49.820  73.080  M                                                                       
+* Karesuando                          68.400  22.600  ASC(p)          ALIS                      steen@irf.se                  
+* Kevo                        KEV     69.749  27.021  ASC             FASCC/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Kevo                        KEV     69.760  27.010  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Kevo                        KEV     69.760  27.010  MP                                                                      
+* Khabarovsk                  KB548   48.500 135.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kharasavey                  KHR     71.100  66.800  M                                                                       
+* Kharkov                             50.000  36.200  IS                                                                      
+* Kiel                                54.330  10.130  NM                                                                      
+* Kiev                        KV151   50.700  30.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kiev                        KIV     50.720  30.300  M                                                                       
+* Kiev                                50.720  30.300  NM                                                                      
+* Killinge                            67.500  20.500  ASC(p)          ALIS                      steen@irf.se                  
+* Kilpisjarvi                 KIL     69.020  20.864  ASC             FASCC/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Kilpisjarvi                 KIL     69.020  20.870  ATV                                       kari.kaila@oulu.fi            
+* Kilpisjarvi                 KIL     69.020  20.790  M               IMAGE/SO/MIRACLE          tuija.pulkkinen@fmi.fi        
+* Kilpisjarvi                 KIL     69.020  20.790  MP                                                                      
+* Kilpisjarvi                 KIL     69.020  20.870  MP                                        tilmann.bosinger@oulu.fi      
+* Kilpisjarvi                 KIL     69.020  20.870  MSP                                       kari.kaila@oulu.fi            
+* Kilpisjarvi                 KIL     69.050  20.790  RI                                        f.honary@lancaster.ac.uk      
+* Kilvo                               66.500  21.040  ASC(p)          ALIS                      steen@irf.se                  
+* King Sejong                        -62.220 301.220  FPI                                       yiwon@sari.kordi.re.kr        
+* King Sejong                        -62.220 301.220  M                                         shnam@sari.kordi.re.kr        
+* King Sejong                        -62.220 301.220  P                                         yiwon@sari.kordi.re.kr        
+* Kinshasa-Binza              LB10M   -4.500  15.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kiruna                      KIR     67.830  20.400  ASC(4freq)      ALIS                      urban@irf.se                  
+* Kiruna                              67.830  20.420  FPI                                       alan@apg.ph.ucl.ac.uk         
+* Kiruna                      KI167   67.840  20.420  ID              WDC-C1                    christer@irf.se               
+* Kiruna                      KIR     67.861  20.435  IS(ro)                                    tony@eiscat.no                
+* Kiruna                      KIR     67.830  20.420  M               IMAGE/MIRACLE             ingemar@irf.se                
+* Kiruna                      KIR     67.830  20.400  R                                         assar@irf.se                  
+* Kochel                      24064   47.700  11.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kodaikanal                  KO310   10.200  77.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kokubunji                           35.700 139.000  ID                                        igarashi@crl.go.jp            
+* Kompelusvaara                       67.100  22.300  ASC(p)          ALIS                      steen@irf.se                  
+* Komsomolskaya               KOM    -74.120  97.500  M                                         rclauer@umich.edu             
+* Kotelny                     KOT     76.000 137.800  M                                                                       
+* Kotzebue                            66.900 197.400  ASC                                                                     
+* Kotzebue                            66.900 197.400  P                                                                       
+* Kourou                      KOU      5.100 307.400  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Krim                        59      44.400  34.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Kullorsuaq                  KUV     74.570 302.820  M               Greenland                 jfw@dmi.dk                    
+* Kunson                              40.300 128.700  ID(p)           ULCAR                     reinisch@cae.uml.edu          
+* Kvistaberg                  KVI     59.500  17.600  M               SAMNET                    dave@aurora.york.ac.uk        
+* L'Aquila                    AQU     42.380  13.320  M               WDC-A                     anna@dune.ingrm.it            
+* La Paz                      LPJ1O  -16.500 291.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* La Reunion                  LR22J  -21.100  55.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* La Trobe                           -37.800 145.000  ID              ULCAR                     tsppld@lure.latrobe.edu.au    
+* Lac Rebours                         93.000 360.000  M                                         cgm@physics.att.com           
+* Laimoluokta                         68.400  19.800  ASC(p)          ALIS                      steen@irf.se                  
+* Lakstrask                           66.300  21.100  ASC(p)          ALIS                      steen@irf.se                  
+* Lannion                     LN047   48.450 356.730  I               WDC-C1                    m.wild@rl.ac.uk               
+* Laurel                      APL     39.100 283.150  M               MEASURE                   rassoul@pss.fit.edu           
+* Leadville                           39.750 255.030  NM                                                                      
+* Learmonth                   LM42B  -21.900 114.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Learmonth                   LM42B  -21.800 114.000  ID              ULCAR                     reinisch@cae.uml.edu          
+* Learmonth                   LRM    -22.220 114.100  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Leirvogur                   LRV     64.180 338.300  M               NGDC/SO                   r.stamper@rl.ac.uk            
+* Leknes                      LEK     68.130  13.540  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Leningrad                   LD160   59.950  30.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Leningrad                   LNN     59.950  30.710  M                                                                       
+* Lerwick                     LE061   60.130 358.820  ID(s)           WDC-C1                    m.wild@rl.ac.uk               
+* Lerwick                     LER     60.130 358.820  M               Intermagnet/EO            d.kerridge@bgs.ac.uk          
+* Lincoln                     60      40.820 263.320  I               WDC-C1                    m.wild@rl.ac.uk               
+* Lindau                      LI050   51.600  10.100  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Lisbon                      LE038   38.720 350.730  I               WDC-C1                    m.wild@rl.ac.uk               
+* Little America              LA77Q  -78.200 197.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Lomnicky Stit                       49.200  20.220  NM                                                                      
+* London                              42.000 279.000  CVHF(ro)                                                                
+* London, Ontario                     42.970 278.750  P                                         lowe@canlon.physics.uwo.ca    
+* Longyearbyen                LYR     78.200  15.820  AS                                        bblw@geewiz.gi.alaska.edu     
+* Longyearbyen                LYR     78.200  15.820  ASC(5freq)      MIRACLE                   jmoen@unis.no                 
+* Longyearbyen                LYR     78.200  15.820  ASP(p)(4fq)                               jmoen@unis.no                 
+* Longyearbyen                LYR     78.200  15.820  ATV(p)                                    hayashi@grl.su-tokyo.ac.jp    
+* Longyearbyen                LYR     78.200  15.820  ATV(white)                                c.deehr@giuaf.gi.alask.edu    
+* Longyearbyen                LYR     78.200  15.820  ATV(p)(nrw)                               c.deehr@giuaf.gi.alask.edu    
+* Longyearbyen                LYR     78.200  15.820  ES                                        c.deehr@giuaf.gi.alask.edu    
+* Longyearbyen                LYR     78.200  15.820  FPI                                       alan@apg.ph.ucl.ac.uk         
+* Longyearbyen                LG178   78.200  15.900  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Longyearbyen                LYR     78.200  15.820  ID(p)                                     wickwar@aeronomy.cass.usu.edu 
+* Longyearbyen                LYR     78.200  15.820  IS                                        tony@eiscat.no                
+* Longyearbyen                LYR     78.200  15.820  M               IMAGE/CO/MIRACLE          truls.hansen@phys.uit.no      
+* Longyearbyen                LYR     78.200  15.820  MI(p)                                     sivjee@maxwell.sprl.db.erau.edu
+* Longyearbyen                LYR     78.200  15.820  MI(p)                                     nielsen@mirage.mpae.gwdg.de   
+* Longyearbyen                LYR     78.200  15.820  MIS                                       fred@unis.no                  
+* Longyearbyen                LYR     78.200  15.820  MP                                        jvo@maxwell.gi.alaska.edu     
+* Longyearbyen                LYR     78.200  15.820  MSP(6freq)                                c.deehr@giuaf.gi.alask.edu    
+* Longyearbyen                LYR     78.200  15.820  R                                         c.deehr@giuaf.gi.alask.edu    
+* Longyearbyen                LYR     78.200  15.820  RI                                        pst@dmicvax.dmi.min.dk        
+* Longyearbyen                LYR     78.200  15.820  SI                                        fred@unis.no                  
+* Longyearbyen                LYR     78.200  15.820  SI                                        sivjee@maxwell.sprl.db.erau.edu
+* Loparskaya                  LS168   68.000  33.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Lovo                        LOV     59.350  17.830  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Lovozero                    LOZ     67.970  35.080  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Lulea                       LU165   65.600  22.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Lunping                     LNP     25.000 121.170  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Lvov                        LVV     49.900  23.800  M                                                                       
+* Lycksele                    LY164   64.620  18.760  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Lycksele                    LYC     64.620  18.760  M               IMAGE/MIRACLE             ingemar@irf.se                
+* Lycksele                            64.620  18.760  R                                         assar@irf.se                  
+* Lynn Lake                   LYN     56.850 258.930  M                                         jvo@maxwell.gi.alaska.edu     
+* MAGIC East                  MCE     72.400 326.100  M(s)            MAGIC/Greenland           rclauer@umich.edu             
+* MAGIC GISP                  MCG     72.600 321.650  M               MAGIC/Greenland           rclauer@umich.edu             
+* MAGIC North                 MCN     73.930 322.380  M(s)            MAGIC/Greenland           rclauer@umich.edu             
+* MAGIC Raven Skiway          MCR     66.480 313.710  M               MAGIC/Greenland           rclauer@umich.edu             
+* MAGIC West                  MCW     72.000 317.410  M(s)            MAGIC/Greenland           rclauer@umich.edu             
+* Macau                       MC422   22.200 113.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Macquarie Island                   -54.500 159.000  ATV                                       ray_mor@antdiv.gov.au         
+* Macquarie Island            MQ55M  -54.500 159.000  I               WDC-C1                    ray_mor@antdiv.gov.au         
+* Macquarie Island                   -54.500 159.000  M                                         ray_mor@antdiv.gov.au         
+* Macquarie Island            MCQ    -54.500 158.950  M               NGDC                      sdennis@agso.gov.au           
+* Macquarie Island                   -54.500 159.000  MP                                        ray_mor@antdiv.gov.au         
+* Macquarie Island                   -54.500 159.000  R                                         ray_mor@antdiv.gov.au         
+* Macquarie Island                   -54.500 159.000  TEC                                       ray_mor@antdiv.gov.au         
+* Madras                      MD313   13.100  80.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Magadan                     MG560   60.000 151.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Magadan                     MGD     60.120 151.020  M               210E/EO                   root@ikir.elrus.kamchatka.su  
+* Magadan                             60.120 151.020  NM                                                                      
+* Maitri                             -70.760  11.730  M                                                                       
+* Maniitsoq                   SKT     65.420 307.100  M               Greenland                 jfw@dmi.dk                    
+* Manila                      MN414   14.700 121.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Manzhouli                   ML449   49.600 117.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Marion Island               MRN    -46.880  37.850  M                                         peters@magnet.csir.co.za      
+* Martin de Vivies            AMS    -37.800  77.570  M               Intermagnet               jbitterly@eopg.u-strasbg.fr   
+* Masi (Maze)                 MAS     69.460  23.700  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Maui                        MA720   20.800 203.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Mawson                             -67.600  62.900  ATV                                       ray_mor@antdiv.gov.au         
+* Mawson                             -67.600  62.900  FPI                                       ray_mor@antdiv.gov.au         
+* Mawson                      MW26P  -67.600  62.900  I               WDC-C1                    ray_mor@antdiv.gov.au         
+* Mawson                      MAW    -67.610  62.880  M               NGDC                      sdennis@agso.gov.au           
+* Mawson                             -67.600  62.900  M                                         ray_mor@antdiv.gov.au         
+* Mawson                             -67.600  62.900  MP                                        ray_mor@antdiv.gov.au         
+* Mawson                             -67.600  62.880  NM                                                                      
+* Mawson                             -67.600  62.900  R                                         ray_mor@antdiv.gov.au         
+* Mawson                             -67.600  62.900  TEC                                       ray_mor@antdiv.gov.au         
+* Maynard                     MYJ43   42.430 288.550  I               WDC-C1                    m.wild@rl.ac.uk               
+* McDonald                            30.700 256.000  SI                                                                      
+* McMurdo                     MCM    -77.850 166.700  ELF                                       acfs@star.stanford.edu        
+* McMurdo                     MCM    -77.850 166.700  M                                         cgm@physics.att.com           
+* McMurdo                     MCM    -77.850 166.700  MP                                        engebret@augsburg.edu         
+* McMurdo                     MCM    -77.850 166.700  P                                         rosenberg@uap.umd.edu         
+* McMurdo                     MCM    -77.850 166.700  R                                         rosenberg@uap.umd.edu         
+* McMurdo                     MCM    -77.850 166.700  SIR                                       murcray@ram.phys.du.edu       
+* McMurdo                     MCM    -77.850 166.700  SM                                        robert.dezafra@sunysb.edu     
+* McMurdo                     MCM    -77.850 166.700  ST                                        dave_rust@jhuapl.edu          
+* McMurdo                     MCM    -77.850 166.700  VLF                                       acfs@star.stanford.edu        
+* Mcmurdo                            -77.850 166.720  NM                                                                      
+* Meanook                     ME855   54.620 246.650  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Meanook                     MEA     54.620 246.650  M               Intermagnet               vanbeek@geolab.emr.ca         
+* Melbourne                   FIT     28.070 279.370  M               MEASURE                   rassoul@pss.fit.edu           
+* Memambetsu                  MMB     43.910 144.190  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Merasjaervi                         67.530  21.920  ASC(4freq)      ALIS                      steen@irf.se                  
+* Mexico City                 MX919   19.400 260.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Mexico City                         19.330 260.820  NM                                                                      
+* Midtsandan                          63.600  10.730  CVHF            STARE/MIRACLE             nielsen@mirage.mpae.gwdg.de   
+* Midway Island               MDY     28.210 182.620  M                                                                       
+* Miedzeszyn                  MZ152   52.200  21.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Millstone Hill              MLH     42.620 288.508  ASC(630nm)                                mendillo@buasta.bu.edu        
+* Millstone Hill              MLH     42.620 288.508  FPI(630nm)                                dps@hyperion.haystack.edu     
+* Millstone Hill              MHJ45   42.620 288.508  ID                                        reinisch@cae.uml.edu          
+* Millstone Hill              MLH     42.620 288.508  IS                                        jcf@hyperion.haystack.edu     
+* Millstone Hill              MSH     42.620 288.370  M               MEASURE                   rassoul@pss.fit.edu           
+* Millstone Hill              MLH     42.620 288.508  SI                                        mendillo@buasta.bu.edu        
+* Millstone Hill              MLH     42.620 288.508  SIR                                       wickwar@aeronomy.cass.usu.edu 
+* Minsk                       MNK     54.500  27.880  M                                                                       
+* Mirny                       MIR    -66.550  93.020  I                                         olegtro@geophys.spb.su        
+* Mirny                       MIR    -66.550  93.020  M                                         olegtro@geophys.spb.su        
+* Mirny                       MIR    -66.550  93.020  R                                         olegtro@geophys.spb.su        
+* Mistassini                          48.900 287.783  I                                         berkey@psi.sci.sdl.usu.edu    
+* Mistassini                          48.900 287.783  R                                         rosenberg@uap.umd.edu         
+* Mizuho                      MZH    -70.430  40.200  M                                                                       
+* Molodezhnaya                MOL    -67.670  45.850  I                                         olegtro@geophys.spb.su        
+* Molodezhnaya                MOL    -67.670  45.850  M                                         olegtro@geophys.spb.su        
+* Molodezhnaya                MOL    -67.670  45.850  R                                         olegtro@geophys.spb.su        
+* Morioka                             39.700 141.130  NM                                                                      
+* Moscow                      MO155   55.500  37.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Moscow                      MOS     55.480  37.310  M                                                                       
+* Moscow                              55.470  37.320  NM                                                                      
+* Moshiri                             44.400 142.300  ASC                                                                     
+* Moshiri                     MSR     44.370 142.270  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Moshiri                             44.400 142.300  P                                                                       
+* Mould Bay                   MBC     76.320 240.640  M               Intermagnet               vanbeek@geolab.emr.ca         
+* Mount Bour                  MBO     14.390 343.040  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Mount Bour                  MBO     14.390 343.040  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Mount Karmakuly             MKM     72.300  52.500  M                                                                       
+* Mt Norikura                         36.110 137.550  NM                                                                      
+* Mt Washington                       44.300 288.700  NM                                                                      
+* Mundaring                   MU43K  -31.980 116.220  I               WDC-C1                    m.wild@rl.ac.uk               
+* Munich                              48.000  12.000  ID              ULCAR                     reinisch@cae.uml.edu          
+* Muodoslompolo                       67.900  23.500  ASC(p)          ALIS                      steen@irf.se                  
+* Muonio                      MUO     68.028  23.536  ASC             FASCC/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Muonio                      MUO     68.020  23.530  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Murmansk                    MM168   69.000  33.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Murmansk                    MMK     68.250  33.080  M                                                                       
+* Nagycenk                    NCK     47.630  16.720  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Nain                                56.400 298.300  M(p)            MACCS                     hughes@buasta.bu.edu          
+* Nairobi                     NR10J   -1.280  36.830  I               WDC-C1                    m.wild@rl.ac.uk               
+* Narsarsuaq                  NQJ61   61.200 314.550  ID              WDC-C1                    bullett@plh.af.mil            
+* Narsarsuaq                  NAQ     61.160 314.560  M               Intermagnet/SO/Greenland  or@dmi.dk                     
+* Narsarsuaq                  NAQ     61.000 314.600  R                                         pst@dmicvax.dmi.min.dk        
+* Natal                       NLA0N   -5.700 324.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Nedre Soppero                       68.100  21.800  ASC(p)          ALIS                      steen@irf.se                  
+* Newark                              39.680 284.250  NM                                                                      
+* Newport                     NEW     48.260 242.880  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Nicosia                     NC136   35.100  33.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Niemegk                     NGK     52.070  12.680  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Nikkaluokta                         67.850  19.000  ASC(4freq)      ALIS                      steen@irf.se                  
+* Nord                        NRD     81.600 343.330  M               Greenland                 jfw@dmi.dk                    
+* Nordli                      NOR     64.460  13.590  M               SAMNET                    dave@aurora.york.ac.uk        
+* Norfolk Island              NI63-  -29.030 167.970  I               WDC-C1                    m.wild@rl.ac.uk               
+* Norilsk                     NO369   69.400  88.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Norilsk                     NLK     69.400  88.100  M                                                                       
+* Norman Wells                NOW     64.900 234.500  M                                         jvo@maxwell.gi.alaska.edu     
+* North York                          44.000 280.000  ASC(c)                                    rudy@stplists.ca              
+* North York                          44.000 280.000  MI                                        rudy@stplists.ca              
+* Novokazalinsk               NK246   45.760  62.120  I               WDC-C1                    m.wild@rl.ac.uk               
+* Novosibirsk                 NS355   54.600  83.200  I               WDC-C1                    m.wild@rl.ac.uk               
+* Novosibirsk                 NVS     55.030  82.900  M                                                                       
+* Novosibirsk                         54.800  83.000  NM                                                                      
+* Nurmijarvi                  NU159   60.500  24.650  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Nurmijarvi                  NUR     60.500  24.650  M               Intermagnet/IMAGE/EO/MIRACLE tuija.pulkkinen@fmi.fi        
+* Nurmijarvi                  NUR     60.500  24.650  MP                                        kari.pajunpaa@fmi.fi          
+* Nuuk                        GHB     64.170 308.270  M               Greenland                 jfw@dmi.dk                    
+* Ny Alesund                  NAL     78.920  11.950  AS                                        j.a.holtet@fys.uio.no         
+* Ny Alesund                  ITACA   78.920  11.930  ASC             MIRACLE                   orsini@ifsi.rm.cnr.it         
+* Ny Alesund                  NAL     78.920  11.950  ATV(630nm)                                j.a.holtet@fys.uio.no         
+* Ny Alesund                  NAL     78.920  11.950  ATV(white)                                j.a.holtet@fys.uio.no         
+* Ny Alesund                  NAL     78.920  11.950  E(p)(H-o)                                 j.a.holtet@fys.uio.no         
+* Ny Alesund                  NAL     78.920  11.950  ELF                                                                     
+* Ny Alesund                  NAL     78.920  11.950  FPI                                       bblw@geewiz.gi.alaska.edu     
+* Ny Alesund                  NAL     78.920  11.950  I(p)                                      ect@ion.le.ac.uk              
+* Ny Alesund                  NAL     78.920  11.950  ID(c)                                     j.a.holtet@fys.uio.no         
+* Ny Alesund                  NAL     78.920  11.950  M               IMAGE/MIRACLE             truls.hansen@phys.uit.no      
+* Ny Alesund                  NAL     78.920  11.950  MP                                                                      
+* Ny Alesund                  NAL     78.920  11.950  MSP(4freq)                                j.a.holtet@fys.uio.no         
+* Ny Alesund                  NAL     78.920  11.950  MSP(4freq)                                bblw@geewiz.gi.alaska.edu     
+* Ny Alesund                  NAL     78.920  11.950  R                                         pst@dmicvax.dmi.min.dk        
+* Ny Alesund                  NAL     78.920  11.950  RI                                        nishino@stelab.nagoya-u.ac.jp 
+* Ny Alesund                  NAL     78.920  11.950  RR(p)                                     kolbjorn@arr.nsc.no           
+* Ny Alesund                  NAL     78.920  11.950  TEC             TOMO                      lek@aber.ac.uk                
+* Ny Alesund                  NAL     78.920  11.950  VLF                                       j.a.holtet@fys.uio.no         
+* Nytorp                              94.000 360.000  ASC(p)          ALIS                      steen@irf.se                  
+* Observatoire Haute Provence         46.070   5.710  P                                                                       
+* Odessa                      ODE     46.780  30.880  M                                                                       
+* Okinawa                     OK426   26.300 127.800  ID              WDC-C1                    igarashi@crl.go.jp            
+* Onagawa                     ONW     38.430 141.470  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* Osan                        SN437   37.200 127.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Ottawa                      OT945   45.400 284.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Ottawa                      OTT     45.400 284.450  M               Intermagnet/EO/MEASURE    vanbeek@geolab.emr.ca         
+* Ouagadougou                 OU012   12.370 358.470  I               WDC-C1                    m.wild@rl.ac.uk               
+* Oulu                                65.000  25.000  CUHF(ro)        COSCAT                    schlegel@linax1.mpae.gwdg.de  
+* Oulu                        OUL     65.090  25.890  M               SAMNET                    dave@aurora.york.ac.uk        
+* Oulu                        OUL     65.100  25.850  MP                                        tilmann.bosinger@oulu.fi      
+* Oulu                                65.050  25.470  NM                                                                      
+* Oulu                        OUL     65.050  25.540  R                                         jyrki.manninen@sgo.fi         
+* Oulujarvi                   OUJ     64.520  27.230  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* PENGUIN1                    P1     -83.860 129.610  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN1                    P1     -83.860 129.610  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN1                    P1     -83.860 129.610  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN1                    P1     -83.860 129.610  M               AGONET                    cgm@physics.att.com           
+* PENGUIN1                    P1     -83.860 129.610  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN1                    P1     -83.860 129.610  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN1                    P1     -83.860 129.610  VLF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN2                    P2     -85.670 313.620  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN2                    P2     -85.670 313.620  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN2                    P2     -85.670 313.620  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN2                    P2     -85.670 313.620  M               AGONET                    cgm@physics.att.com           
+* PENGUIN2                    P2     -85.670 313.620  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN2                    P2     -85.670 313.620  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN2                    P2     -85.670 313.620  VLF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN3                    P3     -82.760  28.580  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN3                    P3     -82.760  28.580  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN3                    P3     -82.760  28.580  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN3                    P3     -82.760  28.580  M               AGONET                    cgm@physics.att.com           
+* PENGUIN3                    P3     -82.760  28.580  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN3                    P3     -82.760  28.580  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN3                    P3     -82.760  28.580  VLF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN4                    P4     -82.010  96.760  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN4                    P4     -82.010  96.760  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN4                    P4     -82.010  96.760  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN4                    P4     -82.010  96.760  M               AGONET                    cgm@physics.att.com           
+* PENGUIN4                    P4     -82.010  96.760  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN4                    P4     -82.010  96.760  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN4                    P4     -82.010  96.760  VLF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN5                    P5     -77.230 123.510  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN5                    P5     -77.230 123.510  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN5                    P5     -77.230 123.510  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN5                    P5     -77.230 123.510  M               AGONET                    cgm@physics.att.com           
+* PENGUIN5                    P5     -77.230 123.510  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN5                    P5     -77.230 123.510  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN5                    P5     -77.230 123.510  VLF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN6                    P6     -71.070 127.870  ASC             AGONET                    mende@agena.space.lockheed.com
+* PENGUIN6                    P6     -71.070 127.870  ELF             AGONET                    inan@sierra.stanford.edu      
+* PENGUIN6                    P6     -71.070 127.870  LF-HF           AGONET                    james.w.labelle@dartmouth.edu 
+* PENGUIN6                    P6     -71.070 127.870  M               AGONET                    cgm@physics.att.com           
+* PENGUIN6                    P6     -71.070 127.870  MP              AGONET                    fuku@stpp2.geophys.tohoku.ac.jp
+* PENGUIN6                    P6     -71.070 127.870  RI              AGONET                    rosenberg@uap.umd.edu         
+* PENGUIN6                    P6     -71.070 127.870  VLF             AGONET                    inan@sierra.stanford.edu      
+* Paamiut                     FHB     62.000 310.320  M               Greenland                 jfw@dmi.dk                    
+* Palestine                           32.100 264.700  BLS                                                                     
+* Palmer                             -64.760 295.920  ELF                                       inan@sierra.stanford.edu      
+* Palmer                             -64.760 295.920  VLF                                       inan@sierra.stanford.edu      
+* Panama                      PN909    9.400 280.100  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Pangnirtung                 PGC     66.100 294.200  M               CO/MACCS                  hughes@buasta.bu.edu          
+* Paramaribo                  PMJ06    5.800 304.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Paris-Saclay                SC047   48.100   2.300  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Peach Mountain                      42.400 273.070  FPI                                       niciejew@umich.edu            
+* Pello                       PEL     66.900  24.080  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* Pelly Bay                   PBC     68.500 270.300  M               MACCS                     hughes@buasta.bu.edu          
+* Petropavlovsk               PET     52.900 158.400  M                                                                       
+* Petroplavsk                 PK553   53.020 158.650  I               WDC-C1                    m.wild@rl.ac.uk               
+* Pinawa                      PIN     50.200 263.960  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Pinawa                      PIN     50.200 263.960  MSP(4freq)      CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Pinawa                      PIN     50.200 263.960  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Pionerskaya                 PIO    -69.730  95.500  M(s)                                                                    
+* Pittsburg                           95.000 360.000  M                                         cgm@physics.att.com           
+* Point Arena                 PTA     39.000 236.300  M                                         cgm@physics.att.com           
+* Point Arguello              PA836   35.600 239.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Point Barrow                BRW     71.300 203.300  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Poitiers                    PT046   46.570   0.350  I               WDC-C1                    m.wild@rl.ac.uk               
+* Poker Flat                  PKR     65.110 212.540  M                                         jvo@maxwell.gi.alaska.edu     
+* Poker Flat                          65.000 213.000  RR                                                                      
+* Pontianak                   PK40-   -0.300 109.000  ID              ULCAR                     reinisch@cae.uml.edu          
+* Port Alfred                 CZT    -46.280  51.860  M               Intermagnet               jbitterly@eopg.u-strasbg.fr   
+* Port Moresby                PMG     -9.410 147.150  M                                                                       
+* Port Stanley                PST    -51.800 302.100  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Port-aux-Francais                  -49.300  70.200  CHF(p)                                    jvillain@cnrs-orleans.fr      
+* Port-aux-Francais           KG24R  -49.350  70.260  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Port-aux-Francais           PAF    -49.350  70.260  M               Intermagnet               jbitterly@eopg.u-strasbg.fr   
+* Port-aux-Francais                  -49.350  70.260  NM              WDC-A                     cclark@ngdc.noaa.gov          
+* Port-aux-Francais                  -49.300  69.300  RR                                                                      
+* Poste-d.l.-Baleine          PBQ     55.280 282.260  M               Intermagnet/SO            vanbeek@geolab.emr.ca         
+* Potchefstroom                      -26.410  27.060  NM                                                                      
+* Potsdam                     CLK     44.670 284.980  M               MEASURE                   rassoul@pss.fit.edu           
+* Preobrazhenya               PZ374   74.700 113.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Preobrazhenya               PRB     74.670 112.560  M                                         olegtro@geophys.spb.su        
+* Provideniya Bay             PD664   64.400 186.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Pruhonice                   PQ052   50.000  14.560  I               WDC-C1                    m.wild@rl.ac.uk               
+* Puerto Madryn               PMJ4K  -42.700 294.700  ID                                        reinisch@cae.uml.edu          
+* Puerto Rico                 PRJ18   18.500 292.900  ID              ULCAR                     reinisch@cae.uml.edu          
+* Pykkvbaer                           63.770 339.460  CHF             SuperDARN/CUTLASS/MIRACLE ect@ion.le.ac.uk              
+* Qaanaaq                     THL     77.470 290.770  ID                                        reinisch@cae.uml.edu          
+* Qaanaaq                     THL     77.470 290.770  M               Intermagnet/Greenland     or@dmi.dk                     
+* Qaanaaq                     THL     77.470 290.770  R               Greenland                 efc@dmi.min.dk                
+* Qeqertarsuaq                GDH     69.250 306.470  M               Intermagnet/CO/Greenland  or@dmi.dk                     
+* Rabat                       RT034   33.900 353.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Rabbit Lake                 RAL     58.070 256.320  ID                                        macdougall@canlon.physics.uwo.ca
+* Rabbit Lake                 RAL     58.220 256.320  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Rabbit Lake                 RAL     58.220 256.320  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Rankin Inlet                RAN     62.820 267.890  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Rankin Inlet                RAN     62.820 267.890  MSP(4freq)      CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Rankin Inlet                RAN     62.820 267.890  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Rarotonga                   RA72J  -21.200 200.200  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Repulse Bay                 RPB     66.500 273.800  M               MACCS                     hughes@buasta.bu.edu          
+* Resolute Bay                RB974   74.700 265.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Resolute Bay                RBC     74.750 265.010  ID                                        macdougall@canlon.physics.uwo.ca
+* Resolute Bay                        75.000 265.000  IS(p)                                     kelly@unix.sri.com            
+* Resolute Bay                RES     74.690 265.110  M               Intermagnet               vanbeek@geolab.emr.ca         
+* Resolute Bay                        74.700 265.100  P                                                                       
+* Reykjavik                   RKA64   64.100 338.200  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Ripats                              67.000  20.700  ASC(p)          ALIS                      steen@irf.se                  
+* Rodolfo Marsh                      -62.200 301.080  I                                                                       
+* Rodolfo Marsh                      -62.200 301.080  M                                                                       
+* Rome                        RO041   41.900  12.520  ID              WDC-C1                    Zolesi@ingv.it                
+* Rome                                41.900  12.520  NM                                                                      
+* Rome                                41.900  12.520  NM                                                                      
+* Rorvik                      RVK     64.940  10.980  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Rostov-on-Don               RV149   47.200  39.680  I               WDC-C1                    m.wild@rl.ac.uk               
+* Rovaniemi (Apukka)                  66.770  25.940  MP                                        tilmann.bosinger@oulu.fi      
+* Rovaniemi (Apukka)                  66.570  26.020  R                                         jyrki.manninen@sgo.fi         
+* Rude Skov                   RSV     55.840  12.460  M(s)                                                                    
+* SANAE                       SNA    -72.000 357.000  ASC                                       scourfie@ph.und.ac.za         
+* SANAE                       SNA    -72.000 357.000  CHF             SuperDARN                 ray.greenwald@jhuapl.edu      
+* SANAE                       QM07_  -70.300 357.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* SANAE                       SNA    -70.330 357.510  M                                         fsdkphs@puknet.puk.ac.za      
+* SANAE                       SNA    -72.000 357.000  RI                                        scourfie@ph.und.ac.za         
+* SANAE                       SNA    -72.000 357.000  VLF                                       scourfie@ph.und.ac.za         
+* Sachs Harbour               SAH     72.000 235.000  M                                         jvo@maxwell.gi.alaska.edu     
+* Sacramento                          38.500 238.500  ID              ULCAR                     reinisch@cae.uml.edu          
+* Salekhard                   SD266   66.500  66.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* San Juan                    SJG     18.120 293.850  M               NGDC                      lmorris@ngdc.noaa.gov         
+* San Salvador                SSJ24   24.100 285.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* San Vito                    VT139   40.700  17.900  ID              ULCAR                     reinisch@cae.uml.edu          
+* Sanae                              -70.310 357.590  NM                                                                      
+* Sao Luis                    SAA0K   -2.500 315.800  ID              ULCAR                     reinisch@cae.uml.edu          
+* Sao Paulo                   SPJ2L  -23.500 313.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Sardinia                    ES      39.000   9.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Saskatoon                           52.200 253.500  CHF             SuperDARN                 sofko@skisas.usask.ca         
+* Saskatoon                           52.200 253.500  CVHF            SAPPHIRE                  sofko@skisas.usask.ca         
+* Saskatoon                           52.200 253.500  FPI                                       mcewen@skisas.usask.ca        
+* Saskatoon                   PKS     52.100 253.600  M                                                                       
+* Savissivik                  SVS     76.020 294.900  M               Greenland                 jfw@dmi.dk                    
+* Schwarzenburg               SZ045   46.600   6.700  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Scott Base                  SB67Q  -77.900 166.800  I               WDC-C1                    w.baggaley@phys.canterbury.ac.nz
+* Scott Base                  SBA    -77.850 166.780  M                                         phbjf@cc.newcastle.edu.au     
+* Scott Base                  SBA    -77.850 166.780  M               Intermagnet/WDC-A         lester@geoserve.southern.co.nz
+* Scott Base                  SBA    -77.850 166.780  MP                                        phbjf@cc.newcastle.edu.au     
+* Seoul                       SU437   37.230 126.570  I               WDC-C1                    m.wild@rl.ac.uk               
+* Seyakha                     SYH     70.100  72.500  M                                                                       
+* Siglufjordur                        66.200 341.770  R                                         jyrki.manninen@sgo.fi         
+* Silkkimuotka                        68.020  21.680  ASC(4freq)      ALIS                      steen@irf.se                  
+* Simferopol                  SF144   44.800  34.100  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Singapore                   SI301    1.300 103.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Sitka                       SIT     57.070 224.670  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Skibotn                             69.350  20.330  ATV(558nm)      DASI                      kosch@lin354.dnet.gwdg.de     
+* Skibotn                             69.350  20.330  FPI             DASI                      kosch@lin354.dnet.gwdg.de     
+* Slough                      SL051   51.510 359.400  ID(s)           WDC-C1                    m.wild@rl.ac.uk               
+* Slutsk                      4615I   59.700  30.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Sodankyla                   SOD     67.250  26.240  ASC                                       Maija-Liisa.Kultima@sgo.fi    
+* Sodankyla                   SO166   67.400  26.600  I               WDC-C1                    esa.turunen@sgo.fi            
+* Sodankyla                   SOD     67.364  26.627  IS(ro)                                    tony@eiscat.no                
+* Sodankyla                   SOD     67.370  26.630  M               Intermagnet/IMAGE/MIRACLE Maija-Liisa.Kultima@sgo.fi    
+* Sodankyla                   SOD     62.420  26.390  MP                                        Maija-Liisa.Kultima@sgo.fi    
+* Sodankyla                   SOD     67.250  26.240  P(4freq)                                  Maija-Liisa.Kultima@sgo.fi    
+* Sodankyla                   SOD     67.420  26.390  R(2freq)                                  jyrki.manninen@sgo.fi         
+* Sodankyla                   SOD     96.000 360.000  VLF(c)                                    jyrki.manninen@sgo.fi         
+* Sofia                       SQ143   42.700  23.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Sondre Stromfjord           STF     66.990 309.050  ASC                                       mende@agena.space.lockheed.com
+* Sondre Stromfjord           STF     66.990 309.050  FPI                                       killeen@sprla.sprl.umich.edu  
+* Sondre Stromfjord           STF     66.990 309.050  ID                                        reinisch@cae.uml.edu          
+* Sondre Stromfjord           STF     66.990 309.050  IS                                        kelly@unix.sri.com            
+* Sondre Stromfjord           STF     66.990 309.050  MI                                                                      
+* Sondre Stromfjord           STF     66.990 309.050  MP                                        engebret@augsburg.edu         
+* Sondre Stromfjord           STF     66.990 309.050  OS                                        rsanders@al.noaa.gov          
+* Sondre Stromfjord           STF     66.990 309.050  P(3freq)                                  mende@agena.space.lockheed.com
+* Sondre Stromfjord           STF     66.990 309.050  R                                         pst@dmicvax.dmi.min.dk        
+* Sondre Stromfjord           STF     66.990 309.050  RI                                        pst@dmicvax.dmi.min.dk        
+* Sondre Stromfjord           STF     66.990 309.050  SC                                                                      
+* Sondre Stromfjord           STF     66.990 309.050  SUV                                       killeen@sprla.sprl.umich.edu  
+* Sopochnaya                  SKG     72.500  81.600  M                                                                       
+* Soroya                      SOR     70.540  22.220  M               IMAGE/MIRACLE             tuija.pulkkinen@fmi.fi        
+* South Georgia               SGA5M  -54.270 323.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* South Pole                  SPA    -90.000 360.000  ASC                                       mende@agena.space.lockheed.com
+* South Pole                  SPA    -90.000 360.000  ELF                                       inan@sierra.stanford.edu      
+* South Pole                  SPA    -90.000 360.000  FPI                                       hernandez@u.washington.edu    
+* South Pole                  PO09-  -90.000 360.000  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* South Pole                  SPA    -90.000 360.000  I(c)                                      berkey@psi.sci.sdl.usu.edu    
+* South Pole                  SPA    -90.000 360.000  LF-HF                                     james.w.labelle@dartmouth.edu 
+* South Pole                  SPA    -90.000 360.000  M                                         cgm@physics.att.com           
+* South Pole                  SPA    -90.000 360.000  MF                                                                      
+* South Pole                  SPA    -90.000 360.000  MI                                        sivjee@maxwell.sprl.db.erau.edu
+* South Pole                  SPA    -90.000 360.000  MP                                        engebret@augsburg.edu         
+* South Pole                         -88.000 150.000  NM                                                                      
+* South Pole                  SPA    -90.000 360.000  P(427.8nm)                                rosenberg@uap.umd.edu         
+* South Pole                  SPA    -90.000 360.000  P(630 nm)                                 rosenberg@uap.umd.edu         
+* South Pole                  SPA    -90.000 360.000  P(557.7nm)                                rosenberg@uap.umd.edu         
+* South Pole                  SPA    -90.000 360.000  R                                         rosenberg@uap.umd.edu         
+* South Pole                  SPA    -90.000 360.000  RI                                        rosenberg@uap.umd.edu         
+* South Pole                  SPA    -90.000 360.000  SIR                                       murcray@ram.phys.du.edu       
+* South Pole                  SPA    -90.000 360.000  SS                                        sivjee@maxwell.sprl.db.erau.edu
+* South Pole                  SPA    -90.000 360.000  VLF                                       inan@sierra.stanford.edu      
+* South Uist                  UI057   57.370 352.670  I(s)                                                                    
+* South Uist                  US057   57.370 352.670  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* St. Johns                   SJJ47   47.600 307.320  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* St. Johns                   STJ     47.600 307.320  M               Intermagnet/EO            vanbeek@geolab.emr.ca         
+* St. Peter-Ording            PE054   54.180   8.370  I               WDC-C1                    m.wild@rl.ac.uk               
+* St. Sirius Nord                     81.600 343.300  R                                         pst@dmicvax.dmi.min.dk        
+* Stanford                    ST837   37.400 237.800  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Stanley                     PSJ5J  -51.700 302.200  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Stockholm                           59.000  18.000  P                                         jacek@misu.su.se              
+* Stockholm                           59.000  18.000  SUV                                       jacek@misu.su.se              
+* Stokkseyri                          63.860 337.980  CHF             SuperDARN                 jvillain@cnrs-orleans.fr      
+* Stora Sjofallet                     67.500  18.400  ASC(p)          ALIS                      steen@irf.se                  
+* Sude                        SUD    -71.300  96.680  M                                         rclauer@umich.edu             
+* Surlari                     SUA     44.680  26.250  M                                                                       
+* Sverdlovsk                  SV256   56.700  61.100  I               WDC-C1                    m.wild@rl.ac.uk               
+* Sverdlovsk                  SVD     56.730  61.070  M                                                                       
+* Syowa                       SYO    -69.010  39.590  M                                                                       
+* Syowa East                  SYO    -69.000  39.600  ASCD                                      n.sato@nipr.ac.jp             
+* Syowa East                  SYO    -69.000  39.600  ATV                                                                     
+* Syowa East                  SYO    -69.000  39.600  CHF             SuperDARN                 n.sato@nipr.ac.jp             
+* Syowa East                  SYO    -69.000  39.600  DA                                                                      
+* Syowa East                  SYO    -69.000  39.600  I                                                                       
+* Syowa East                  SW16R  -69.000  39.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Syowa East                  SYO    -69.000  39.600  M                                         n.sato@nipr.ac.jp             
+* Syowa East                  SYO    -69.000  39.600  MP                                                                      
+* Syowa East                  SYO    -69.000  39.600  P                                                                       
+* Syowa East                  SYO    -69.000  39.600  R                                                                       
+* Syowa East                  SYO    -69.000  39.600  RI                                                                      
+* Syowa East                  SYO    -69.000  39.600  TEC                                                                     
+* Syowa East                  SYO    -69.000  39.600  VLF                                       n.sato@nipr.ac.jp             
+* Syowa Station               STARS  -69.000  39.580  CVHF                                      igarashi@crl.go.jp            
+* Tahiti                      TT71P  -17.700 210.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tahiti                      PPT    -17.560 210.390  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Tahiti                      TAH    -17.560 210.390  M                                                                       
+* Taipei                      TP424   25.000 121.200  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Talara                      TA90M   -4.600 278.700  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Talkeetna                   TLK     62.300 209.900  M                                         jvo@maxwell.gi.alaska.edu     
+* Taloyoak                    TAL     69.540 266.450  M               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Taloyoak                    TAL     69.540 266.450  R               CANOPUS                   hughes@canott.dan.sp-agency.ca
+* Tamanrasset                 TN022   22.800   5.530  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tamanrasset                 TAM     22.790   5.530  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Tambey                      TMB     71.500  71.800  M                                                                       
+* Tananarive                  TAN    -18.920  47.550  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Tashkent                    TQ241   41.330  69.620  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tashkent                    TKT     41.330  69.620  M                                                                       
+* Tasiilaq                    AMK     65.600 322.370  M               Greenland                 jfw@dmi.dk                    
+* Tbilisi                     TB142   41.700  44.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tbilisi                     TFS     42.090  44.710  M                                                                       
+* Tbilisi                             41.720  44.800  NM                                                                      
+* Tehran                      TE236   35.700  51.400  I               WDC-C1                    m.wild@rl.ac.uk               
+* Terra Nova Bay              TNB    -74.690 164.120  ASC             AGONET                    candidi@sunago2.ifsi.rm.cnr.it
+* Terra Nova Bay              TNB    -74.690 164.120  I                                         Cerrone@ingv.it               
+* Terra Nova Bay              TNB    -74.690 164.120  M               AGONET                    cafarel@ugo.ingrm.it          
+* Terra Nova Bay              TNB    -74.690 164.120  R               AGONET                    Defranceschi@ingv.it          
+* Terre Adelie                DU56O  -66.660 140.020  I               WDC-C1                    jean-jacques.berthelier@cetp.ipsl.fr
+* Terre Adelie                       -66.670 140.020  NM                                                                      
+* Thule                               76.530 291.560  FPI                                       niciejew@umich.edu            
+* Thule                               76.500 291.300  NM                                                                      
+* Thule (Qanaq)               THJ77   77.500 290.800  I               WDC-C1                    m.wild@rl.ac.uk               
+* Thumba                      TC309    8.600  76.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tihany                      THY     46.900  17.890  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Tiruchirapalli              TI311   10.800  78.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tixie Bay                   TIK     71.580 129.000  ASC                                                                     
+* Tixie Bay                   TX471   71.500 128.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tixie Bay                   TIX     71.580 129.000  M               210E/SO                   centr@ifkia.yacc.yakutia.su   
+* Tixie Bay                   TIK     71.580 128.920  M                                         olegtro@geophys.spb.su        
+* Tixie Bay                   TIK     71.580 129.000  P                                                                       
+* Tjautjas                            67.330  20.750  ASC(4freq)      ALIS                      steen@irf.se                  
+* Tjornes                             66.200 342.900  I                                         n.sato@nipr.ac.jp             
+* Tjornes                     TJO     66.200 342.800  M                                         n.sato@nipr.ac.jp             
+* Tjornes                             66.200 342.900  RI                                        pst@dmicvax.dmi.min.dk        
+* Tokyo                       TO535   35.700 139.500  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tokyo Itabashi                      35.750 139.720  NM                                                                      
+* Toledo                      TOL     39.880 355.950  M                                                                       
+* Tomsk                       TK356   56.500  84.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Torino                      TF043   45.020   7.640  I               WDC-C1                    m.wild@rl.ac.uk               
+* Torshavn                            62.000 353.300  R                                         pst@dmicvax.dmi.min.dk        
+* Tortosa (Roquetas)          EB040   40.800   0.300  ID              WDC-C1                    m.wild@rl.ac.uk               
+* Townsville                  TV51R  -19.630 146.850  I               WDC-C1                    m.wild@rl.ac.uk               
+* Trelew                      TWJ4L   43.200 294.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Trivandrum                  TM308    8.500  77.000  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Tromso                              69.700  19.200  D                                         yxo@ion.le.ac.uk              
+* Tromso                      TR169   69.700  19.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tromso                      TRO     69.660  18.940  M               IMAGE/MIRACLE             truls.hansen@phys.uit.no      
+* Tromso-Ramfjord                     69.586  19.227  ATV(c)                                    p.n.smith@sussex.ac.uk        
+* Tromso-Ramfjord                     69.586  19.227  ID                                        mike@eiscatt.eiscat.no        
+* Tromso-Ramfjord                     69.586  19.227  IS(UHF)                                   tony@eiscat.no                
+* Tromso-Ramfjord                     69.586  19.227  IS(VHF)                                   tony@eiscat.no                
+* Tromso-Ramfjord                     69.586  19.227  MF                                                                      
+* Tromso-Ramfjord                     69.586  19.227  RI(P)                                     nielsen@mirage.mpae.gwdg.de   
+* Tsumeb                             -19.120  17.350  NM                                                                      
+* Tuckerton                   TKN     39.620 283.670  M                                         cgm@physics.att.com           
+* Tucson                      TUC     32.250 249.170  M               NGDC                      lmorris@ngdc.noaa.gov         
+* Tucuman                     TUJ2O  -26.900 294.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tulsa                       TUL     35.910 264.210  M                                                                       
+* Tunguska                    TZ362   61.600  90.000  I               WDC-C1                    m.wild@rl.ac.uk               
+* Tunguska                    POD     61.600  90.000  M                                                                       
+* Turku                               60.400  22.600  NM                                                                      
+* Uedinenija                  UDN     77.520  82.220  M               DIMNET                    olegtro@geophys.spb.su        
+* Uedinenija                  UDN     77.520  82.220  R               DIMNET                    olegtro@geophys.spb.su        
+* Upernavik                   UPN     72.780 303.850  M               Greenland                 jfw@dmi.dk                    
+* Uppsala                     UP158   59.800  17.600  ID              WDC-C1                    opg@irfu.se                   
+* Uppsala                     UPS     59.900  17.350  M               IMAGE/MIRACLE             Kirsti.Kauristie@fmi.fi       
+* Ushuaia                     UAJ5m  -54.800 291.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Uummannaq                   UMQ     70.680 307.870  M               Greenland                 jfw@dmi.dk                    
+* Valentia                    VAL     51.930 349.750  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Vandenberg AFB                      34.700 239.400  ID              ULCAR                     reinisch@cae.uml.edu          
+* Vanimo                      VA50L   -2.700 141.300  I               WDC-C1                    m.wild@rl.ac.uk               
+* Vernadsky                   AIJ6N  -65.250 295.730  I                                         milin@aston.univ.kiev.ua      
+* Vernadsky                          -65.250 295.730  M                                         milin@aston.univ.kiev.ua      
+* Vernadsky                          -65.250 295.730  VLF                                       milin@aston.univ.kiev.ua      
+* Victoria                    VI848   48.400 236.600  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Victoria                    VIC     48.520 236.580  M               Intermagnet/EO            vanbeek@geolab.emr.ca         
+* Vize Island                 VIZ     79.480  76.980  M               DIMNET                    olegtro@geophys.spb.su        
+* Vize Island                 VIZ     79.480  76.980  R               DIMNET                    olegtro@geophys.spb.su        
+* Vladivostok                 VLA     43.680 132.170  M                                                                       
+* Vostok                      VO47P  -78.450 106.870  I               WDC-C1                    olegtro@geophys.spb.su        
+* Vostok                      VOS    -78.460 106.820  M                                         olegtro@geophys.spb.su        
+* Vostok                      VOS    -78.450 106.870  R                                         olegtro@geophys.spb.su        
+* Wake Island                 WKE     19.200 166.700  M                                                                       
+* Wakkanai                    WK545   45.400 141.700  I               WDC-C1                    m.wild@rl.ac.uk               
+* Wallops Island              WP937   37.900 284.500  ID              WDC-C1                    bullett@plh.af.mil            
+* Wallops Island                      38.000 285.000  RR                                                                      
+* Washington                  WA938   38.700 282.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Watheroo                    WT43-  -30.300 115.900  I               WDC-C1                    m.wild@rl.ac.uk               
+* Watson Lake                         60.060 231.420  FPI                                       niciejew@umich.edu            
+* Watson Lake                 WTL     60.060 231.420  M                                                                       
+* Weipa                       WEP    -12.680 141.880  M               210E                      ogawa@stelab.nagoya-u.ac.jp   
+* White Sands                 WS832   38.300 253.500  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* White Sands                         32.200 254.000  RR                                                                      
+* Wingst                      WNG     53.740   9.070  M               Intermagnet               d.kerridge@bgs.ac.uk          
+* Winnipeg                    WI949   49.800 265.600  I(s)            WDC-C1                    m.wild@rl.ac.uk               
+* Wuhan                       54430   30.600 114.400  ID              ULCAR                     reinisch@cae.uml.edu          
+* Xinxiang                    XI434   35.300 113.900  ID              ULCAR                     reinisch@cae.uml.edu          
+* Yakutsk                     YA462   62.000 129.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Yakutsk                     YAK     62.080 129.670  M                                                                       
+* Yakutsk                             62.010 129.430  NM                                                                      
+* Yamagawa                    YG431   31.200 130.600  I               WDC-C1                    m.wild@rl.ac.uk               
+* Yar Sale                    YSL     66.800  70.800  M                                                                       
+* Yellowknife                 YE862   62.400 245.600  ID                                                                      
+* Yellowknife                 YKC     62.480 245.520  M               Intermagnet/SO            vanbeek@geolab.emr.ca         
+* York                        YOR     53.940 358.940  M               SAMNET                    dave@aurora.york.ac.uk        
+* Yuzhno Sakhalins            YSS     46.950 142.720  M                                                                       
+* Zhong-Shan                  ZHO    -69.400  76.400  ASC                                                                     
+* Zhong-Shan                  ZHO    -69.400  76.400  ATV                                                                     
+* Zhong-Shan                  ZS36R  -69.200  76.200  ID                                                                      
+* Zhong-Shan                  ZHO    -69.400  76.400  M                                                                       
+* Zhong-Shan                  ZHO    -69.400  76.400  MSP(5 frq)                                kari.kaila@oulu.fi            
+* Zhong-Shan                  ZHO    -69.400  76.400  RI                                                                      
