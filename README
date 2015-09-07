@@ -3,33 +3,29 @@ git clone VTK (to get VTK6.2), maybe we switch to release later.
 install apache maven
 fetch JOGL using mvn, no longer README.txt in VTK/Wrapping/Java, use these three commands:
 
-$ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.gluegen:gluegen-rt:2.3.1
-$ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all-main:2.3.1
-$ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all:2.3.1
+$ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.gluegen:gluegen-rt:2.3.1;mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all-main:2.3.1;mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all:2.3.1
 
-git clone OVT ...
+git clone OVT...
+
 cd ovt
-mkdir VTKBuild
-cd VTKBuild
-ccmake /path/to/VTK
+$mkdir VTKBuild
+$cd VTKBuild
+$ccmake /path/to/VTK
 #Enable Java,JOGL, and Testing in VTK config  #NB UPDATE JOGL PATHS! from 2.0.2 to 2.3.1
 
-change VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.java 
-from —>
-line 49         vtkAbstractJoglComponent.this.setSize(drawable.getWidth(), drawable.getHeight());
-————— 
-line 49         vtkAbstractJoglComponent.this.setSize(drawable.getSurfaceWidth(), drawable.getSurfaceHeight());
-<— to
-and all “import javax.media.opengl.*” must be changed to com.jogamp.opengl.* in;
+Patch VTK for new JOGL by running this:
+$ cp -v ../VTKPatch/*.java java/vtk/rendering/jogl/
 
-VTKBuild/java/vtk/rendering/jogl/vtkAbstractJoglComponent.java
-VTKBuild/java/vtk/rendering/jogl/vtkJoglPanelComponent.java 
-VTKBuild/java/vtk/rendering/jogl/vtkJoglCanvasComponent.java 
+$ make
 
-make
 compile libovt:
-cd ../src/libovt
-./configure --with-jdk=PATH-TO-JDK
-make
+$cd ../src/libovt
+$./configure --with-jdk=PATH-TO-JDK
+$make
 start Netbeans
 Open Project -> Navigate to OVT
+
+
+Before release:
+make sure VTK compiled in Release version, (ccmake, patch, make)
+make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing
