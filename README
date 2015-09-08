@@ -27,5 +27,6 @@ Open Project -> Navigate to OVT
 
 
 Before release:
+fix_macosx_nativelibs_fkjn.sh
 make sure VTK compiled in Release version, (ccmake, patch, make)
 make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing

@@ -25,7 +25,7 @@ public class MagnetosphereBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_fieldlineRadiusScale] = new PropertyDescriptor ( "fieldlineRadiusScale", ovt.object.Magnetosphere.class, "getFieldlineRadiusScale", "setFieldlineRadiusScale" ); // NOI18N
             properties[PROPERTY_visible] = new PropertyDescriptor ( "visible", ovt.object.Magnetosphere.class, "isVisible", "setVisible" ); // NOI18N
             properties[PROPERTY_wireframe] = new PropertyDescriptor ( "wireframe", ovt.object.Magnetosphere.class, "isWireframe", "setWireframe" ); // NOI18N
-            properties[PROPERTY_scalarcolor] = new PropertyDescriptor ( "scalarcolor", ovt.object.Magnetosphere.class, "isScalarColor", "setScalarColor" ); // NOI18N
+            properties[PROPERTY_scalarcolor] = new PropertyDescriptor ( "scalarcolor", ovt.object.Magnetosphere.class, "isScalarcolor", "setScalarcolor" ); // NOI18N
         }
         catch(IntrospectionException e) {
             e.printStackTrace();
