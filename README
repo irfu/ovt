@@ -26,7 +26,36 @@ start Netbeans
 Open Project -> Navigate to OVT
 
 
+----------------------------------------------------------------------------------------------
+Install OVT for development(& build if new VTK version) on Windows
+----------------------------------------------------------------------------------------------
+install: Visual Studio, CMake, Cygwin, Oxygen, Perl  ( Don’t forget Maven, JAVA, JOGL, set JAVA_PATH)
+
+Install & Patch VTK VTK, Follow instructions here:
+http://www.vtk.org/Wiki/VTK/Configure_and_Build#On_Windows_5
+
+compile libovt
+
+Deliver .dll files to distribution.
+
+----------------------------------------------------------------------------------------------
 Before release:
-fix_macosx_nativelibs_fkjn.sh
-make sure VTK compiled in Release version, (ccmake, patch, make)
+----------------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------------
+if VTK updated or libovt.dylib/.so/.dll updated:
+
+ 
+build on each target platform....................
+
+for Mac OS X native libs, run:
+$sh fix_macosx_nativelibs_fkjn.sh
 make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing
+
+----------------------------------------------------------------------------------------------
+build all in install4j
+
+rsync (4 files) files to server:
+$cd <install4j output folder>
+$rsync -rzh --progress ovt*3_0.sh ovt*3_0.dmg ovt*3_0.exe updates.xml frejon@hq.irfu.se:/usr/home/www/ovt/releases/current/
+
