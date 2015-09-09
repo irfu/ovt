@@ -321,8 +321,14 @@ public class IndexedSegmentsCache {
     private class InternalCacheDataSource implements DiscreteIntervalToListCache.DataSource {
 
         @Override
-        public List<CacheSlotContents> getList(int i_beginInclusive, int i_endExclusive, Object getListArgument) throws IOException {
-            return IndexedSegmentsCache.this.dataSource.getCacheSlotContents(i_beginInclusive, i_endExclusive, getListArgument);
+        public List<CacheSlotContents> getList(
+                int i_beginInclusive,
+                int i_endExclusive,
+                Object getListArgument) throws IOException {
+            return IndexedSegmentsCache.this.dataSource.getCacheSlotContents(
+                    i_beginInclusive,
+                    i_endExclusive,
+                    getListArgument);
         }
     }
 

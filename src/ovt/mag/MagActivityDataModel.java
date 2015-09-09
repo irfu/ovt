@@ -47,7 +47,7 @@ import java.util.*;
 import ovt.util.Log;
 
 /**
- * Class modelling the activity data in a GUI table and read from/saved to files.
+ * Class modelling the activity data in a JTable (GUI) and read from/saved to files.
  * 
  * Files should exist in directory <I>mdata/</I> on the disk and have
  * header with column names. First column should be always <B>Time</B>.

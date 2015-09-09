@@ -23,9 +23,10 @@ import java.util.TreeMap;
  *
  * NOTE: null also works instead of an object.
  *
- * DEFINITION: "Cache slot", or just "slot" refers to a "place"/"slot"/"site" in
- * the cache where one object returned from the function (corresponding to a
- * specific integer) may or may not already be cached.
+ * DEFINITION: "Cache slot", or just "slot" refers to a "place"/"slot"/"site"
+ * inside the cache where one object returned from the function (corresponding
+ * to a specific integer) may or may not already be cached. This concept is onyl
+ * relevant for the implementation and for configuring the cache.
  *
  * NOTE: The current implementation does not assume there are any min/max limits
  * on meaningful integer intervals. It just caches returned objects from calls
@@ -71,19 +72,25 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
     public interface DataSource {
 
         /**
-         * Method that returns requested objects from the source.
+         * Method that returns requested objects from the source. The returned
+         * objects will be cached.
          *
-         * NOTE: An implementing class must not throw exception merely because
+         * NOTE: An implementing class must NOT throw exception merely because
          * it is known that there is no data for the specified interval, e.g.
          * data gap or outside some natural interval for which there is data.
          * Instead it must return something that represents the absence of data.
          *
+         * IMPLEMENTATION NOTE: Java will not permit using generic class "O" for
+         * return type (List<O>).
+         *
+         * @param i_beginInclusive
+         * @param i_endExclusive
          * @param getListArgument Argument passed on from the call to the cache.
-         * Can be used to e.g. specify extra parameters, e.g. resolution.
+         * Can be used to e.g. specify extra parameters on the required
+         * "quality", e.g. resolution or possibly the age of data.
          * @return List of objects of class O. These objects should be treated
          * as immutable by all code.
          */
-        // IMPLEMENTATION NOTE: Java will not permit using "O" for return type (List<U>).
         public List getList(
                 int i_beginInclusive, int i_endExclusive,
                 Object getListArgument)
@@ -109,7 +116,7 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
 
 
     /**
-     * Constructor.
+     * Constructor. Initializes cache contents (but not other settings) from a stream.
      */
     public DiscreteIntervalToListCache(
             ObjectInput in, DataSource mDataSource, int mProactiveCachingFillMargin)
@@ -138,6 +145,8 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
 
 
     /**
+     * Write the cached data (but not other settings) to a strean.
+     * 
      * IMPLEMENTATION NOTE: The writing to stream captures the class of cached
      * objects, not the class specified through Java generics when instantiating
      * this class ("O").
@@ -164,7 +173,10 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
     }
 
 
-    /** Only supplied to give some sort of basic statistic on how full the cache is. */
+    /**
+     * Only supplied to give some sort of basic statistic on how full the cache
+     * is.
+     */
     public int getNbrOfFilledCacheSlots() {
         return this.cachedObjects.size();
     }
@@ -205,12 +217,13 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
                 /*==============================================================
                  Fill uncached slots in the requested interval with some
                  extra margin for proactive caching.
-                 NOTE: One only wants to cache proactively if new objects are to
+                 NOTE: One only wants to cache proactively _IF_ new objects are to
                  be retrieved anyway. Therefore one must first check if any new
                  objects are to be retrieved at all.
                  =============================================================*/
                 fillUncachedSlots(
-                        i_beginInclusive - this.proactiveCachingFillMargin, i_endExclusive + this.proactiveCachingFillMargin,
+                        i_beginInclusive - this.proactiveCachingFillMargin,
+                        i_endExclusive + this.proactiveCachingFillMargin,
                         acceptCachedObject, getListArgument);
             }
         }

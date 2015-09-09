@@ -35,7 +35,6 @@
 package ovt.datatype;
 
 import java.lang.*;
-import java.text.*;
 import java.util.*;
 
 /**
@@ -371,8 +370,20 @@ public class Time {
 
 
     /**
+     * Appropriate to set year to be sure that leap day are taken into account.
+     * User may otherwise try to set year after setting day-of-year.
+     */
+    /*public void setDayOfYear(int year, int doy) {
+        // Wikipedia: "The years 2000 and 2400 are leap years, while 1800, 1900, 2100, 2200, 2300 and 2500 are common years."
+        final boolean isLeapYearException = (year % 100 == 0) && (year % 400 != 0);
+        final boolean isLeapYear = (year % 4 == 0) && !isLeapYearException;
+    }*/
+
+
+    /**
      * This is a quick hack. There could be a better solution
      */
+    // UNUSED?
     public int getDayOfTheYear() {
         return (int) (getMjd() - new Time(year, 1, 1, 0, 0, 0).getMjd());
     }
@@ -553,7 +564,7 @@ public class Time {
 
 
     /**
-     * converts mjd to julian
+     * Converts mjd to julian.
      */
     public static Julian getJulian(double mjd) {
         return new Julian(mjd);
@@ -576,7 +587,7 @@ public class Time {
 
         System.out.println("mjd=0   : " + new Time(0.0));   // Determine epoch (back conversion not checked here).
         System.out.println("--");
-        
+
         {
             // Test whether conversion and reverse conversion match each other.
             // NOTE: Does not check whether the actual mjd values correspond to the normal dates.

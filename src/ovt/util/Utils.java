@@ -727,9 +727,21 @@ public class Utils extends Object {
      * a non-null return File object refers to an existing file. NOTE: The
      * function is therefore also NOT suited for suggesting where to create a
      * new file.
+     *
+     * NOTE: The return result from ClassLoader#getResource can refer to a file
+     * inside a ".jar" file.
      */
     /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
+        {
+            // DEBUG
+            /*Log.log("Utils#findFile(fileName="+fileName+")");
+             Log.log("   First suggestion (file path): "+OVTCore.getUserDir() + fileName, 2);
+             final java.net.URL tempURL = OVTCore.class.getClassLoader().getResource(fileName);
+             final String tempStr = String.valueOf(tempURL);
+             Log.log("   Second suggestion (resource): "+tempStr, 2);*/
+        }
+
         if (fileName == null) {
             return null;
         }
@@ -738,8 +750,8 @@ public class Utils extends Object {
             file = null;
         }
         if (file == null) {
-            ClassLoader classLoader = OVTCore.class.getClassLoader();
-            java.net.URL fn = classLoader.getResource(fileName);
+            final ClassLoader classLoader = OVTCore.class.getClassLoader();
+            final java.net.URL fn = classLoader.getResource(fileName);
             if (fn == null) {
                 return null;
             }
@@ -983,6 +995,33 @@ public class Utils extends Object {
             a[i] = first + (last - first) / (N - 1) * i;
         }
         return a;
+    }
+
+
+    /**
+     * Given an array, construct a new same-sized array where the components are
+     * the sum of the components up to that index in the original array.
+     *
+     * @param inclusiveSum Determines whether the sum should include the index
+     * itself.
+     * @return Array where a component i contains the sum of the components a[0]
+     * to a[i-1] or a[i] depending on flag.
+     */
+    public static int[] getCumulativeIntArray(int[] a, boolean inclusiveSum) {
+        final int[] ca = new int[a.length];
+        int sum = 0;
+        if (inclusiveSum) {
+            for (int i = 0; i < a.length; i++) {
+                sum = sum + a[i];
+                ca[i] = sum;
+            }
+        } else {
+            for (int i = 0; i < a.length; i++) {
+                ca[i] = sum;
+                sum = sum + a[i];
+            }
+        }
+        return ca;
     }
 
 

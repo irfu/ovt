@@ -351,14 +351,26 @@ public class SSCWSOrbitCache {
          return SSCWSOrbitCache.this.getCacheSlotIndex(t);
          }*/
         @Override
-        public Object getDataFromCacheSlotContents(List<CacheSlotContents> requestedCacheSlotsContents, int i_beginSlotArrayInclusive, int i_endSlotArrayExclusive) {
-            return SSCWSOrbitCache.this.getDataFromCacheSlotContents(requestedCacheSlotsContents, i_beginSlotArrayInclusive, i_endSlotArrayExclusive);
+        public List<CacheSlotContents> getCacheSlotContents(
+                int i_beginInclusive,
+                int i_endExclusive,
+                Object getCacheSlotContentsArgument) throws IOException {
+            return SSCWSOrbitCache.this.getCacheSlotContents(
+                    i_beginInclusive,
+                    i_endExclusive,
+                    getCacheSlotContentsArgument);
         }
 
 
         @Override
-        public List<CacheSlotContents> getCacheSlotContents(int i_beginInclusive, int i_endExclusive, Object getCacheSlotContentsArgument) throws IOException {
-            return SSCWSOrbitCache.this.getCacheSlotContents(i_beginInclusive, i_endExclusive, getCacheSlotContentsArgument);
+        public Object getDataFromCacheSlotContents(
+                List<CacheSlotContents> requestedCacheSlotsContents,
+                int i_beginSlotArrayInclusive,
+                int i_endSlotArrayExclusive) {
+            return SSCWSOrbitCache.this.getDataFromCacheSlotContents(
+                    requestedCacheSlotsContents,
+                    i_beginSlotArrayInclusive,
+                    i_endSlotArrayExclusive);
         }
     }
 

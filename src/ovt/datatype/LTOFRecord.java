@@ -215,7 +215,7 @@ public  class LTOFRecord  {
      * 
      * New implementation of set3rdRecord to fix bugs.
      * 
-     * @author Erik P G Johansson
+     * @author Erik P G Johansson, 2015-08-xx
      */
     public void set3rdRecord(String line) throws IllegalArgumentException {
         

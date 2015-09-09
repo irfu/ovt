@@ -89,9 +89,10 @@ public static final int T2001 =  2001;
 
 /**  arbitrary factor from <code>0.5</code> to <code>1.5</code>
  *  Field = internalField  +  ModelFactor * externalFiels
+ * 
  *  @see ovt.calc.MagPack#magbv(double[])
  */
-public static double modelFactor=1.0;
+public static double modelFactor = 1.0;   // Make private, final, non-static?
 
 public static double mSub=11.0;
 public static double bSub=13.5;
@@ -393,9 +394,9 @@ public void removeMagPropsChangeListener (MagPropsChangeListener listener) {
 //----------- DATA ---------------
 
 public double getKPIndex(double mjd) {
-  Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);
+  Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
   final double value = activityDataModels[KPINDEX].getValues(mjd)[0];
-  Log.log("   value="+value, 2);
+  Log.log("   value="+value, 2);   // DEBUG
   return activityDataModels[KPINDEX].getValues(mjd)[0];
 }
 
@@ -412,7 +413,10 @@ public double getDSTIndex(double mjd) {
 }
 
 public double getMachNumber(double mjd) {
-  return activityDataModels[MACHNUMBER].getValues(mjd)[0];
+  Log.log(this.getClass().getSimpleName()+"#getMachNumber("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+  final double value = activityDataModels[MACHNUMBER].getValues(mjd)[0];
+  Log.log("   value="+value, 2);   // DEBUG
+  return value;
 }
 
 public double getSWVelocity(double mjd) {
