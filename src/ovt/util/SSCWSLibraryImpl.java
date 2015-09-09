@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.util;
 
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateComponent;
@@ -283,10 +278,12 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;
         final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_J_2000;
         if (REQUESTED_CS != CoordinateSystem.GEI_J_2000) {
+            System.out.println("===========================================================");
             System.out.println("WARNING! Downloading satellite orbit data from SSC in a coordinate "
                     + "system different from GEI_J_2000. This setting has probably "
                     + "been made for testing purposes but should not be used in an "
                     + "official version.");
+            System.out.println("===========================================================");
         }
 
         final SatelliteSpecification satSpec = new SatelliteSpecification();

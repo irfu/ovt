@@ -1,13 +1,9 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.util;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
 import ovt.object.LTOFSat;
@@ -15,6 +11,10 @@ import ovt.object.SSCWSSat;
 import ovt.object.TLESat;
 
 /**
+ * Class created 2015.
+ *
+ * @author Erik P G Johansson, erik.johansson@irfu.se
+ *
  * Informal test_compareTrajectories code for comparing trajectories to
  * determine differences in coordinate systems or time. Used in particular to
  * verify the coordinate system used by SSCWS satellites data.
@@ -34,10 +34,8 @@ import ovt.object.TLESat;
  * 7) Difference in how handling data gaps (or special cases) somehow.<BR>
  *
  * NOTE: If one tries to download SSC in different coordinate systems, then one
- * MUST DEACTIVATE CACHING TO FILE.
- *
- *
- * @author Erik P G Johansson, erik.johansson@irfu.se
+ * MUST DEACTIVATE CACHING TO FILE ot avoid mixing of coordinate systems in the
+ * disk cache over multiple sessions.
  */
 public class SSCWSSat_CompareTrajectoriesTest {
 
@@ -48,10 +46,9 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
 
     public static void main(String[] args) throws IOException {
-        //DistributionEstimator.test_compareTrajectories();
         //test_testCode();
-        test_compareTrajectories();
         //test_pointCalculation();
+        test_compareTrajectories();
     }
 
 
@@ -80,13 +77,20 @@ public class SSCWSSat_CompareTrajectoriesTest {
         //System.out.println("gei_arr_posAxis_km1[0] = " + Arrays.toString(gei_arr_posAxis_km1[0]));
         //System.out.println("gei_arr_posAxis_km2[0] = " + Arrays.toString(gei_arr_posAxis_km2[0]));
 
-        compareTrajectories(gei_arr_posAxis_km1, gei_arr_posAxis_km2, vei_arr1, vei_arr2, timeMjdMap);
+        compareTrajectoriesPrint(gei_arr_posAxis_km1, gei_arr_posAxis_km2, vei_arr1, vei_arr2, timeMjdMap);
     }
 
 
+    /**
+     * Print the orbit for a single point in time. Used for JSOC's external test
+     * cases.
+     */
     public static void test_pointCalculation() throws IOException {
-        final double[] timeMjdMap = {Time.getMjd(1997, 01, 01, 00, 00, 00)};
-        TrajectoryDataSource tds = new LTOFFileDataSource(
+        final int N = 101;
+        final int i = 51 - 1;
+        final double timeMjd = Time.getMjd(1997, 01, 01, 00, 00, 00);
+        final double[] timeMjdMap = Utils.newLinearArray(timeMjd - 1, timeMjd + 1, N);
+        final TrajectoryDataSource tds = new LTOFFileDataSource(
                 "/home/erjo/work_files/ovt_diverse/ESOC_LTOF_validation/ltof.cl1"
         );
 
@@ -94,12 +98,16 @@ public class SSCWSSat_CompareTrajectoriesTest {
          TrajectoryDataSource tds = new LTOFFileDataSource(
          "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"
          );*/
-        final double[][] gei_arr_posAxis_km = new double[1][3];
-        final double[][] vei_arr = new double[1][3];
+        final double[][] gei_arr_posAxis_km = new double[N][3];
+        final double[][] vei_arr = new double[N][3];
         tds.fill_GEI_VEI(timeMjdMap, gei_arr_posAxis_km, vei_arr);
 
-        System.out.printf("gei_arr : %f, %f, %f\n", gei_arr_posAxis_km[0][0], gei_arr_posAxis_km[0][1], gei_arr_posAxis_km[0][2]);
-        System.out.printf("vei_arr : %f, %f, %f\n", vei_arr[0][0], vei_arr[0][1], vei_arr[0][2]);
+        System.out.printf("gei_arr : %f, %f, %f\n", gei_arr_posAxis_km[i][0], gei_arr_posAxis_km[i][1], gei_arr_posAxis_km[i][2]);
+        System.out.printf("vei_arr : %f, %f, %f\n", vei_arr[i][0], vei_arr[i][1], vei_arr[i][2]);
+
+        // Results when running code for JSOC's verification test:
+        // gei_arr : -93378,131462, 1951,879165, 45818,774600
+        // vei_arr : -1,352745, 0,006500, -0,733957
     }
 
 
@@ -139,15 +147,14 @@ public class SSCWSSat_CompareTrajectoriesTest {
          */
 
         final int N = 20000;   // Note: 1 day = 1440 min.
-        final double startMjd = Time.getMjd(2010, 1, 1, 0, 0, 0);
+        final double startMjd = Time.getMjd(2005, 1, 1, 0, 0, 0);
         final double lengthMjd = 120;
-        final double timeDifferenceMjd = Time.DAYS_IN_SECOND * 30;
-        compareTrajectories(
-                new SSCWSDataSource("cluster3", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-                new LTOFFileDataSource(
-                        //"/home/erjo/work_files/ovt/build/classes/odata/Cluster1.ltof"
-                        "/home/erjo/work_files/INBOX/SUPER_LTOF_C3.CR.ltof"
-                ),
+        final double timeDifferenceMjd = Time.DAYS_IN_SECOND * 0;
+        /*compareTrajectories(
+                new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                //new SSCWSDataSource("cluster3", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
+                //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C3.CR.ltof"),
                 Utils.newLinearArray(
                         startMjd,
                         startMjd + lengthMjd, N),
@@ -161,13 +168,12 @@ public class SSCWSSat_CompareTrajectoriesTest {
          startMjd + lengthMjd, N),
          timeDifferenceMjd);//*/
         //--------------------------
-        /*compareTrajectories(
-         new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource(
-         "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"),
-         Utils.newLinearArray(
-         startMjd,
-         startMjd + lengthMjd, N),
+        compareTrajectories(
+         //new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         //new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_1.ltof"),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"),
+         Utils.newLinearArray(startMjd, startMjd + lengthMjd, N),
          timeDifferenceMjd);//*/
         //--------------------------
         /*compareTrajectories(
@@ -211,7 +217,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
      *
      * @param timeMjdList Only required for some limited analysis.
      */
-    private static void compareTrajectories(
+    private static void compareTrajectoriesPrint(
             double[][] coord_posAxis_km1,
             double[][] coord_posAxis_km2,
             double[][] vei_arr1,
@@ -239,12 +245,13 @@ public class SSCWSSat_CompareTrajectoriesTest {
         final double[] d_z_array = new double[N];
 
         final double[] d_r_array = new double[N];
-        final double[] d_v2_array = new double[N];
-        final double[] d_rxv2_array = new double[N];
-        final double[] d_v2xrxv2_array = new double[N];
+        final double[] d_v_array = new double[N];
+        final double[] abs_v_array = new double[N];
+        final double[] d_rxv_array = new double[N];
+        final double[] d_v_x_rxv_array = new double[N];
         //final double[] dPosdt_div_v_array = new double[N];
         //dPosdt_div_v_array[0] = Double.NaN;   // Value must be ignored when doing statistics.
-        final double[] d_v2p_array = new double[N];
+        final double[] d_vp_array = new double[N];
 
         final double[] d_dPos2dtp_array = new double[N];
         d_dPos2dtp_array[0] = Double.NaN;
@@ -258,12 +265,16 @@ public class SSCWSSat_CompareTrajectoriesTest {
         final double[] rotAxisZ_array = new double[N];
         final double[] rotAxis_abs_array = new double[N];
 
+        final double[] totEnergy1_array = new double[N];
+        final double[] totEnergy2_array = new double[N];
+
         for (int i = 0; i < N; i++) {
             final double[] pos1 = coord_posAxis_km1[i];
             final double[] pos2 = coord_posAxis_km2[i];
-            final double[] v2 = vei_arr2[i];
-            final double[] rxv2 = Vect.cross(pos2, v2);    // Orthogonal to both r and v.
-            final double[] v2xrxv2 = Vect.cross(v2, rxv2);  // Orthogonal to both v and rxv.
+            final double[] r = pos2;
+            final double[] v = vei_arr2[i];
+            final double[] rxv = Vect.cross(r, v);     // Orthogonal to both r and v.
+            final double[] v_x_rxv = Vect.cross(v, rxv);  // Orthogonal to both v and rxv.
             final double[] d = Vect.sub(pos2, pos1);
             // NOTE: (r,v,rxv) are NOT all orthogonal to each other.
             // NOTE: (v, rxv, vxrxv) ARE all orthogonal to each other.
@@ -276,17 +287,24 @@ public class SSCWSSat_CompareTrajectoriesTest {
             d_z_array[i] = d[2];
 
             // NOTE: r and v are NOT perpendicular (but are at least unlikely to be parallel).
-            d_r_array[i] = getVectorComponent(d, pos2, false);      // NOTE: r = pos2 = vector from origin.
-            d_v2_array[i] = getVectorComponent(d, v2, false);
-            d_rxv2_array[i] = getVectorComponent(d, rxv2, false);
-            d_v2xrxv2_array[i] = getVectorComponent(d, v2xrxv2, false);
+            d_r_array[i] = getVectorComponent(d, r, false);
+            d_v_array[i] = getVectorComponent(d, v, false);
+            abs_v_array[i] = Vect.absv(v);
+            d_rxv_array[i] = getVectorComponent(d, rxv, false);
+            d_v_x_rxv_array[i] = getVectorComponent(d, v_x_rxv, false);
 
-            d_v2p_array[i] = getVectorComponent(d, v2, true);   // NOTE: Double normalization of v. Useful for the case of exact time difference.
+            d_vp_array[i] = getVectorComponent(d, v, true);   // NOTE: Double normalization of v. Interprets the difference as due to motion in seconds. Useful for the case of exact time difference.
 
             rotAxisX_array[i] = rotAxis[0];
             rotAxisY_array[i] = rotAxis[1];
             rotAxisZ_array[i] = rotAxis[2];
             rotAxis_abs_array[i] = Vect.absv(rotAxis);
+
+            // -G*M_Earth / r + 0.5*v^2
+            final Utils.OrbitalState s1 = new Utils.OrbitalState(Vect.multiply(pos1, 1e3), Vect.multiply(vei_arr1[i], 1e3));
+            totEnergy1_array[i] = s1.E_orbital_norm_SI;
+            final Utils.OrbitalState s2 = new Utils.OrbitalState(Vect.multiply(pos2, 1e3), Vect.multiply(vei_arr2[i], 1e3));
+            totEnergy2_array[i] = s2.E_orbital_norm_SI;
 
             /* Make comparisons between the current and the previous data point. */
             if (i > 0) {
@@ -296,8 +314,8 @@ public class SSCWSSat_CompareTrajectoriesTest {
                 final double dt_seconds = (timeMjdList[i] - timeMjdList[i - 1]) * Time.SECONDS_IN_DAY;
                 final double[] dPos2dt = Vect.multiply(dPos2, 1 / dt_seconds);   // "Empirically derived" velocity vector.
 
-                dPos2dt_dot_v2_norm2_array[i] = Vect.dot(dPos2dt, v2) / (Vect.absv(dPos2dt) * Vect.absv(v2));
-                v_dPos2dt_array[i] = getVectorComponent(v2, dPos2dt, true);
+                dPos2dt_dot_v2_norm2_array[i] = Vect.dot(dPos2dt, v) / (Vect.absv(dPos2dt) * Vect.absv(v));
+                v_dPos2dt_array[i] = getVectorComponent(v, dPos2dt, true);
                 d_dPos2dtp_array[i] = getVectorComponent(d, dPos2dt, true);   // NOTE: Double normalization of v. Useful for the case of exact time difference.
             }
         }
@@ -324,11 +342,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
         printStatistics("d_z", new Statistics(d_z_array, false));
         System.out.println("========");
         printStatistics("d_r", new Statistics(d_r_array, false));
-        printStatistics("d_v2", new Statistics(d_v2_array, false));
-        printStatistics("d_rxv2 (perp. to orbital plane)", new Statistics(d_rxv2_array, false));
-        printStatistics("d_v2xrxv2", new Statistics(d_v2xrxv2_array, false));
+        printStatistics("d_v2", new Statistics(d_v_array, false));
+        printStatistics("d_rxv (normal to orbital plane)", new Statistics(d_rxv_array, false));
+        printStatistics("d_vx(rxv) (perp. to both velocity and the normal to the orbital plane)", new Statistics(d_v_x_rxv_array, false));
         System.out.println("========");
-        printStatistics("d_v2p", new Statistics(d_v2p_array, false));
+        printStatistics("d_vp", new Statistics(d_vp_array, false));
         //printStatistics("dPos2dt_dot_v2_norm_array", new Statistics(dPos2dt_dot_v2_norm2_array, true));
         //printStatistics("v_dPos2dt_array", new Statistics(v_dPos2dt_array, true));
         //printStatistics("d_dPos2dtp_array", new Statistics(d_dPos2dtp_array, true));
@@ -337,6 +355,9 @@ public class SSCWSSat_CompareTrajectoriesTest {
         //printStatistics("rotAxisY", new Statistics(rotAxisY_array, false));
         //printStatistics("rotAxisZ", new Statistics(rotAxisZ_array, false));
         //printStatistics("rotAxis_abs", new Statistics(rotAxis_abs_array, false));
+        //printStatistics("abs_v", new Statistics(abs_v_array, false));
+        printStatistics("totEnergy1", new Statistics(totEnergy1_array, false));
+        printStatistics("totEnergy2", new Statistics(totEnergy2_array, false));
     }
 
 
@@ -368,10 +389,13 @@ public class SSCWSSat_CompareTrajectoriesTest {
         src2.fill_GEI_VEI(timeMjdList2, gei_arr_posAxis_km2, vei_arr2);
 
         System.out.println("Comparing:");
-        System.out.println("   src1 =" + src1);
-        System.out.println("   src2 =" + src2);
+        System.out.println("   src1 = " + src1);
+        System.out.println("   src2 = " + src2);
+        System.out.println("   timeMjdAddedToTrajectory2  / Time.DAYS_IN_SECOND = " + timeMjdAddedToTrajectory2 / Time.DAYS_IN_SECOND);
+        System.out.println("   timeMjdList1[0]   = " + new Time(timeMjdList1[0]));
+        System.out.println("   timeMjdList1[N-1] = " + new Time(timeMjdList1[N - 1]));
 
-        compareTrajectories(gei_arr_posAxis_km1, gei_arr_posAxis_km2, vei_arr1, vei_arr2, timeMjdList1);
+        compareTrajectoriesPrint(gei_arr_posAxis_km1, gei_arr_posAxis_km2, vei_arr1, vei_arr2, timeMjdList1);
     }
 
 
@@ -392,15 +416,17 @@ public class SSCWSSat_CompareTrajectoriesTest {
     /**
      * Get vector component in an arbitrary direction.
      *
-     * @param v_ref NOTE: Must have dimensions (units) that match v if it is not
-     * normalized.
+     * @param v_ref NOTE: Unit important iff doubleNormalizeRef==true.
+     * @param doubleNormalizeRef False: Do not change the length of the
+     * projected vector. True: Divide the length of the projected vector by
+     * abs(v_ref). If v [km] and v_ref [km/s], the return result is [s].
      */
     private static double getVectorComponent(double[] v, double[] v_ref, boolean doubleNormalizeRef) {
         double C;
         if (doubleNormalizeRef) {
-            C = Vect.absv2(v_ref);
+            C = Vect.absv2(v_ref);  // Will effectively normalize v_ref (and remove its unit), then divide the result by abs(v_ref) (which add a unit).
         } else {
-            C = Vect.absv(v_ref);
+            C = Vect.absv(v_ref);   // Will effectively normalize v_ref (and remove its unit).
         }
         if (C == 0) {
             throw new IllegalArgumentException("v_ref is zero length.");
@@ -429,13 +455,13 @@ public class SSCWSSat_CompareTrajectoriesTest {
             satID = mSatID;
             File cacheFile = null;
             if (USE_SSCWS_DISK_CACHE) {
-                cacheFile = selectCacheFile(mSatID);
+                cacheFile = selectCacheFile(mSatID);   // Needed for loading cache from the right file.
             }
             dataSource = new SSCWSSat.DataSource(mLib, mSatID, cacheFile);
         }
 
 
-        // NOTE: Saves cahce to disk after every read. Maybe somewhat inefficient.
+        // NOTE: Saves cache to disk after every read. Maybe somewhat inefficient.
         public void fill_GEI_VEI(
                 double[] timeMjdMap,
                 double[][] gei_arr_posAxis_km,

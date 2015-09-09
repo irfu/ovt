@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.object;
 
 import ovt.util.SSCWSOrbitCache;
@@ -25,7 +20,9 @@ import ovt.util.Utils;
 import ovt.util.Utils.OrbitalState;
 
 /**
- * @author Erik P_SI G Johansson, erik.johansson@irfu.se
+ * Class created 2015.
+ *
+ * @author Erik P G Johansson, erik.johansson@irfu.se
  *
  * Sat subclass for satellites where OVT itself downloads data from SSC Web
  * Services (SSC WS) via the internet and caches the data internally.<BR>
@@ -342,11 +339,11 @@ public class SSCWSSat extends Sat {
                  since it uses data points outside of it for interpolation.*/
             }
 
-            final double[] interpCoords_pos_km = new double[timeMjdMap.length];      // For one X/Y/Z axis.
-            final double[] interpVelocity_pos_kmMjd = new double[timeMjdMap.length];    // For one X/Y/Z axis.
+            final double[] interpCoords_pos_km = new double[timeMjdMap.length];         // Temporary variable for one X/Y/Z axis.
+            final double[] interpVelocity_pos_kmMjd = new double[timeMjdMap.length];    // Temporary variable for one X/Y/Z axis.
             for (int i_axis = 0; i_axis < 3; i_axis++) {
-                /* Concerning bad interpolation observed in the GUI:
-                 ---------------------------------------------------
+                /* NOTE: Concerning bad interpolation observed in the GUI:
+                 ---------------------------------------------------------
                  One can see bad interpolation at the orbit endpoints in the GUI
                  when specifying low time resolution (in the GUI). This is not
                  due to bugs in this method or the Utils#cubicSplineInterpolation
@@ -363,6 +360,7 @@ public class SSCWSSat extends Sat {
                  timeMjdMap,
                  interpCoords_pos_km,
                  interpVelocity_pos_kmMjd);*/
+                // NOTE: Time unit is mjd. Therefore, interpolated velocity is km/day.
                 Utils.cubicSplineInterpolation(
                         data.coords_axisPos_kmMjd[3],
                         data.coords_axisPos_kmMjd[i_axis],
@@ -376,7 +374,7 @@ public class SSCWSSat extends Sat {
 
                 for (int i_pos = 0; i_pos < gei_arr_posAxis_km.length; i_pos++) {
                     gei_arr_posAxis_km[i_pos][i_axis] = interpCoords_pos_km[i_pos];
-                    vei_arr_posAxis_kms[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos] * Time.SECONDS_IN_DAY;
+                    vei_arr_posAxis_kms[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos] / Time.SECONDS_IN_DAY;   // Convert unit from km/day to km/s.
                 }
             }
 
