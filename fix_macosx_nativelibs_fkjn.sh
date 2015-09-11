@@ -7,7 +7,7 @@
 APP_PATH=/Users/frejon/OVT/ovt/dist_static
 VTK_BUILD=/Users/frejon/OVT/ovt/VTKBuild/lib
 JAVA_PATH=$APP_PATH/shit
-FULL_FRMW_PATH=$APP_PATH/natives
+FULL_FRMW_PATH=$APP_PATH/natives/MacOS
 RELATIVE_PATH=@executable_path/../java/app/natives
 
 

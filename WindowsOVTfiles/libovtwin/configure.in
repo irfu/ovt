@@ -1,0 +1,206 @@
+#
+# $Id: configure.in,v 1.31 2009/10/27 14:56:13 yuri Exp $
+#
+
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(configure.in)
+#AM_INIT_AUTOMAKE(OVT,2.1)
+#AC_CONFIG_HEADER(platform.h)
+
+AC_CANONICAL_HOST
+
+# set OVT vession
+ovtversion=3.0
+AC_SUBST(ovtversion)
+
+BUILD_DIR=`pwd`
+AC_SUBST(BUILD_DIR)
+
+if test "$prefix" = "NONE" ; then
+	prefix=/usr/local
+fi
+
+case $host_cpu in
+    sparc*)	CPUARCH=sparc;;
+    i*86)	CPUARCH=i386;;
+    amd64|x86_64|X86_64)	CPUARCH=amd64;;
+    *)	ARCH=no;
+esac
+AC_SUBST(ARCH)
+
+case $host_os in
+    solaris*)	PLATFORM=solaris;;
+    linux-*)	PLATFORM=linux;;
+    freebsd*)	PLATFORM=freebsd;;
+    darwin*)	PLATFORM=darwin;;
+    *)	PLATFORM=unsupported;;
+esac
+AC_SUBST(PLATFORM)
+
+dnl Checks for programs.
+AC_PROG_CC
+AC_CHECK_PROGS(RM,rm)
+AC_SUBST(RM)
+AC_PROG_INSTALL
+
+JAVA_BIN_PREF=bin
+JAVA_INC_PREF=include
+
+dnl Checks for libraries.
+case $PLATFORM in
+	linux*)
+		CFLAGS="-O3"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".so"
+		SHLIB_BUILD_FLAGS="-shared"
+		JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	;;
+    freebsd*)
+		CFLAGS="-O3"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".so"
+		SHLIB_BUILD_FLAGS="-shared"
+		JNI_MD_H_SUBDIR="freebsd"
+		JAVA_SHLIB_SUFFIX=$SHLIB_SUFFIX
+	;;
+	darwin*)
+		CFLAGS="-O3 -mmacosx-version-min=10.8"
+		SHLIB_CFLAGS="-fPIC -fno-common"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX="lib"
+		SHLIB_SUFFIX=".dylib"
+		SHLIB_BUILD_FLAGS="-dynamiclib"
+		#JAVA_BIN_PREF=Commands
+		#JAVA_INC_PREF=Headers
+		JAVA_SHLIB_SUFFIX=".jnilib"
+	;;
+    cygwin*)
+    	CFLAGS="-O3"
+		SHLIB_CFLAGS="-fPIC"
+		SHLIB_LD_LIBS=""
+		SHLIB_PREFIX=""
+		SHLIB_SUFFIX=".dll"
+		SHLIB_BUILD_FLAGS="-shared"
+	;;
+esac
+if test "x$JNI_MD_H_SUBDIR" = "x" ; then
+	JNI_MD_H_SUBDIR=$PLATFORM
+fi
+#export SHLIB_SUFFIX
+AC_SUBST(SHLIB_CFLAGS)
+AC_SUBST(SHLIB_PREFIX)
+AC_SUBST(SHLIB_SUFFIX)
+AC_SUBST(JAVA_SHLIB_SUFFIX)
+AC_SUBST(SHLIB_BUILD_FLAGS)
+
+# If we're running gcc, then change the C flags for compiling shared
+# libraries to the right flags for gcc, instead of those for the
+# standard manufacturer compiler.
+if test "$CC" = "gcc" -o `$CC -v 2>&1 | grep -c gcc` != "0" ; then
+  SHLIB_CFLAGS="-fPIC"
+fi
+
+dnl Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+
+AC_MSG_CHECKING(install path of JDK)
+AC_ARG_WITH(jdk,
+AC_HELP_STRING(
+[--with-jdk=DIR],[where JDK is installed]),
+	[ ac_cv_java_home=${with_jdk} ],
+	[ if test "x$PLATFORM" = "xdarwin" ; then
+		ac_cv_java_home=/System/Library/Frameworks/JavaVM.framework
+	else
+		IFS="${IFS= 	}"; ac_save_ifs="$IFS"; IFS=":"
+  ac_dummy="$PATH"
+  for ac_dir in $ac_dummy; do
+    test -z "$ac_dir" && ac_dir=.
+    if test -f $ac_dir/java; then
+      ac_cv_prog_java="$ac_dir/java"
+      break
+    fi
+  done
+  IFS="$ac_save_ifs"
+  ac_cv_java_home=`echo $ac_cv_prog_java | sed 's+/bin/java$++'`
+fi])
+AC_MSG_RESULT($ac_cv_java_home)
+JAVA_HOME=$ac_cv_java_home
+AC_SUBST(JAVA_HOME)
+JAVABIN=$JAVA_HOME/$JAVA_BIN_PREF/java
+
+ac_java_bin="$ac_cv_java_home/$JAVA_BIN_PREF"
+
+unset JAVA_COMPILER
+unset CLASSPATH
+
+AC_CACHE_CHECK(version of JDK, ac_cv_jdk_version,
+[ac_cv_jdk_version=`($JAVABIN -version 2>&1) | sed -n '/.*java.* version *"\(.*\)".*/s//\1/p'`])
+case "$ac_cv_jdk_version" in
+1.1|1.2*)
+	AC_MSG_ERROR(Java >=1.3.x is needed)
+	;;
+1.3*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/include"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/include/$PLATFORM"
+	JAVA_LIBS_OS=""
+	;;
+1.4*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/include"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/include/$JNI_MD_H_SUBDIR"
+	JAVA_LIBS_OS=""
+	;;	
+1.5*|1.6*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/$JAVA_INC_PREF"
+	if test "x$PLATFORM" = "xdarwin" ; then
+		JAVA_INCLUDES_OS=
+		JAVA_LIBS_OS=
+		SHLIB_CFLAGS="-fPIC -fno-common -framework JavaVM"
+		SHLIB_BUILD_FLAGS="-dynamiclib -framework JavaVM"
+	else
+		JAVA_INCLUDES_OS="-I$ac_cv_java_home/$JAVA_INC_PREF/$JNI_MD_H_SUBDIR"
+		JAVA_LIBS_OS="-I$ac_cv_java_home/jre/lib/$CPUARCH:$ac_cv_java_home/jre/lib/$CPUARCH/xawt"
+	fi
+	;;
+1.7*|1.8*)
+	JAVA_INCLUDES="-I$ac_cv_java_home/$JAVA_INC_PREF"
+	JAVA_INCLUDES_OS="-I$ac_cv_java_home/$JAVA_INC_PREF/$JNI_MD_H_SUBDIR"
+	JAVA_LIBS_OS="-I$ac_cv_java_home/jre/lib/$CPUARCH:$ac_cv_java_home/jre/lib/$CPUARCH/xawt"
+	;;
+*)
+	AC_MSG_ERROR(unrecognized JDK version ($JAVABIN):$ac_cv_jdk_version)
+	;;
+esac
+
+if test ! -f $ac_cv_java_home/$JAVA_INC_PREF/jni.h; then
+  AC_MSG_ERROR(wrong JDK install path ($ac_cv_java_home/$JAVA_INC_PREF/). please use ./configure --with-jdk=DIR)	
+fi
+
+
+AC_SUBST(JAVA_INCLUDES)
+AC_SUBST(JAVA_INCLUDES_OS)
+AC_SUBST(JAVA_LIBS_OS)
+	
+AC_MSG_CHECKING(if we target for a specific JRE)
+AC_ARG_WITH(target-jre,
+AC_HELP_STRING(
+[--with-java-target=V.V],[target JRE version (1.4,1.5,1.6,etc.)]),
+	[ ac_cv_target_jre=${with_target_jre} ])
+if test "x$ac_cv_target_jre" = "x"; then
+	AC_MSG_RESULT(no)
+	JAVACFLAGS=
+else
+	case $ac_cv_target_jre in
+		1.1|1.2|1.3|1.4|1.5|1.6|1.7|1.8) AC_MSG_RESULT($ac_cv_target_jre);
+		JAVACFLAGS="-source $ac_cv_target_jre -target $ac_cv_target_jre";;
+	*) AC_MSG_ERROR(invalid target JRE version)
+	esac
+fi
+AC_SUBST(JAVACFLAGS)
+	
+AC_OUTPUT(Makefile 
+)
+
