@@ -26,23 +26,30 @@ start Netbeans
 Open Project -> Navigate to OVT
 
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 Install OVT for development(& build if new VTK version) on Windows
-----------------------------------------------------------------------------------------------
-install: Visual Studio, CMake, Cygwin, Oxygen, Perl  ( Don’t forget Maven, JAVA, JOGL, set JAVA_PATH)
+------------------------------------------------------------------------------------------
+install Netbeans, Java (NB: 32Bit, not x64!), Visual Studio Express 2013 (not 2015. There have been moderate success with VTK 6.3 & 2015, but why risk it)
 
-Install & Patch VTK VTK, Follow instructions here:
+install: CMake, Cygwin, Oxygen, Perl  ( Don’t forget Maven, JOGL, set JAVA_PATH)
+
+Download VTK 6.2
+
+Build CMake. (Can induce migraine. I’ll include a reference CMake Cache file to use later, because getting one thing wrong will produce not produce an error or a warning until much later.)
+
+Install & Patch VTK with Visual Studio Express, some instructions here:
 http://www.vtk.org/Wiki/VTK/Configure_and_Build#On_Windows_5
+remember to link to correct 32bit files,
 
-compile libovt
+Compile libovt
 
 Deliver .dll files to distribution.
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 Before release:
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 if VTK updated or libovt.dylib/.so/.dll updated:
 
  
@@ -52,10 +59,28 @@ for Mac OS X native libs, run:
 $sh fix_macosx_nativelibs_fkjn.sh
 make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing
 
-----------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------
 build all in install4j
 
 rsync (4 files) files to server:
 $cd <install4j output folder>
 $rsync -rzh --progress ovt*3_0.sh ovt*3_0.dmg ovt*3_0.exe updates.xml frejon@hq.irfu.se:/usr/home/www/ovt/releases/current/
+
+
+Stuff to make OVT_LINUX compile:
+
+export install4J_JAVA_HOME
+
+add libmawt.so to natives or JAVA_HOME or something
+
+duplicate libvtkhdf5.so.1.8.13, change name to libvtkhdf5.so.8.0.2 <— this is probably wrong
+
+
+error at jogl rendering, check linux vtk build.
+
+Stuff to make OVT_windows compile:
+
+
+1. move natives to to jre/bin/  (maybe add to path)
+2. switch to 32bit JRE. or recompile to 64bit .dlls…
 
