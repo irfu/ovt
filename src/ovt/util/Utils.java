@@ -42,6 +42,8 @@ package ovt.util;
 import java.util.*;
 import java.io.*;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import ovt.*;
 import ovt.datatype.*;
@@ -813,6 +815,36 @@ public class Utils extends Object {
 
 
     /**
+     * Download arbitrary file from a URL and save it to disk.
+     *
+     * @return Number of bytes downloaded.
+     */
+    public static int downloadURLToFile(String urlStr, File file) throws MalformedURLException, IOException {
+        final int OUTPUT_BUFFER_SIZE = 1024 * 1024;
+        final int TRANSFER_BUFFER_SIZE = OUTPUT_BUFFER_SIZE;   // Makes sense?
+
+        final URL url = new URL(urlStr);   // throws  MalformedURLException. Does not seem to throw for non-existing URL.
+        int bytesReadTotal = 0;
+
+        //final OutputStream out;        
+        try (InputStream in = url.openStream(); OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
+
+            final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+            int bytesReadThisIteration;
+
+            while ((bytesReadThisIteration = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesReadThisIteration);
+                bytesReadTotal += bytesReadThisIteration;
+            }
+            //in.close();   // Should be unnecessary.
+            //out.close();  // Should be unnecessary.
+
+        }
+        return bytesReadTotal;
+    }
+
+
+    /**
      * Return array that is the concatenation of multiple arrays. Should work
      * for zero-length arrays, including zero-length aa. No null pointers
      * permitted anywhere.
@@ -835,6 +867,26 @@ public class Utils extends Object {
         return a;
     }
 
+    /**
+     * Entirely analogous with concatDoubleArrays but for int arrays instead.
+     */
+    public static int[] concatIntArrays(int[][] aa) {
+        int N_a = 0;
+        for (int[] ap : aa) {
+            if (ap == null) {
+                throw new NullPointerException("Array component is null.");
+            }
+            N_a = N_a + ap.length;
+        }
+        final int[] a = new int[N_a];
+
+        int i_a = 0;
+        for (int[] ap : aa) {
+            System.arraycopy(ap, 0, a, i_a, ap.length);
+            i_a += ap.length;
+        }
+        return a;
+    }
 
     /**
      * @author Erik P_SI G Johansson
@@ -990,11 +1042,25 @@ public class Utils extends Object {
             throw new IllegalArgumentException("Negative N.");
         }
 
-        final double[] a = new double[N];
-        for (int i = 0; i < N; i++) {
-            a[i] = first + (last - first) / (N - 1) * i;
+        if (N == 1) {            
+            if (first != last) {
+                throw new IllegalArgumentException("First and last value can not be different for length=1 array.");
+            }
+            
+            return new double[]{first};
+            
+        } else {
+            // CASE: N==0 or N>=2.
+            // NOTE: Does not work for N==1 since it
+            // 1) requires first==last
+            // 2) results in 0/0 = NaN even when first==last.
+
+            final double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = first + (last - first) / (N - 1) * i;
+            }
+            return a;
         }
-        return a;
     }
 
 

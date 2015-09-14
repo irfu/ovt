@@ -34,6 +34,10 @@ package ovt.util;
 
 import java.util.*;
 
+/** Class for routines for manipulating vectors in general. Mathematical vectors
+ * are in the form of double[], but it is mostly (entirely?) implicit that they
+ * have length=3.
+ */
 public class Vect {
 
   public static double[] add(double[] vector1, double[] vector2) {
@@ -182,7 +186,7 @@ public static double[] norm(double vec[], double norm) {
 }
 
 
-/** Get the vector normalized by 1 */
+/** Get the vector normalized by 1. */
 public static double[] norm(double vec[]) {
     double res[] = new double[3];
     for (int i=0; i<3; i++) {

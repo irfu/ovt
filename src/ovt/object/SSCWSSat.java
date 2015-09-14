@@ -11,6 +11,8 @@ import java.math.RoundingMode;
 import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
+import ovt.event.ChildrenEvent;
+import ovt.interfaces.ChildrenListener;
 import ovt.util.IndexedSegmentsCache;
 import ovt.util.Log;
 import ovt.util.SSCWSLibrary;
@@ -27,16 +29,22 @@ import ovt.util.Utils.OrbitalState;
  * Sat subclass for satellites where OVT itself downloads data from SSC Web
  * Services (SSC WS) via the internet and caches the data internally.<BR>
  *
+ * IMPLEMENTATION NOTE: The class is divided into (1) one "context-dependent"
+ * outer class (for the GUI), and (2) a more "context-independent" nested class
+ * which is independent of the GUI.
+ *
  * IMPLEMENTATION NOTE: The code is originally written to handle that (1) the
  * time resolution requested from SSC can vary between requested and thus vary
  * between different cache slots, and (2) that the time resolution requested
  * from SSC for a given cache slot can be increased, thus replacing older data
  * with lower time resolution in cache slot. Neither of these two features is
- * however presently used and the same a constant time resolution is requested
- * from the SSC DURING A SESSION. However, the derived time resolution can
- * however still change from session to session due to updated SSC data or
- * changes in the code which is relevant if the code reads cached data from disk
- * from another session.
+ * however presently (2015-09-10) used DURING AN OVT SESSION, and the same
+ * constant time resolution is always requested (for the same satellite) from
+ * the SSC. However, the derived time resolution can however still change from
+ * OVT session to OVT session due to (1) updated SSC data (from which resolution
+ * is derived), or (2) changes in the OVT code. This is relevant if the code
+ * reads cached data from disk from a previous session (with a different time
+ * resolution).
  *
  */
 // PROPOSAL: Change name? 
@@ -53,7 +61,8 @@ public class SSCWSSat extends Sat {
     private static final double CACHE_SLOT_SIZE_MJD = 1.0;
 
     /**
-     * See DiscreteIntervalToListCache to understand this variable. Must be non-negative.
+     * See DiscreteIntervalToListCache to understand this variable. Must be
+     * non-negative.
      */
     private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 10;
     private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";  // Include period.
@@ -80,8 +89,9 @@ public class SSCWSSat extends Sat {
         /*==============================================
          Determine where a previous cache should be.
          ===============================================*/
-        final String dir = OVTCore.getUserDir() + OVTCore.getOrbitDataSubdir();
-        cacheFile = new File(dir + Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
+        // Do not try to create parent directory. Is done when saving.
+        final File dir = new File(OVTCore.getUserDir() + OVTCore.getSSCWSCacheSubdir());
+        cacheFile = new File(dir, Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
         Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
 
         dataSource = new DataSource(sscwsLibrary, SSCWS_satID, cacheFile);
@@ -99,8 +109,21 @@ public class SSCWSSat extends Sat {
     }
 
 
-    public void saveCacheToFile() throws IOException {
-        this.dataSource.saveCacheToFile(cacheFile);
+    /**
+     * Try save cache to file.
+     *
+     * IMPLEMENTATION NOTE: We want to save cache to file (1) when quitting OVT,
+     * (2) when removing the SSCWSSat from the GUI tree. Can call this method on
+     * both occasions. Therefore want to catch exception and display error
+     * message here, ONCE, in ONE location. Note that the method does not have
+     * to succeed for OVT to continue.
+     */
+    public void trySaveCacheToFile() {
+        try {
+            this.dataSource.saveCacheToFile(cacheFile);
+        } catch (IOException e) {
+            this.getCore().sendErrorMessage("Error saving SSC orbit cache file: " + e.getMessage(), e);
+        }
     }
 
 
@@ -150,10 +173,26 @@ public class SSCWSSat extends Sat {
         //return satID + " (SSC)";
     }
 
+
+    /**
+     * Called when trying to delete object from GUI tree.
+     */
+    @Override
+    public void dispose() {
+        trySaveCacheToFile();    // NOTE: Can not be allowed to throw IOException since located in inherited method.
+        super.dispose(); // dispose descriptors, remove listeners, dispose children
+    }
+
+    //##########################################################################
+    //##########################################################################
+    //##########################################################################
+    //##########################################################################
+    //##########################################################################
+    //##########################################################################
     //##########################################################################
     /**
      * Nested class to which the parent class delegates most of the work. Class
-     * is independent of GUI and OVTCore.
+     * is independent of GUI and OVTCore and the parent class.
      *
      * IMPLEMENTATION NOTE: This looks somewhat ugly at first but the reason for
      * this is to divide the functionality into parts which are connected to the
@@ -217,6 +256,7 @@ public class SSCWSSat extends Sat {
                 Log.log("SSCWSSat: cacheFile.isFile() = " + cacheFile.isFile(), DEBUG);
 
                 try (final ObjectInputStream ois = new ObjectInputStream(new FileInputStream(cacheFile))) {
+
                     newCache = new SSCWSOrbitCache(
                             ois, mSSCWSLibrary, SSCWS_satID, PROACTIVE_CACHING_FILL_MARGIN_SLOTS * CACHE_SLOT_SIZE_MJD);
                     createNewCache = false;
@@ -260,14 +300,15 @@ public class SSCWSSat extends Sat {
 
 
         /**
-         * Save cache to specified file. Will try to create parent directories
-         * if needed. Will overwrite file if it exists.
+         * Save cache to specified file. Will overwrite file if it exists.
          */
         public void saveCacheToFile(File cacheFile) throws IOException {
-            final File cacheDir = cacheFile.getParentFile();
+            final File parentDir = cacheFile.getParentFile();
 
-            if (!cacheDir.isDirectory()) {
-                cacheDir.mkdirs();  // Create directories.
+            if (!parentDir.isDirectory()) {
+                parentDir.mkdirs();  // Create directories.
+                // Permit IOException when trying to write to file, rather than check for it here.
+                // Error messages should be taken care of higher up.
             }
 
             try (final ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(cacheFile))) {
@@ -301,7 +342,7 @@ public class SSCWSSat extends Sat {
              be displayed. */
             final int INDEX_MARGIN = 2;
 
-            /*=============
+            /*==============
              Argument check.
              ==============*/
             if ((gei_arr_posAxis_km.length > 0) && (gei_arr_posAxis_km[0].length != 3)) {
@@ -315,6 +356,9 @@ public class SSCWSSat extends Sat {
                 throw new IllegalArgumentException("Illegal array dimensions. Lengths are not identical.");
             }
 
+            /*===================
+             Get data from cache
+             ===================*/
             //Log.log(this.getClass().getSimpleName() + ".fill_GEI_VEI", DEBUG);
             final double beginReqMjd = timeMjdMap[0];     // Req = Request/requested
             final double endReqMjd = timeMjdMap[timeMjdMap.length - 1];
@@ -329,6 +373,9 @@ public class SSCWSSat extends Sat {
                 throw new IOException("Can not fill the specified time interval with data due to boundaries: " + e.getMessage(), e);
             }
 
+            /*=======================
+             Check data for "errors".
+             =======================*/
             if (data.coords_axisPos_kmMjd[3].length < 2) {
                 throw new IOException("Less than two data points available for the specified time interval. Can not interpolate.");
             }
@@ -339,6 +386,10 @@ public class SSCWSSat extends Sat {
                  since it uses data points outside of it for interpolation.*/
             }
 
+            /*=========================================================
+             (1) Interpolate data to requested points in time and
+             (2) store in the format returned to user (change indices)
+             =========================================================*/
             final double[] interpCoords_pos_km = new double[timeMjdMap.length];         // Temporary variable for one X/Y/Z axis.
             final double[] interpVelocity_pos_kmMjd = new double[timeMjdMap.length];    // Temporary variable for one X/Y/Z axis.
             for (int i_axis = 0; i_axis < 3; i_axis++) {
@@ -354,12 +405,6 @@ public class SSCWSSat extends Sat {
                  tabulated points outside of the (time) range that is actually
                  used for plotting.
                  */
-                /*ovt.util.Utils.linearInterpolation(
-                 data.coords_axisPos_kmMjd[3],
-                 data.coords_axisPos_kmMjd[i_axis],
-                 timeMjdMap,
-                 interpCoords_pos_km,
-                 interpVelocity_pos_kmMjd);*/
                 // NOTE: Time unit is mjd. Therefore, interpolated velocity is km/day.
                 Utils.cubicSplineInterpolation(
                         data.coords_axisPos_kmMjd[3],
@@ -367,7 +412,6 @@ public class SSCWSSat extends Sat {
                         timeMjdMap,
                         interpCoords_pos_km,
                         interpVelocity_pos_kmMjd,
-                        //Utils.SplineInterpolationBC.SET_SECOND_DERIV,
                         Utils.SplineInterpolationBC.SET_SECOND_DERIV,
                         Utils.SplineInterpolationBC.SET_SECOND_DERIV
                 );

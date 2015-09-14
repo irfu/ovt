@@ -420,9 +420,9 @@ public class SSCWSOrbitCache {
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
         System.out.printf("   Time used for downloading data: %.1f [s]\n", duration);
 
-        /*==============
+        /*===============
          Check assertion
-         ==============*/
+         ===============*/
         if (ASSERT_OUTSIDE_EARTH) {
             final double[] origin = new double[]{0, 0, 0};
             for (int i = 0; i < coords_axisPos[3].length; i++) {

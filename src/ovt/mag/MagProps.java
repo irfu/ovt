@@ -51,7 +51,7 @@ import javax.swing.*;
  * (MagActivityDataModel, MagActivityDataEditor) which are time-DEpenedent.
  * 
  * 
- * MagProps = Magnetic(?) properties. Name is somewhat misleading since not all
+ * MagProps = Magnetic(?) properties. The name is somewhat misleading since not all
  * indexes have anything to do with magnetism (and not all indexes are 
  * non-dimensional).
  */
@@ -301,7 +301,7 @@ public AbstractMagModel getModel(int modelType) {
 }
 
 public IgrfModel getIgrfModel() {
-  return (IgrfModel)getModel(IGRF);
+  return (IgrfModel) getModel(IGRF);
 }
 
 //added by kono

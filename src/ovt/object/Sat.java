@@ -721,7 +721,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
     public void dispose() {
         setVisible(false);
-        super.dispose(); // dispose desctiprors, remove listeners, dispose children
+        super.dispose(); // dispose descriptors, remove listeners, dispose children
     }
 
 

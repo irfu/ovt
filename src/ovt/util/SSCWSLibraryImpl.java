@@ -10,7 +10,6 @@ import javax.xml.namespace.QName;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateData;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateSystem;
 import gov.nasa.gsfc.spdf.ssc.client.DataFileRequest;
-import gov.nasa.gsfc.spdf.ssc.client.DataRequest;
 import gov.nasa.gsfc.spdf.ssc.client.DataResult;
 import gov.nasa.gsfc.spdf.ssc.client.DistanceUnits;
 import gov.nasa.gsfc.spdf.ssc.client.FileResult;
@@ -124,6 +123,30 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     private List<String> privacyAndImportantNotices = null;
     private List<String> acknowledgements = null;
 
+    /*==================================================================
+     Exact coordinate system used for the downloaded orbital positions.
+     ===================================================================
+     The SSC Web Services API lists, among others, two different "GEI" coordinate systems.
+     "GEI_J2000 : Geocentric Equatorial Inertial coordinate system with a Julian 2000 equinox epoch."
+     "GEI_TOD : Geocentric Equatorial Inertial coordinate system with a true-of-date equinox epoch."
+     As it appears from comparisons of trajectories from LTOF files, none of these is 
+     exactly the same coordinate system.
+     /Erik P G Johansson 2015-06-16.
+        
+     1) GEI_J_2000 (compared to GEI_TOD) combined with a constant time difference
+     decreases the difference between Cluster1-4 trajectories
+     (LTOF files vs SSC Web Services) to ~1 km.
+     Therefore GEI_J_2000 seems to be the same coordinate system as (or the one
+     closest to) the one used in LTOF files.
+     2) When comparing with akebono.tle, both coordinate systems yield
+     differences of 80-90 km (standard deviation ~90 km)
+     when comparing TLE with SSCWS, with no coordinate system clearly better
+     than the other.
+     /Erik P G Johansson 2015-08-25.
+     =====================================================================*/
+    //private static final CoordinateSystem REQUESTED_CS = CoordinateSystem.GSE;
+    //private static final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;
+    //private static final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_J_2000;
     /**
      * Set the minimum log message level for this class.
      */
@@ -195,7 +218,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     @Override
     public List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException {
         /**
-         * * NOTE: Judging from the SSC Web Services interface, it appears that
+         * NOTE: Judging from the SSC Web Services interface, it appears that
          * one can not download only selected satellite descriptions, only all
          * of them at once.
          */
@@ -239,7 +262,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          before rethrowing them. NOTE: They do keep the SAME stack trace.
          */
         try {
-            return getTrajectoryRaw_GEI(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor);
+            return getTrajectoryRaw_GEI(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor, CoordinateSystem.GEI_J_2000);
         } catch (Exception e) {
             Log.log("ERROR/EXCEPTION: " + e.getMessage(), DEBUG);
             throw e;   // Re-throws the same exception but keeps the stack trace.
@@ -247,43 +270,21 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     }
 
 
-    private double[][] getTrajectoryRaw_GEI(
+    public double[][] getTrajectoryRaw_GEI(
             String satID,
             double beginMjdInclusive, double endMjdInclusive,
-            int resolutionFactor)
+            int resolutionFactor,
+            CoordinateSystem coordSys)
             throws IOException {
 
-        /*======================================================================
-         Exact coordinate system used for the downloaded orbital positions.
-         ============================================================
-         The SSC Web Services API lists, among others, two different "GEI" coordinate systems.
-         "GEI_J2000 : Geocentric Equatorial Inertial coordinate system with a Julian 2000 equinox epoch."
-         "GEI_TOD : Geocentric Equatorial Inertial coordinate system with a true-of-date equinox epoch."
-         As it appears from comparisons of trajectories from LTOF files, none of these is 
-         exactly the same coordinate system.
-         /Erik P G Johansson 2015-06-16.
-        
-         1) GEI_J_2000 (compared to GEI_TOD) combined with a constant time difference
-         decreases the difference between Cluster1-4 trajectories
-         (LTOF files vs SSC Web Services) to ~1 km.
-         Therefore GEI_J_2000 seems to be the same coordinate system as (or the one
-         closest to) the one used in LTOF files.
-         2) When comparing with akebono.tle, both coordinate systems yield
-         differences of 80-90 km (standard deviation ~90 km)
-         when comparing TLE with SSCWS, with no coordinate system clearly better
-        than the other.
-         /Erik P G Johansson 2015-08-25.
-         =====================================================================*/
-        //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEO;
-        //final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_TOD;
-        final CoordinateSystem REQUESTED_CS = CoordinateSystem.GEI_J_2000;
-        if (REQUESTED_CS != CoordinateSystem.GEI_J_2000) {
-            System.out.println("===========================================================");
-            System.out.println("WARNING! Downloading satellite orbit data from SSC in a coordinate "
-                    + "system different from GEI_J_2000. This setting has probably "
-                    + "been made for testing purposes but should not be used in an "
-                    + "official version.");
-            System.out.println("===========================================================");
+        if (coordSys != CoordinateSystem.GEI_J_2000) {
+            System.out.println(""
+                    + "===========================================================\n"
+                    + "WARNING! Downloading satellite orbit data from SSC in a coordinate\n"
+                    + "system different from GEI_J_2000. This setting has probably \n"
+                    + "been made for testing purposes but should not be used in an \n"
+                    + "official version.\n"
+                    + "===========================================================");
         }
 
         final SatelliteSpecification satSpec = new SatelliteSpecification();
@@ -317,7 +318,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         final List<FilteredCoordinateOptions> filtCoordOptionList = new ArrayList<>();
         for (CoordinateComponent component : EnumSet.of(CoordinateComponent.X, CoordinateComponent.Y, CoordinateComponent.Z)) {
             final FilteredCoordinateOptions filtCoordOption = new FilteredCoordinateOptions();
-            filtCoordOption.setCoordinateSystem(REQUESTED_CS);
+            filtCoordOption.setCoordinateSystem(coordSys);
             filtCoordOption.setComponent(component);
             filtCoordOption.setFilter(null);   // Used in the SSC Web Services example code ("WsExample.java"). Necessary?
             filtCoordOptionList.add(filtCoordOption);
@@ -373,9 +374,9 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
             }
             final CoordinateData coordData = satData.getCoordinates().get(0);
 
-            // Make sure the data uses a supported coordinate system.
+            // Make sure the data uses a supported coordinate system. Should not be needed.
             final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
-            if (!REQUESTED_CS.equals(receivedCS)) {
+            if (!coordSys.equals(receivedCS)) {
                 throw new IOException("The orbit data downloaded from SSC Web Services "
                         + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
             }
@@ -438,6 +439,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         return acknowledgements;
     }
 
+    //##########################################################################
 
     /**
      * Informal test code.

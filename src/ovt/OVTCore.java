@@ -62,7 +62,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "March 2015";
-    public static final int BUILD = 4;
+    public static final int BUILD = 5;           // Incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev.
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "DefaultSettingsFile";
     public static final Properties globalProperties = new Properties();
@@ -176,6 +176,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     
     public static final String getOrbitDataSubdir(){
         return "odata" + File.separator;
+    }
+    
+    /** Subdirectory for SSCWS orbit cache files. */
+    public static final String getSSCWSCacheSubdir(){
+        return "cache" + File.separator + "sscsats" + File.separator;
     }
     
     public static String getConfSubdir(){
@@ -316,19 +321,19 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         Log.log("MagProps created.", 3);
         transCollection = new TransCollection(magProps.getIgrfModel());
         Log.log("TransCollection created.", 3);
-        // set time
+        // Set time
         timeSettings = new TimeSettings(this);
         Log.log("TimeSettings created.", 3);
-        // set coordinate system
+        // Set coordinate system
         coordinateSystem = new CoordinateSystem(this);
         Log.log("CoordinateSystems created.", 3);
-        // add sun light
+        // Add sunlight
         sunLight = new SunLight(this);
         Log.log("SunLight created.", 3);
-        // set frames
+        // Set frames
         Log.log("Creating axes ...", 3);
         axes = new Axes(this);
-        // set Earth
+        // Set Earth
         Log.log("Creating Earth ...", 3);
         earth = new Earth(this);
         

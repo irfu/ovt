@@ -345,8 +345,8 @@ public class OVTObject implements NamedObject, OVTTreeNode,
      * One has to redefine this method if the object has something to dispose 
      * (like customizer) or unregister itself as a listener.
      * <p>
-     * The purpose of this mehthod is to remove all pointers to and from this object
-     * to outer environment. So the Gatbage Collector will be able to free this memory.
+     * The purpose of this method is to remove all pointers to and from this object
+     * to outer environment. So the Garbage Collector will be able to free this memory.
      * The second purpose is to close all windows/customizers of this object ;-)
      */
     public void dispose() {
