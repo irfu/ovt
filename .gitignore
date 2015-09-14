@@ -7,6 +7,16 @@ nbproject/private/private.xml
 src/libovt/libovt-3.0.jnilib_temp
 
 src/libovt/magpackbackup.c
-
-
 lib/jogl/Archive.zip
+dist_static/
+
+lib/vtk copy.jar
+
+src/ovt/object/MainFieldlineModule.javabackup
+
+src/ovt/util/ImageOperations.backupjava
+
+vtkError.txt
+
+nbproject/genfiles.properties
+

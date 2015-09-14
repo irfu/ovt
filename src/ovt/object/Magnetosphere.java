@@ -592,6 +592,7 @@ public void setScalarcolor(boolean scalarcolor) {
               actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
               actor.setColor(color);
               //mapper.SetColorMode(1);
+              this.setScalarcolor(false);
 
 
             }
@@ -773,7 +774,7 @@ class MagnetosphereActor extends vtkActor {
    */
       public void setColor(Color color) {
           Color oldColor = this.color;
-          this.setScalarcolor(false);
+          //this.setScalarcolor(false);
           this.color = color;
 
           float[] rgb = ovt.util.Utils.getRGB(getColor());
