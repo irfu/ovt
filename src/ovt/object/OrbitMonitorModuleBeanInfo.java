@@ -6,15 +6,15 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
   // Property identifiers //GEN-FIRST:Properties
   private static final int PROPERTY_visible = 0;
-  private static final int PROPERTY_hoursFormat = 1;
-  private static final int PROPERTY_dumperVisible = 2;
-  private static final int PROPERTY_distanceUnit = 3;
-  private static final int PROPERTY_dateFormat = 4;
-  private static final int PROPERTY_distanceFractionDigits = 5;
+  //private static final int PROPERTY_hoursFormat = 1;
+  private static final int PROPERTY_dumperVisible = 1;
+  private static final int PROPERTY_distanceUnit = 2;
+  private static final int PROPERTY_dateFormat = 3;
+  private static final int PROPERTY_distanceFractionDigits = 4;
 
 
   // Property array
-  private static PropertyDescriptor[] properties = new PropertyDescriptor[6];
+  private static PropertyDescriptor[] properties = new PropertyDescriptor[5];
 
   private static PropertyDescriptor[] getPdescriptor(){
         return properties;
@@ -22,7 +22,7 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
   static {
     try {
       properties[PROPERTY_visible] = new PropertyDescriptor ( "visible", OrbitMonitorModule.class, "isVisible", "setVisible" );
-      properties[PROPERTY_hoursFormat] = new PropertyDescriptor ( "hoursFormat", OrbitMonitorModule.class, "getHoursFormat", "setHoursFormat" );
+      //properties[PROPERTY_hoursFormat] = new PropertyDescriptor ( "hoursFormat", OrbitMonitorModule.class, "getHoursFormat", "setHoursFormat" );
       properties[PROPERTY_dumperVisible] = new PropertyDescriptor ( "dumperVisible", OrbitMonitorModule.class, "isDumperVisible", "setDumperVisible" );
       properties[PROPERTY_distanceUnit] = new PropertyDescriptor ( "distanceUnit", OrbitMonitorModule.class, "getDistanceUnit", "setDistanceUnit" );
       properties[PROPERTY_dateFormat] = new PropertyDescriptor ( "dateFormat", OrbitMonitorModule.class, "getDateFormat", "setDateFormat" );
@@ -53,7 +53,7 @@ private static EventSetDescriptor[] getEdescriptor(){
 //GEN-HEADEREND:Methods
 private static MethodDescriptor[] getMdescriptor(){
     return methods;
-}      
+}
     // Here you can add code for customizing the methods array.
 
   //GEN-LAST:Methods

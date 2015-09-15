@@ -440,12 +440,12 @@ public class Trans {
   // -------- GEI  ->  GSE  ---------
 
   public static Matrix3x3 gei_gse_trans_matrix(double mjd) {
-    double[][] geigse = new double[3][];
-    double eqlipt[] = {   0.0, -0.398, 0.917 };
-    geigse[0] = Utils.sunmjd(mjd);
-    geigse[1] = Vect.crossn(eqlipt, geigse[0]);
-    geigse[2] = Vect.crossn(geigse[0], geigse[1]);
-    Matrix3x3 m = new Matrix3x3(geigse);
+    final double[][] gei_gse = new double[3][];
+    final double eqlipt[] = {   0.0, -0.398, 0.917 };
+    gei_gse[0] = Utils.sunmjd(mjd);                    // NOTE: Time dependent.
+    gei_gse[1] = Vect.crossn(eqlipt, gei_gse[0]);
+    gei_gse[2] = Vect.crossn(gei_gse[0], gei_gse[1]);
+    final Matrix3x3 m = new Matrix3x3(gei_gse);
     return m;
   }
 

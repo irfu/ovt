@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.util;
 
 import java.io.IOException;
@@ -351,14 +346,26 @@ public class SSCWSOrbitCache {
          return SSCWSOrbitCache.this.getCacheSlotIndex(t);
          }*/
         @Override
-        public Object getDataFromCacheSlotContents(List<CacheSlotContents> requestedCacheSlotsContents, int i_beginSlotArrayInclusive, int i_endSlotArrayExclusive) {
-            return SSCWSOrbitCache.this.getDataFromCacheSlotContents(requestedCacheSlotsContents, i_beginSlotArrayInclusive, i_endSlotArrayExclusive);
+        public List<CacheSlotContents> getCacheSlotContents(
+                int i_beginInclusive,
+                int i_endExclusive,
+                Object getCacheSlotContentsArgument) throws IOException {
+            return SSCWSOrbitCache.this.getCacheSlotContents(
+                    i_beginInclusive,
+                    i_endExclusive,
+                    getCacheSlotContentsArgument);
         }
 
 
         @Override
-        public List<CacheSlotContents> getCacheSlotContents(int i_beginInclusive, int i_endExclusive, Object getCacheSlotContentsArgument) throws IOException {
-            return SSCWSOrbitCache.this.getCacheSlotContents(i_beginInclusive, i_endExclusive, getCacheSlotContentsArgument);
+        public Object getDataFromCacheSlotContents(
+                List<CacheSlotContents> requestedCacheSlotsContents,
+                int i_beginSlotArrayInclusive,
+                int i_endSlotArrayExclusive) {
+            return SSCWSOrbitCache.this.getDataFromCacheSlotContents(
+                    requestedCacheSlotsContents,
+                    i_beginSlotArrayInclusive,
+                    i_endSlotArrayExclusive);
         }
     }
 
@@ -413,9 +420,9 @@ public class SSCWSOrbitCache {
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
         System.out.printf("   Time used for downloading data: %.1f [s]\n", duration);
 
-        /*==============
+        /*===============
          Check assertion
-         ==============*/
+         ===============*/
         if (ASSERT_OUTSIDE_EARTH) {
             final double[] origin = new double[]{0, 0, 0};
             for (int i = 0; i < coords_axisPos[3].length; i++) {

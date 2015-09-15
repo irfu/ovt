@@ -293,7 +293,7 @@ implements MagPropsChangeListener {
         
         //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd())).GetMapper().ScalarVisibilityOn();
         //ActorUtils.getActor(this.sat.getFieldline(FieldlineModule.FL_2_EARTH, this.getMjd())).GetMapper().ScalarVisibilityOn();
-
+/*
         Log.log("Creating pretty colours ...", 3);
 
         //mapper = sat.satelliteModule.actor.GetMapper();
@@ -336,6 +336,7 @@ implements MagPropsChangeListener {
                 
     propertyChangeSupport.firePropertyChange("scalarcolor", oldScalarcolor, scalarcolor);
 
+        */
     }
   //copied from SingleActorSatModule FKJN
   /** Getter for property color.
@@ -360,6 +361,9 @@ implements MagPropsChangeListener {
           
           
         //this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
+          
+          
+          /*
         float[] rgb = ovt.util.Utils.getRGB(getColor());
         Enumeration e = this.sat.getFieldline(FieldlineModule.FL_2_EQUATOR, this.getMjd()).elements();
         while (e.hasMoreElements())
@@ -369,7 +373,7 @@ implements MagPropsChangeListener {
         while (e.hasMoreElements())
             ((vtkFollower)e.nextElement()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);    
         
-
+*/
 
          //   this.module1.getActor(getMjd()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);;
          //   this.module2.getActor(getMjd()).GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);;

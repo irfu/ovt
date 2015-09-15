@@ -217,6 +217,7 @@ private static Element createNode(String nodeName, Object obj, Class propertyEdi
         
         // if this method will throw NullPointerException
         // check the BeanInfo for that class - some PropertyDescriptors may be invalid! 
+        //Log.log("obj.getClass() = "+obj.getClass(),0);   // TEMP DEBUG
         BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass()); 
         
         // to avoid strrange ordering of p.d. bug
@@ -235,7 +236,8 @@ private static Element createNode(String nodeName, Object obj, Class propertyEdi
         for (int i=0; i<propD.length; i++) {
             if (propD[i] == null) {
                 Log.err("PropertyDescriptor["+i+"] of "+obj.getClass().getName()+" is NULL!!!"); System.exit(-1);
-            }
+            }        
+            //Log.err("PropertyDescriptor["+i+"]"+propD[i].getName()+" of "+obj.getClass().getName()+" is not Null");
             if (OVTCore.isServer() && propD[i].isHidden()) continue;
             if (obj instanceof OVTCore) Log.log("Processing property ("+i+") "+root.getNodeName()+" -> "+propD[i].getName(), DEBUG);
             addPropertyToNode(root, propD[i], obj, document);
@@ -257,7 +259,7 @@ private static void addIndexedPropertyToNode(org.w3c.dom.Element root, IndexedPr
         Method indexedReadMethod = ipd.getIndexedReadMethod();
         try {
             for (int i=0; true; i++) {
-                Log.log(bean.getClass().getName()+"."+ipd.getName()+"("+i+")",DEBUG);
+                Log.err(bean.getClass().getName()+"."+ipd.getName()+"("+i+")",DEBUG);
                 Object valueObj = indexedReadMethod.invoke(bean, new Object[]{ new Integer(i) });
                 ///Log.log("   value="+valueObj,DEBUG);
                 boolean addClassAttribute = (!valueObj.getClass().getName().equals(indexedReadMethod.getReturnType().getName()));
@@ -273,7 +275,7 @@ private static void addIndexedPropertyToNode(org.w3c.dom.Element root, IndexedPr
         }
         
     } catch (NullPointerException e2) {
-        //Log.err("Property descriptor '"+ pd.getName() +"' has no editor", 0);
+        Log.err("Property descriptor '"+ ipd.getName() +"' has no editor", 0);
         Log.err("---------------------SUXX!!!00000000000--------------------"+e2);
     //} catch (InvocationTargetException inv_t_e) { inv_t_e.printStackTrace();
     } catch (IllegalAccessException ill_a_e) { ill_a_e.printStackTrace();

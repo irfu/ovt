@@ -140,11 +140,11 @@ public class LTOFSat extends Sat {
             throw new IllegalArgumentException("Illegal array dimensions. Lengths are not identical.");
         }
 
-        int k = 0, lineNumber = 0;
-        double mjd = timeMjdMap[k];
+        int i_mjdTimeMap = 0, lineNumber = 0;
+        double mjd = timeMjdMap[i_mjdTimeMap];
 
         try (BufferedReader inData = new BufferedReader(new FileReader(LTOFFile))) {
-            while (inData.ready() && k < timeMjdMap.length) {
+            while (inData.ready() && i_mjdTimeMap < timeMjdMap.length) {
                 final LTOFRecord rec = new LTOFRecord();
 
                 {
@@ -160,7 +160,7 @@ public class LTOFSat extends Sat {
                         continue; // search for the 1-st record. It contains the number of a satellite +2spaces +  P or R - Predict or Recon.
                     }              // I3,X2,A1,... (Integer 123, two spaces, 1 char,...
 
-                    final int codeOfLine = Integer.parseInt(line.substring(0, 3).trim()); // trim to remove leading spaces
+                    final int codeOfLine = Integer.parseInt(line.substring(0, 3).trim()); // Trim to remove leading spaces
                     //Log.log("mjd["+k+"] codeOfLine="+codeOfLine);
 
                     //if (codeOfLine>=1 && codeOfLine<99 ){   //Satellite ID (sc_id)
@@ -207,9 +207,9 @@ public class LTOFSat extends Sat {
                 }
 
                 // Calculate and fill in gei_arr vei_arr for the time valid for this LTOF record.
-                while (mjd <= rec.dayEnd && k < timeMjdMap.length) {  //Treatment of MJDs as much as possible.
+                while (mjd <= rec.dayEnd && i_mjdTimeMap < timeMjdMap.length) {  //Treatment of MJDs as much as possible.
                     //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
-                    mjd = timeMjdMap[k];
+                    mjd = timeMjdMap[i_mjdTimeMap];
 
                     // BUG FIX. /Erik P G Johansson 2015-08-24
                     if (mjd > rec.dayEnd) {
@@ -218,11 +218,11 @@ public class LTOFSat extends Sat {
 
                     final double[] posAndVel = solveKepler(mjd, rec);
                     for (int jx = 0; jx < 3; jx++) {
-                        gei_arr[k][jx] = posAndVel[jx];
-                        vei_arr[k][jx] = posAndVel[jx + 3];
+                        gei_arr[i_mjdTimeMap][jx] = posAndVel[jx];
+                        vei_arr[i_mjdTimeMap][jx] = posAndVel[jx + 3];
                     }
                     // Log.log("pos="+Vect.toString(gei_arr[k]));
-                    k++;
+                    i_mjdTimeMap++;
                 }
 
             }   // while

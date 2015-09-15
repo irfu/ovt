@@ -62,9 +62,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
         }
         vtkNativeLibrary.DisableOutputWindow(null);
-    
+
     /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
-        
+
     dir == ('../directory/to/the/VTK/DLLs');
     File[] files = dir.listFiles();
     if (files != null) {
@@ -72,12 +72,12 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         // only the lib-name needed, without file extension
 	System.loadLibrary(files[i].getName().substring(0,files[i].getName().length()-4));
         if (files[i].isDirectory()) {
-		listDir(files[i]); 
+		listDir(files[i]);
                 }
         }
     }
 */
-    
+
     }
 
     protected OVTCore core;
@@ -107,8 +107,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
     private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
 
-    private static final int DEFAULT_VISUALIZATION_PANEL_WIDTH = 600;
-    private static final int DEFAULT_VISUALIZATION_PANEL_HEIGHT = 600;
+    //private static final int DEFAULT_VISUALIZATION_PANEL_WIDTH = 600;
+    //private static final int DEFAULT_VISUALIZATION_PANEL_HEIGHT = 600;
+    //private static final int DEFAULT_XYZWINDOW_WIDTH = 600;
+    //private static final int DEFAULT_XYZWINDOW_HEIGHT = 600;
 
 
     public XYZWindow() {
@@ -149,15 +151,15 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
          (NOTE: This is why one should not leak "this" from within a constructor.) */
         core = new OVTCore(this);
 
-        int width = DEFAULT_VISUALIZATION_PANEL_WIDTH;
-        int height = DEFAULT_VISUALIZATION_PANEL_HEIGHT;
-        try {
-            width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
-            height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
-        } catch (NumberFormatException ignore) {
-        }
-        renPanel.setSize(width, height);             // NOTE: renPanel.setSize seems unnecessary.
-
+        /*
+         int width = DEFAULT_VISUALIZATION_PANEL_WIDTH;
+         int height = DEFAULT_VISUALIZATION_PANEL_HEIGHT;
+         try {
+         width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
+         height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
+         } catch (NumberFormatException ignore) {
+         }*/
+        //renPanel.setSize(width, height);             // NOTE: renPanel.setSize seems unnecessary.
         // set the renderer
         ren = renPanel.getRenderer();
         float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
@@ -170,10 +172,18 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 // ----------- Set window size ----------
         boolean pack = false;
         try {
-            setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
-                    Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))
+            /*setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
+             Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))*/
+            setSize(
+                    new Dimension(
+                            Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
+                            Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT)))
             );
         } catch (NumberFormatException e2) {
+            final Dimension scrSize = Toolkit.getDefaultToolkit().getScreenSize();
+
+            setPreferredSize(new Dimension(scrSize.width / 2, scrSize.height / 2));
+            //setPreferredSize(new Dimension(DEFAULT_XYZWINDOW_WIDTH, DEFAULT_XYZWINDOW_HEIGHT));
             pack = true;
         }
 
@@ -190,9 +200,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         }
 
         if (treePanelWidth != 0) {
-            treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
+            //treePanel.setPreferredSize(new Dimension(treePanelWidth, height));
+            treePanel.setPreferredSize(new Dimension(treePanelWidth, getPreferredSize().height));
         }
-        treePanel.setMinimumSize(new Dimension(200, 10));
+        treePanel.setMinimumSize(new Dimension(250, 10));
 
 //--------Create a split pane with the two scroll panes in it
         splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, windowResizable);
@@ -201,7 +212,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         splitPane.setOneTouchExpandable(windowResizable);
         splitPane.setDividerSize(6);
         if (treePanelWidth == 0) {
-            renPanel.setSize(width - treePanel.getPreferredSize().width, height);     // NOTE: renPanel.setSize seems unnecessary.
+            //renPanel.setSize(width - treePanel.getPreferredSize().width, height);     // NOTE: renPanel.setSize seems unnecessary.
+            renPanel.setSize(this.getPreferredSize().width - treePanel.getWidth(), getPreferredSize().height);     // NOTE: renPanel.setSize seems unnecessary.
         }
         contentPane.add(splitPane, BorderLayout.CENTER);
 
@@ -250,7 +262,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             final int y = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_Y));
 
             // On Linux/KDE: It appears that this method always sets the window
-            // inside the screen. Therefore one does not need to check for this.            
+            // inside the screen. Therefore one does not need to check for this.
             setLocation(x, y);
         } catch (NumberFormatException e2) {
             setLocation(scrnSize.width / 2 - windowSize.width / 2, scrnSize.height / 2 - windowSize.height / 2);
@@ -263,8 +275,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         setVisible(true);
         renPanel.resetCamera();
         renPanel.getComponent().requestFocus();
-        core.getCamera().setViewFrom(Camera.VIEW_FROM_X);
-        core.getCamera().setProjection(1);
+        core.getCamera().setViewFrom(Camera.VIEW_FROM_X); //Fixed origin bug 
+        //core.getCamera().setProjection(1); //Fix clipping bug FKJN 15Sept2015
         core.Render();
 
     }
@@ -310,11 +322,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     public void quit() {
 
         for (SSCWSSat sat : getSSCWSSats()) {
-            try {
-                sat.saveCacheToFile();
-            } catch (IOException e) {
-                core.sendErrorMessage("Error saving Orbit cache file: "+e.getMessage(), e);
-            }
+            sat.trySaveCacheToFile();
         }
 
         try {
@@ -458,20 +466,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
-     * Have SSCWSSatellitesSelectionWindow set the global settings, but ONLY if
-     * it has already been instantiated. One could call
-     * getSSCWSSatellitesSelectionWindow().setGlobalSettings() directly instead
-     * but that would instantiate the window (if it has not already been done)
-     * which in turn requires network traffic which slows down (and risks
-     * creating error messsages) which is unnecessary if the user does not work
-     * with SSCWS satellites.
-     */
-    /*public void sscwsSatellitesSelectionWindow_setGlobalSettings() {
-     if (sscwsSatellitesSelectionWindow != null) {
-     sscwsSatellitesSelectionWindow.setGlobalSettings();
-     }
-     }*/
-    /**
      * Method representing the action of adding a satellite (of any type: LTOF,
      * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
      * user event in the GUI.
@@ -493,7 +487,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         /* Include here or let the caller call it?!
          Having the caller call this might be more efficient.
-         Including here might also have implications if automatically calling this function during launch/initialization.            
+         Including here might also have implications if automatically calling this function during launch/initialization.
          Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
          */
         getCore().Render();

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.util;
 
 import java.awt.BasicStroke;
@@ -30,6 +25,11 @@ import static ovt.util.Utils.linearInterpolation;
  * @author Erik P G Johansson, erik.johansson@irfu.se
  */
 public class UtilsTests {
+    
+    public static void main(String[] args) {
+        test_getCumulativeIntArray();
+    }
+    
 
     /**
      * Test code.
@@ -207,6 +207,30 @@ public class UtilsTests {
     }
 
 
+    public static void test_getCumulativeIntArray() {
+        final ArrayList<Object[]> testList = new ArrayList();
+        
+        testList.add(new Object[]{new int[]{}, true, new int[]{}});
+        testList.add(new Object[]{new int[]{}, false, new int[]{}});
+
+        testList.add(new Object[]{new int[]{-5}, true, new int[]{-5}});
+        testList.add(new Object[]{new int[]{-5}, false, new int[]{0}});
+
+        testList.add(new Object[]{new int[]{1, 2, 3}, true, new int[]{1, 3, 6}});
+        testList.add(new Object[]{new int[]{1, 2, 3}, false, new int[]{0, 1, 3}});
+
+        for (Object[] test : testList) {
+            final boolean ok = Arrays.equals(Utils.getCumulativeIntArray(
+                    (int[]) test[0], (boolean) test[1]),
+                    (int[]) test[2]);
+            if (!ok) {
+                throw new AssertionError();
+            }
+        }
+        System.out.println("OK");
+    }
+
+
     /**
      * Test code. Can see that Random#nextDouble() produces similar results for
      * the first call after initializing with strings with the same beginning
@@ -279,7 +303,9 @@ public class UtilsTests {
     }
 
 
-    /** Test code for cubicSplineInterpolation. Still based on user interaction. */
+    /**
+     * Test code for cubicSplineInterpolation. Still based on user interaction.
+     */
     // PROPOSAL: Add markings for the points which are actually tabulated (for the original tabulated curve).
     public static void test_cubicSplineInterpolation() {
         //final double[] x = {2, 3, 4, 5, 6, 7, 8, 9, 10};
@@ -290,7 +316,7 @@ public class UtilsTests {
         /*final double[] x = {0, 2, 4, 6, 8, 10, 12, 14};   // Ramp function
          final double[] y = {2, 2, 2, 2, 4, 6, 8, 10};
          //*/
-        final double[] x = {0, 1, 4, 6.8, 7.2, 10, 12, 14};  
+        final double[] x = {0, 1, 4, 6.8, 7.2, 10, 12, 14};
         //final double[] x = {0, 2, 4, 6, 8, 10, 12, 14};
         final double[] y = {2, 2, 2, 2, 4, 4, 4, 4}; // Step function
         //*/

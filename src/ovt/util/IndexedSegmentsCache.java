@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package ovt.util;
 
 import java.io.IOException;
@@ -321,8 +316,14 @@ public class IndexedSegmentsCache {
     private class InternalCacheDataSource implements DiscreteIntervalToListCache.DataSource {
 
         @Override
-        public List<CacheSlotContents> getList(int i_beginInclusive, int i_endExclusive, Object getListArgument) throws IOException {
-            return IndexedSegmentsCache.this.dataSource.getCacheSlotContents(i_beginInclusive, i_endExclusive, getListArgument);
+        public List<CacheSlotContents> getList(
+                int i_beginInclusive,
+                int i_endExclusive,
+                Object getListArgument) throws IOException {
+            return IndexedSegmentsCache.this.dataSource.getCacheSlotContents(
+                    i_beginInclusive,
+                    i_endExclusive,
+                    getListArgument);
         }
     }
 

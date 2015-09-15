@@ -42,6 +42,8 @@ package ovt.util;
 import java.util.*;
 import java.io.*;
 import java.math.RoundingMode;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import ovt.*;
 import ovt.datatype.*;
@@ -727,9 +729,21 @@ public class Utils extends Object {
      * a non-null return File object refers to an existing file. NOTE: The
      * function is therefore also NOT suited for suggesting where to create a
      * new file.
+     *
+     * NOTE: The return result from ClassLoader#getResource can refer to a file
+     * inside a ".jar" file.
      */
     /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
+        {
+            // DEBUG
+            /*Log.log("Utils#findFile(fileName="+fileName+")");
+             Log.log("   First suggestion (file path): "+OVTCore.getUserDir() + fileName, 2);
+             final java.net.URL tempURL = OVTCore.class.getClassLoader().getResource(fileName);
+             final String tempStr = String.valueOf(tempURL);
+             Log.log("   Second suggestion (resource): "+tempStr, 2);*/
+        }
+
         if (fileName == null) {
             return null;
         }
@@ -738,8 +752,8 @@ public class Utils extends Object {
             file = null;
         }
         if (file == null) {
-            ClassLoader classLoader = OVTCore.class.getClassLoader();
-            java.net.URL fn = classLoader.getResource(fileName);
+            final ClassLoader classLoader = OVTCore.class.getClassLoader();
+            final java.net.URL fn = classLoader.getResource(fileName);
             if (fn == null) {
                 return null;
             }
@@ -801,6 +815,36 @@ public class Utils extends Object {
 
 
     /**
+     * Download arbitrary file from a URL and save it to disk.
+     *
+     * @return Number of bytes downloaded.
+     */
+    public static int downloadURLToFile(String urlStr, File file) throws MalformedURLException, IOException {
+        final int OUTPUT_BUFFER_SIZE = 1024 * 1024;
+        final int TRANSFER_BUFFER_SIZE = OUTPUT_BUFFER_SIZE;   // Makes sense?
+
+        final URL url = new URL(urlStr);   // throws  MalformedURLException. Does not seem to throw for non-existing URL.
+        int bytesReadTotal = 0;
+
+        //final OutputStream out;        
+        try (InputStream in = url.openStream(); OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
+
+            final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
+            int bytesReadThisIteration;
+
+            while ((bytesReadThisIteration = in.read(buffer)) != -1) {
+                out.write(buffer, 0, bytesReadThisIteration);
+                bytesReadTotal += bytesReadThisIteration;
+            }
+            //in.close();   // Should be unnecessary.
+            //out.close();  // Should be unnecessary.
+
+        }
+        return bytesReadTotal;
+    }
+
+
+    /**
      * Return array that is the concatenation of multiple arrays. Should work
      * for zero-length arrays, including zero-length aa. No null pointers
      * permitted anywhere.
@@ -823,6 +867,26 @@ public class Utils extends Object {
         return a;
     }
 
+    /**
+     * Entirely analogous with concatDoubleArrays but for int arrays instead.
+     */
+    public static int[] concatIntArrays(int[][] aa) {
+        int N_a = 0;
+        for (int[] ap : aa) {
+            if (ap == null) {
+                throw new NullPointerException("Array component is null.");
+            }
+            N_a = N_a + ap.length;
+        }
+        final int[] a = new int[N_a];
+
+        int i_a = 0;
+        for (int[] ap : aa) {
+            System.arraycopy(ap, 0, a, i_a, ap.length);
+            i_a += ap.length;
+        }
+        return a;
+    }
 
     /**
      * @author Erik P_SI G Johansson
@@ -978,11 +1042,52 @@ public class Utils extends Object {
             throw new IllegalArgumentException("Negative N.");
         }
 
-        final double[] a = new double[N];
-        for (int i = 0; i < N; i++) {
-            a[i] = first + (last - first) / (N - 1) * i;
+        if (N == 1) {            
+            if (first != last) {
+                throw new IllegalArgumentException("First and last value can not be different for length=1 array.");
+            }
+            
+            return new double[]{first};
+            
+        } else {
+            // CASE: N==0 or N>=2.
+            // NOTE: Does not work for N==1 since it
+            // 1) requires first==last
+            // 2) results in 0/0 = NaN even when first==last.
+
+            final double[] a = new double[N];
+            for (int i = 0; i < N; i++) {
+                a[i] = first + (last - first) / (N - 1) * i;
+            }
+            return a;
         }
-        return a;
+    }
+
+
+    /**
+     * Given an array, construct a new same-sized array where the components are
+     * the sum of the components up to that index in the original array.
+     *
+     * @param inclusiveSum Determines whether the sum should include the index
+     * itself.
+     * @return Array where a component i contains the sum of the components a[0]
+     * to a[i-1] or a[i] depending on flag.
+     */
+    public static int[] getCumulativeIntArray(int[] a, boolean inclusiveSum) {
+        final int[] ca = new int[a.length];
+        int sum = 0;
+        if (inclusiveSum) {
+            for (int i = 0; i < a.length; i++) {
+                sum = sum + a[i];
+                ca[i] = sum;
+            }
+        } else {
+            for (int i = 0; i < a.length; i++) {
+                ca[i] = sum;
+                sum = sum + a[i];
+            }
+        }
+        return ca;
     }
 
 
