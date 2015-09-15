@@ -13,7 +13,7 @@ public class MagnetosphereBeanInfo extends SimpleBeanInfo {
 
 
     // Property array
-    private static PropertyDescriptor[] properties = new PropertyDescriptor[4];
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[5];
 
     private static PropertyDescriptor[] getPdescriptor(){
         return properties;

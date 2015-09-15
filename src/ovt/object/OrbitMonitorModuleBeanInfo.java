@@ -6,19 +6,19 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
   // Property identifiers //GEN-FIRST:Properties
   private static final int PROPERTY_visible = 0;
-  private static final int PROPERTY_hoursFormat = 1;
-  private static final int PROPERTY_dumperVisible = 2;
-  private static final int PROPERTY_distanceUnit = 3;
-  private static final int PROPERTY_dateFormat = 4;
-  private static final int PROPERTY_distanceFractionDigits = 5;
+  //private static final int PROPERTY_hoursFormat = 1;
+  private static final int PROPERTY_dumperVisible = 1;
+  private static final int PROPERTY_distanceUnit = 2;
+  private static final int PROPERTY_dateFormat = 3;
+  private static final int PROPERTY_distanceFractionDigits = 4;
 
-  // Property array 
-  private static PropertyDescriptor[] properties = new PropertyDescriptor[6];
+  // Property array
+  private static PropertyDescriptor[] properties = new PropertyDescriptor[5];
 
   static {
     try {
       properties[PROPERTY_visible] = new PropertyDescriptor ( "visible", OrbitMonitorModule.class, "isVisible", "setVisible" );
-      properties[PROPERTY_hoursFormat] = new PropertyDescriptor ( "hoursFormat", OrbitMonitorModule.class, "getHoursFormat", "setHoursFormat" );
+      //properties[PROPERTY_hoursFormat] = new PropertyDescriptor ( "hoursFormat", OrbitMonitorModule.class, "getHoursFormat", "setHoursFormat" );
       properties[PROPERTY_dumperVisible] = new PropertyDescriptor ( "dumperVisible", OrbitMonitorModule.class, "isDumperVisible", "setDumperVisible" );
       properties[PROPERTY_distanceUnit] = new PropertyDescriptor ( "distanceUnit", OrbitMonitorModule.class, "getDistanceUnit", "setDistanceUnit" );
       properties[PROPERTY_dateFormat] = new PropertyDescriptor ( "dateFormat", OrbitMonitorModule.class, "getDateFormat", "setDateFormat" );
@@ -42,12 +42,12 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
   // Method identifiers //GEN-FIRST:Methods
 
-  // Method array 
+  // Method array
   private static MethodDescriptor[] methods = new MethodDescriptor[0];
 //GEN-HEADEREND:Methods
 
     // Here you can add code for customizing the methods array.
-    
+
   //GEN-LAST:Methods
 
     private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
@@ -65,7 +65,7 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>PropertyDescriptor</code>s.
-     * 
+     *
      * @return An array of PropertyDescriptors describing the editable
      * properties supported by this bean.  May return null if the
      * information should be obtained by automatic analysis.
@@ -81,8 +81,8 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>EventSetDescriptor</code>s.
-     * 
-     * @return  An array of EventSetDescriptors describing the kinds of 
+     *
+     * @return  An array of EventSetDescriptors describing the kinds of
      * events fired by this bean.  May return null if the information
      * should be obtained by automatic analysis.
      */
@@ -92,8 +92,8 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>MethodDescriptor</code>s.
-     * 
-     * @return  An array of MethodDescriptors describing the methods 
+     *
+     * @return  An array of MethodDescriptors describing the methods
      * implemented by this bean.  May return null if the information
      * should be obtained by automatic analysis.
      */
@@ -103,7 +103,7 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
     /**
      * A bean may have a "default" property that is the property that will
-     * mostly commonly be initially chosen for update by human's who are 
+     * mostly commonly be initially chosen for update by human's who are
      * customizing the bean.
      * @return  Index of default property in the PropertyDescriptor array
      * 		returned by getPropertyDescriptors.
@@ -115,7 +115,7 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
 
     /**
      * A bean may have a "default" event that is the event that will
-     * mostly commonly be used by human's when using the bean. 
+     * mostly commonly be used by human's when using the bean.
      * @return Index of default event in the EventSetDescriptor array
      *		returned by getEventSetDescriptors.
      * <P>	Returns -1 if there is no default event.
@@ -140,7 +140,7 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
      * so they can be rendered onto an existing background.
      *
      * @param  iconKind  The kind of icon requested.  This should be
-     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32, 
+     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32,
      *    ICON_MONO_16x16, or ICON_MONO_32x32.
      * @return  An image object representing the requested icon.  May
      *    return null if no suitable icon is available.
@@ -184,4 +184,3 @@ public class OrbitMonitorModuleBeanInfo extends SimpleBeanInfo {
     }
 
 }
-
