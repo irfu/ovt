@@ -62,6 +62,22 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
         }
         vtkNativeLibrary.DisableOutputWindow(null);
+    
+    /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
+        
+    dir == ('../directory/to/the/VTK/DLLs');
+    File[] files = dir.listFiles();
+    if (files != null) {
+         for (int i = 0; i < files.length; i++) {
+        // only the lib-name needed, without file extension
+	System.loadLibrary(files[i].getName().substring(0,files[i].getName().length()-4));
+        if (files[i].isDirectory()) {
+		listDir(files[i]); 
+                }
+        }
+    }
+*/
+    
     }
 
     protected OVTCore core;

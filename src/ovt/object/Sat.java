@@ -478,7 +478,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     }
 
 
-    //-----------------  FieldLine staff------------
+    //-----------------  FieldLine stuff------------
     protected FieldlineCollection getFieldlineCollection(int type) {
         return mainFieldlineModule.getFieldlineCollection(type);
     }
@@ -487,7 +487,6 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     protected Fieldline getFieldline(int type, double mjd) {
         return mainFieldlineModule.getFieldline(type, mjd);
     }
-
 
     public void validate() {
         updateTrajectory();
