@@ -37,7 +37,7 @@ package ovt.datatype;
 import java.lang.*;
 import java.util.*;
 
-/**
+/*
  * One should remove the concept "1996-12-01 12:00:00" and move to the one like
  * in ISDAT "1996-12-01 12:00:00.0"
  */

@@ -12,7 +12,6 @@ package ovt.model.magnetopause;
 
 import ovt.mag.*;
 import ovt.util.*;
-import ovt.interfaces.*;
 
 import ovt.util.Utils;
 

@@ -1,3 +1,34 @@
+/*=========================================================================
+ 
+ Program:   Orbit Visualization Tool
+ Source:    $Source: /ovt/util/SSCWSLibraryImpl.java $
+ Date:      $Date: 2015/09/15 11:54: $
+ Version:   $Revision: 1.0 $
+ 
+ 
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification is permitted provided that the following conditions are met:
+ 
+ * No part of the software can be included in any commercial package without
+ written consent from the OVT team.
+ 
+ * Redistributions of the source or binary code must retain the above
+ copyright notice, this list of conditions and the following disclaimer.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
+ INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
+ 
+ OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ 
+ =========================================================================*/
 package ovt.util;
 
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateComponent;
@@ -31,8 +62,6 @@ import java.util.Collections;
 import java.util.EnumSet;
 
 /**
- * @author Erik P G Johansson, erik.johansson@irfu.se
- *
  * Class which supplies a small library of static functions for all accessing of
  * data from the Satellite Situation Center (SSC) Web Services. The purpose of
  * having this separate from SSCWSSat and the rest of OVT is to:<BR>
@@ -83,13 +112,14 @@ import java.util.EnumSet;
  * Bobby Robert.M.Candey@nasa.gov 1-301-286-6707 NASA Goddard Space Flight
  * Center, Code 672 Greenbelt MD 20771 USA
  *
+ * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
+ * @since 2015
  */
 // TODO: Go through code and set all or as many as possible options since one can not trust default values.
 //
 // PROPOSAL: Attempt to make library independent of OVT functions?
 //    Ex: Time conversion functions
 //    Ex: Coordinates system functions (if there are any).
-// PROPOSAL: Measure and log download times (durations).
 // PROPOSAL: Display GUI message when downloading (modal info window?).
 //    CON: Should be done by caller.
 // 
@@ -98,11 +128,6 @@ import java.util.EnumSet;
 // QUESTION: Which types of exception should be caught and rethrown as something else? Rethrown as what?
 //    PROPOSAL: Exceptions which are hard to explain without understanding the insides of SSC Web Services.
 // QUESTION: How reuse catching and rethrowing of exceptions?
-//
-// PROPOSAL: Somehow use
-//      getPrivacyAndImportantNotices() ??
-//      getAcknowledgements() ??
-//      to display text somewhere in OVT.
 //
 public class SSCWSLibraryImpl extends SSCWSLibrary {
 

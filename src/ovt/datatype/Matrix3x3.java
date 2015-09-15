@@ -54,15 +54,14 @@ public class Matrix3x3 {
      {0, 1, 0},
      {0, 0, 1} };*/
 
-    protected double[][] matrix = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
-
     public static final Matrix3x3 IDENTITY_MATRIX = new Matrix3x3(new double[][]{{1, 0, 0}, {0, 1, 0}, {0, 0, 1}});
-    //public static final Matrix3x3 ZERO_MATRIX = new Matrix3x3(new double[][] { {0, 0, 0}, {0, 0, 0}, {0, 0, 0} });   // NOTE: Assumes that initial values corespond to identity matrix.
 
     /* Matrices used for constructing rotation matrices. (A base for the SO(3) Lie algebra.) */
     private static final Matrix3x3 L_x = new Matrix3x3(new double[][]{{0, 0, 0}, {0, 0, -1}, {0, 1, 0}});
     private static final Matrix3x3 L_y = new Matrix3x3(new double[][]{{0, 0, 1}, {0, 0, 0}, {-1, 0, 0}});
     private static final Matrix3x3 L_z = new Matrix3x3(new double[][]{{0, -1, 0}, {1, 0, 0}, {0, 0, 0}});
+
+    protected double[][] matrix = {{1, 0, 0}, {0, 1, 0}, {0, 0, 1}};
 
 
     /**
@@ -247,10 +246,10 @@ public class Matrix3x3 {
      * Algorithm: e^A = (1+A/n)^n, where n--> +infinity. Uses n=2^N with N
      * iterations in code since this is easy to implement.
      *
-     * @param N Number of iterations to use. More accurate result for higher value.
-     * Should _probably_ be chosen such that 2^N >> |det(matrix)| as a necessary
-     * requirement, but it is not certain whether this is also sufficient. Has
-     * to be a non-negative number.
+     * @param N Number of iterations to use. More accurate result for higher
+     * value. Should _probably_ be chosen such that 2^N >> |det(matrix)| as a
+     * necessary requirement, but it is not certain whether this is also
+     * sufficient. Has to be a non-negative number.
      * @return New instance of Matrix3x3.
      *
      * @author Erik P G Johansson, erik.johansson@irfu.se
@@ -265,7 +264,7 @@ public class Matrix3x3 {
         final double twoPowerN = Math.pow(2, N);
         final Matrix3x3 A = new Matrix3x3(this);  // Copy argument to avoid modifying it. Matrix3x3#multiply(double) modifies the matrix in-place later.
         A.multiply(1.0d / twoPowerN);
-        Matrix3x3 C = Matrix3x3.IDENTITY_MATRIX.add(A);
+        Matrix3x3 C = IDENTITY_MATRIX.add(A);
 
         for (int i = 1; i <= N; i++) {
             // C_0 = Matrix before first iteration
@@ -285,14 +284,14 @@ public class Matrix3x3 {
      * Get 3x3 rotation matrix for rotation around an arbitrary axis.
      *
      * @param r Axis around which to rotate. The length of the vector determines
-     * the angle of a righthand rotation in radians (in a righthanded coordinate system).
+     * the angle of a righthand rotation in radians (in a righthanded coordinate
+     * system).
      *
      * @return A new instance of Matrix3x3, "R". If v and v' are vectors where
      * R*v=v', then v' will be a rotated version v.
      *
-     * @author Erik P G Johansson, erik.johansson@irfu.se
-     *
-     * Created 2015-09-10.
+     * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
+     * @since 2015-09-10.
      */
     // PROPOSAL: Add/subtract 2*pi to length of rotation vector to reduce the length of the rotation vector. ==> Reduce number of iterations.
     public static Matrix3x3 getRotationMatrix(double[] r) {

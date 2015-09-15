@@ -1,33 +1,33 @@
 /*=========================================================================
 
  Program:   Orbit Visualization Tool
- Source:    $Source: /stor/devel/ovt2g/ovt/datatype/Interval.java,v $
+ Source:    $Source: /ovt/datatype/Interval.java $
  Date:      $Date: 2006/02/20 16:06:39 $
- Version:   $Revision: 2.5 $
+ Version:   $Revision: 2.6 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev)
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev
-
+ Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ 
  =========================================================================*/
 /*
  * Interval.java
@@ -43,7 +43,7 @@ import java.util.*;
  * time)
  *
  * NOTE: This class used to have a strange implementation using an internal
- * ovt.datatype.Time object meant having day>30, hour>23 , or min>59 led to
+ * ovt.datatype.Time object meant having day>30, hour>23, or min>59 led to
  * trying to create an illegal date, which triggered an exception, which
  * prevents the caller from defining such time intervals. Therefore the class
  * has been reimplemented to handle arbitrarily large (positive) time

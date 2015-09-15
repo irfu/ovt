@@ -1,33 +1,33 @@
 /*=========================================================================
 
   Program:   Orbit Visualization Tool
-  Source:    $Source: /stor/devel/ovt2g/ovt/datatype/LTOFRecord.java,v $
-  Date:      $Date: 2003/09/28 17:52:37 $
-  Version:   $Revision: 1.3 $
+  Source:    $Source: /ovt/datatype/LTOFRecord.java,v $
+  Date:      $Date: 2015/09/15 13:36:00 $
+  Version:   $Revision: 1.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
-Yuri Khotyaintsev)
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification is permitted provided that the following conditions are met:
-
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification is permitted provided that the following conditions are met:
+ 
  * No part of the software can be included in any commercial package without
-written consent from the OVT team.
-
+ written consent from the OVT team.
+ 
  * Redistributions of the source or binary code must retain the above
-copyright notice, this list of conditions and the following disclaimer.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
-IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
-INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
-OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
-Khotyaintsev
-
+ copyright notice, this list of conditions and the following disclaimer.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
+ INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
+ 
+ OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ 
 =========================================================================*/
 
 
@@ -37,7 +37,7 @@ import java.util.*;
 
 /**
  * The record class of the Long Term Orbit Files, used by {@link ovt.object.LTOFSat}.
- * Does MOST of the interpretation of LTOF files, but NOT all interpretation.
+ * It does MOST of the interpretation of LTOF files, but NOT all interpretation.
  * 
  * For more information concerning LTOF format refer to docs/ltof.pdf.
  * 
@@ -161,52 +161,6 @@ public  class LTOFRecord  {
            throw new IllegalArgumentException("Too few parameters in the line : "+i+". Should be 7."); */
        
     }
-    
-    /** *  Extracts from the line <code>ss</code> the following parameters : {@link #coeffLinesNumber },  {@link #Y}, {@link #rDist } Initializes {@link #coeffs }. 
-     * The format of the line : <code>I3, 3F11.3, 3F11.7, F11.3, A1 </code>
-     * 
-     * Old implementation of set3rdRecord. It has has proven to crash when trying to
-     * interpret ESOC's validation test for LTOF files. The bug lies in that it
-     * assumes there is whitespace between the (number) fields. The specification
-     * however refers to exact byte intervals without whitespace between them. 
-     * There happens to be whitespace anyway when the numbers are too small to fill the bytes for each field.
-     * Should be possible to delete when new code is tested.
-     * /Erik P G Johansson 2015-08-28
-     */
-    /*public void set3rdRecord_OLD(String ss) throws IllegalArgumentException {
-       final StringTokenizer stok = new StringTokenizer(ss);
-       int i = 0;   // Elements counter
-       
-       while(stok.hasMoreTokens() && i<8) {
-          final String s1 = stok.nextToken();
-          switch (i) {
-             case 0: //coeffLinesNumber;
-                final int tmp_coeffLinesNumber = Integer.parseInt(s1);
-                coeffLinesNumber=tmp_coeffLinesNumber-300;             // Unknown constant 300. Why?
-                if (coeffLinesNumber<0 || coeffLinesNumber>MaxCoefs) {
-                    throw new IllegalArgumentException("Wrong number of polynomial coefficient lines : "+coeffLinesNumber+" . ");
-                }
-                
-                coeffs = new double[coeffLinesNumber][6];  // Init. array!
-                break;
-             case 1:
-                Y[i-1] = Double.parseDouble(s1); break;
-             default:
-                if(i>=1 && i<=6){
-                   Y[i-1] = Double.parseDouble(s1);
-                   break;
-                } else {
-                   if(i==7)
-                      rDist = Double.parseDouble(s1);
-                   break;
-                }
-          }
-          ++i;
-       }
-       if (i<8) {
-           throw new IllegalArgumentException("Too few parameters in the line : "+i+" should be 8");
-       }
-    }*/
     
     
     /** 
