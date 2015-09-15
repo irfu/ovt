@@ -1,0 +1,33 @@
+# Example of Makefile to build OVT shared library on FreeBSD system
+#
+#To compile shared library libovt2g:
+# 1) set JAVA_INCLUDES and JAVA_INCLUDES_OS variables (to access to jni.h, jni_md.h files)
+# 2) set CC variable (C compiler) and define with which flags it should be used to compile shared library
+# 3) define which shared library suffix is used on your system
+
+SHELL = /bin/sh
+.SUFFIXES: .c .h
+
+srcdir        = .
+JAVA_INCLUDES = /usr/local/jdk1.1.8/include
+JAVA_INCLUDES_OS = -I/usr/local/jdk1.1.8/include/green_threads/ -I/usr/local/jdk1.1.8/include/freebsd/ 
+INSTALLDIR = ../bin
+
+#List of sources to be compiled
+SRCS = sgp4.c utils.c tsyg96.c magpack.c satorbit.c subpr.c
+
+linux: freebsd
+
+freebsd:
+	@echo "Compiling C's sources ..."
+	${CC} -shared ${CFLAGS} -DUNIX -I${JAVA_INCLUDES} ${JAVA_INCLUDES_OS} ${SRCS} -o libovt2g.so
+
+solaris:
+	@echo "Compiling C's sources ..."
+	${CC} -G ${CFLAGS} -DUNIX -I${JAVA_INCLUDES} ${JAVA_INCLUDES_OS} ${SRCS} -o libovt2g.so
+
+install:
+	@echo "Installing ..."
+	install -m 555 libovt2g.so $(INSTALLDIR)
+clean:
+	rm -f config.*

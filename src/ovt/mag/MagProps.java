@@ -335,7 +335,7 @@ public AbstractMagModel getExternalModel() {
  * @return Magnetic field vector in nT
  */
 public double[] bv(double[] gsm, double mjd, int internalModel, int externalModel) {
-  Log.log("MagProps.bv(..) executed.",2);
+  //Log.log("MagProps.bv(..) executed.",2);
   final double[] result = new double[3];
   final double[] intbv = getModel(internalModel).bv(gsm, mjd);
   final double[] extbv = getModel(externalModel).bv(gsm, mjd);

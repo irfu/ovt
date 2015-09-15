@@ -297,7 +297,9 @@ public class LoadDataWizard extends JDialog {
     class TimeFormatPage extends WizardPage {
         JRadioButton useNormalRB = new JRadioButton("Normal");
         JRadioButton useExtendedRB = new JRadioButton("Extended");
-        JComboBox dateCB, hoursCB, timeUnitsCB;
+        JComboBox dateCB, timeUnitsCB;
+        // removed hoursCB, since I think dataCB has been redesigned to envelope hours EDIT FKJN 15Sept2015
+        //JComboBox dateCB, hoursCB, timeUnitsCB;
         JTextField startTimeTF;
                 
         public TimeFormatPage(WizardPage prevPage) {
@@ -307,7 +309,7 @@ public class LoadDataWizard extends JDialog {
             
             Descriptors descriptors = data.getDescriptors();
             dateCB = (JComboBox)((ComponentPropertyEditor)descriptors.getDescriptor("dateFormat").getPropertyEditor()).getComponent();
-            hoursCB = (JComboBox)((ComponentPropertyEditor)data.getTimeFormat().getDescriptors().getDescriptor("hoursFormat").getPropertyEditor()).getComponent();
+            //hoursCB = (JComboBox)((ComponentPropertyEditor)data.getTimeFormat().getDescriptors().getDescriptor("hoursFormat").getPropertyEditor()).getComponent();
             
             timeUnitsCB = (JComboBox)((ComponentPropertyEditor)descriptors.getDescriptor("unit").getPropertyEditor()).getComponent();
             startTimeTF = (JTextField)((ComponentPropertyEditor)descriptors.getDescriptor("offsetMjd").getPropertyEditor()).getComponent();
@@ -320,12 +322,12 @@ public class LoadDataWizard extends JDialog {
                 public void propertyChange(PropertyChangeEvent evt) {
                     if (data.getTimeFormatType() == DataModule.TIME_FORMAT_NORMAL) {
                         dateCB.setEnabled(true);
-                        hoursCB.setEnabled(true);
+                        //hoursCB.setEnabled(true);
                         timeUnitsCB.setEnabled(false);
                         startTimeTF.setEnabled(false);
                     } else if (data.getTimeFormatType() == DataModule.TIME_FORMAT_EXTENDED) {
                         dateCB.setEnabled(false);
-                        hoursCB.setEnabled(false);
+                        //hoursCB.setEnabled(false);
                         timeUnitsCB.setEnabled(true);
                         startTimeTF.setEnabled(true);
                     }
@@ -337,7 +339,7 @@ public class LoadDataWizard extends JDialog {
             JPanel normalPanel = new JPanel();
             normalPanel.setLayout(new FlowLayout());
             normalPanel.add(dateCB);
-            normalPanel.add(hoursCB);
+            //normalPanel.add(hoursCB);
             
             JPanel extendedPanel = new JPanel();
             extendedPanel.setLayout(new FlowLayout());

@@ -586,31 +586,21 @@ public void setScalarcolor(boolean scalarcolor) {
    */
       public void setColor(Color color) {
           Color oldColor = this.color;
+          boolean oldsetscalar=this.scalarcolor;
+
           this.color = color;
           if (actor != null) {
               float[] rgb = ovt.util.Utils.getRGB(getColor());
               actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
               actor.setColor(color);
-              //mapper.SetColorMode(1);
-              this.setScalarcolor(false);
-
 
             }
             //firePropertyChange("color", oldColor, color);
+          this.setScalarcolor(false);
+
+          propertyChangeSupport.firePropertyChange("scalarcolor", oldsetscalar, false);          
           propertyChangeSupport.firePropertyChange ("color", oldColor, color);
       }
-
-
-         //public void setFieldlineRadiusScale(double fieldlineRadiusScale) {
-     // double oldFieldlineRadiusScale = this.fieldlineRadiusScale;
-     // this.fieldlineRadiusScale = fieldlineRadiusScale;
-     // if (actor != null) {
-     //     if (Math.abs(actor.getFieldlineRadius() - getFieldlineRadius()) > 0.0001)
-     //     actor.setFieldlineRadius(getFieldlineRadius());
-      //  }
-      //firePropertyChange("fieldlineRadiusScale", new Double(oldFieldlineRadiusScale), new Double(fieldlineRadiusScale));
-  //}
-
 
   public Descriptors getDescriptors() {
         if (descriptors == null) {
@@ -621,62 +611,50 @@ public void setScalarcolor(boolean scalarcolor) {
 
 
 
-                    //FKJN COPY THIS
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("fieldlineRadiusScale", this);
                 pd.setLabel("Fieldline Thickness...");
                 pd.setDisplayName("Magnetospheric Fieldline Thickness");
-                ExponentialSliderPropertyEditor sliderEditor = new ExponentialSliderPropertyEditor(pd,
+                ExponentialSliderPropertyEditor fieldlineRadiusScaleEditor = new ExponentialSliderPropertyEditor(pd,
                     1./8., 8., new double[]{1./8.,1./2., 1, 2, 8});
-                addPropertyChangeListener("fieldlineRadiusScale", sliderEditor);
-                sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
+                addPropertyChangeListener("fieldlineRadiusScale", fieldlineRadiusScaleEditor);
+                fieldlineRadiusScaleEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
                     public void editingFinished(GUIPropertyEditorEvent evt) {
                         Render();
                     }
                 });
-                pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
+                pd.setPropertyEditor(new WindowedPropertyEditor(fieldlineRadiusScaleEditor, getCore().getXYZWin()));
                 descriptors.put(pd);
 
-
-                    //TO THIS FKJN
 
                 // FKJN copy from Satellite colour 13May 2015
                 pd = new BasicPropertyDescriptor("color", this);
                 pd.setLabel("Color...");
                 pd.setDisplayName(getParent().getName()+" : "+ getName() +" color");
-                ComponentPropertyEditor editor = new ColorPropertyEditor(pd);
-                editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
+                ComponentPropertyEditor colorEditor = new ColorPropertyEditor(pd);
+                colorEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
                     public void editingFinished(GUIPropertyEditorEvent evt) {
                         Render();
                     }
                 });
-                addPropertyChangeListener("color", editor);
-                pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "Close"));
+                addPropertyChangeListener("color", colorEditor);
+                pd.setPropertyEditor(new WindowedPropertyEditor(colorEditor, getCore().getXYZWin(), "Close"));
                 descriptors.put(pd);
-
-                /*
-                MenuPropertyEditor keepEditor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
-                pd.setPropertyEditor(keepEditor);
-                addPropertyChangeListener("color", keepEditor);
-                pd.setPropertyEditor(keepEditor);
-                getDescriptors().put(pd);
-                */
-
 
                 pd = new BasicPropertyDescriptor("wireframe", this);
                 pd.setLabel("Wireframe");
                 //pd.setDisplayName("Keep Fieldlines");
-                MenuPropertyEditor keepEditor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
-                addPropertyChangeListener("wireframe", keepEditor);
-                pd.setPropertyEditor(keepEditor);
+                MenuPropertyEditor wireframeEditor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
+                addPropertyChangeListener("wireframe", wireframeEditor);
+                pd.setPropertyEditor(wireframeEditor);
                 getDescriptors().put(pd);
 
 
                 pd = new BasicPropertyDescriptor("scalarcolor", this);
                 pd.setLabel("Scalar Colors");
                 //pd.setDisplayName("Keep Fieldlines");
-                MenuPropertyEditor keepEditor2 = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
-                addPropertyChangeListener("scalarcolor", keepEditor2);
-                pd.setPropertyEditor(keepEditor2);
+                MenuPropertyEditor scalarcolorEditor = new BooleanEditor(pd, MenuPropertyEditor.CHECKBOX);
+                addPropertyChangeListener("scalarcolor", scalarcolorEditor);
+                pd.setPropertyEditor(scalarcolorEditor);
                 getDescriptors().put(pd);
 
 
@@ -756,7 +734,6 @@ class MagnetosphereActor extends vtkActor {
     public void setScalarcolor(boolean scalarcolor) {
         this.scalarcolor = scalarcolor;
         if (scalarcolor) mapper.ScalarVisibilityOn();
-        //else mapper.SetInputData(tubeFilter.GetOutput());
         else mapper.ScalarVisibilityOff();
     }
   //copied from SingleActorSatModule FKJN
@@ -779,6 +756,7 @@ class MagnetosphereActor extends vtkActor {
 
           float[] rgb = ovt.util.Utils.getRGB(getColor());
           this.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          mapper.ScalarVisibilityOff();
 
       }
 }

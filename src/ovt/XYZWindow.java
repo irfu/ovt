@@ -62,6 +62,22 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
         }
         vtkNativeLibrary.DisableOutputWindow(null);
+
+    /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
+
+    dir == ('../directory/to/the/VTK/DLLs');
+    File[] files = dir.listFiles();
+    if (files != null) {
+         for (int i = 0; i < files.length; i++) {
+        // only the lib-name needed, without file extension
+	System.loadLibrary(files[i].getName().substring(0,files[i].getName().length()-4));
+        if (files[i].isDirectory()) {
+		listDir(files[i]);
+                }
+        }
+    }
+*/
+
     }
 
     protected OVTCore core;
@@ -246,7 +262,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             final int y = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_Y));
 
             // On Linux/KDE: It appears that this method always sets the window
-            // inside the screen. Therefore one does not need to check for this.            
+            // inside the screen. Therefore one does not need to check for this.
             setLocation(x, y);
         } catch (NumberFormatException e2) {
             setLocation(scrnSize.width / 2 - windowSize.width / 2, scrnSize.height / 2 - windowSize.height / 2);
@@ -259,8 +275,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         setVisible(true);
         renPanel.resetCamera();
         renPanel.getComponent().requestFocus();
-        core.getCamera().setViewFrom(Camera.VIEW_FROM_X);
-        core.getCamera().setProjection(1);
+        core.getCamera().setViewFrom(Camera.VIEW_FROM_X); //Fixed origin bug 
+        //core.getCamera().setProjection(1); //Fix clipping bug FKJN 15Sept2015
         core.Render();
 
     }
@@ -471,7 +487,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         /* Include here or let the caller call it?!
          Having the caller call this might be more efficient.
-         Including here might also have implications if automatically calling this function during launch/initialization.            
+         Including here might also have implications if automatically calling this function during launch/initialization.
          Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
          */
         getCore().Render();
