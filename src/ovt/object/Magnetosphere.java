@@ -586,17 +586,19 @@ public void setScalarcolor(boolean scalarcolor) {
    */
       public void setColor(Color color) {
           Color oldColor = this.color;
+          boolean oldsetscalar=this.scalarcolor;
+
           this.color = color;
           if (actor != null) {
               float[] rgb = ovt.util.Utils.getRGB(getColor());
               actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
               actor.setColor(color);
-              //mapper.SetColorMode(1);
-              this.setScalarcolor(false);
-
 
             }
             //firePropertyChange("color", oldColor, color);
+          this.setScalarcolor(false);
+
+          propertyChangeSupport.firePropertyChange("scalarcolor", oldsetscalar, false);          
           propertyChangeSupport.firePropertyChange ("color", oldColor, color);
       }
 
@@ -779,6 +781,7 @@ class MagnetosphereActor extends vtkActor {
 
           float[] rgb = ovt.util.Utils.getRGB(getColor());
           this.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
+          //mapper.ScalarVisibilityOff();
 
       }
 }

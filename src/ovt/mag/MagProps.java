@@ -334,7 +334,7 @@ public AbstractMagModel getExternalModel() {
  * @return Magnetic field vector in nT
  */
 public double[] bv(double[] gsm, double mjd, int internalModel, int externalModel) {
-  Log.log("MagProps.bv(..) executed.",2);
+  //Log.log("MagProps.bv(..) executed.",2);
   final double[] result = new double[3];
   final double[] intbv = getModel(internalModel).bv(gsm, mjd);
   final double[] extbv = getModel(externalModel).bv(gsm, mjd);
@@ -394,9 +394,9 @@ public void removeMagPropsChangeListener (MagPropsChangeListener listener) {
 //----------- DATA ---------------
 
 public double getKPIndex(double mjd) {
-  Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+  //Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
   final double value = activityDataModels[KPINDEX].getValues(mjd)[0];
-  Log.log("   value="+value, 2);   // DEBUG
+  //Log.log("   value="+value, 2);   // DEBUG
   return activityDataModels[KPINDEX].getValues(mjd)[0];
 }
 
@@ -413,9 +413,9 @@ public double getDSTIndex(double mjd) {
 }
 
 public double getMachNumber(double mjd) {
-  Log.log(this.getClass().getSimpleName()+"#getMachNumber("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+  //Log.log(this.getClass().getSimpleName()+"#getMachNumber("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
   final double value = activityDataModels[MACHNUMBER].getValues(mjd)[0];
-  Log.log("   value="+value, 2);   // DEBUG
+  //Log.log("   value="+value, 2);   // DEBUG
   return value;
 }
 
@@ -564,7 +564,7 @@ public Descriptors getDescriptors() {
    * you need Z component of IMF (IMF[2]). <CODE>key = IMF*100 + 2</CODE>
    */
   public double[] getActivity(int key, double mjd) {
-    Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
+    //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
     if (key <= 100)
             return activityDataModels[key].getValues(mjd);
     else {
