@@ -47,13 +47,13 @@ import java.util.*;
 import ovt.util.Log;
 
 /**
- * Class modelling the activity data in a JTable (GUI) and read from/saved to files.
+ * Class modelling the "magnetic" activity data in a JTable (GUI) and read from/saved to files.
  * 
  * Files should exist in directory <I>mdata/</I> on the disk and have
  * header with column names. First column should be always <B>Time</B>.
- * All extra and insufficient data will be ignored and overwritten
+ * All extra and insufficient data will be ignored and overwritten after
+ * <CODE>save()</CODE>
  * 
- * after <CODE>save()</CODE>
  * @author Yuri Khotyaintsev
  * @version 1.0
  */
@@ -238,23 +238,28 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
     return defaultValues;
   }
   
-  /** Return the corresponding row for a given time, i.e. if the mjd is between
+  /** Return the corresponding row for a given time. If the mjd is between
    * two rows, then choose the row preceeding in time. Otherwise choose the row
    * nearest in time.
    */
   protected int getRow(double mjd) {
-    int rowCount = getRowCount();
+    final int rowCount = getRowCount();
+    
     if ( rowCount == 0 ) {
         throw new IllegalArgumentException();
     } else if ( rowCount == 1 ) {
         return 0; // only one data line present
     } else {
+        
         if (mjd <= getMjd(0)) {
+            // CASE: mjd less than value on first row.
             return 0; // request before first data - return first data
         }
         if (mjd >= getMjd(rowCount - 1)) {
+            // CASE: mjd greater than value on last row.
             return rowCount - 1; //request after last data
         }
+        
         for (int i=0; i<rowCount - 1; i++) {
             if (getMjd(i+1) > mjd) {
                 return i;
@@ -283,7 +288,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
           return lastValues.values;
       }
       try {
-          lastValues  = getRecordAt(getRow(mjd));
+          lastValues = getRecordAt(getRow(mjd));
       } catch (IllegalArgumentException e2) {
           lastValues = getDefaultValues();
       }
@@ -292,6 +297,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
       return lastValues.values;
   }
 
+  /** Get mjd value for specific row. */
   public double getMjd(int row) {
     return getRecordAt(row).time.getMjd();
   }
@@ -413,9 +419,9 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
 
   
   /** Used to sort the data by time.
-   * Not to be confused with sorting columns in
+   * NOTE: Not to be confused with sorting columns in
    * the GUI (clicking on column title), which
-   * the Java GUI routines (Swing/AWT) handles itself.
+   * the Java GUI routines (Swing/AWT) handle themselves.
    */
   protected void sortData() {
     int lo = 0;

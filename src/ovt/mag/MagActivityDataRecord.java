@@ -11,6 +11,7 @@ import ovt.util.*;
 
 
 /**
+ * Hold "activity" values for one point in time. Used to build tables.
  *
  * @author  yuri
  * @version 

@@ -151,7 +151,8 @@ public static final String G2_STR = "G2";
 
 public static final String MPCLIP = "MP Clipping";  //Added by kono
 
-private MagActivityDataModel[] activityDataModels = new MagActivityDataModel[MAX_ACTIVITY_INDEX + 1];
+/** List of data models tied to the editor window for manually editing tables with activity data. */
+private MagActivityDataModel[] activityEditorDataModels = new MagActivityDataModel[MAX_ACTIVITY_INDEX + 1];
 
 public static final double KPINDEX_DEFAULT = 0;
 public static final double[] IMF_DEFAULT = {0,0,0};
@@ -184,26 +185,26 @@ public MagProps(OVTCore core) {
   setIcon(new ImageIcon(OVTCore.getImagesSubdir()+"magnet.gif"));
   showInTree(false);
   this.core = core;
-  
-  activityDataModels[KPINDEX] = new MagActivityDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
-  activityDataModels[IMF] = new MagActivityDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
-  activityDataModels[SWP] = new MagActivityDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
-  activityDataModels[DSTINDEX] = new MagActivityDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
-  activityDataModels[MACHNUMBER] = new MagActivityDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
-  activityDataModels[SW_VELOCITY] = new MagActivityDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
-  activityDataModels[G1] = new MagActivityDataModel( G1, 0, 50, 6, "G1");
-  activityDataModels[G2] = new MagActivityDataModel( G2, 0, 50, 10, "G2");
+
+  activityEditorDataModels[KPINDEX] = new MagActivityDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
+  activityEditorDataModels[IMF] = new MagActivityDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
+  activityEditorDataModels[SWP] = new MagActivityDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
+  activityEditorDataModels[DSTINDEX] = new MagActivityDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
+  activityEditorDataModels[MACHNUMBER] = new MagActivityDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
+  activityEditorDataModels[SW_VELOCITY] = new MagActivityDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
+  activityEditorDataModels[G1] = new MagActivityDataModel( G1, 0, 50, 6, "G1");
+  activityEditorDataModels[G2] = new MagActivityDataModel( G2, 0, 50, 10, "G2");
   
   
   if (!OVTCore.isServer()) {
-      activityEditors[KPINDEX] = new MagActivityDataEditor(activityDataModels[KPINDEX], this);
-      activityEditors[IMF] = new MagActivityDataEditor(activityDataModels[IMF], this);
-      activityEditors[SWP] = new MagActivityDataEditor(activityDataModels[SWP], this);
-      activityEditors[DSTINDEX] = new MagActivityDataEditor(activityDataModels[DSTINDEX], this);
-      activityEditors[MACHNUMBER] = new MagActivityDataEditor(activityDataModels[MACHNUMBER], this);
-      activityEditors[SW_VELOCITY] = new MagActivityDataEditor(activityDataModels[SW_VELOCITY], this);
-      activityEditors[G1] = new MagActivityDataEditor(activityDataModels[G1], this);
-      activityEditors[G2] = new MagActivityDataEditor(activityDataModels[G2], this);
+      activityEditors[KPINDEX] = new MagActivityDataEditor(activityEditorDataModels[KPINDEX], this);
+      activityEditors[IMF] = new MagActivityDataEditor(activityEditorDataModels[IMF], this);
+      activityEditors[SWP] = new MagActivityDataEditor(activityEditorDataModels[SWP], this);
+      activityEditors[DSTINDEX] = new MagActivityDataEditor(activityEditorDataModels[DSTINDEX], this);
+      activityEditors[MACHNUMBER] = new MagActivityDataEditor(activityEditorDataModels[MACHNUMBER], this);
+      activityEditors[SW_VELOCITY] = new MagActivityDataEditor(activityEditorDataModels[SW_VELOCITY], this);
+      activityEditors[G1] = new MagActivityDataEditor(activityEditorDataModels[G1], this);
+      activityEditors[G2] = new MagActivityDataEditor(activityEditorDataModels[G2], this);
       magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
       addMagPropsChangeListener(magPropsCustomizer);
   }
@@ -394,41 +395,48 @@ public void removeMagPropsChangeListener (MagPropsChangeListener listener) {
 //----------- DATA ---------------
 
 public double getKPIndex(double mjd) {
-  Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
-  final double value = activityDataModels[KPINDEX].getValues(mjd)[0];
-  Log.log("   value="+value, 2);   // DEBUG
-  return activityDataModels[KPINDEX].getValues(mjd)[0];
+  //Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+  //final double value = activityEditorDataModels[KPINDEX].getValues(mjd)[0];
+  final double value = getActivity(KPINDEX, mjd)[0];
+  //Log.log("   value="+value, 2);   // DEBUG
+  return value;
 }
 
 public double[] getIMF(double mjd) {
-  return activityDataModels[IMF].getValues(mjd);
+  //return activityEditorDataModels[IMF].getValues(mjd);
+  return getActivity(IMF, mjd);
 }
 
 public double getSWP(double mjd) {
-  return activityDataModels[SWP].getValues(mjd)[0];
+  //return activityEditorDataModels[SWP].getValues(mjd)[0];
+  return getActivity(SWP, mjd)[0];
 }
 
 public double getDSTIndex(double mjd) {
-  return activityDataModels[DSTINDEX].getValues(mjd)[0];
+  //return activityEditorDataModels[DSTINDEX].getValues(mjd)[0];
+  return getActivity(DSTINDEX, mjd)[0];
 }
 
 public double getMachNumber(double mjd) {
-  Log.log(this.getClass().getSimpleName()+"#getMachNumber("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
-  final double value = activityDataModels[MACHNUMBER].getValues(mjd)[0];
-  Log.log("   value="+value, 2);   // DEBUG
+  //Log.log(this.getClass().getSimpleName()+"#getMachNumber("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+  final double value = activityEditorDataModels[MACHNUMBER].getValues(mjd)[0];
+  //Log.log("   value="+value, 2);   // DEBUG
   return value;
 }
 
 public double getSWVelocity(double mjd) {
-  return activityDataModels[SW_VELOCITY].getValues(mjd)[0];
+  //return activityEditorDataModels[SW_VELOCITY].getValues(mjd)[0];
+  return getActivity(SW_VELOCITY, mjd)[0];
 }
 
 public double getG1(double mjd) {
-  return activityDataModels[G1].getValues(mjd)[0];
+  //return activityEditorDataModels[G1].getValues(mjd)[0];
+  return getActivity(G1, mjd)[0];
 }
 
 public double getG2(double mjd) {
-  return activityDataModels[G2].getValues(mjd)[0];
+  //return activityEditorDataModels[G2].getValues(mjd)[0];
+  return getActivity(G2, mjd)[0];
 }
 
 public double getSint(double mjd) {
@@ -559,18 +567,26 @@ public Descriptors getDescriptors() {
    * Get either (1) all values (array) for specific activity index, or (2) one
    * specific value for a specific activity index.
    * 
+   * NOTE: It appears that all reading of "activity" data by OVT goes through
+   * this method. /Erik P G Johansson 2015-09-14.
+   * 
+   * @param key Specify which activity variable that is sought, and optionally
+   * which component of that variable. The rule for requesting some component of
+   * activity, let's say you need Z component of IMF (IMF[2]). <CODE>key = IMF*100 + 2</CODE>
    * @return activity.
-   * The rule for requesting some component of activity, let's say
-   * you need Z component of IMF (IMF[2]). <CODE>key = IMF*100 + 2</CODE>
+   * 
    */
   public double[] getActivity(int key, double mjd) {
     Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
-    if (key <= 100)
-            return activityDataModels[key].getValues(mjd);
-    else {
-            int index = key/100;
-            int component = key - index*100;
-            return new double[]{activityDataModels[index].getValues(mjd)[component]};
+    
+    if (key <= 100) {
+        final double[] values = activityEditorDataModels[key].getValues(mjd);
+        Log.log("   double[] values = "+Arrays.toString(values), 2);
+        return values;
+    } else {
+        final int index = key/100;
+        final int component = key - index*100;
+        return new double[]{activityEditorDataModels[index].getValues(mjd)[component]};
     }
   }
   
@@ -609,21 +625,21 @@ public Descriptors getDescriptors() {
 
   
   /** used by XML */
-  public MagActivityDataModel getKPIndexDataModel() { return activityDataModels[KPINDEX]; }
+  public MagActivityDataModel getKPIndexDataModel() { return activityEditorDataModels[KPINDEX]; }
   /** used by XML */
-  public MagActivityDataModel getIMFDataModel() { return activityDataModels[IMF]; }  
+  public MagActivityDataModel getIMFDataModel() { return activityEditorDataModels[IMF]; }  
   /** used by XML */
-  public MagActivityDataModel getSWPDataModel() { return activityDataModels[SWP]; }  
+  public MagActivityDataModel getSWPDataModel() { return activityEditorDataModels[SWP]; }  
   /** used by XML */
-  public MagActivityDataModel getDSTIndexDataModel() { return activityDataModels[DSTINDEX]; }  
+  public MagActivityDataModel getDSTIndexDataModel() { return activityEditorDataModels[DSTINDEX]; }  
   /** used by XML */
-  public MagActivityDataModel getMachNumberDataModel() { return activityDataModels[MACHNUMBER]; }  
+  public MagActivityDataModel getMachNumberDataModel() { return activityEditorDataModels[MACHNUMBER]; }  
   /** used by XML */
-  public MagActivityDataModel getSWVelocityDataModel() { return activityDataModels[SW_VELOCITY]; }  
+  public MagActivityDataModel getSWVelocityDataModel() { return activityEditorDataModels[SW_VELOCITY]; }  
   /** used by XML */
-  public MagActivityDataModel getG1DataModel() { return activityDataModels[G1]; }  
+  public MagActivityDataModel getG1DataModel() { return activityEditorDataModels[G1]; }  
   /** used by XML */
-  public MagActivityDataModel getG2DataModel() { return activityDataModels[G2]; }  
+  public MagActivityDataModel getG2DataModel() { return activityEditorDataModels[G2]; }  
 
 }
 

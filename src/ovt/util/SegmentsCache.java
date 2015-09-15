@@ -74,6 +74,7 @@ public class SegmentsCache {
          */
         public DataSegment select(double t_begin, double t_end);
     }
+    //##########################################################################
 
     /**
      * Interface which supplies data for the cache and the ability to merge
@@ -103,6 +104,7 @@ public class SegmentsCache {
 
     }
 
+    //##########################################################################
     public enum SearchDirection {
 
         DOWN, UP

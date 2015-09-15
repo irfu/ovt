@@ -81,9 +81,9 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         if (mEnd_mjd <= mBegin_mjd) {
             throw new IllegalArgumentException();
         }
-        
+
         begin_mjd = mBegin_mjd;
-        end_mjd = mEnd_mjd;        
+        end_mjd = mEnd_mjd;
 
         // Initialize empty fields.
         for (FieldID fieldID : DOUBLE_FIELDS) {
@@ -115,7 +115,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         }
         dataFields.put(fieldID, new IntArray(array));
     }
-
+    
 
     /**
      * Merges multiple instances into one. Instances have to be sorted in time
@@ -124,10 +124,13 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
      * NOTE: Static method.
      */
     public static OMNI2Data mergeAdjacent(List<OMNI2Data> dataList) {
-
+        if (dataList.size() < 1) {
+            throw new IllegalArgumentException();
+        }
+        
         /* ====================================================
          Check assertion: all data blocks are adjacent in time.
-         =====================================================*/
+         =====================================================*/        
         OMNI2Data prevData = null;
         for (OMNI2Data data : dataList) {
             // Argument check
@@ -191,6 +194,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
      *
      * Could almost be an interface instead of a class.
      */
+    // Move to Utils?
     private static abstract class ArrayData {
 
         /**

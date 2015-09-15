@@ -39,6 +39,8 @@ Khotyaintsev
 package ovt.object;
 
 /** 
+ * 
+ * Plots the magnetopause, keeps track on what it depends on.
  *
  * @author  ko
  * @version 
@@ -73,7 +75,7 @@ public class Magnetopause extends SingleActorObject implements
   private int representation = RepresentationEditor.WIREFRAME;
   /** Holds value of property opacity. */
   private double opacity = 0.1;
-  private int[] activityDependsOn = { MagProps.SWP, MagProps.IMF_Z };
+  final private int[] activityDependsOn = { MagProps.SWP, MagProps.IMF_Z };
   /** Holds Characteristics of this object */
   private Characteristics characteristics = new Characteristics(-1);
 
@@ -95,13 +97,14 @@ protected void validate() {
 	// Here we go!
 	Log.log("Recalculating Magnetopause ...", 5);
         
-	double[] gsm = new double[3];
-	double[] rv = new double[3];
+	//double[] gsm = new double[3];
+	//double[] rv = new double[3];
 	
-	double thetaMax = 150*Const.D_TO_R;
+	final double thetaMax = 150*Const.D_TO_R;
+        final int phiResolution = 50;
+        final int thetaResolution = 60;
 	
 	double phi, theta, dPhi, dTheta, r;
-        int phiResolution = 50, thetaResolution = 60;
 	double x, y, z;
 	
 	dPhi   = 2.*Math.PI/(phiResolution );
@@ -130,7 +133,7 @@ protected void validate() {
             sinPhi = Math.sin(phi);
             cosPhi = Math.cos(phi);
             
-            r = Shue97.getR(cosTheta, swp, bz);
+            r = Shue97.getR(cosTheta, swp, bz);  // Subsolar point on magnetopause?
             
             x = r * cosTheta;
             z = r * sinTheta * cosPhi;
@@ -207,7 +210,7 @@ public void setOpacity(double opacity) {
 }
 
 public void timeChanged(TimeEvent evt) {
-  // check if SWP and MachNumber Changed
+  // Check if SWP and MachNumber Changed
   Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
   if (!characteristics.equals(newCh)) {
       invalidate();
