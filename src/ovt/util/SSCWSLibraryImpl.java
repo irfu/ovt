@@ -60,6 +60,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+import javax.xml.ws.WebServiceException;
 
 /**
  * Class which supplies a small library of static functions for all accessing of
@@ -132,13 +140,21 @@ import java.util.EnumSet;
 public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     /**
-     * Only one "canonical" instance of SSCWSLibraryImpl is needed (except maybe
-     * for some kind of testing). This is that one instance.
+     * Only one "canonical" singleton instance of SSCWSLibraryImpl is needed
+     * (except maybe for some kind of testing). This is that one instance.
      */
-    public static final SSCWSLibrary DEFAULT_INSTANCE = new SSCWSLibraryImpl();
+    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl();
+    public static final SSCWSLibrary DEFAULT_INSTANCE = TYPED_INSTANCE;
+
+    /**
+     * Number of milliseconds (ms) before timing out.
+     */
+    //private static final long GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS = 10;
+    private static final long GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS = 6000;
 
     /* Data used for connecting to SSC Web Services. */
-    private static final String WSDL_URL_STRING = "http://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
+    private static final String WSDL_URL_STRING
+            = "http://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
     private static final String QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
     private static final String QNAME_LOCAL_PART = "SatelliteSituationCenterService";
 
@@ -193,7 +209,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * Return a SatelliteSituationCenterInterface object that can be used for
      * downloading data. Only used internally.
      */
-    private SatelliteSituationCenterInterface getSSCInterface() throws MalformedURLException {
+    private SatelliteSituationCenterInterface getSSCInterface() throws MalformedURLException, IOException {
         /*
          NOTE: The same SatelliteSituationCenterService object can and probably
          should should be reused for the duration of the entire application
@@ -224,9 +240,16 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                     + System.getProperty("os.name") + " "
                     + System.getProperty("os.arch") + ")");
 
-            sscService = new SatelliteSituationCenterService(
-                    new URL(WSDL_URL_STRING),
-                    new QName(QNAME_NAMESPACE_URI, QNAME_LOCAL_PART));
+            try {
+                sscService = new SatelliteSituationCenterService(
+                        new URL(WSDL_URL_STRING),
+                        new QName(QNAME_NAMESPACE_URI, QNAME_LOCAL_PART));
+            } catch (WebServiceException e) {
+                // javax.xml.ws.WebServiceException (extends java.lang.RuntimeException, i.e. it must not be declared)
+                // is not documented as something that can be thrown by getSatelliteSituationCenterPort()
+                // but it has been observed.
+                throw new IOException("Can not obtain instance of SatelliteSituationCenterService", e);
+            }
             return sscService.getSatelliteSituationCenterPort();
         }
 
@@ -251,15 +274,41 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
             final List<SatelliteDescription> satDescriptions;
             try {
-                Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Download satellite list from SSC Web Services.", DEBUG);
+                //==============================================================
+                // Simple class wrapping the actual network call.
+                class Task implements Callable<List<SatelliteDescription>> {
+
+                    @Override
+                    public List<SatelliteDescription> call() throws Exception {
+                        return getSSCInterface().getAllSatellites();   // Make network call.
+                    }
+                }
+                final ExecutorService executor = Executors.newSingleThreadExecutor();
+                final Future<List<SatelliteDescription>> future = executor.submit(new Task());
+                //==============================================================
+
+                //Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Download satellite list from SSC Web Services.", DEBUG);
+                System.out.println("Downloads satellite list from SSC Web Services.");
                 final long t_start = System.nanoTime();
 
-                satDescriptions = getSSCInterface().getAllSatellites();
+                //satDescriptions = getSSCInterface().getAllSatellites();   // No timeout.
+                /* Make network call, but in such a way that it is interrupted if it takes too much time.
+                 * If it does take more time than a specified time, then an Exception is thrown. */
+                satDescriptions = future.get(GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS, TimeUnit.MILLISECONDS);
 
-                final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
-                Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Time used for downloading data: " + duration + " [s]", DEBUG);
+                final double duration_s = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
+                //Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Time used for downloading data: " + duration + " [s]", DEBUG);
+                System.out.println("   Time used for downloading data: " + duration_s + " [s]");
 
-            } catch (SSCExternalException_Exception ex) {
+                //} catch (SSCExternalException_Exception ex) {
+                //    throw new IOException("Could not complete request to SSC Web Services: " + ex.getMessage(), ex);
+            } catch (TimeoutException ex) {
+                // ex.getMessage() usually null here.
+                throw new IOException("Request to SSC Web Services reached timeout limit of "
+                        + GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS / 1000.0 + " [s].", ex);
+            } catch (ExecutionException ex) {
+                throw new IOException("Could not complete request to SSC Web Services: " + ex.getMessage(), ex);
+            } catch (InterruptedException ex) {
                 throw new IOException("Could not complete request to SSC Web Services: " + ex.getMessage(), ex);
             }
 
@@ -287,7 +336,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          before rethrowing them. NOTE: They do keep the SAME stack trace.
          */
         try {
-            return getTrajectoryRaw_GEI(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor, CoordinateSystem.GEI_J_2000);
+            SSCOrbitRequestResults results = getTrajectoryRaw(satID, beginMjdInclusive, endMjdInclusive, resolutionFactor, CoordinateSystem.GEI_J_2000);
+            return results.coordinates_axisPos_kmMjd;
         } catch (Exception e) {
             Log.log("ERROR/EXCEPTION: " + e.getMessage(), DEBUG);
             throw e;   // Re-throws the same exception but keeps the stack trace.
@@ -295,7 +345,12 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     }
 
 
-    public double[][] getTrajectoryRaw_GEI(
+    /**
+     * IMPLEMENTATION NOTE: Useful to have this separate method for testing, and
+     * for validation of coordinates. Can specify coordinate system with this
+     * one as opposed to with its wrapper method.
+     */
+    public SSCOrbitRequestResults getTrajectoryRaw(
             String satID,
             double beginMjdInclusive, double endMjdInclusive,
             int resolutionFactor,
@@ -312,6 +367,100 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                     + "===========================================================");
         }
 
+        final DataResult dataResult;
+        try {
+            dataResult = getTrajectoryRawRaw(
+                    satID,
+                    convertMjdToXMLGregorianCalendar(beginMjdInclusive),
+                    convertMjdToXMLGregorianCalendar(endMjdInclusive),
+                    resolutionFactor, coordSys);
+        } catch (DatatypeConfigurationException e) {
+            throw new IOException("Could not construct request for SSC Web Services.", e);
+        }
+
+        if (dataResult.getStatusCode() == ResultStatusCode.ERROR) {
+            throw new IOException("Error when requesting data from SSC Web Services. dataResult.getStatusCode()=" + dataResult.getStatusCode()
+                    + "; dataResult.getStatusSubCode()=" + dataResult.getStatusSubCode());
+        }
+
+        if (dataResult.getData().isEmpty()) {
+            return new SSCOrbitRequestResults(new double[4][0], dataResult);
+        }
+        final SatelliteData satData = dataResult.getData().get(0);   // Select data for satellite number 0 (there is only one satellite in the list).
+
+        /*======================================================================
+         Check the size of the data structure before reading so that it does not
+         contain anything unexpected. I do not know why satData.getCoordinates()
+         is a list since it always seems to contain exactly one single value.
+         /Erik P G Johansson 2015-06-05.
+         =======================================================================*/
+        if (satData.getCoordinates().size() != 1) {
+            throw new IOException("SSC Web Services returned a data structure with an unexpected size: "
+                    + "satData.getCoordinates().size() = " + satData.getCoordinates().size());
+        }
+        final CoordinateData coordData = satData.getCoordinates().get(0);
+
+        // Make sure the data uses a supported coordinate system. Should not be needed.
+        final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
+        if (!coordSys.equals(receivedCS)) {
+            throw new IOException("The orbit data downloaded from SSC Web Services "
+                    + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
+        }
+
+        /*===========================================
+         Convert data into data structure to return.
+         ==========================================*/
+        final List<Double> X = coordData.getX();
+        final List<Double> Y = coordData.getY();
+        final List<Double> Z = coordData.getZ();
+        final List<XMLGregorianCalendar> timeList = satData.getTime(); // Define variable to reduce number of calls to satData.getTime() (or does the compiler figure that out itself?).
+
+        final int N_coord = X.size();
+        final double[][] coordinates_axisPos_kmMjd = new double[4][N_coord];   // axisPos = Indices [axis][position].
+
+        for (int i = 0; i < N_coord; i++) {
+            /**
+             * NOTE: The call to convertXMLGregorianCalendarToMjd is conceivably
+             * slow but so far (2015-08-10), no concrete problem has been
+             * observed. One could in principle parallelize the call with
+             * something like java.util.Arrays.parallelSetAll.
+             */
+            final double mjd = convertXMLGregorianCalendarToMjd(timeList.get(i));
+            final double[] position = new double[]{X.get(i), Y.get(i), Z.get(i)};
+
+            coordinates_axisPos_kmMjd[0][i] = position[0];
+            coordinates_axisPos_kmMjd[1][i] = position[1];
+            coordinates_axisPos_kmMjd[2][i] = position[2];
+            coordinates_axisPos_kmMjd[3][i] = mjd;
+        }
+        return new SSCOrbitRequestResults(coordinates_axisPos_kmMjd, dataResult);
+    }
+
+    public static class SSCOrbitRequestResults {
+
+        final double[][] coordinates_axisPos_kmMjd;
+        final DataResult dataResult;
+
+
+        public SSCOrbitRequestResults(double[][] mCoordinates_axisPos_kmMjd, DataResult mDataResult) {
+            coordinates_axisPos_kmMjd = mCoordinates_axisPos_kmMjd;
+            dataResult = mDataResult;
+        }
+    }
+
+
+    /**
+     * IMPLEMENTATION NOTE: Useful to have this separate method for testing, and
+     * for validation of coordinates. Can specify time without time conversion
+     * with this one as opposed to with its wrapper method.
+     */
+    public DataResult getTrajectoryRawRaw(
+            String satID,
+            XMLGregorianCalendar beginInclusive, XMLGregorianCalendar endInclusive,
+            int resolutionFactor,
+            CoordinateSystem coordSys)
+            throws IOException {
+
         final SatelliteSpecification satSpec = new SatelliteSpecification();
         satSpec.setId(satID);
         satSpec.setResolutionFactor(resolutionFactor);
@@ -319,19 +468,16 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         /* Start configuring a DataFileRequest. */
         final DataFileRequest dataFileReq = new DataFileRequest();
         dataFileReq.getSatellites().add(satSpec);
-        try {
-            /*==================================================================
-             NOTE: The SSC Web Services API documentation claims that
-             Request#setBeginTime and Request#setEndTime uses
-             java.util.Calendar but in practice they only accept XMLGregorianCalendar.
-             This difference is mentioned under "Important Notes:" in the API documentation for 
-             "Interface SatelliteSituationCenterInterface"
-             =================================================================*/
-            dataFileReq.setBeginTime(convertMjdToXMLGregorianCalendar(beginMjdInclusive));
-            dataFileReq.setEndTime(convertMjdToXMLGregorianCalendar(endMjdInclusive));
-        } catch (DatatypeConfigurationException e) {
-            throw new IOException("Could not construct request for SSC Web Services.", e);
-        }
+        
+        /*==================================================================
+         NOTE: The SSC Web Services API documentation claims that
+         Request#setBeginTime and Request#setEndTime uses
+         java.util.Calendar but in practice they only accept XMLGregorianCalendar.
+         This difference is mentioned under "Important Notes:" in the API documentation for 
+         "Interface SatelliteSituationCenterInterface"
+         =================================================================*/
+        dataFileReq.setBeginTime(beginInclusive);
+        dataFileReq.setEndTime(endInclusive);
 
         /*======================================================================
          Set coordinate system for the data request
@@ -369,71 +515,19 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         final DataResult dataResult;
         try {
             //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Download orbit data from SSC Web Services.", DEBUG);
-            //final long t_start = System.nanoTime();
+            System.out.println("Download orbit data from SSC Web Services.");
+            final long t_start_ns = System.nanoTime();
 
             dataResult = getSSCInterface().getData(dataFileReq);
 
-            //final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
+            final double duration_s = (System.nanoTime() - t_start_ns) / 1.0e9;  // Unit: seconds
             //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Time used for downloading data: " + duration + " [s]", DEBUG);
+            System.out.println("Time used for downloading data: " + duration_s + " [s]");
         } catch (SSCDatabaseLockedException_Exception | SSCExternalException_Exception | SSCResourceLimitExceededException_Exception e) {
             throw new IOException("Attempt to download data from SSC Web Services failed: " + e.getMessage(), e);
         }
-        if (dataResult.getStatusCode() == ResultStatusCode.ERROR) {
-            throw new IOException("Error when requesting data from SSC Web Services. dataResult.getStatusCode()=" + dataResult.getStatusCode()
-                    + "; dataResult.getStatusSubCode()=" + dataResult.getStatusSubCode());
-        }
 
-        if (dataResult.getData().isEmpty()) {
-            return new double[4][0];
-        } else {
-            final SatelliteData satData = dataResult.getData().get(0);   // Select data for satellite number 0 (there is only one satellite in the list).
-
-            /*======================================================================
-             Check the size of the data structure before reading so that it does not contain anything unexpected.
-             I do not know why satData.getCoordinates() is a list since it always seems to contain exactly one single value.
-             /Erik P G Johansson 2015-06-05.
-             =======================================================================*/
-            if (satData.getCoordinates().size() != 1) {
-                throw new IOException("SSC Web Services returned a data structure with an unexpected size: "
-                        + "satData.getCoordinates().size() = " + satData.getCoordinates().size());
-            }
-            final CoordinateData coordData = satData.getCoordinates().get(0);
-
-            // Make sure the data uses a supported coordinate system. Should not be needed.
-            final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
-            if (!coordSys.equals(receivedCS)) {
-                throw new IOException("The orbit data downloaded from SSC Web Services "
-                        + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
-            }
-
-            /*===========================================
-             Convert data into data structure to return.
-             ==========================================*/
-            final List<Double> X = coordData.getX();
-            final List<Double> Y = coordData.getY();
-            final List<Double> Z = coordData.getZ();
-            final List<XMLGregorianCalendar> timeList = satData.getTime(); // Define variable to reduce number of calls to satData.getTime() (or does the compiler figure that out itself?).
-
-            int N_coord = coordData.getX().size();
-            final double[][] coordinates_axisPos_kmMjd = new double[4][N_coord];   // axisPos = Indices [axis][position].
-
-            for (int i = 0; i < N_coord; i++) {
-                // NOTE: The call to convertXMLGregorianCalendarToMjd is conceivably
-                // slow but so far (2015-08-10), no concrete problem has been observed.
-                // One could in principle parallelize the call with something like java.util.Arrays.parallelSetAll.
-                final double mjd = convertXMLGregorianCalendarToMjd(timeList.get(i));
-                double[] position = new double[]{X.get(i), Y.get(i), Z.get(i)};
-
-                // Change coordinate system from GEO to GEI.
-                //position = Trans.geo_gei_trans_matrix(mjd).multiply(position);
-                coordinates_axisPos_kmMjd[0][i] = position[0];
-                coordinates_axisPos_kmMjd[1][i] = position[1];
-                coordinates_axisPos_kmMjd[2][i] = position[2];
-                coordinates_axisPos_kmMjd[3][i] = mjd;
-            }
-            return coordinates_axisPos_kmMjd;
-        }
-
+        return dataResult;
     }
 
 

@@ -32,11 +32,13 @@
 package ovt.util;
 
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateSystem;
+import gov.nasa.gsfc.spdf.ssc.client.SatelliteData;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import javax.xml.datatype.XMLGregorianCalendar;
 import ovt.OVTCore;
 import ovt.datatype.Matrix3x3;
 import ovt.datatype.Time;
@@ -46,9 +48,9 @@ import ovt.object.SSCWSSat;
 import ovt.object.TLESat;
 
 /**
- * Informal manual test code for comparing trajectories to
- * determine differences in coordinate systems or time. Used in particular to
- * verify the coordinate system used by SSCWS satellites data.
+ * Informal manual test code for comparing trajectories to determine differences
+ * in coordinate systems or time. Used in particular to verify the coordinate
+ * system used by SSCWS satellites data.
  *
  * Theories for why trajectories may differ:<BR>
  * 1) Interpolation<BR>
@@ -67,7 +69,7 @@ import ovt.object.TLESat;
  * NOTE: If one tries to download SSC in different coordinate systems, then one
  * MUST DEACTIVATE CACHING TO FILE ot avoid mixing of coordinate systems in the
  * disk cache over multiple sessions.
- * 
+ *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
  */
@@ -76,14 +78,16 @@ public class SSCWSSat_CompareTrajectoriesTest {
     /**
      * Useful when modifying OVT code obtaining/deriving SSCWS data.
      */
-    private static final boolean USE_SSCWS_DISK_CACHE = true;
-    //private static final boolean USE_SSCWS_DISK_CACHE = false;
+    //private static final boolean USE_SSCWS_DISK_CACHE = true;
+    private static final boolean USE_SSCWS_DISK_CACHE = false;
 
 
     public static void main(String[] args) throws IOException {
+        Log.setDebugLevel(3);
         //test_testCode();
-        test_pointCalculation();
-        //test_compareTrajectories();
+        //test_printRawData();
+        //test_pointCalculation();
+        test_compareTrajectories();
     }
 
 
@@ -116,6 +120,18 @@ public class SSCWSSat_CompareTrajectoriesTest {
     }
 
 
+    public static void test_printRawData() throws IOException {
+        /*printSSCPositions("cluster1",
+         Time.getMjd(2000, 11, 01, 00, 00, 00.0),
+         Time.getMjd(2000, 11, 01, 00, 03, 00.0),
+         1, CoordinateSystem.GSE);*/
+        printSSCPositions("doublestar1",
+                Time.getMjd(2006, 11, 01, 00, 00, 00.0),
+                Time.getMjd(2006, 11, 01, 00, 03, 00.0),
+                1, CoordinateSystem.GSE);
+    }
+
+
     /**
      * Print the orbit for a single point in time. Used for JSOC's external test
      * cases.
@@ -123,54 +139,50 @@ public class SSCWSSat_CompareTrajectoriesTest {
     public static void test_pointCalculation() throws IOException {
 
         /*final int N = 101;
-         final int i = 51 - 1;  // The point to look at.
          final double timeMjd = Time.getMjd(1997, 01, 01, 00, 00, 00);
          final double[] timeMjdMap = Utils.newLinearArray(timeMjd - 1, timeMjd + 1, N);
          final TrajectoryDataSource tds = new LTOFFileDataSource(
          "/home/erjo/work_files/ovt_diverse/ESOC_LTOF_validation/ltof.cl1"
          );//*/
-        final int N = 10000;
-        final int i = 0 * N;  // The point to look at.
         //final double timeMjd = Time.getMjd(2013, 01, 30, 20, 39, 30);
-        final double timeMjd = Time.getMjd(2000, 11, 01, 00, 00, 30);
-        //final double timeMjd = 0;
-        final double[] timeMjdMap = Utils.newLinearArray(timeMjd, timeMjd + 1, N);
+        //final double timeMjd = Time.getMjd(2000, 11, 01, 00, 00, 00.0);
+        //final double[] timeMjdMap = Utils.newLinearArray(timeMjd, timeMjd + 1, N);
+        final double[] timeMjdMap = {
+            Time.getMjd(2000, 11, 01, 00, 00, 00.0),
+            Time.getMjd(2000, 11, 01, 00, 00, 30.0),
+            Time.getMjd(2000, 11, 01, 00, 01, 00.0)
+        };
+        final int N = timeMjdMap.length;
+        final TrajectoryDataSource tds = new RawSSCWSDataSource("cluster1", CoordinateSystem.GSE);
 
-        //final TrajectoryDataSource tds = new TLEFileDataSource("/home/erjo/work_files/ovt_diverse/Spacetrack_TLE_validation/SGP4/SGP4-VER.TLE");
-        //final TrajectoryDataSource tds = new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof");
-        //final TrajectoryDataSource tds = new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE);
-        final TrajectoryDataSource tds = new RawSSCWSDataSource("cluster1", CoordinateSystem.GEI_J_2000);
+        final double[][] pos_raw_posAxis_km = new double[N][3];
+        final double[][] vel_raw_posAxis_km = new double[N][3];
+        tds.fill_GEI_VEI(timeMjdMap, pos_raw_posAxis_km, vel_raw_posAxis_km);
 
-        /*final double[] timeMjdMap = {Time.getMjd(2005, 01, 01, 00, 00, 00)};
-         TrajectoryDataSource tds = new LTOFFileDataSource(
-         "/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"
-         );*/
-        final double[][] gei_arr_posAxis_km = new double[N][3];
-        final double[][] vei_arr_posAxis_km = new double[N][3];
-        //tds.fill_GEI_VEI(timeMjdMap, gei_arr_posAxis_km, vei_arr_posAxis_km);
-
-        double mjd = timeMjdMap[i];
-        double[] pos_GEI = gei_arr_posAxis_km[i];
-
-        final Trans trans = new Trans(mjd, new IgrfModel(null));
-        final Trans trans2 = new Trans(mjd-2.0, new IgrfModel(null));
-        final Matrix3x3 gei_gsm = trans.gei_gse_trans_matrix();
-        final Matrix3x3 gei_gsm2 = trans2.gei_gse_trans_matrix();
-        double[] pos_GSE = gei_gsm.multiply(gei_arr_posAxis_km[i]);
-        //System.out.println(mjd);
-        //System.out.println(Time.Y2000);
-        System.out.println("-----");
-        printMatrix("gei_gsm", gei_gsm);
-        printMatrix("gei_gsm2", gei_gsm2);
+        //final Trans trans = new Trans(mjd, new IgrfModel(null));
+        //final Trans trans2 = new Trans(mjd-2.0, new IgrfModel(null));
+        //final Matrix3x3 gei_gsm = trans.gei_gse_trans_matrix();
+        //final Matrix3x3 gei_gsm2 = trans2.gei_gse_trans_matrix();
+        //double[] pos_GSE = gei_gsm.multiply(gei_arr_posAxis_km[i]);
+        ///System.out.println("-----");
+        //printMatrix("gei_gsm", gei_gsm);
+        //printMatrix("gei_gsm2", gei_gsm2);
         System.out.println("-----");
 
-        System.out.printf("pos GEI : %s\n", Arrays.toString(pos_GEI));
-        System.out.printf("pos_GSE : %s\n", Arrays.toString(pos_GSE));
-
-        List<TrajectoryPosition> valPosList = getValidationPositions_GSE();
-        for (TrajectoryPosition valPos : valPosList) {
-            printPointComparison(pos_GSE, valPos.pos);
+        for (int i = 0; i < timeMjdMap.length; i++) {
+            System.out.printf("posraw : %g, %s, %s\n", timeMjdMap[i], Time.toString(timeMjdMap[i]), Arrays.toString(pos_raw_posAxis_km[i]));
         }
+        //System.out.printf("pos_GSE : %s\n", Arrays.toString(pos_GSE));
+
+        /*final List<TrajectoryPosition> valPosList = getValidationPositions_GSE();
+         final double[] pos_raw = pos_raw_posAxis_km[0];
+         for (TrajectoryPosition valPos : valPosList) {
+         printPointComparison(pos_raw, valPos.pos);
+         }*/
+        printSSCPositions("cluster1",
+                Time.getMjd(2000, 11, 01, 00, 00, 00.0),
+                Time.getMjd(2000, 11, 01, 00, 02, 00.0),
+                1, CoordinateSystem.GSE);
 
         // OVT results when running code for JSOC's verification test:
         // gei_arr : -93378,131462, 1951,879165, 45818,774600
@@ -178,8 +190,26 @@ public class SSCWSSat_CompareTrajectoriesTest {
     }
 
 
+    /**
+     * Print raw data from SSC, including unconverted time.
+     */
+    private static void printSSCPositions(String satID, double beginMjd, double endMjd, int resolutionFactor, CoordinateSystem coordSys) throws IOException {
+        SSCWSLibraryImpl.SSCOrbitRequestResults results = SSCWSLibraryImpl.TYPED_INSTANCE.getTrajectoryRaw(satID, beginMjd, endMjd, resolutionFactor, coordSys);
+
+        final SatelliteData data = results.dataResult.getData().get(0);
+        final List<XMLGregorianCalendar> time = data.getTime();
+        final int N = data.getTime().size();
+        final List<Double> X = data.getCoordinates().get(0).getX();
+        final List<Double> Y = data.getCoordinates().get(0).getY();
+        final List<Double> Z = data.getCoordinates().get(0).getZ();
+        for (int i = 0; i < N; i++) {
+            System.out.format("%s : %g, %g, %g\n", time.get(i), X.get(i), Y.get(i), Z.get(i));
+        }
+    }
+
+
     private static void printMatrix(String label, Matrix3x3 m) {
-        System.out.println("----- "+ label + " -----");
+        System.out.println("----- " + label + " -----");
         System.out.println(m.toString());
 
     }
@@ -210,14 +240,15 @@ public class SSCWSSat_CompareTrajectoriesTest {
     private static List<TrajectoryPosition> getValidationPositions_GSE() {
         final List<TrajectoryPosition> positions = new ArrayList();
 
+        // @spis /data/caalocal/C1_CP_AUX_POSGSE_1M/C1_CP_AUX_POSGSE_1M__20001101_000000_20001130_235959_V150408.cdf, Cluster1, GSE
         positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 00, 00), new double[]{-20454.7, 67241.1, -41574.4}));
         positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 01, 00), new double[]{-20381.2, 67141.4, -41603.4}));
-        //positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 02, 00), new double[]{-20307.7, 67041.6, -41632.4}));
-        //positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 03, 00), new double[]{-20234.1, 66941.6, -41661.2}));
+        positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 02, 00), new double[]{-20307.7, 67041.6, -41632.4}));
+        positions.add(new TrajectoryPosition(Time.getMjd(2000, 11, 01, 00, 03, 00), new double[]{-20234.1, 66941.6, -41661.2}));
 
         // @spis: /data/caalocal/C1_CP_AUX_POSGSE_1M/C1_CP_AUX_POSGSE_1M__20130101_000000_20130131_235959_V140124.cdf
-        //positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 39, 00), new double[]{101855.0, 47392.6, -50969.2}));
-        //positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 40, 00), new double[]{101860.0, 47356.0, -50921.4}));
+        positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 39, 00), new double[]{101855.0, 47392.6, -50969.2}));
+        positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 40, 00), new double[]{101860.0, 47356.0, -50921.4}));
         //positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 41, 00), new double[]{101865.0, 47319.3, -50873.6}));
         //positions.add(new TrajectoryPosition(Time.getMjd(2013, 01, 30, 20, 42, 00), new double[]{101869.0, 47282.5, -50825.8}));
         return positions;
@@ -260,8 +291,8 @@ public class SSCWSSat_CompareTrajectoriesTest {
          */
 
         final int N = 10000;   // Note: 1 day = 1440 min.
-        //final double startMjd = Time.getMjd(2005, 1, 1, 0, 0, 0);
-        final double startMjd = Time.getMjd(1997, 1, 1, 0, 0, 0);
+        final double startMjd = Time.getMjd(2002, 1, 1, 0, 0, 0);
+        //final double startMjd = Time.getMjd(1997, 1, 1, 0, 0, 0);
         final double lengthMjd = 120;
         //final double lengthMjd = 19/24.0;
         final double timeDifferenceMjd2 = Time.DAYS_IN_SECOND * 0; // -21.7;
@@ -270,15 +301,15 @@ public class SSCWSSat_CompareTrajectoriesTest {
         //final double[] rotationVec2 = {2*5.0/Const.RE, 0, 0};
         //--------------------------
         /*compareTrajectories(
-         new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new SSCWSDataSource("cluster3", SSCWSLibraryImpl.DEFAULT_INSTANCE),
          //new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/resources/odata/Cluster3.ltof"),
          //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
-         new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_1.ltof"),
+         new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
@@ -294,7 +325,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         compareTrajectories(
-                new SSCWSDataSource("polar", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                new RawSSCWSDataSource("polar", CoordinateSystem.GEI_J_2000),
                 new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Polar.tle"),
                 Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
@@ -596,7 +627,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
     }
 
     //##########################################################################
-    // Fetch data directly from SSCWSLibraryImpl.
+    // Fetch data directly from SSCWSLibraryImpl (no caching).
     private static class RawSSCWSDataSource implements TrajectoryDataSource {
 
         private final CoordinateSystem coordSys;
@@ -670,7 +701,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
     //##########################################################################
     /**
-     * Retrieve data in a way similar to the way used in the "propoer" code, but
+     * Retrieve data in a way similar to the way used in the "proper" code, but
      * (1) without caching, (2) with arbitrary coordinate system as delivered
      * from SSC, (3) always highest resolution.
      *
@@ -680,25 +711,31 @@ public class SSCWSSat_CompareTrajectoriesTest {
     public static void fill_pos_vel_RawSSCWS(
             String satID,
             double[] timeMjdMap,
-            double[][] gei_arr_posAxis_km,
-            double[][] vei_arr_posAxis_kms,
+            double[][] pos_arr_posAxis_km,
+            double[][] vel_arr_posAxis_kms,
             CoordinateSystem coordSys)
             throws IOException {
 
-        final SSCWSLibraryImpl lib = (SSCWSLibraryImpl) SSCWSLibraryImpl.DEFAULT_INSTANCE;
+        if ((timeMjdMap.length != pos_arr_posAxis_km.length) || (timeMjdMap.length != vel_arr_posAxis_kms.length)) {
+            throw new IllegalArgumentException();
+        }
 
-        final int resolutionFactor = 1;
-        final int timeResolution_s = lib.getSatelliteInfo(satID).bestTimeResolution * resolutionFactor;
+        final SSCWSLibraryImpl LIB = (SSCWSLibraryImpl) SSCWSLibraryImpl.DEFAULT_INSTANCE;
+        final int RESOLUTION_FACTOR = 1;
+
+        final int timeResolution_s = LIB.getSatelliteInfo(satID).bestTimeResolution * RESOLUTION_FACTOR;
         final double timeMarginMjd = 2 * timeResolution_s * Time.DAYS_IN_SECOND;
+        //final double timeMarginMjd = 0;
         final double beginMjd = timeMjdMap[0];
         final double endMjd = timeMjdMap[timeMjdMap.length - 1];
 
         // NOTE: coords_axisPos_kmMjd[3][..] = time.
-        final double[][] coords_axisPos_kmMjd = lib.getTrajectoryRaw_GEI(
+        final SSCWSLibraryImpl.SSCOrbitRequestResults results = LIB.getTrajectoryRaw(
                 satID,
                 beginMjd - timeMarginMjd,
                 endMjd + timeMarginMjd,
-                resolutionFactor, coordSys);
+                RESOLUTION_FACTOR, coordSys);
+        final double[][] coords_axisPos_kmMjd = results.coordinates_axisPos_kmMjd;
 
         final List<Integer> dataGaps = Utils.findJumps(coords_axisPos_kmMjd[3], timeResolution_s * 2 * Time.DAYS_IN_SECOND);
         if (!dataGaps.isEmpty()) {
@@ -721,9 +758,9 @@ public class SSCWSSat_CompareTrajectoriesTest {
                     Utils.SplineInterpolationBC.SET_SECOND_DERIV
             );
 
-            for (int i_pos = 0; i_pos < gei_arr_posAxis_km.length; i_pos++) {
-                gei_arr_posAxis_km[i_pos][i_axis] = interpCoords_pos_km[i_pos];
-                vei_arr_posAxis_kms[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos] / Time.SECONDS_IN_DAY;   // Convert unit from km/day to km/s.
+            for (int i_pos = 0; i_pos < pos_arr_posAxis_km.length; i_pos++) {
+                pos_arr_posAxis_km[i_pos][i_axis] = interpCoords_pos_km[i_pos];
+                vel_arr_posAxis_kms[i_pos][i_axis] = interpVelocity_pos_kmMjd[i_pos] / Time.SECONDS_IN_DAY;   // Convert unit from km/day to km/s.
             }
         }
     }

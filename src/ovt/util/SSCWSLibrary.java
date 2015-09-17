@@ -217,11 +217,9 @@ public abstract class SSCWSLibrary {
          Code must handle this case since the value in that case is
          XMLGregorianCalendar#getMillisecond() == DatatypeConstants.FIELD_UNDEFINED = -2^31 << 0
          which gives an error of ca -25 days. */
-        double seconds;
-        if (cal.getMillisecond() == DatatypeConstants.FIELD_UNDEFINED) {
-            seconds = 0;
-        } else {
-            seconds = cal.getSecond() + cal.getMillisecond() / 1000.0;
+        double seconds = cal.getSecond();
+        if (cal.getMillisecond() != DatatypeConstants.FIELD_UNDEFINED) {
+            seconds = seconds + cal.getMillisecond() / 1000.0;
         }
         return Time.getMjd(
                 cal.getYear(),

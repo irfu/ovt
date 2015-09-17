@@ -447,6 +447,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     /**
      * NOTE: Creates the JFrame-based object the first time it is requested and
      * then "caches it".
+     * 
+     * NOTE: Takes care of error message.
+     * 
+     * @return null if error when creating the window. Otherwise a reference to the window.
      */
     public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() {
         if (sscwsSatellitesSelectionWindow == null) {
@@ -456,7 +460,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                 sscwsSatellitesSelectionWindow = temp;
             } catch (IOException e) {
                 /**
-                 * NOTE: Important to catch IOException here. If
+                 * NOTE: Important to catch IOException here.
                  */
                 getCore().sendErrorMessage(e);
             }

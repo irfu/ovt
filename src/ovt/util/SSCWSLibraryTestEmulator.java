@@ -75,13 +75,14 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
      * Number of times getAllSatelliteInfo has been called.
      */
     private int getAllSatelliteInfo_nbrOfRequests = 0;
+    
     /**
      * Number of calls to getAllSatelliteInfo that should fail before
      * succeeding.
      */
     private static final int getAllSatelliteInfo_NBR_OF_INITIAL_FAILS = 0;
-    //#####################################################################
 
+    //#####################################################################
     /**
      * Frequency of day-long data gaps. One day-long data gap per this many
      * days.
@@ -123,7 +124,8 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
         getAllSatelliteInfo_nbrOfRequests++;
         if (getAllSatelliteInfo_nbrOfRequests <= getAllSatelliteInfo_NBR_OF_INITIAL_FAILS) {
             throw new IOException("Can not obtain list with SSCWS satellites. "
-                    + "(getAllSatelliteInfo_nbrOfRequests="+getAllSatelliteInfo_nbrOfRequests+"; getAllSatelliteInfo_NBR_OF_INITIAL_FAILS="+getAllSatelliteInfo_NBR_OF_INITIAL_FAILS+")");
+                    + "(getAllSatelliteInfo_nbrOfRequests=" + getAllSatelliteInfo_nbrOfRequests
+                    + "; getAllSatelliteInfo_NBR_OF_INITIAL_FAILS=" + getAllSatelliteInfo_NBR_OF_INITIAL_FAILS + ")");
         }
 
         final List<SSCWSSatelliteInfo> satInfos = new ArrayList<>();
@@ -304,10 +306,9 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
             int timeResolution) {
 
         /*Log.log(SSCWSLibraryTestEmulator.class.getSimpleName() + " getPhysicallyCorrectCircularOrbit("
-                + "rand=..."
-                + ", beginMjdInclusive=" + beginMjdInclusive
-                + ", endMjdInclusive+" + endMjdInclusive + ", ...)", DEBUG);*/
-
+         + "rand=..."
+         + ", beginMjdInclusive=" + beginMjdInclusive
+         + ", endMjdInclusive+" + endMjdInclusive + ", ...)", DEBUG);*/
         // NOTE: Gravitational constant (m^3 * kg^-1 * s^-2; does not use km!).
         final double yzAngle_radians = rand.nextDouble() * Math.PI * 2;
         final double R = (1.1 + 2 * rand.nextDouble()) * Const.RE * Const.METERS_PER_KM;

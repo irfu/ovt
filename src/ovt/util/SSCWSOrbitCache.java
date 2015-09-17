@@ -58,29 +58,39 @@ import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
  * permit running with different slot sizes if using old caches from earlier
  * sessions (loaded from disk) AND brand new caches started during the current
  * session, (2) simplify automated code testing.
- * 
- * IMPLEMENTATION NOTE: The functionality for (1) caching orbits and
- * (b) SSCWS-specific functionality should possibly be separated.
- *    PRO: Makes data source independent of SSCWSLibrary.
- *    CON: Caches the requested time resolution.
-
+ *
+ * IMPLEMENTATION NOTE: The functionality for (1) caching orbits and (b)
+ * SSCWS-specific functionality should possibly be separated. PRO: Makes data
+ * source independent of SSCWSLibrary. CON: Caches the requested time
+ * resolution.
+ *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
  */
 public class SSCWSOrbitCache {
 
-    private static final int DEBUG = 3;   // Set the minimum log message level for this class.
+    private static final int DEBUG = 4;   // Set the minimum log message level for this class.
     private static final boolean ASSERT_OUTSIDE_EARTH = false;   // You probably want to disable this during automated testing.
 
     /**
      * Version number of cached data in an object stream. This number always
      * comes first in the stream. The Code will reject data with the wrong
-     * version number. This is a functionality to make it possible to change the
-     * stream format without needing to manually remove old cache files just to
-     * avoid errors due to mismatch in stream format (the code will know to
-     * reject them).
+     * version number (higher or lower). This is a functionality to make it
+     * possible to automatically reject old cache files for different reasons
+     * and avoid needing to manually remove them.<BR>
+     * Examples:<BR>
+     * 1) The stream format has changed and old cache files can not be read
+     * anymore. The code will give error when reading files in the wrong format
+     * (if one uses serialization) but this will avoid the error messages
+     * too.<BR>
+     * 2) It becomes known that data in old cache files is corrupt (e.g. due to
+     * discovery of bugs).
+     *
+     * Old values that should not be used:<BR>
+     * STREAM_FORMAT_VERSION = 0: Cache files were generated with corrupt time
+     * conversion. Stopped using 2015-09-17.
      */
-    private static final long STREAM_FORMAT_VERSION = 0;
+    private static final long STREAM_FORMAT_VERSION = 1;
 
     /**
      * Comment to put in the stream (file). Meant to be human-readable in case
@@ -183,7 +193,7 @@ public class SSCWSOrbitCache {
      * that it does not contain the same data as at the SSC (e.g. since the time
      * interval of available data has changed).<BR>
      *
-     * NOTE: The caller still has to find a file with cache data exists, i.e.
+     * NOTE: The caller still has to find a file with cache data that exists, i.e.
      * can not call this function if the caller does not find any.
      *
      * IMPLEMENTATION NOTE: It is useful to use an ObjectInput stream as
@@ -232,7 +242,7 @@ public class SSCWSOrbitCache {
          ====================================================================*/
         final long stream_format_version = in.readLong();
         if (stream_format_version != STREAM_FORMAT_VERSION) {
-            throw new IOException("Stream format has changed. Can/will not read data from stream.");
+            throw new IOException("Stream format has changed. Can/will not read data from stream. Stream format may have changed or old data was corrupt.");
         }
         final SSCWSSatelliteInfo oldSatInfo;
         try {

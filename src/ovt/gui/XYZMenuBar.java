@@ -323,7 +323,10 @@ public class XYZMenuBar extends JMenuBar {
 
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                getCore().getXYZWin().getSSCWSSatellitesSelectionWindow().setVisible(true);
+                final SSCWSSatellitesSelectionWindow sscwsWin = getCore().getXYZWin().getSSCWSSatellitesSelectionWindow();
+                if (sscwsWin != null) {
+                    sscwsWin.setVisible(true);
+                }
             }
         });
 
@@ -425,26 +428,29 @@ public class XYZMenuBar extends JMenuBar {
 
 
     private JMenuItem[] createSSCWSSatsMenuItemsList() {
-        final Set<String> satIDs;
-        satIDs = xyzWin.getSSCWSBookmarksModel().getBookmarkedSSCWSSatIds();
+        final Set<String> satIDs = xyzWin.getSSCWSBookmarksModel().getBookmarkedSSCWSSatIds();
 
         final List<JMenuItem> menuItems = new ArrayList();
 
         int i = 0;
-        for (String satID : satIDs) {
-            try {
+        try {
+            for (String satID : satIDs) {
                 final JMenuItem menuItem = createSSCWSSatMenuItem(satID);
                 menuItems.add(menuItem);
-            } catch (IOException e) {
-                /* NOTE: Fails silently (does not throw Exception) if can not create menu item.
-                 * Overall, it is best to just fail to display menu items for satellites
-                 * which existence in the satellite list can not be confirmed.
-                 */
-                // Do nothing. Does not want warning message while creating menu??!!
             }
-            // NOTE: Does NOT remove the satellite ID from the bookmarks if it
-            // is invalid. See comments in the SSCWSSatelliteBookmarks class.
-        }
+        } catch (IOException e) {
+            /* NOTE: Fails silently (does not throw Exception) if can not create menu item.
+             * Case 1: It is best to just fail to display menu items for satellites
+             * which existence in the satellite list can not be confirmed. This
+             * happens if one switches between implementations of SSCWSLibrary.
+             * Case 2: Network failure (can not indirectly download satellites list).
+             * We do not want a popup every time the user tries to open the menu.
+             * The already written log error message (stdout) for the error is OK.
+             */
+            System.out.println("ERROR: " + e.getMessage());
+                    }
+        // NOTE: Does NOT remove the satellite ID from the bookmarks if it
+        // is invalid. See comments in the SSCWSSatelliteBookmarks class.
         final JMenuItem[] menuItemsArray = new JMenuItem[menuItems.size()];
         menuItems.toArray(menuItemsArray);
         sortMenuItemsByText(menuItemsArray);
@@ -574,9 +580,9 @@ public class XYZMenuBar extends JMenuBar {
 
 }
 
-
-
-/** JMenuItem for any of the (magnetic) activity indexes. */
+/**
+ * JMenuItem for any of the (magnetic) activity indexes.
+ */
 class ActivityDataMenuItem extends JMenuItem implements ActionListener {
 
     private int activityIndex;

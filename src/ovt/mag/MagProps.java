@@ -476,7 +476,7 @@ public double getXlim() {
 
 public Descriptors getDescriptors() {
     if (descriptors == null) {
-    // Add default property descriptor for visible property.
+    // Add default property descriptor for visible property.    
     // each visual object can be hidden or shown.
       try {
 

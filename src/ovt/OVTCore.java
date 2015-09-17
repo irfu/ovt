@@ -50,7 +50,7 @@ import java.util.*;
 import java.io.*;
 import javax.swing.*;
 
-/**
+/** 
  * This is the main class of the OVT. 
  * 
  * @author Mykola Khotyaintsev

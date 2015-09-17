@@ -82,7 +82,7 @@ public class Settings {
     public static final String ARRAY_ELEMENT = "ArrayElement";
     public static final boolean INDEXED	     = true;
     public static final boolean NOT_INDEXED  = false;
-    private static final int DEBUG = 9;
+    private static final int DEBUG = 2;
     
     static {
         //PropertyEditorManager.setEditorSearchPath(new String[]{});
@@ -220,7 +220,7 @@ private static Element createNode(String nodeName, Object obj, Class propertyEdi
         //Log.log("obj.getClass() = "+obj.getClass(),0);   // TEMP DEBUG
         BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass()); 
         
-        // to avoid strrange ordering of p.d. bug
+        // To avoid strange ordering of p.d. bug
         if (obj instanceof OVTCore) beanInfo = new OVTCoreBeanInfo(); 
         
         
@@ -278,7 +278,8 @@ private static void addIndexedPropertyToNode(org.w3c.dom.Element root, IndexedPr
         Log.err("Property descriptor '"+ ipd.getName() +"' has no editor", 0);
         Log.err("---------------------SUXX!!!00000000000--------------------"+e2);
     //} catch (InvocationTargetException inv_t_e) { inv_t_e.printStackTrace();
-    } catch (IllegalAccessException ill_a_e) { ill_a_e.printStackTrace();
+    } catch (IllegalAccessException ill_a_e) {
+        ill_a_e.printStackTrace();
     }
 
 }

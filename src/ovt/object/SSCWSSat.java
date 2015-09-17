@@ -42,8 +42,6 @@ import java.math.RoundingMode;
 import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
-import ovt.event.ChildrenEvent;
-import ovt.interfaces.ChildrenListener;
 import ovt.util.IndexedSegmentsCache;
 import ovt.util.Log;
 import ovt.util.SSCWSLibrary;
@@ -83,7 +81,7 @@ import ovt.util.Utils.OrbitalState;
 //
 public class SSCWSSat extends Sat {
 
-    private static final int DEBUG = 1;   // The minimum log message level for this class.
+    private static final int DEBUG = 4;   // The minimum log message level for this class.
     private static final boolean ALWAYS_REQUEST_BEST_TIME_RESOLUTION = false;   // For debugging.
     /**
      * See DiscreteIntervalToListCache to understand the variable.
@@ -127,6 +125,22 @@ public class SSCWSSat extends Sat {
         dataSource = new DataSource(sscwsLibrary, SSCWS_satID, cacheFile);
     }
 
+    /* ONLY FOR TESTING - TEMPORARY. */
+    /*public SSCWSSat(OVTCore core) throws IOException {
+        super(core);
+        SSCWSLibrary sscwsLibrary = core.SSCWS_LIBRARY;
+        String SSCWS_satID = "polar";
+        
+        /*==============================================
+         Determine where a previous cache should be.
+         ===============================================*/
+/*        // Do not try to create parent directory. Is done when saving.
+        final File dir = new File(OVTCore.getUserDir() + OVTCore.getSSCWSCacheSubdir());
+        cacheFile = new File(dir, Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
+        Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
+
+        dataSource = new DataSource(sscwsLibrary, SSCWS_satID, cacheFile);
+    }*/
 
     @Override
     public void setOrbitFile(File orbitFile) throws IOException {

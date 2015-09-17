@@ -64,7 +64,7 @@ public class IndexedSegmentsCache {
      * Remove?
      */
     private static final double T_REQUEST_MARGIN = 0.0001;
-    private static final int DEBUG = 3;   // Set the log message level for this class.
+    private static final int DEBUG = 4;   // Set the log message level for this class.
 
     private final DiscreteIntervalToListCache<CacheSlotContents> objectsCache;
     private final double t_slotSize;
