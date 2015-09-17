@@ -4,46 +4,52 @@ import java.beans.*;
 
 public class LTOFSatBeanInfo extends SimpleBeanInfo {
     
-    // Bean descriptor //GEN-FIRST:BeanDescriptor
+    // Bean descriptor//GEN-FIRST:BeanDescriptor
     /*lazy BeanDescriptor*/
     private static BeanDescriptor getBdescriptor(){
-        BeanDescriptor beanDescriptor = new BeanDescriptor  ( LTOFSat.class , null );//GEN-HEADEREND:BeanDescriptor
+        BeanDescriptor beanDescriptor = new BeanDescriptor  ( ovt.object.LTOFSat.class , null ); // NOI18N//GEN-HEADEREND:BeanDescriptor
         
         // Here you can add code for customizing the BeanDescriptor.
         
-        return beanDescriptor;         }//GEN-LAST:BeanDescriptor
+        return beanDescriptor;     }//GEN-LAST:BeanDescriptor
     
     
-    // Property identifiers //GEN-FIRST:Properties
+    // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_dataModules = 0;
-    private static final int PROPERTY_magFootprintModule = 1;
-    private static final int PROPERTY_mainFieldlineModule = 2;
-    private static final int PROPERTY_name = 3;
-    private static final int PROPERTY_orbitFile = 4;
-    private static final int PROPERTY_orbitModule = 5;
-    private static final int PROPERTY_orbitMonitorModule = 6;
-    private static final int PROPERTY_satelliteModule = 7;
+    private static final int PROPERTY_labelsModule = 1;
+    private static final int PROPERTY_magFootprintModule = 2;
+    private static final int PROPERTY_magTangentModule = 3;
+    private static final int PROPERTY_mainFieldlineModule = 4;
+    private static final int PROPERTY_name = 5;
+    private static final int PROPERTY_orbitFile = 6;
+    private static final int PROPERTY_orbitModule = 7;
+    private static final int PROPERTY_orbitMonitorModule = 8;
+    private static final int PROPERTY_satelliteModule = 9;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[8];
+        PropertyDescriptor[] properties = new PropertyDescriptor[10];
     
         try {
-            properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", LTOFSat.class, "getDataModules", "setDataModules" );
-            properties[PROPERTY_magFootprintModule] = new PropertyDescriptor ( "magFootprintModule", LTOFSat.class, "getMagFootprintModule", null );
-            properties[PROPERTY_mainFieldlineModule] = new PropertyDescriptor ( "mainFieldlineModule", LTOFSat.class, "getMainFieldlineModule", null );
-            properties[PROPERTY_name] = new PropertyDescriptor ( "name", LTOFSat.class, "getName", "setName" );
-            properties[PROPERTY_orbitFile] = new PropertyDescriptor ( "orbitFile", LTOFSat.class, "getOrbitFile", "setOrbitFile" );
-            properties[PROPERTY_orbitModule] = new PropertyDescriptor ( "orbitModule", LTOFSat.class, "getOrbitModule", null );
-            properties[PROPERTY_orbitMonitorModule] = new PropertyDescriptor ( "orbitMonitorModule", LTOFSat.class, "getOrbitMonitorModule", null );
-            properties[PROPERTY_satelliteModule] = new PropertyDescriptor ( "satelliteModule", LTOFSat.class, "getSatelliteModule", null );
+            properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ovt.object.LTOFSat.class, "getDataModules", "setDataModules" ); // NOI18N
+            properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ovt.object.LTOFSat.class, "getLabelsModule", null ); // NOI18N
+            properties[PROPERTY_magFootprintModule] = new PropertyDescriptor ( "magFootprintModule", ovt.object.LTOFSat.class, "getMagFootprintModule", null ); // NOI18N
+            properties[PROPERTY_magTangentModule] = new PropertyDescriptor ( "magTangentModule", ovt.object.LTOFSat.class, "getMagTangentModule", null ); // NOI18N
+            properties[PROPERTY_mainFieldlineModule] = new PropertyDescriptor ( "mainFieldlineModule", ovt.object.LTOFSat.class, "getMainFieldlineModule", null ); // NOI18N
+            properties[PROPERTY_name] = new PropertyDescriptor ( "name", ovt.object.LTOFSat.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_orbitFile] = new PropertyDescriptor ( "orbitFile", ovt.object.LTOFSat.class, "getOrbitFile", "setOrbitFile" ); // NOI18N
+            properties[PROPERTY_orbitModule] = new PropertyDescriptor ( "orbitModule", ovt.object.LTOFSat.class, "getOrbitModule", null ); // NOI18N
+            properties[PROPERTY_orbitMonitorModule] = new PropertyDescriptor ( "orbitMonitorModule", ovt.object.LTOFSat.class, "getOrbitMonitorModule", null ); // NOI18N
+            properties[PROPERTY_satelliteModule] = new PropertyDescriptor ( "satelliteModule", ovt.object.LTOFSat.class, "getSatelliteModule", null ); // NOI18N
         }
-        catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
         
         // Here you can add code for customizing the properties array.
         
-        return properties;         }//GEN-LAST:Properties
+        return properties;     }//GEN-LAST:Properties
     
     // EventSet identifiers//GEN-FIRST:Events
 
@@ -54,9 +60,9 @@ public class LTOFSatBeanInfo extends SimpleBeanInfo {
         
         // Here you can add code for customizing the event sets array.
         
-        return eventSets;         }//GEN-LAST:Events
+        return eventSets;     }//GEN-LAST:Events
     
-    // Method identifiers //GEN-FIRST:Methods
+    // Method identifiers//GEN-FIRST:Methods
 
     // Method array 
     /*lazy MethodDescriptor*/
@@ -65,18 +71,18 @@ public class LTOFSatBeanInfo extends SimpleBeanInfo {
         
         // Here you can add code for customizing the methods array.
         
-        return methods;         }//GEN-LAST:Methods
+        return methods;     }//GEN-LAST:Methods
     
     
     private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
     private static final int defaultEventIndex = -1;//GEN-END:Idx
     
     
- //GEN-FIRST:Superclass
+//GEN-FIRST:Superclass
     
     // Here you can add code for customizing the Superclass BeanInfo.
     
- //GEN-LAST:Superclass
+//GEN-LAST:Superclass
     
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.

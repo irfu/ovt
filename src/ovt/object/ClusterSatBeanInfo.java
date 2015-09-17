@@ -4,71 +4,83 @@ import java.beans.*;
 
 public class ClusterSatBeanInfo extends SimpleBeanInfo {
 
-  // Property identifiers //GEN-FIRST:Properties
-  private static final int PROPERTY_dataModules = 0;
-  private static final int PROPERTY_labelsModule = 1;
-  private static final int PROPERTY_orbitFile = 2;
-  private static final int PROPERTY_name = 3;
-  private static final int PROPERTY_orbitMonitorModule = 4;
-  private static final int PROPERTY_satelliteModule = 5;
-  private static final int PROPERTY_mainFieldlineModule = 6;
-  private static final int PROPERTY_magTangentModule = 7;
-  private static final int PROPERTY_orbitModule = 8;
+    // Property identifiers//GEN-FIRST:Properties
+    private static final int PROPERTY_dataModules = 0;
+    private static final int PROPERTY_labelsModule = 1;
+    private static final int PROPERTY_magFootprintModule = 2;
+    private static final int PROPERTY_magTangentModule = 3;
+    private static final int PROPERTY_mainFieldlineModule = 4;
+    private static final int PROPERTY_name = 5;
+    private static final int PROPERTY_orbitFile = 6;
+    private static final int PROPERTY_orbitModule = 7;
+    private static final int PROPERTY_orbitMonitorModule = 8;
+    private static final int PROPERTY_satelliteModule = 9;
 
-  // Property array 
-  private static PropertyDescriptor[] properties = new PropertyDescriptor[9];
+    // Property array 
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[10];
 
-  static {
-    try {
-      properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ClusterSat.class, "getDataModules", "setDataModules" );
-      properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ClusterSat.class, "getLabelsModule", null );
-      properties[PROPERTY_orbitFile] = new PropertyDescriptor ( "orbitFile", ClusterSat.class, "getOrbitFile", "setOrbitFile" );
-      properties[PROPERTY_name] = new PropertyDescriptor ( "name", ClusterSat.class, "getName", "setName" );
-      properties[PROPERTY_orbitMonitorModule] = new PropertyDescriptor ( "orbitMonitorModule", ClusterSat.class, "getOrbitMonitorModule", null );
-      properties[PROPERTY_satelliteModule] = new PropertyDescriptor ( "satelliteModule", ClusterSat.class, "getSatelliteModule", null );
-      properties[PROPERTY_mainFieldlineModule] = new PropertyDescriptor ( "mainFieldlineModule", ClusterSat.class, "getMainFieldlineModule", null );
-      properties[PROPERTY_magTangentModule] = new PropertyDescriptor (
-      "magTangentModule", ClusterSat.class, "getMagTangentModule", null );
-      properties[PROPERTY_orbitModule] = new PropertyDescriptor (
-      "orbitModule", ClusterSat.class, "getOrbitModule", null );
+    private static PropertyDescriptor[] getPdescriptor(){
+        return properties;
     }
-    catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
+
+    static {
+        try {
+            properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ovt.object.ClusterSat.class, "getDataModules", "setDataModules" ); // NOI18N
+            properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ovt.object.ClusterSat.class, "getLabelsModule", null ); // NOI18N
+            properties[PROPERTY_magFootprintModule] = new PropertyDescriptor ( "magFootprintModule", ovt.object.ClusterSat.class, "getMagFootprintModule", null ); // NOI18N
+            properties[PROPERTY_magTangentModule] = new PropertyDescriptor ( "magTangentModule", ovt.object.ClusterSat.class, "getMagTangentModule", null ); // NOI18N
+            properties[PROPERTY_mainFieldlineModule] = new PropertyDescriptor ( "mainFieldlineModule", ovt.object.ClusterSat.class, "getMainFieldlineModule", null ); // NOI18N
+            properties[PROPERTY_name] = new PropertyDescriptor ( "name", ovt.object.ClusterSat.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_orbitFile] = new PropertyDescriptor ( "orbitFile", ovt.object.ClusterSat.class, "getOrbitFile", "setOrbitFile" ); // NOI18N
+            properties[PROPERTY_orbitModule] = new PropertyDescriptor ( "orbitModule", ovt.object.ClusterSat.class, "getOrbitModule", null ); // NOI18N
+            properties[PROPERTY_orbitMonitorModule] = new PropertyDescriptor ( "orbitMonitorModule", ovt.object.ClusterSat.class, "getOrbitMonitorModule", null ); // NOI18N
+            properties[PROPERTY_satelliteModule] = new PropertyDescriptor ( "satelliteModule", ovt.object.ClusterSat.class, "getSatelliteModule", null ); // NOI18N
+        }
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
 
     // Here you can add code for customizing the properties array.
 
 }//GEN-LAST:Properties
 
-  // EventSet identifiers//GEN-FIRST:Events
+    // EventSet identifiers//GEN-FIRST:Events
 
-  // EventSet array
-  private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
-//GEN-HEADEREND:Events
+    // EventSet array
+    private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
+
+    private static EventSetDescriptor[] getEdescriptor(){
+        return eventSets;
+    }//GEN-HEADEREND:Events
 
     // Here you can add code for customizing the event sets array.
 
-  //GEN-LAST:Events
+//GEN-LAST:Events
 
-  // Method identifiers //GEN-FIRST:Methods
+    // Method identifiers//GEN-FIRST:Methods
 
-  // Method array 
-  private static MethodDescriptor[] methods = new MethodDescriptor[0];
-//GEN-HEADEREND:Methods
+    // Method array 
+    private static MethodDescriptor[] methods = new MethodDescriptor[0];
+
+    private static MethodDescriptor[] getMdescriptor(){
+        return methods;
+    }//GEN-HEADEREND:Methods
 
     // Here you can add code for customizing the methods array.
     
-  //GEN-LAST:Methods
+//GEN-LAST:Methods
 
-    private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
+    private static java.awt.Image iconColor16 = null;//GEN-BEGIN:IconsDef
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
-    private static java.awt.Image iconMono32 = null; //GEN-END:IconsDef
+    private static java.awt.Image iconMono32 = null;//GEN-END:IconsDef
   private static String iconNameC16 = null;//GEN-BEGIN:Icons
   private static String iconNameC32 = null;
   private static String iconNameM16 = null;
   private static String iconNameM32 = null;//GEN-END:Icons
 
-  private static int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
-  private static int defaultEventIndex = -1;//GEN-END:Idx
+    private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
+    private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
     /**

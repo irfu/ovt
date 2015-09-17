@@ -159,7 +159,7 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
             String satID,
             double beginMjdInclusive, double endMjdInclusive,
             int resolutionFactor)
-            throws IOException {
+            throws IOException, NoSuchSatelliteException {
 
         // Argument check
         if (resolutionFactor <= 0) {

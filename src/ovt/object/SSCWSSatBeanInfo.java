@@ -8,7 +8,10 @@ package ovt.object;
 import java.beans.*;
 
 /**
- *
+ * IMPLEMENTATION NOTE: orbitFile should be included since Sat#setOrbitFile does
+ * some initialization of (Sat#firstDataMjd, Sat#lastDataMjd, Sat#revolutionPeriod,
+ * Sat#satNumber). Ugly for SSCWSSat but it works.
+ * 
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  */
 public class SSCWSSatBeanInfo extends SimpleBeanInfo {
@@ -24,26 +27,34 @@ public class SSCWSSatBeanInfo extends SimpleBeanInfo {
 
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_dataModules = 0;
-    private static final int PROPERTY_magFootprintModule = 1;
-    private static final int PROPERTY_mainFieldlineModule = 2;
-    private static final int PROPERTY_name = 3;
-    private static final int PROPERTY_orbitModule = 4;
-    private static final int PROPERTY_orbitMonitorModule = 5;
-    private static final int PROPERTY_satelliteModule = 6;
+    private static final int PROPERTY_labelsModule = 1;
+    private static final int PROPERTY_magFootprintModule = 2;
+    private static final int PROPERTY_magTangentModule = 3;
+    private static final int PROPERTY_mainFieldlineModule = 4;
+    private static final int PROPERTY_name = 5;
+    private static final int PROPERTY_orbitFile = 6;
+    private static final int PROPERTY_orbitModule = 7;
+    private static final int PROPERTY_orbitMonitorModule = 8;
+    private static final int PROPERTY_satelliteModule = 9;
+    private static final int PROPERTY_SSCWSSatelliteID = 10;
 
     // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
-        PropertyDescriptor[] properties = new PropertyDescriptor[7];
+        PropertyDescriptor[] properties = new PropertyDescriptor[11];
     
         try {
             properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ovt.object.SSCWSSat.class, "getDataModules", "setDataModules" ); // NOI18N
+            properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ovt.object.SSCWSSat.class, "getLabelsModule", null ); // NOI18N
             properties[PROPERTY_magFootprintModule] = new PropertyDescriptor ( "magFootprintModule", ovt.object.SSCWSSat.class, "getMagFootprintModule", null ); // NOI18N
+            properties[PROPERTY_magTangentModule] = new PropertyDescriptor ( "magTangentModule", ovt.object.SSCWSSat.class, "getMagTangentModule", null ); // NOI18N
             properties[PROPERTY_mainFieldlineModule] = new PropertyDescriptor ( "mainFieldlineModule", ovt.object.SSCWSSat.class, "getMainFieldlineModule", null ); // NOI18N
             properties[PROPERTY_name] = new PropertyDescriptor ( "name", ovt.object.SSCWSSat.class, "getName", "setName" ); // NOI18N
+            properties[PROPERTY_orbitFile] = new PropertyDescriptor ( "orbitFile", ovt.object.SSCWSSat.class, "getOrbitFile", "setOrbitFile" ); // NOI18N
             properties[PROPERTY_orbitModule] = new PropertyDescriptor ( "orbitModule", ovt.object.SSCWSSat.class, "getOrbitModule", null ); // NOI18N
             properties[PROPERTY_orbitMonitorModule] = new PropertyDescriptor ( "orbitMonitorModule", ovt.object.SSCWSSat.class, "getOrbitMonitorModule", null ); // NOI18N
             properties[PROPERTY_satelliteModule] = new PropertyDescriptor ( "satelliteModule", ovt.object.SSCWSSat.class, "getSatelliteModule", null ); // NOI18N
+            properties[PROPERTY_SSCWSSatelliteID] = new PropertyDescriptor ( "SSCWSSatelliteID", ovt.object.SSCWSSat.class, "getSSCWSSatelliteID", "setSSCWSSatelliteID" ); // NOI18N
         }
         catch(IntrospectionException e) {
             e.printStackTrace();

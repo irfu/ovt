@@ -40,6 +40,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
@@ -160,7 +162,7 @@ public class SSCWSOrbitCache {
             SSCWSLibrary mSSCWSLibrary,
             String SSCWSSatID,
             double mCacheSlotSizeMjd,
-            int proactiveFillMargin) throws IOException {
+            int proactiveFillMargin) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
 
         if (mCacheSlotSizeMjd <= 0) {
             throw new IllegalArgumentException("Cache slot size =< 0.");
@@ -212,7 +214,7 @@ public class SSCWSOrbitCache {
             ObjectInput in,
             SSCWSLibrary mSSCWSLibrary, String SSCWSSatID,
             double approxProactiveCachingFillMarginMjd)
-            throws IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException, SSCWSLibrary.NoSuchSatelliteException {
 
         /* IMPLEMENTATION NOTE: Lets the caller set the proactive caching fill
          margin in units of (approximate) TIME, NOT SLOTS. 
@@ -458,7 +460,12 @@ public class SSCWSOrbitCache {
         final int resolutionFactor = Math.max(requestedTimeResolution / this.satInfo.bestTimeResolution, 1);
         System.out.println("Downloading data from SSC Web Services.");   // Printout (not log message) is here to cover the SSCWSLibrary for testing.
         final long t_start = System.nanoTime();
-        final double[][] coords_axisPos = sscwsLibrary.getTrajectory_GEI(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
+        final double[][] coords_axisPos;
+        try {
+            coords_axisPos = sscwsLibrary.getTrajectory_GEI(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
+        } catch (SSCWSLibrary.NoSuchSatelliteException e) {
+            throw new IOException(e);    // NOTE: Reclassifying NoSuchSatelliteException as IOException. Should never occur in practise.
+        }
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
         System.out.printf("   Time used for downloading data: %.1f [s]\n", duration);
 

@@ -45,6 +45,7 @@ import ovt.datatype.Time;
 import ovt.util.IndexedSegmentsCache;
 import ovt.util.Log;
 import ovt.util.SSCWSLibrary;
+import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
 import ovt.util.SSCWSOrbitCache.OrbitalData;
 import ovt.util.Utils;
@@ -74,7 +75,7 @@ import ovt.util.Utils.OrbitalState;
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
-*/
+ */
 // PROPOSAL: Change name? 
 //    PRO: The common thread is not SSC Web Services?
 //    PRO: Caching and download code is outside of class?
@@ -100,8 +101,9 @@ public class SSCWSSat extends Sat {
     /**
      * Cache file. Read (if it exists) and overwritten when quitting.
      */
-    private final File cacheFile;
-    private final SSCWSSat.DataSource dataSource;
+    private File cacheFile = null;
+    private SSCWSSat.DataSource dataSource = null;
+    private String SSCWS_satID = null;
 
     //##########################################################################
 
@@ -111,45 +113,96 @@ public class SSCWSSat extends Sat {
      *
      * @see SatelliteDescription#getId().
      */
-    public SSCWSSat(OVTCore core, SSCWSLibrary sscwsLibrary, String SSCWS_satID) throws IOException {
+    public SSCWSSat(OVTCore core, String mSSCWS_satID) throws IOException, NoSuchSatelliteException {
         super(core);
-
-        /*==============================================
-         Determine where a previous cache should be.
-         ===============================================*/
-        // Do not try to create parent directory. Is done when saving.
-        final File dir = new File(OVTCore.getUserDir() + OVTCore.getSSCWSCacheSubdir());
-        cacheFile = new File(dir, Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
-        Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
-
-        dataSource = new DataSource(sscwsLibrary, SSCWS_satID, cacheFile);
+        initializeSSCWSSat(mSSCWS_satID);
     }
 
-    /* ONLY FOR TESTING - TEMPORARY. */
-    /*public SSCWSSat(OVTCore core) throws IOException {
+
+    /**
+     * Initializer intended to be called from Settings.java using Java Beans
+     * when loading settings. <BR>
+     * NOTE: Leaves instance fields and thus the cache unitialized and in a
+     * non-functioning state. "Settings" should call setSSCWSSatelliteID to
+     * complete the initialization.
+     */
+    public SSCWSSat(OVTCore core) throws IOException {
         super(core);
-        SSCWSLibrary sscwsLibrary = core.SSCWS_LIBRARY;
-        String SSCWS_satID = "polar";
-        
+    }
+
+
+    /**
+     * Initializes the cache to use a specific SSCWS_satID.<BR>
+     * IMPLEMENTATION NOTE: Does not want to use the method name "initialize"
+     * since that would override the inherited method with the same name.
+     */
+    private void initializeSSCWSSat(String mSSCWS_satID) throws IOException, NoSuchSatelliteException {
+        if (mSSCWS_satID == null) {
+            throw new IllegalArgumentException("mSSCWS_satID is null.");
+        }
+        SSCWS_satID = mSSCWS_satID;
+
         /*==============================================
          Determine where a previous cache should be.
          ===============================================*/
-/*        // Do not try to create parent directory. Is done when saving.
+        // Do not try to create parent directory. That is done when saving.
         final File dir = new File(OVTCore.getUserDir() + OVTCore.getSSCWSCacheSubdir());
         cacheFile = new File(dir, Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
         Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
 
-        dataSource = new DataSource(sscwsLibrary, SSCWS_satID, cacheFile);
-    }*/
+        dataSource = new DataSource(OVTCore.SSCWS_LIBRARY, SSCWS_satID, cacheFile);
+    }
 
+
+    /**
+     * Partly intended to be called from Settings.java using Java Beans when
+     * loading settings. Described in SSCWSSatBeanInfo.
+     */
+    public String getSSCWSSatelliteID() {
+        return dataSource.satInfo.ID;
+    }
+
+
+    /**
+     * Intended to be called from Settings.java using Java Beans when loading
+     * settings. Described in SSCWSSatBeanInfo.
+     */
+    public void setSSCWSSatelliteID(String mSSCWS_satID) throws IOException, NoSuchSatelliteException {
+        initializeSSCWSSat(mSSCWS_satID);
+    }
+
+
+    /**
+     * Intended to be called from Settings.java using Java Beans when saving
+     * settings. Described in SSCWSSatBeanInfo.
+     *
+     * NOTE: In its current form, this method must be called AFTER
+     * setSSCWSSatelliteID for the instance to be properly initialized.
+     * Otherwise (probably) an exception will be thrown. The "Settings" class
+     * will initialize this class by calling first the (right) constructor, then
+     * setSSCWSSatelliteID and then setOrbitFile, which works, but there is no
+     * guarantee that the method will always be called in this order. /Erik P G
+     * Johansson
+     *
+     * NOTE: It appears that class "Settings" calls this method with a File
+     * object initialized with the path "null" (a string!) when loading settings
+     * which once originated from a null pointer returned from getOrbitFile.
+     * Therefore the method treats the path "null" (the string) the same as the null
+     * pointer.
+     *
+     * orbitFile.getPath().equals("null")
+     */
     @Override
     public void setOrbitFile(File orbitFile) throws IOException {
-        if (orbitFile != null) {
+        if ((orbitFile != null) && (!orbitFile.getPath().equals("null"))) {
             throw new IllegalArgumentException("There must be no orbitFile for this class."
-                    + " This exception indicates a pure OVT bug.");
+                    + " This exception indicates a pure OVT bug. orbitFile=" + orbitFile);
         }
-        super.setOrbitFile(orbitFile);
-        //throw new RuntimeException("Method not supported by this class since it does not make use of an coords_axisPos_kmMjd file. This exception indicates a bug.");
+        if (SSCWS_satID != null) {
+            // Avoid making this call if this class has not been properly initialized yet.
+            // Not entirely correct but the initialization in setOrbitFile is not very important.
+            super.setOrbitFile(orbitFile);
+        }
     }
 
 
@@ -198,11 +251,6 @@ public class SSCWSSat extends Sat {
     }
 
 
-    public String getSSCWSSatelliteID() {
-        return dataSource.satInfo.ID;
-    }
-
-
     /**
      * Function for deriving the name to be displayed in the GUI tree in a
      * standardized fashion (in one single location in the code). Useful for
@@ -210,7 +258,7 @@ public class SSCWSSat extends Sat {
      * Satellite ID. Used for the "name" property (field) that is set/read with
      * OVTObject#setName and OVTObject#getName.
      */
-    public static String deriveNameFromSSCWSSatID(String satID) throws IOException {
+    public static String deriveNameFromSSCWSSatID(String satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
         final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(satID).name;   // throws IOException
 
         return "(SSC) " + satName;
@@ -223,7 +271,8 @@ public class SSCWSSat extends Sat {
      */
     @Override
     public void dispose() {
-        trySaveCacheToFile();    // NOTE: Can not be allowed to throw IOException since located in inherited method.
+        // NOTE: Can not be allowed to throw IOException since it is located in an inherited method.
+        trySaveCacheToFile();
         super.dispose(); // dispose descriptors, remove listeners, dispose children
     }
 
@@ -273,7 +322,7 @@ public class SSCWSSat extends Sat {
         /**
          * @param cacheFile If null, then don't try to read from a cache file.
          */
-        public DataSource(SSCWSLibrary mSSCWSLibrary, String SSCWS_satID, File cacheFile) throws IOException {
+        public DataSource(SSCWSLibrary mSSCWSLibrary, String SSCWS_satID, File cacheFile) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
             this.satInfo = mSSCWSLibrary.getSatelliteInfo(SSCWS_satID);
 
             /*==============================================

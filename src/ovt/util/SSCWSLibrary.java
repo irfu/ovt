@@ -35,6 +35,7 @@ import gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
+import java.util.NoSuchElementException;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
@@ -141,19 +142,29 @@ public abstract class SSCWSLibrary {
      * lists for every successful call. That means the satellite list can never
      * change or be updated during a session (except by creating a new
      * SSCWSLibraryImpl object, but one is not supposed to do that). OVT assumes
-     * this behaviour and can therefore presently NOT use the MVC pattern for the
-     * satellite list. Change this?
+     * this behaviour and can therefore presently NOT use the MVC pattern for
+     * the satellite list. Change this?
      */
     public abstract List<SSCWSSatelliteInfo> getAllSatelliteInfo() throws IOException;
 
 
     /**
      * NOTE: Returns private immutable instance, not a copy.
+     *
+     * IMPLEMENTATION NOTE: It is useful to have separate exceptions for callers
+     * that iterate over a list of satellite IDs. If there was a network failure
+     * then the error will likely occur again for the next satellite ID too, but
+     * if the satellite info was not found, then it is worth trying with the
+     * next satellite ID.
+     *
+     * @throws IOException for network-related failures,
+     * NoSuchSatelliteException when the satellite list is available but no such
+     * satellite can be found.
      */
-    public final SSCWSSatelliteInfo getSatelliteInfo(String satID) throws IOException {
+    public final SSCWSSatelliteInfo getSatelliteInfo(String satID) throws IOException, NoSuchSatelliteException {
 
         if (satID == null) {
-            throw new NullPointerException("satID is null.");
+            throw new IllegalArgumentException("satID is null.");
         }
         for (SSCWSSatelliteInfo satInfo : getAllSatelliteInfo()) // throws IOException
         {
@@ -161,7 +172,14 @@ public abstract class SSCWSLibrary {
                 return satInfo;
             }
         }
-        throw new IOException("Could not find SSC Web Services satellite description for satellite ID = \"" + satID + "\".");
+        throw new NoSuchSatelliteException("Could not find any satellite ID = \"" + satID + "\" in the SSC Web Services satellite descriptions list.");
+    }
+
+    public static class NoSuchSatelliteException extends Exception {
+
+        public NoSuchSatelliteException(String msg) {
+            super(msg);
+        }
     }
 
 
@@ -192,7 +210,7 @@ public abstract class SSCWSLibrary {
             double beginMjdInclusive,
             double endMjdInclusive,
             int resolutionFactor)
-            throws IOException;
+            throws IOException, NoSuchSatelliteException;
 
 
     public abstract List<String> getPrivacyAndImportantNotices() throws IOException;

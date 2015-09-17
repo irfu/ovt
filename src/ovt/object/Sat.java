@@ -173,11 +173,18 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
      * file is given, then it assumes that there is a corresponding spin file
      * with other suffix, ".spin".
      *
+     * NOTE: It appears that class "Settings" calls this method with a File
+     * object initialized with the path "null" (a string!) when loading settings
+     * which once originated from a null pointer returned from getOrbitFile.
+     * Therefore the method treats the path "null" (the string) the same as the null
+     * pointer.
+     *
      * @param orbitFile Null means there is no file (i.e. another data source is
      * used).
      */
     public void setOrbitFile(File orbitFile) throws IOException {
-        if (orbitFile != null) {
+
+        if ((orbitFile != null) && (!orbitFile.getPath().equals("null"))) {
             if (!orbitFile.exists()) {
                 throw new IOException("File " + orbitFile + " does not exist");
             }
@@ -487,6 +494,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     protected Fieldline getFieldline(int type, double mjd) {
         return mainFieldlineModule.getFieldline(type, mjd);
     }
+
 
     public void validate() {
         updateTrajectory();

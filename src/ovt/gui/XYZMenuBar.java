@@ -48,6 +48,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.List;
+import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 
 public class XYZMenuBar extends JMenuBar {
 
@@ -398,10 +399,12 @@ public class XYZMenuBar extends JMenuBar {
      * (2) obtaining the online SSCWS satellites list fails (indirect).
      */
     // Throw exceptions on failure and let the caller decide what to do?
-    private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) throws IOException {
+    private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
         final String satName;
-        //try {
-        satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException
+
+        /* NOTE: Exceptions are likely to be thrown here rather than later,
+         * inside addSSCWSSatAction and removeSSCWSSatAction. */
+        satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException, NoSuchSatelliteException
 
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
@@ -419,7 +422,6 @@ public class XYZMenuBar extends JMenuBar {
         newMenuItem.setFont(Style.getMenuFont());
         newMenuItem.addActionListener(actionListener);
 
-        //try {
         // Select if sat is already added to OVT.
         newMenuItem.setSelected(xyzWin.sscwsSatAlreadyAdded(SSCWS_satID));   // throws IOException if can not get satellites list.
         return newMenuItem;
@@ -432,23 +434,31 @@ public class XYZMenuBar extends JMenuBar {
 
         final List<JMenuItem> menuItems = new ArrayList();
 
-        int i = 0;
-        try {
-            for (String satID : satIDs) {
+        for (String satID : satIDs) {
+            try {
                 final JMenuItem menuItem = createSSCWSSatMenuItem(satID);
                 menuItems.add(menuItem);
+            } catch (IOException e) {
+                /**
+                 * Fail silently (does not throw Exception) and stop trying
+                 * again if it can not create menu item due to network failure.
+                 * SSCWSLibrary. Case 2: Network failure (can not indirectly
+                 * download satellites list). We do not want a popup every time
+                 * the user tries to open the menu. The already written log
+                 * error message (stdout) for the error is OK.
+                 */
+                System.out.println("ERROR: " + e.getMessage());
+                break;   // Do not try again with other satellite.
+            } catch (NoSuchSatelliteException e) {
+                /**
+                 * It is best to just fail to display menu items for satellites
+                 * which existence in the satellite list can not be confirmed.
+                 * This tends to happen if one switches between implementations
+                 * of SSCWSLibrary. Should still continue with other satellites.
+                 */
+                System.out.println("ERROR: " + e.getMessage());
             }
-        } catch (IOException e) {
-            /* NOTE: Fails silently (does not throw Exception) if can not create menu item.
-             * Case 1: It is best to just fail to display menu items for satellites
-             * which existence in the satellite list can not be confirmed. This
-             * happens if one switches between implementations of SSCWSLibrary.
-             * Case 2: Network failure (can not indirectly download satellites list).
-             * We do not want a popup every time the user tries to open the menu.
-             * The already written log error message (stdout) for the error is OK.
-             */
-            System.out.println("ERROR: " + e.getMessage());
-                    }
+        }
         // NOTE: Does NOT remove the satellite ID from the bookmarks if it
         // is invalid. See comments in the SSCWSSatelliteBookmarks class.
         final JMenuItem[] menuItemsArray = new JMenuItem[menuItems.size()];

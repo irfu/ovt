@@ -61,7 +61,7 @@ import javax.swing.*;
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
-    public static final String RELEASE_DAY = "March 2015";
+    public static final String RELEASE_DAY = "October 2015";
     public static final int BUILD = 5;           // Incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev.
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "DefaultSettingsFile";

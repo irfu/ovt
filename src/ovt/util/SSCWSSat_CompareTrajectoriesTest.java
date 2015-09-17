@@ -38,6 +38,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.datatype.XMLGregorianCalendar;
 import ovt.OVTCore;
 import ovt.datatype.Matrix3x3;
@@ -46,6 +48,7 @@ import ovt.mag.model.IgrfModel;
 import ovt.object.LTOFSat;
 import ovt.object.SSCWSSat;
 import ovt.object.TLESat;
+import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 
 /**
  * Informal manual test code for comparing trajectories to determine differences
@@ -97,7 +100,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
      *
      * @throws IOException
      */
-    public static void test_testCode() throws IOException {
+    public static void test_testCode() throws IOException, NoSuchSatelliteException {
         final SSCWSLibrary lib = ovt.util.SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;
         final SSCWSSat.DataSource sscwsDataSource1 = new SSCWSSat.DataSource(lib, "CompOrbitSat1", null);
         final SSCWSSat.DataSource sscwsDataSource2 = new SSCWSSat.DataSource(lib, "CompOrbitSat2b", null);
@@ -597,7 +600,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
         private final String satID;   // Save cache file instead?
 
 
-        public SSCWSDataSource(String mSatID, SSCWSLibrary mLib) throws IOException {
+        public SSCWSDataSource(String mSatID, SSCWSLibrary mLib) throws IOException, NoSuchSatelliteException {
             satID = mSatID;
             File cacheFile = null;
             if (USE_SSCWS_DISK_CACHE) {
@@ -642,7 +645,11 @@ public class SSCWSSat_CompareTrajectoriesTest {
 
         @Override
         public void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr_posAxis_km, double[][] vei_arr) throws IOException {
-            SSCWSSat_CompareTrajectoriesTest.fill_pos_vel_RawSSCWS(satID, timeMjdMap, gei_arr_posAxis_km, vei_arr, coordSys);
+            try {
+                SSCWSSat_CompareTrajectoriesTest.fill_pos_vel_RawSSCWS(satID, timeMjdMap, gei_arr_posAxis_km, vei_arr, coordSys);
+            } catch (NoSuchSatelliteException e) {
+                throw new IOException(e);
+            }
         }
 
     }
@@ -714,7 +721,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
             double[][] pos_arr_posAxis_km,
             double[][] vel_arr_posAxis_kms,
             CoordinateSystem coordSys)
-            throws IOException {
+            throws IOException, NoSuchSatelliteException {
 
         if ((timeMjdMap.length != pos_arr_posAxis_km.length) || (timeMjdMap.length != vel_arr_posAxis_kms.length)) {
             throw new IllegalArgumentException();

@@ -42,6 +42,8 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 import ovt.object.Camera;
 import ovt.object.SSCWSSat;
@@ -538,13 +540,13 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     public void addSSCWSSatAction(String SSCWS_satID) {
         final Sat sat;
         try {
-            sat = new SSCWSSat(getCore(), OVTCore.SSCWS_LIBRARY, SSCWS_satID);
+            sat = new SSCWSSat(getCore(), SSCWS_satID);
 
             /* NOTE: The string value appears in the GUI tree node, but is also
              used to find the satellite when removing it from the tree(?). */
             sat.setName(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
-            sat.setOrbitFile(null);
-        } catch (IOException e) {
+            sat.setOrbitFile(null);   // The only valid parameter value.
+        } catch (IOException|SSCWSLibrary.NoSuchSatelliteException e) {
             getCore().sendErrorMessage(e);
             return;
         }
@@ -570,7 +572,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
             /*getCore().getSats().removeSat(sat);
              getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.*/
-        } catch (IOException e) {
+        } catch (IOException|SSCWSLibrary.NoSuchSatelliteException e) {
             getCore().sendErrorMessage(e);
         }
     }
@@ -580,7 +582,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * @param True if-and-only-if there is a SSCWSSat object corresponding to
      * the argument in the GUI tree.
      */
-    public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException {
+    public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
         // NOTE: Implementation assumes there is only one Sat by that exact name.
         final Sat sat = (Sat) getCore().getSats().getChildren().getChild(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
         return (sat instanceof SSCWSSat);

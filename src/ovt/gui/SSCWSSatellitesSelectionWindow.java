@@ -56,6 +56,7 @@ import ovt.event.ChildrenEvent;
 import ovt.interfaces.ChildrenListener;
 import ovt.object.SSCWSSat;
 import ovt.util.SSCWSLibrary;
+import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 import ovt.util.SSCWSLibraryTestEmulator;
 
 /**
@@ -293,7 +294,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                 if (core != null) {
                     try {
                         return core.getXYZWin().sscwsSatAlreadyAdded(satInfo.ID);
-                    } catch (IOException e) {
+                    } catch (IOException|NoSuchSatelliteException e) {
                         /* It is very, very unlikely that this exception will be
                          thrown since it can only happen if (1) the list of satellites
                          has not already been downloaded, or (2) the satellite ID
