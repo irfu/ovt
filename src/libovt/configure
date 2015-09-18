@@ -58,7 +58,7 @@ else
       case $arg in #(
       *"$as_nl"*)
 	expr "X$arg" : "X\\(.*\\)$as_nl";
-	arg=`expr "X$arg" : ".*$as_nl\\(.*\\)"`;;
+	arg=`exprf "X$arg" : ".*$as_nl\\(.*\\)"`;;
       esac;
       expr "X$arg" : "X\\(.*\\)" | tr -d "$as_nl"
     '

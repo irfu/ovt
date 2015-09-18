@@ -93,7 +93,7 @@ static void doterms (void);
 int    dpinit (double eqsq1, double siniq1, double cosiq1,
 	         double rteqsq1, double ao, double cosq2, double sinomo1,
 	        double cosomo1, double bsq1, double xlldot, double omgdt1,
-	              double xnodot, double xnodp, ELEMENT element)
+	              double xnodot, double xnodp, ELEMENT *element)
 {
     /* Local variables */
 
@@ -123,20 +123,20 @@ int    dpinit (double eqsq1, double siniq1, double cosiq1,
     bsq = bsq1;
     omgdt = omgdt1;
 
-    thgr = thetag (element.epoch, element);
-    eq = element.eo;
+    thgr = thetag ((*element).epoch, *element);
+    eq = (*element).eo;
     xnq = xnodp;
     aqnv = 1. / ao;
-    xqncl = element.xincl;
-    xmao = element.xmo;
+    xqncl = (*element).xincl;
+    xmao = (*element).xmo;
     xpidot = omgdt + xnodot;
-    sinq = sin (element.xnodeo);
-    cosq = cos (element.xnodeo);
-    omegaq = element.omegao;
+    sinq = sin ((*element).xnodeo);
+    cosq = cos ((*element).xnodeo);
+    omegaq = (*element).omegao;
 
     /* INITIALIZE LUNAR SOLAR TERMS */
 
-    day = element.ds50 + 18261.5;
+    day = (*element).ds50 + 18261.5;
 
     if (day != preep)
     {
@@ -241,7 +241,7 @@ int    dpinit (double eqsq1, double siniq1, double cosiq1,
 	fasx2 = .13130908;
 	fasx4 = 2.8843198;
 	fasx6 = .37448087;
-	xlamo = xmao + element.xnodeo + element.omegao - thgr;
+	xlamo = xmao + (*element).xnodeo + (*element).omegao - thgr;
 	bfact = xlldot + xpidot - thdt;
 	bfact = bfact + ssl + ssg + ssh;
     }
@@ -339,7 +339,7 @@ int    dpinit (double eqsq1, double siniq1, double cosiq1,
 	temp = temp1 * 2. * root54;
 	d5421 = temp * f542 * g521;
 	d5433 = temp * f543 * g533;
-	xlamo = xmao + element.xnodeo + element.xnodeo - thgr - thgr;
+	xlamo = xmao + (*element).xnodeo + (*element).xnodeo - thgr - thgr;
 	bfact = xlldot + xnodot + xnodot - thdt - thdt;
 	bfact = bfact + ssl + ssh + ssh;
     }
@@ -363,7 +363,7 @@ int    dpinit (double eqsq1, double siniq1, double cosiq1,
 /****************************************/
 
 int    dpsec (double *xll, double *omgasm, double *xnodes, double *em,
-	             double *xinc, double *xn, double tsince, ELEMENT element)
+	             double *xinc, double *xn, double tsince, ELEMENT *element)
 {
     /* Local variables */
 
@@ -377,8 +377,8 @@ int    dpsec (double *xll, double *omgasm, double *xnodes, double *em,
     *xll += ssl * time;
     *omgasm += ssg * time;
     *xnodes += ssh * time;
-    *em = element.eo + sse * time;
-    *xinc = element.xincl + ssi * time;
+    *em = (*element).eo + sse * time;
+    *xinc = (*element).xincl + ssi * time;
 
     if (*xinc < 0.)
     {
@@ -476,18 +476,18 @@ int    dpsec (double *xll, double *omgasm, double *xnodes, double *em,
 	    xndot = d2201 * sin (x2omi + xli - g22)
 		+ d2211 * sin (xli - g22) + d3210 *
 		sin (xomi + xli - g32) + d3222 * sin (-xomi + xli - g32)
-		+ d4410 * sin (x2omi + x2li - g44) + d4422 * 
-		sin (x2li - g44) + d5220 * sin (xomi + xli - g52) 
-		+ d5232 * sin (-xomi + xli - g52) + d5421 * 
-		sin (xomi + x2li - g54) + d5433 * sin (-( double) xomi 
+		+ d4410 * sin (x2omi + x2li - g44) + d4422 *
+		sin (x2li - g44) + d5220 * sin (xomi + xli - g52)
+		+ d5232 * sin (-xomi + xli - g52) + d5421 *
+		sin (xomi + x2li - g54) + d5433 * sin (-( double) xomi
 		+ x2li - g54);
 	    xnddt = d2201 * cos (x2omi + xli - g22)
 		+ d2211 * cos (xli - g22) + d3210 *
 		cos (xomi + xli - g32) + d3222 * cos (-xomi + xli - g32)
-		+ d5220 * cos (xomi + xli - g52) + d5232 * 
-		cos (-xomi + xli - g52) + (d4410 * 
-		cos (x2omi + x2li - g44) + d4422 * cos ( x2li - g44) + 
-		d5421 * cos (xomi + x2li - g54) + d5433 * 
+		+ d5220 * cos (xomi + xli - g52) + d5232 *
+		cos (-xomi + xli - g52) + (d4410 *
+		cos (x2omi + x2li - g44) + d4422 * cos ( x2li - g44) +
+		d5421 * cos (xomi + x2li - g54) + d5433 *
 		cos (-( double) xomi + x2li - g54)) * 2.;
 	}
 

@@ -70,6 +70,8 @@
     nbproject/build-impl.xml file.
 
     -->
+
+  <!--
     <target name="-post-jar">
       <jar jarfile="dist/ovtzip.jar">
           <zipfileset src="${dist.jar}" excludes="META-INF/*" />
@@ -85,7 +87,9 @@
           </manifest>
         </jar>
     </target>
+-->
 
+<!--
     <property environment="env" />
 
         <taskdef name="bundleapp"
@@ -101,10 +105,10 @@
                 mainclassname="ovt.XYZWindow">
                 <runtime dir="${env.JAVA_HOME}" />
                 <classpath file="dist/ovtzip.jar" />
-                <!--<librarypath dir="dist/lib/"/>-->
+              //COMMENT THIS OUT<librarypath dir="dist/lib/"/>
                 <option value="-Djava.library.path=/Users/frejon/OVT/ovt/VTKBuild/lib:/Users/frejon/OVT/ovt/src/libovt"/>
                 <option value="-Duser.dir=$APP_ROOT/Contents/Resources"/>
             </bundleapp>
         </target>
-
+-->
 </project>

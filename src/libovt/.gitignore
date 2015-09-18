@@ -1,7 +1,0 @@
-config.status
-config.log
-autom4te.cache/
-*.o
-*.jnilib
-Makefile
-libovt-*.so

@@ -25,7 +25,7 @@ $make
 start Netbeans
 Open Project -> Navigate to OVT
 
-
+#note: add version numbers on installations
 ------------------------------------------------------------------------------------------
 Install OVT for development(& build if new VTK version) on Windows
 ------------------------------------------------------------------------------------------
@@ -47,10 +47,19 @@ Deliver .dll files to distribution.
 
 ------------------------------------------------------------------------------------------
 Before release:
-------------------------------------------------------------------------------------------
+—————————————————————————————————————————————
+
+
+
+sign ovt/dist/ovt.jar (from NetBeans build) with following command:
+
+jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkestore.jks> -storepass $PASS <path_to_ov.jart> server
+
+replace local paths and $PASS with keystone password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
+
 
 ------------------------------------------------------------------------------------------
-if VTK updated or libovt.dylib/.so/.dll updated:
+if VTK updated or OVT native C package( libovt.dylib/libovt.so/ovt.dll updated:
 
  
 build on each target platform....................
@@ -60,6 +69,9 @@ $sh fix_macosx_nativelibs_fkjn.sh
 make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing
 
 ------------------------------------------------------------------------------------------
+
+
+
 build all in install4j
 
 rsync (4 files) files to server:
@@ -81,6 +93,6 @@ error at jogl rendering, check linux vtk build.
 Stuff to make OVT_windows compile:
 
 
-1. move natives to to jre/bin/  (maybe add to path)
+1. move natives to to jre/bin/  add to path)
 2. switch to 32bit JRE. or recompile to 64bit .dlls…
 

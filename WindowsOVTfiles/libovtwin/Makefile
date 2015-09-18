@@ -9,21 +9,21 @@ RM = rm
 
 .SUFFIXES: .c .h
 
-INSTALL = /bin/install -c
+INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
 
 CC = gcc
 
 SHLIB_CFLAGS = -fPIC
-SHLIB_BUILD_FLAGS = 
+SHLIB_BUILD_FLAGS = -dynamiclib
 
-CFLAGS = -g -O2
+CFLAGS = -O3 -mmacosx-version-min=10.8
 CC_FLAGS = ${SHLIB_CFLAGS} ${CFLAGS} -DUNIX
 
 srcdir        = .
 
-JAVA_INCLUDES = -IC:/Users/frejon/Desktop/jre1.8.0_51/include
-JAVA_INCLUDES_OS = -IC:/Users/frejon/Desktop/jre1.8.0_51/include/unsupported
+JAVA_INCLUDES = -I/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/include
+JAVA_INCLUDES_OS = -I/Library/Java/JavaVirtualMachines/jdk1.8.0_45.jdk/Contents/Home/include/darwin
 INSTALLDIR = ../lib
 
 OVTVERSION = 3.0
@@ -34,21 +34,21 @@ USATOBJS = usat/cnstinit.o usat/deep.o usat/fmod2p_2.o usat/getsatpos.o usat/mat
 
 WEIMEROBJ = weimer/cgmc2.o weimer/cgmc4.o
 
-all: ovt-${OVTVERSION}
+all: libovt-${OVTVERSION}.jnilib
 
 .c.o:
 	${CC} ${CC_FLAGS_XTRA} ${CC_FLAGS} -c ${JAVA_INCLUDES} ${JAVA_INCLUDES_OS} $< -o $@
 
-ovt-${OVTVERSION}: $(OBJS) $(USATOBJS) $(WEIMEROBJ)
+libovt-${OVTVERSION}.jnilib: $(OBJS) $(USATOBJS) $(WEIMEROBJ)
 	${CC}  ${CC_FLAGS_XTRA} ${SHLIB_BUILD_FLAGS} ${OBJS} $(USATOBJS) $(WEIMEROBJ) -o $@
 
 
 install:
 	@echo "Installing OVT shared library ..."
-	${INSTALL} -m 555 ovt-${OVTVERSION} ${exec_prefix}/lib
+	${INSTALL} -m 555 libovt-${OVTVERSION}.jnilib ${exec_prefix}/lib
 
 clean: clean-objs
 	${RM} -rf arch
 	
 clean-objs:
-	${RM} -f *.o *  usat/*.o  weimer/*.o
+	${RM} -f *.o *.jnilib  usat/*.o  weimer/*.o

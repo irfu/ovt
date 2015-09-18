@@ -51,19 +51,19 @@ struct MCONSTANTS
 };
 
 
-typedef struct {
+typedef struct ELEMENT {
     char name[32];
     double xmo;			/* Mean Anomaly [rad] (ko)	*/
     double xnodeo;
     double omegao;
     double eo;			/* Eccentricity with assumed leading decimal (ko) */
- 
+
     double xincl;		/* Inclination [rad] (ko) */
     double xno;			/* Revolutions per Day (Mean Motion) (ko)	*/
     double xndt2o;
     double xndd6o;
     double bstar;
-    double x; 			/* coordinates          */ 
+    double x; 			/* coordinates          */
     double y;
     double z;
     double xdot;		/* velocity             */
@@ -76,13 +76,15 @@ typedef struct {
 
 /***** functions found in deep.c *****/
 
-int    dpinit (double eqsq1, double siniq1, double cosiq1, 
+
+int    dpinit (double eqsq1, double siniq1, double cosiq1,
 	    double rteqsq1, double ao, double cosq2, double sinomo1,
 	    double cosmom1, double bsq1, double xlldot, double omgdt1,
-	    double xnodot, double xnodp, ELEMENT element);
+	    double xnodot, double xnodp, ELEMENT *element);
 
 int    dpsec (double *xll, double *omgasm, double *xnodes,
-	    double *em, double *xinc, double *xn, double tsince, ELEMENT element);
+	    double *em, double *xinc, double *xn, double tsince, ELEMENT *element);
+
 
 int    dpper (double *em, double *xinc, double *omgasm,
 	    double *xnodes, double *xll);
@@ -122,4 +124,3 @@ double mjd (long year, long month, double day);
 /***** functions found in rsat.c *****/
 
 int    read_element (FILE *tlefile, ELEMENT *element);
-

@@ -1,0 +1,163 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+      "http://www.w3.org/TR/REC-html40/strict.dtd"> 
+<html>
+<head>
+	<meta name="Author" content="yuri@irfu.se">
+	<meta name="Keywords" content="OVT ovt orbit visualization">
+	<meta name="description" content="Orbit Visualization Tool (OVT) 
+	Installation under UNIX">
+	<link rel="StyleSheet" href="/ovt_web.css" type="text/css" media="screen">
+	<title>OVT 2.1 :: Installing under UNIX</title>
+</head>
+<body>
+<h1>OVT 2.1 :: Installing under UNIX</h1>
+
+<hr>
+
+<ul>
+<li><a href="#intro">Requirements</a>
+<li><a href="#ovt">OVT Installation</a>
+</ul>
+
+<hr>
+
+<a name="intro"><h2>Requirements</h2></a>
+<blockquote>
+OVT requires :
+<UL>
+  <LI> Java (J2SE/JDK 1.2-1.3.x)
+  <LI> OpenGL or Mesa
+  <LI> VTK (Visualization Toolkit) 3.2 with Java support 
+</UL>
+ 
+<BR><BR>
+
+Follow the following steps before building OVT:
+<ol>
+<li><a href="#java">Install Java</a>
+<li><a href="#vtk">Install OpenGL or Mesa libraries</a>
+<li><a href="#vtk">Install VTK with Java support</a>
+</ol>
+
+<a name="java"><h3>Java Installation</h3></a>
+<blockquote>
+You need to install Java 2 Standard Edition (J2SE) version 1.2 - 1.3.x.<BR> <BR>
+
+Note that OVT doesnt not work with versions: 1.1.x, 1.4.<BR><BR>
+
+Install <A HREF="http://java.sun.com/j2se/1.3/">SUN's implementations of Java</A>
+(recommended) or <a href="http://java.sun.com/cgi-bin/java-ports.cgi">Java Port by the vendor other then SUN Microsystems</a>.
+<BR><BR>
+
+To speed up OVT and VTK compilation process you can also install <A HREF="http://oss.software.ibm.com/developerworks/opensource/jikes/">jikes</A>.
+</blockquote>
+<!--
+<a name="opengl"><h3>OpenGL/Mesa Installation</h3></a>
+<blockquote>
+OpenGL/Mesa is needed by VTK.<BR><BR>
+
+If you have OpenGL already installed you should use it, otherwise install <a href="http://www.mesa3d.org/">Mesa</A>.
+<BR><BR>
+
+Mesa works faster on Xfree86-4 because of GLX support.
+
+
+It is possible to run OVT to a remote X-display but depending on server/display 
+configuration performance/stability could differ seriously. Please refer to platform 
+specific tips for more details.
+
+</blockquote>
+//-->
+
+<a name="vtk"><h3>OpenGL/Mesa Installation, VTK Installation</h3></a>
+<blockquote>
+For OpenGL/<a href="http://www.mesa3d.org/">Mesa</A> and <a href="http://www.kitware.com/vtk/">VTK</A> installation please refer 
+VTK for OVT page (<a href="http://ovt.irfu.se/vtk/">http://ovt.irfu.se/vtk/</a>)
+</blockquote>
+
+<!--
+<blockquote>
+<A HREF="ftp://public.kitware.com/pub/vtk/vtk3.2/vtk32-src-unix.tgz">Download</A> VTK 3.2 source files from Kitware FTP server.<BR>
+Installing VTK with Java support is more complicated ;-) The most important moments 
+are to modify thread support for some systems (FreeBSD, Linux) and to link VTK Java 
+library with extra C++ libraries. If you will be using VTK only for OVT/Java then 
+disable TCL and Python support because of timing. For details please refer to VTK 
+documentation and our VTK page 
+(http://ovt.irfu.se/vtk/</a>)
+</blockquote>
+
+//-->
+</blockquote>
+
+<a name="ovt"><h2>OVT Installation</h2></a>
+<blockquote>
+<OL>
+
+<LI> Download OVT sources (<TT>ovt2g-2.1-XX.src.tar.gz</TT>) from <A HREF="http://ovt.irfu.se/download/">http://ovt.irfu.se/download/<A>
+<BR><BR>
+
+<LI> Unpack sources: <TT>gzcat ovt2g-2.1-XX.src.tar.gz | tar xvf -</TT><BR><BR>
+
+<LI> <TT>cd ovt2g-2.1</TT><BR><BR>
+
+<!--
+<LI> Run <TT>autoconf</TT> wich will generate configure script.<BR><BR>
+//-->
+
+<LI> Run <TT>configure</TT> script:<BR>
+
+     <TT>./configure --with-jdk=/path/to/your/JDKHOME --with-vtk-classpath=/path/to/your/vtk.jar --with-vtk-lib=/path/to/your/vtk/libs/dir</TT><BR><BR>
+      Use <TT>./configure --help</TT> for help.<BR><BR>
+      If you have installed jikes, add it to PATH before running <TT>configure</TT>.<BR><BR>
+<LI> <TT>make</TT><BR><BR>
+
+<LI> Become a superuser: <TT>su -l</TT><BR><BR>
+
+<LI> <TT>make install</TT><BR><BR>
+     By default OVT will be installed under <TT>/usr/local/</TT>.<BR>
+     If you want OVT to be installed under the directory other than /usr/local/, 
+     let's say <TT>/opt</TT> you have to supply <TT>configure</TT> with 
+     <TT>--with-prefix=/opt</TT> parameter.<BR><BR>
+     
+
+<LI> Run OVT: <TT>/usr/local/bin/ovt.sh</TT><BR><BR>
+
+</blockquote>
+<!--
+<h5>UNIX shared multiuser installation</h5>
+<blockquote>
+To run program properly user should have write permissions to OVT configuration and data 
+directories. To avoid interaction between users it is possible to make a personal installation. 
+To do so run <tt>$OVT_HOME/bin/ovt.sh –install</tt>. 
+It will copy all the necessary data 
+to <tt>$HOME/ovt2g</tt> and then will use only personal data and configuration 
+files.
+</blockquote>
+//-->
+
+<!--
+<a name="tips"><h2>Platform specific tips</h2></a>
+<blockquote>
+For the moment we have seen OVT working on the following platforms:
+<ul>
+<li>FreeBSD/i386 3.4 STABLE 
+<li>Solaris 7 (Sparc)
+<li>Solaris 2.6 (x86)
+<li>Windows 98
+<li>Windows NT 4.8 SP6
+<li>RedHat Linux 5.2
+</ul>
+</blockquote>
+//-->
+<hr>
+Copyright &copy 2000-2002 OVT Team.
+All rights reserved.
+<br><br>
+<font size=-2>
+<!--#echo var="SERVER_NAME" var="DOCUMENT_URI"-->
+<br>
+last modified on <!--#echo var="LAST_MODIFIED"-->
+</font>
+</body>
+</html>
+

@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
+
+<title>Release notes for OVT 2.1 (April 2002)</title>
+<meta name=Author content="yuri@irfu.se">
+<meta name=Keywords content="OVT ovt orbit visualization">
+<meta name=description
+content="Orbit Visualization Tool (OVT) version 2.0 Release notes">
+<link rel=StyleSheet href="ovt_web.css" type="text/css" media=screen>
+</head>
+
+<body>
+<h1>Release notes for OVT version 2.1</h1>
+
+<small>April 12, 2002</small>
+
+<hr size=2 width="100%" align=center>
+
+<p>This release of OVT is the first one from 2.0 in April, 2001.
+There are many new features and bug-fixes.</p>
+
+<h3>New features</h3>
+
+<h4>Data visualization module</h4>
+<p>gives possibility to visualize simple data
+on orbit and/or fieldlines. It includes following modules:</p>
+<UL>
+<LI>Load Data Wizard, which can load data from 2-column data file containing
+time and value;
+<LI>Data scalar bar;
+<LI>Data on orbit module;
+<LI>Data on fieldlines Module;
+<LI>Data Properties window.
+</UL>
+
+<h4>View Controls</h4>
+<ul>
+<LI> View Control Window include Perspective/Parallel projection choice;
+<LI> <B>Look at</B> menu item in Earth, 
+Satellite and GroundbasedStation pop-up menu;
+<LI> View Control Toolbar contains
+fast views buttons: close view to the northern/southern hemisphere,
+views from x, -x, y, -y, z, -z and a button to show a View Control window.
+</ul>
+
+<h4>Orbit files (TLE) validation tool</h4>
+<p><tt>checktle</tt> - allow user to create "correct" TLE files by cleaning
+double and incorrect ordered lines. It is strongly recommended to
+process TLE files with <tt>checktle</tt> when importing. <tt>checktle</tt> is 
+located in <tt>ovt2g/bin</tt> directory and is used from the command line
+<tt>checktle filein.tle fileout.tle</tt>.
+
+<h4>Shape of Cluster satellites</h4>
+<p>is now cylindrical with additional small cone, indicating spin axis
+orientation.</p>
+
+<h4>Magnetosphere</h4>
+<p>visualization is now possible with "thick" fieldlines in addition to
+wireframe. Thickness of the fieldlines can be specified.</p>
+
+<h4>Footprints</h4>
+<p>now have time labels.</p>
+
+<h4>Earth</h4>
+<p>visualization now includes</p>
+<ul>
+<LI>meridians and parallels (grid) with labels;
+<LI>different texture choice (Black &amp; White, Normal and High Resolution).
+</ul>
+
+<h4>Orbit monitor</h4>
+<p>dumper now has option to include B-total, Bx, By, Bz, Footprint coordinates, 
+Dipole Tilt angle.</p>
+
+<hr size=2 width="100%" align=center>
+
+<h3>Updates and fixes</h3>
+
+<h4>Field line calculation</h4>
+<p>works approximately 2x times faster due to some optimizations
+included.</p>
+
+<h4>Orbital files</h4>
+<ul>
+<li>Cluster LTOF files are updated to 25-Jan-2002;
+<li>Updated orbital files for other
+satellites are included in the distribution and also can be found at our 
+<a href='http://ovt.irfu.se/download/'>download page</a>
+</ul>
+
+<h4>Caption</h4>
+<ul>
+<li>is wiser. Example: (2001-01-01 00:00:00 - 2001-01-02 00:00:00)
+is changed to (2001-01-01 00:00:00 - 02 00:00:00);
+<li>is always updated on change of time period.
+</ul>
+
+<h4>Major bugs fixed</h4>
+<ul>
+<li>MLT display in Orbit monitor;
+<li>Cluster orbit calculation;
+<li>java.lang.ArrayIndexOutOfBoundsException;
+<li>"slow" ground based stations;
+<li>window behavior on resize.
+</ul>
+ 
+<hr size=2 width="100%" align=center>
+
+<h3>Known problems</h3>
+
+<h4>Windows 2000</h4>
+<p>has OpenGL/Java memory leaks resulting in numerous problems 
+starting from incorrect color display and ending by
+program crash in case of earth grid display or close look at
+Cluster satellites.</p>
+
+<h4>Using parallel projection</h4>
+<p>may sometimes leed to strange effects like mirroring of labels,
+clipping of view-plane, etc. Pressing <tt>reset</tt> in View Control Window 
+may sometimes help.
+</p>
+
+<hr size=2 width="100%" align=center>
+
+<p>OVT2 is known to run on majority of Windows and UNIX platforms. </p>
+
+<p>Submission of bugs and possible
+improvements is welcome. Please send e-mail to <a
+href="mailto:ovt-team@nest.irfu.se">ovt-team@nest.irfu.se</a> </p>
+
+<hr size=2 width="100%" align=center>
+
+
+<p>Copyright © 2000-2002,
+OVT Team. All rights reserved.<br>
+Maintained by <i><a href="http://cluster.irfu.se/yuri">Yuri Khotyaintsev</a></i>
+(<a href="mailto:yuri@irfu.se">yuri@irfu.se</a>)<br>
+<br>
+<small>http://<!--#echo var="SERVER_NAME" var="DOCUMENT_URI"-->
+<br>
+last modified on <!--#echo var="LAST_MODIFIED"--></small></p>
+
+</body>
+
+</html>

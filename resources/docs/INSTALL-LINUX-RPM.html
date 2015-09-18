@@ -1,0 +1,81 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"> 
+<html>
+<head>
+	<meta name="Keywords" content="OVT ovt orbit visualization">
+	<meta name="description" content="Orbit Visualization Tool (OVT) 
+	RPM Installation under LINUX">
+	<link rel="StyleSheet" href="/ovt_web.css" type="text/css" media="screen">
+	<title>OVT 2.3 RPM installation under LINUX</title>
+</head>
+<body>
+<h1>OVT 2.3 RPM installation under LINUX</h1>
+<hr>
+
+<li>Install Java 1.4.x or 1.3.x<BR><BR>
+For example - Sun's j2se SDK 1.4.2:
+<UL>
+<LI> download <B>Linux RPM in self-extracting file</B> from <a href="http://java.sun.com/j2se/1.4.2/download.html" target=_newwin>this page</a>.<BR>
+<LI><TT>$ sh j2sdk-1_4_2_01-linux-i586-rpm.bin</TT><BR>
+<LI><TT>$ rpm -i j2sdk-1_4_2_01-linux-i586.rpm</TT><BR>
+</UL>
+
+<BR><BR>
+
+<LI>Install VTK 4.2 RPMS (
+<A HREF="http://ovt.irfu.se/vtk/files/vtk-4.3.0-1.cvs20030930.i386.rpm">vtk-4.3.0-1.cvs20030930.i386.rpm</A>
+and
+<A HREF="http://ovt.irfu.se/vtk/files/vtk-java-4.3.0-1.cvs20030930.i386.rpm">vtk-java-4.3.0-1.cvs20030930.i386.rpm</A>)
+<BR><BR>
+<UL>
+  <LI><tt>$ rpm -i vtk-4.3.0-1.cvs20030930.i386.rpm</tt>
+  <LI><tt>$ rpm -i vtk-java-4.3.0-1.cvs20030930.i386.rpm</tt>
+</UL>
+<BR>
+
+If you get the dependency error about missing libraries 
+(e.g. libstdc++.so.6, etc.) you should install them. You
+can use <A HREF="http://rpmfind.net">http://rpmfind.net</A>
+to locate the appropriate RPM.<BR><BR> 
+
+If you get:<BR>
+<PRE>
+error: Failed dependencies:
+        libjawt.so is needed by vtk-java-4.3.0-1.cvs20030930
+</PRE>
+Force <TT>vtk-java</TT> installation:
+<tt>$ rpm -i --nodeps vtk-java-4.3.0-1.cvs20030930.i386.rpm</tt>
+<BR><BR>
+
+<!--
+<PRE>
+error: failed dependencies:
+         libvga.so.1 is needed by vtk-java-4.3.0-1.cvs20030930
+</PRE>
+You need to install <TT>svgalib</TT> package.
+You can download <TT>svgalib-1.4<TT> rpm (RedHat 7.1 distribution) <A HREF="ftp://ftp.redhat.com/pub/redhat/linux/7.1/en/powertools/i386/RedHat/RPMS/svgalib-1.4.1-13.i386.rpm">here</A>
+ //-->
+
+Note, that VTK also requires OpenGL or Mesa libraries. 
+<BR><BR>
+<LI> Install OVT RPM
+<UL><LI><tt>$ rpm -i ovt-2.3-1.i386.rpm</tt></UL>
+
+
+<li> Run OVT
+<UL><tt>$ /usr/local/bin/ovt</tt></UL>
+
+</ul>
+<BR><BR>
+
+<!--<li> Enjoy!-->
+<hr>
+Copyright &copy 2000-2002 OVT Team.
+All rights reserved.
+<br><br>
+<small>
+http://<!--#echo var="SERVER_NAME" var="DOCUMENT_URI"-->
+<br>
+last modified on <!--#echo var="LAST_MODIFIED"-->
+</small>
+</body>
+</html>

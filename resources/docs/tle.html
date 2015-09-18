@@ -1,0 +1,212 @@
+<html><head>
+<title>Orbital Elements</title></head>
+<body>
+
+<h2><a name="TLEs"></a><a name="intro"></a>Brief Introduction To TLEs And
+Satellite IDs</h2>
+
+<BR>
+
+<p>Keplerian or Two-Line Element Sets (TLEs) are distributed in the form shown
+in the example below: </p>
+
+<b>THOR ABLESTAR R/B 1</b><br>
+1 00047U 60007C 96198.95303667 -.00000008 +00000-0 +24803-4 005026 2<br>
+2 00047 066.6626 011.9766 0252122 190.4009 169.1818 14.34618735877842
+
+<p>Line 0 (the top line) provides the<b> catalog and/or common name</b> of the
+satellite object. Not all TLEs have common names associated with them, but they
+are an additional enhancement provided by some TLE distributors to allow the
+tracking program to provide a common name for the satellite in addition to the
+Satellite Catalog Number and/or International ID. Note, "R/B is an OIG
+acronym for "rocket body". </p>
+
+<p>The<b> epoch date</b> is the third element <b>(96198.95303667)</b> in line 1
+of the TLE. The epoch is the sequential calendar date when the satellite
+crossed the equator in an ascending (northerly) direction subsequent to a
+series of observations that were made to calculate the elements. In the above
+example, observations were made near the time on which the satellite was
+calculated to have crossed the equator on calendar date 198.95303667 in the
+year 1996. Universal Time (UT), formally known as Greenwich Mean Time (GMT), is
+the time standard used. Jim Varney explains the concept in a response to a
+question found in the <a href="http://satobs.org/seesat/Mar-1997/0094.html">SeeSat-L</a>
+e-mail archive. </p>
+
+<p>Specifically, the equatorial crossing was calculated for day 198 of the year
+1996 at 22:52 UT [24 (hours) x 0.95303667 = 22.87288 hours, and 60 (minutes) x
+0.87288 = 52.3728 minutes]. Most tracking programs will inform the user how old
+the element is by using the epoch date element. This tells the user if an old
+and possibly unreliable TLE is being used. </p>
+
+THOR ABLESTAR R/B 1<br><b>
+1 00047U 60007C 96198.95303667 -.00000008 +00000-0 +24803-4 005026 2</b><br>
+2 00047 066.6626 011.9766 0252122 190.4009 169.1818 14.34618735877842
+
+<p><a name="catno">The</a> first element in line 1 <b>(00047U)</b> and in line 2 <b>(00047)</b>
+is the<b> Satellite Catalog Number</b> assigned by USSPACECOM. The <b>"U"</b>
+designates the element as unclassified or for public distribution. The official
+title for this identifier is "Satellite Catalog Number". However,
+many acronyms are used because of their brevity and past history of use. These
+include NORAD (North American Air Defense), NSSC (NORAD Space Surveillance
+Center), Cat # (Catalog Number), Object Number, USSPACECOM (US Space Command)
+number, and so on. </p>
+
+<p>Thus the satellite in the example TLE was 47th satellite ever cataloged by
+the USSPACECOM. </p>
+
+<p>"Satellite Catalog Number" comes from the early days of satellite
+identification done at Hanscom Field, Massachusetts, USA in the late 1950's,
+where they kept track of the satellites they identified, by giving them the
+next ascending number in a log that began with the number 00001 for the Sputnik
+launch. When NORAD took over the responsibility for tracking, they continued
+using the sequence. Now USSPACECOM continues the assignment. </p>
+
+THOR ABLESTAR R/B 1<br><b>
+1 00047U 60007C 96198.95303667 -.00000008 +00000-0 +24803-4 005026 2</b><br>
+2 00047 066.6626 011.9766 0252122 190.4009 169.1818 14.34618735877842
+
+<p><a name="intdesg">The</a> second element in line 1 <b>(60007C)</b> indicates
+the<b> International Designation</b> and corresponds to the numerical format
+designation of 60-007C. This indicates a launch in 1960 and it was the 7th
+successful orbital launch for that year. "C" designates the third
+object catalogued for that launch. Launches in 2000, 2001, 2002 and later start
+with 00-xxxx, 01-xxxx, 02-xxxx while launches from 1957 and later until the year 
+2000 start with the numbers 57 to 99. The International Designation is also
+described by terms such as International ID, <a href="http://cospar.itodys.jussieu.fr/">COSPAR</a> (COmmittee for SPAce
+Research) number, and COSPAR/WWAS (COSPAR World Warning Agency for Satellites)
+number. The World Warning Agency (WWAS) is the body authorized by the United
+Nations to issue the International ID. WWAS issues the International
+Designation for the payload but not for any of the other objects placed in
+orbit as a result of the launch. Subsequent International Designations for
+non-payload objects are normally assigned by USSPACECOM using the same
+designation as the payload, but using the next higher English letter in the
+alphabet. </p>
+
+THOR ABLESTAR R/B 1<br>
+1 00047U 60007C 96198.95303667 -.00000008 +00000-0 +24803-4 005026 2<br><b>
+2 00047 066.6626 011.9766 0252122 190.4009 169.1818 14.34618735877842</b>
+
+<p>The second element in Line 2 <b>(066.6626)</b> is the<b> inclination</b> of
+the orbit which is measured counter-clockwise from true East to true West . The
+values of inclination can be from 0 to 180 degrees. Thus, this satellite will
+be seen moving in a NNE direction as it crosses the Earth's equator going in an
+ascending direction (south to north). </p>
+
+<p>An inclination of less than 90 degrees would mean that the satellite is in
+an orbit less than polar and is in a prograde orbit. That is, the satellite
+moving in an easterly direction takes advantage of the Earth's easterly
+rotation and requires less energy to be placed into orbit. The minimum energy
+needed to place a satellite into orbit would be a launch from the equator in a
+due easterly direction. Such a launch would have the satellite have an
+inclination of 0 degrees. Additional energy must be expended by the rocket to maneuver
+a satellite into an orbital inclination of zero degrees if launched from a latitude
+other than zero degrees. </p>
+
+<p>An inclination of 90 degrees would mean the satellite crosses the Earth's
+equator at a right angle and crosses both poles in one orbit. </p>
+
+<p>An inclination of greater than 90 degrees would mean that the satellite is
+in less than a polar orbit and is in what is called a retrograde orbit. Part of
+the motion of the satellite is in the opposite direction of rotation of the
+Earth. </p>
+
+<hr>
+
+<h2> Breakdown of Orbital Elements</h2>
+<p>
+<img src="tle_files/thinrainbow_line.gif" align="bottom" width="750" height="1">
+</p><p>
+</p><h3>Standard TLE format from Orbital Information Group (OIG)</h3>
+<pre>25107 Iridium 48
+1 25107U 97082D   98151.26839894 -.00007632  00000-0 -27359-2 0  1321
+2 25107  86.3970 282.3520 0003565  65.4476 294.7132 14.34205441 23251
+</pre>
+
+<h3>Breakdown of a Two Line Element</h3>
+<p> Line 0= "25107 Iridium 48", provides the NORAD catalog number and/or
+possibly other information such as the common name assigned to the satellite. 
+</p><pre>
+!&gt;Line Number 1
+!   !&gt;Catalog Number (NORAD)
+!   !  !&gt;Security Classification for this Element Set
+!   !  !    !&gt;International Identification for this Object (COSPAR)
+!   !  !    !     !&gt;Two Digit Year
+!   !  !    !     !  !&gt;Day of Year
+!   !  !    !     !  !     !&gt;Fraction of 24 Hour Day
+!   !  !    !     !  !     !     !&gt;Sign of 1st Time Derivative
+!   !  !    !     !  !     !     !    !&gt;1st Time Derivative
+!   !  !    !     !  !     !     !    !     !&gt;Sign of 2nd Time Derivative
+!   !  !    !     !  !     !     !    !     !  !&gt;2nd Time Derivative
+!   !  !    !     !  !     !     !    !     !  !  !&gt;Sign of exponent
+!   !  !    !     !  !     !     !    !     !  !   !&gt;Exponent 2ndTimeDerivative
+!   !  !    !     !  !     !     !    !     !  !     !&gt;Sign of BSTAR drag term
+!   !  !    !     !  !     !     !    !     !  !     !  !&gt;BSTAR/Drag Term
+!   !  !    !     !  !     !     !    !     !  !     !  !  !&gt;Sign of Exponent
+!   !  !    !     !  !     !     !    !     !  !     !  !  !!&gt;Exponent BstarDrg
+!   !  !    !     !  !     !     !    !     !  !     !  !  !! !&gt;Ephemeris Type
+!   !  !    !     ! ---    !     !    !     !  !     !  !  !! ! !&gt;Element No.
+! -----! -------- --|||--------- !--------- !-----   !-----!! ! ----!&gt;Checksum
+1 25107U 97082D   98151.26839894 -.00007632  00000-0 -27359-2 0  1321 = Line 1
+2 25107 086.3970 282.3520 0003565 065.4476 294.7132 14.34205441 23251 = Line 2
+123456789012345678901234567890123456789012345678901234567890123456789 = columns
+! ----- ---.---- ---.---- ------- ---.---- ---.---- --.--------|||||!&gt;Checksum
+!   !   Incl     RAAN     Ecc     AoP      MA       RpD        -----
+!   !   !        !        !       !        !        !          !&gt;Rev # @ Epoch
+!   !   !        !        !       !        !        !&gt;MeanMotion(Revolutions/Day)
+!   !   !        !        !       !        !&gt;Mean Anomaly
+!   !   !        !        !       !&gt;Argument of Perigee
+!   !   !        !        !&gt;Eccentricity, with assumed decimal point leading
+!   !   !        !&gt;Right Ascension of Ascending Node
+!   !   !&gt;Inclination
+!   !&gt;Catalog Number (NORAD)
+!&gt;Line Number 2
+
+
+Line 0 provides the catalog number and/or possibly other information
+such as the common name assigned to the satellite.
+
+Line 1
+
+   Column Numbers     Number of
+   First     Last     Characters     Description
+   -----     ----     ----------     -----------
+     1        1           1          Line No. Identification
+     3        7           5          Catalog No.
+     8        8           1          Security Classification
+    10       17           8          International Identification
+    19       32          14          YRDOY.FODddddd
+    34       34           1          Sign of first time derivative
+    35       43           9          1st Time Derative
+    45       45           1          Sign of 2nd Time Derivative
+    46       50           5          2nd Time Derivative
+    51       51           1          Sign of 2nd Time Derivative Exponent
+    52       52           1          Exponent of 2nd Time Derivative
+    54       54           1          Sign of Bstar/Drag Term
+    55       59           5          Bstar/Drag Term
+    60       60           1          Sign of Exponent of Bstar/Drag Term
+    61       61           1          Exponent of Bstar/Drag Term
+    63       63           1          Ephemeris Type
+    65       68           4          Element Number
+    69       69           1          Check Sum, Modulo 10
+
+
+Line 2
+
+   Column Numbers     Number of
+   First     Last     Characters     Description
+   -----     ----     ----------     -----------
+     1        1           1          Line No. Identification
+     3        7           5          Catalog No.
+     9       16           8          Inclination
+    18       25           8          Right Ascension of Ascending Node
+    27       33           7          Eccentricity with assumed leading decimal
+    35       42           8          Argument of the Perigee
+    44       51           8          Mean Anomaly
+    53       63          11          Revolutions per Day (Mean Motion)
+    64       68           5          Revolution Number at Epoch
+    69       69           1          Check Sum Modulo 10
+
+<address>
+Information taken from <a href="http://satobs.org/">satobs.org</a>
+</address>
+</body></html>

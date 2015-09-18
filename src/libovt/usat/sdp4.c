@@ -148,7 +148,7 @@ int    sdp4 (int *iflag, ELEMENT *element, double tsince)
 	*iflag = 0;
 
 	dpinit (eosq, sinio, cosio, betao, aodp, theta2, sing, cosg,
-		betao2, xmdot, omgdot, xnodot, xnodp, (*element));
+		betao2, xmdot, omgdot, xnodot, xnodp, element);
 
     }
 
@@ -164,7 +164,7 @@ int    sdp4 (int *iflag, ELEMENT *element, double tsince)
     templ = t2cof * tsq;
     xn = xnodp;
 
-    dpsec (&xmdf, &omgadf, &xnode, &em, &xinc, &xn, tsince, (*element));
+    dpsec (&xmdf, &omgadf, &xnode, &em, &xinc, &xn, tsince, element);
 
     a = pow (pcnsts.xke / xn, mcnsts.tothrd) * tempa * tempa;
     e = em - tempe;

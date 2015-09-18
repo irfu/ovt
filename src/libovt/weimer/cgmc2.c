@@ -42,7 +42,7 @@ union {
 	real bb[8];
     } _1;
     struct {
-	real st0, ct0, sl0, cl0, ctcl, stcl, ctsl, stsl, sfi, cfi, sps, cps, 
+	real st0, ct0, sl0, cl0, ctcl, stcl, ctsl, stsl, sfi, cfi, sps, cps,
 		shi, chi, hi, psi, xmut, a11, a21, a31, a12, a22, a32, a13,
 		a23, a33, ds3;
 	integer k, iy;
@@ -74,7 +74,7 @@ void fill_commons(int nharm, int year){
 /* This version is prepared to be translated from Fortran to C with use */
 /* of f2c on Linux. */
 
-/* Main program */ MAIN__()
+/* Main program */ int MAIN__()
 {
     /* System generated locals */
     integer i__1, i__2;
@@ -167,7 +167,7 @@ real *sla, *slo, *rh, *dla, *dlo, *cla, *clo, *pmi;
     extern /* Subroutine */ int geomag_();
     static real rm, sn, xm, ym, zm;
     extern /* Subroutine */ int geocor_(), sphcar_();
-    static real dr0, dr1, sn2, aa10, saa, dr10, col, rfi, gth, dls, saq, rlo, 
+    static real dr0, dr1, sn2, aa10, saa, dr10, col, rfi, gth, dls, saq, rlo,
 	    pms;
 
 /*  Calculates geocentric coordinates from corrected geomagnetic ones. */
@@ -423,7 +423,7 @@ real *x, *y, *z, *ds;
 
     /* Local variables */
     extern /* Subroutine */ int right_();
-    static real r11, r12, r13, r21, r22, r23, r31, r32, r33, r41, r42, r43, 
+    static real r11, r12, r13, r21, r22, r23, r31, r32, r33, r41, r42, r43,
 	    r51, r52, r53;
 
 /*  Similar to SUBR STEP from GEOPACK-1996 but SHAG takes into account */
@@ -470,7 +470,7 @@ real *x, *y, *z, *r1, *r2, *r3;
     static real b, f, r, t, bf, br, bt, bx, by, bz;
     extern /* Subroutine */ int bspcar_(), sphcar_();
 
-/*  Similar to SUBR RHAND from GEOPACK-1996 but RIGHT takes into account 
+/*  Similar to SUBR RHAND from GEOPACK-1996 but RIGHT takes into account
 */
 /*  only internal sources */
 /*  The code is re-written from Tsyganenko's subroutine RHAND */
@@ -817,16 +817,16 @@ real *r, *t, *f, *br, *bt, *bf;
 /*  Aug 26, 1997: Subroutine IGRF is modified by V. Papitashvili - SHA */
 /*    coefficients for DGRF-1990, IGRF-1995, and SV 1995-2000 are added */
 /*    (EOS, v.77, No.16, p.153, April 16, 1996) */
-/*  Feb 03, 1995: Modified by Vladimir Papitashvili (SPRL, University of 
+/*  Feb 03, 1995: Modified by Vladimir Papitashvili (SPRL, University of
 */
 /*    Michigan) to accept dates between 1945 and 2000 */
-/*  MODIFIED TO ACCEPT DATES BETWEEN 1965 AND 2000; COEFFICIENTS FOR IGRF 
+/*  MODIFIED TO ACCEPT DATES BETWEEN 1965 AND 2000; COEFFICIENTS FOR IGRF
 */
 /*  1985 HAVE BEEN REPLACED WITH DGRF1985 COEFFICIENTS [EOS TRANS. AGU */
 /*  APRIL 21, 1992, C  P. 182]. ALSO, THE CODE IS MODIFIED TO ACCEPT */
 /*  DATES BEYOND 1990, AND TO USE LINEAR EXTRAPOLATION BETWEEN 1990 AND */
 /*  2000 BASED ON THE IGRF COEFFICIENTS FROM THE SAME EOS ARTICLE */
-/*  Modified by Mauricio Peredo, Hughes STX at NASA/GSFC, September 1992 
+/*  Modified by Mauricio Peredo, Hughes STX at NASA/GSFC, September 1992
 */
 /*  CALCULATES COMPONENTS OF MAIN GEOMAGNETIC FIELD IN SPHERICAL */
 /*  GEOCENTRIC COORDINATE SYSTEM BY USING THIRD GENERATION IGRF MODEL */
@@ -836,9 +836,9 @@ real *r, *t, *f, *br, *bt, *bf;
 /*  CALL AND AFTER EVERY CHANGE OF PARAMETER IY */
 /* ---INPUT PARAMETERS: */
 /*  IY - YEAR NUMBER (FROM 1945 UP TO 1990) */
-/*  NM - MAXIMAL ORDER OF HARMONICS TAKEN INTO ACCOUNT (NOT MORE THAN 10) 
+/*  NM - MAXIMAL ORDER OF HARMONICS TAKEN INTO ACCOUNT (NOT MORE THAN 10)
 */
-/*  R,T,F - SPHERICAL COORDINATES OF THE POINT (R IN UNITS RE=6371.2 KM, 
+/*  R,T,F - SPHERICAL COORDINATES OF THE POINT (R IN UNITS RE=6371.2 KM,
 */
 /*    COLATITUDE T AND LONGITUDE F IN RADIANS) */
 /* ---OUTPUT PARAMETERS: */
@@ -1313,7 +1313,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 
     /* Local variables */
     static real sdec, cgst, sgst, t, y, obliq, slong, f1, f2, srasn, s1, s2,
-	    s3, y1, y2, y3, z1, z2, z3, g10, g11, h11, dj, dt, sq, exmagx, 
+	    s3, y1, y2, y3, z1, z2, z3, g10, g11, h11, dj, dt, sq, exmagx,
 	    exmagy, exmagz, eymagx, eymagy, dy1, dz1, dz2, dz3, dy2, dy3, gst,
 	     sqq, sqr;
     extern /* Subroutine */ int sun_();
@@ -1335,7 +1335,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 /*  ##################################################### */
 /*  Modified by Mauricio Peredo, Hughes STX at NASA/GSFC Code 695, */
 /*  September 1992 */
-/*  Modified to accept dates up to year 2000 and updated IGRF coeficients 
+/*  Modified to accept dates up to year 2000 and updated IGRF coeficients
 */
 /*  from 1945 (updated by V. Papitashvili, February 1995) */
 /*   OTHER SUBROUTINES CALLED BY THIS ONE: SUN */
@@ -1358,7 +1358,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
     }
 /*  WE ARE RESTRICTED BY THE INTERVAL 1945-2000, FOR WHICH THE IGRF */
 /*  COEFFICIENTS ARE KNOWN; IF IYR IS OUTSIDE THIS INTERVAL, THE */
-/*  SUBROUTINE GIVES A WARNING (BUT DOES NOT REPEAT IT AT THE NEXT CALLS) 
+/*  SUBROUTINE GIVES A WARNING (BUT DOES NOT REPEAT IT AT THE NEXT CALLS)
 */
 /*      IF(IY.NE.IYR.AND.IPR.EQ.0) PRINT 10,IYR,IY */
     if (c1_2.iy != *iyr) {
@@ -1369,7 +1369,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 /*  VALUES FOR THE NEAREST EPOCHS: */
     if (c1_2.iy < 1950) {
 /* 1945-1950 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1945.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1945.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30594. + f2 * (float)30554.;
@@ -1377,7 +1377,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5810. + f2 * (float)5815.;
     } else if (c1_2.iy < 1955) {
 /* 1950-1955 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1950.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1950.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30554. + f2 * (float)30500.;
@@ -1385,7 +1385,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5815. + f2 * (float)5820.;
     } else if (c1_2.iy < 1960) {
 /* 1955-1960 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1955.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1955.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30500. + f2 * (float)30421.;
@@ -1393,7 +1393,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5820. + f2 * (float)5791.;
     } else if (c1_2.iy < 1965) {
 /* 1960-1965 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1960.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1960.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30421. + f2 * (float)30334.;
@@ -1401,7 +1401,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5791. + f2 * (float)5776.;
     } else if (c1_2.iy < 1970) {
 /* 1965-1970 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1965.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1965.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30334. + f2 * (float)30220.;
@@ -1409,7 +1409,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5776. + f2 * (float)5737.;
     } else if (c1_2.iy < 1975) {
 /* 1970-1975 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1970.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1970.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)30220. + f2 * (float)30100.;
@@ -1425,7 +1425,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5675. + f2 * (float)5604.;
     } else if (c1_2.iy < 1985) {
 /* 1980-1985 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1980.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1980.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)29992. + f2 * (float)29873.;
@@ -1433,7 +1433,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5604. + f2 * (float)5500.;
     } else if (c1_2.iy < 1990) {
 /* 1985-1990 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1985.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1985.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)29873. + f2 * (float)29775.;
@@ -1441,7 +1441,7 @@ integer *iyr, *iday, *ihour, *min__, *isec;
 	h11 = f1 * (float)5500. + f2 * (float)5406.;
     } else if (c1_2.iy < 1995) {
 /* 1990-1995 */
-	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1990.) / 
+	f2 = ((real) c1_2.iy + (real) (*iday) / (float)365. - (float)1990.) /
 		(float)5.;
 	f1 = 1. - f2;
 	g10 = f1 * (float)29775. + f2 * (float)29682.;
@@ -1509,9 +1509,9 @@ L5:
     z1 = s2 * y3 - s3 * y2;
     z2 = s3 * y1 - s1 * y3;
     z3 = s1 * y2 - s2 * y1;
-/*  THE VECTOR EZGSE (HERE DZ) IN GEI HAS THE COMPONENTS (0,-SIN(DELTA), 
+/*  THE VECTOR EZGSE (HERE DZ) IN GEI HAS THE COMPONENTS (0,-SIN(DELTA),
 */
-/*  COS(DELTA)) = (0.,-0.397823,0.917462); HERE DELTA = 23.44214 DEG FOR 
+/*  COS(DELTA)) = (0.,-0.397823,0.917462); HERE DELTA = 23.44214 DEG FOR
 */
 /*  THE EPOCH 1978 (SEE THE BOOK BY GUREVICH OR OTHER ASTRONOMICAL */
 /*  HANDBOOKS). HERE THE MOST ACCURATE TIME-DEPENDENT FORMULA IS USED: */
@@ -1522,7 +1522,7 @@ L5:
     dz1 = (float)0.;
     dz2 = -(doublereal)sin(obliq);
     dz3 = cos(obliq);
-/*  THEN THE UNIT VECTOR EYGSE IN GEI SYSTEM IS THE VECTOR PRODUCT DZ x S 
+/*  THEN THE UNIT VECTOR EYGSE IN GEI SYSTEM IS THE VECTOR PRODUCT DZ x S
 */
     dy1 = dz2 * s3 - dz3 * s2;
     dy2 = dz3 * s1 - dz1 * s3;
@@ -1580,7 +1580,7 @@ L5:
     c1_2.a32 = -(doublereal)z1 * sgst + z2 * cgst;
     c1_2.a33 = z3;
 /* 10   FORMAT(//1X, */
-/*     * '****RECALC WARNS: YEAR IS OUT OF INTERVAL 1945-2000: IYR=',I4, 
+/*     * '****RECALC WARNS: YEAR IS OUT OF INTERVAL 1945-2000: IYR=',I4,
 */
 /*     * /,6X,'CALCULATIONS WILL BE DONE FOR IYR=',I4,/) */
     return 0;
@@ -1588,7 +1588,7 @@ L5:
 
 /*  ********************************************************************* */
 /*  ********************************************************************* */
-/* Subroutine */ int sun_(iyr, iday, ihour, min__, isec, gst, slong, srasn, 
+/* Subroutine */ int sun_(iyr, iday, ihour, min__, isec, gst, slong, srasn,
 	sdec)
 integer *iyr, *iday, *ihour, *min__, *isec;
 real *gst, *slong, *srasn, *sdec;
@@ -1619,7 +1619,7 @@ real *gst, *slong, *srasn, *sdec;
 /*  IYR,IDAY,IHOUR,MIN,ISEC - YEAR, DAY, AND UNIVERSAL TIME IN HOURS, */
 /*    MINUTES, AND SECONDS  (IDAY=1 CORRESPONDS TO JANUARY 1). */
 /* ---OUTPUT PARAMETERS: */
-/*  GST - GREENWICH MEAN SIDEREAL TIME, SLONG - LONGITUDE ALONG ECLIPTIC 
+/*  GST - GREENWICH MEAN SIDEREAL TIME, SLONG - LONGITUDE ALONG ECLIPTIC
 */
 /*  SRASN - RIGHT ASCENSION,  SDEC - DECLINATION  OF THE SUN (RADIANS) */
 /*  THIS SUBROUTINE HAS BEEN COMPILED FROM: */
@@ -1633,7 +1633,7 @@ real *gst, *slong, *srasn, *sdec;
     t = dj / (float)36525.;
     d__1 = dj * (float).9856473354 + (float)279.696678;
     vl = gjdmod_(&d__1, &c_b79);
-    d__1 = dj * (float).9856473354 + (float)279.690983 + fday * (float)360. + 
+    d__1 = dj * (float).9856473354 + (float)279.690983 + fday * (float)360. +
 	    (float)180.;
     *gst = gjdmod_(&d__1, &c_b79) / rad;
     d__1 = dj * (float).985600267 + (float)358.475845;
@@ -1695,4 +1695,3 @@ L3:
 #ifdef __cplusplus
 }
 #endif
-

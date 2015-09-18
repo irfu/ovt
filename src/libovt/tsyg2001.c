@@ -442,7 +442,7 @@ L1:
     cospsas = sqrt(1. - d__1 * d__1);
     zss = *x * sinpsas + *z__ * cospsas;
     xss = *x * cospsas - *z__ * sinpsas;
-    dd = (d__1 = xss - xsold, abs(d__1)) + (d__2 = zss - zsold, abs(d__2));
+    dd = (d__1 = xss - xsold, fabs(d__1)) + (d__2 = zss - zsold, fabs(d__2));
     if (dd > 1e-6) {
 	goto L1;
     }
@@ -532,8 +532,8 @@ ONNECTION FIELD):*/
 	    *bzr22 = 0.;
 	}
 	if (*iopgen == 0 || *iopgen == 4) {
-	    rcpar_1.phi = tanh(abs(*dst) / a[34]) * 1.5707963;
-	    znam = abs(*dst);
+	    rcpar_1.phi = tanh(fabs(*dst) / a[34]) * 1.5707963;
+	    znam = fabs(*dst);
 	    if (znam < 20.) {
 		znam = 20.;
 	    }
@@ -3824,7 +3824,7 @@ WITH SOME*/
 
 /*    WRITTEN BY: N. A. TSYGANENKO */
 
-    if (m == 1 && (d__1 = *ps - psi, abs(d__1)) < 1e-5) {
+    if (m == 1 && (d__1 = *ps - psi, fabs(d__1)) < 1e-5) {
 	goto L1;
     }
 /*   THIS IS TO AVOID */
