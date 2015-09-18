@@ -522,7 +522,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
             final double duration_s = (System.nanoTime() - t_start_ns) / 1.0e9;  // Unit: seconds
             //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Time used for downloading data: " + duration + " [s]", DEBUG);
-            System.out.println("Time used for downloading data: " + duration_s + " [s]");
+            System.out.println("   Time used for downloading data: " + duration_s + " [s]");
         } catch (SSCDatabaseLockedException_Exception | SSCExternalException_Exception | SSCResourceLimitExceededException_Exception e) {
             throw new IOException("Attempt to download data from SSC Web Services failed: " + e.getMessage(), e);
         }

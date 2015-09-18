@@ -82,8 +82,8 @@ import ovt.util.SSCWSLibraryTestEmulator;
 public class SSCWSSatellitesSelectionWindow extends JFrame {
 
     private static final int DEBUG = 1;
-    private static final String WINDOW_TITLE = "Satellite data offered online by NASA SSC";
-    private static final String INFO_TEXT = "Satellite data offered online by NASA's Satellite Situation Center (SSC)"
+    private static final String WINDOW_TITLE = "Satellite orbit data offered online by NASA SSC";
+    private static final String INFO_TEXT = "Satellite orbit data offered online by NASA's Satellite Situation Center (SSC)"
             + " and available through OVT. Note that some of these \"satellites\" may be located at Lagrange points "
             + "(e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN).";
     private static final String[] COLUMN_GUI_TITLES = {"Bookmarked", "Added", "Name", "Data begins", "Data ends"};

@@ -469,8 +469,8 @@ public class XYZMenuBar extends JMenuBar {
 
 
     /**
-     * @param Array of menu items that is to sorted. The result is also stored
-     * in this array.
+     * @param menuItems Array of menu items that is to sorted. The result is
+     * also stored in this array.
      */
     private void sortMenuItemsByText(JMenuItem[] menuItems) {
         // Sort menu items based on text.
@@ -479,7 +479,8 @@ public class XYZMenuBar extends JMenuBar {
             public int compare(Object o1, Object o2) {
                 final String text1 = ((JMenuItem) o1).getText();
                 final String text2 = ((JMenuItem) o2).getText();
-                return text1.compareTo(text2);
+                return text1.compareToIgnoreCase(text2);      // Does not adapts to locale.
+                // Can use String#compareTo but that (it seems) treats all upper case as coming before all lower case characters.
             }
         });
     }

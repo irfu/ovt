@@ -85,8 +85,8 @@ public class SSCWSSat_CompareTrajectoriesTest {
     private static final boolean USE_SSCWS_DISK_CACHE = false;
 
 
-    public static void main(String[] args) throws IOException {
-        Log.setDebugLevel(3);
+    public static void main(String[] args) throws IOException, NoSuchSatelliteException {
+        Log.setDebugLevel(2);
         //test_testCode();
         //test_printRawData();
         //test_pointCalculation();
@@ -265,7 +265,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
      */
     // PROPOSAL: Try trajectories of more satellites than cluster.
     // PROPOSAL: Verify coordinate system of LTOF files?
-    public static void test_compareTrajectories() throws IOException {
+    public static void test_compareTrajectories() throws IOException, NoSuchSatelliteException {
         /*
          -------- SSC Web Services --------
          getID(): cluster1;   getName(): Cluster-1 (FM5/Rumba)
@@ -294,25 +294,25 @@ public class SSCWSSat_CompareTrajectoriesTest {
          */
 
         final int N = 10000;   // Note: 1 day = 1440 min.
-        final double startMjd = Time.getMjd(2002, 1, 1, 0, 0, 0);
+        final double startMjd = Time.getMjd(1990, 1, 1, 0, 0, 0);
         //final double startMjd = Time.getMjd(1997, 1, 1, 0, 0, 0);
         final double lengthMjd = 120;
-        //final double lengthMjd = 19/24.0;
+        //final double lengthMjd = 0.1/24.0;
         final double timeDifferenceMjd2 = Time.DAYS_IN_SECOND * 0; // -21.7;
         final double[] rotationVec2 = {0, 0, 0};
         //final double[] rotationVec2 = {Math.PI/2, 0, 0};
         //final double[] rotationVec2 = {2*5.0/Const.RE, 0, 0};
         //--------------------------
         /*compareTrajectories(
-         new SSCWSDataSource("cluster3", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
          //new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/ovt/resources/odata/Cluster3.ltof"),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/resources/odata/Cluster1.ltof"),
          //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
-         new SSCWSDataSource("doublestar2", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_2.ltof"),
+         new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Double_Star_1.ltof"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
@@ -323,22 +323,14 @@ public class SSCWSSat_CompareTrajectoriesTest {
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd);//*/
         //--------------------------
         /*compareTrajectories(
-         new LTOFFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Cluster1.ltof"),
-         new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
+         new RawSSCWSDataSource("polar", CoordinateSystem.GEI_J_2000),
+         new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Polar.tle"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         compareTrajectories(
-                new RawSSCWSDataSource("polar", CoordinateSystem.GEI_J_2000),
-                new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/Polar.tle"),
-                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
-        //--------------------------
-        /*compareTrajectories(
-         new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/akebono.tle"),
-         Utils.newLinearArray(
-         startMjd,
-         startMjd + lengthMjd, N),
-         timeDifferenceMjd);//*/
+                new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/akebono.tle"),
+                Utils.newLinearArray(startMjd,  startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
     }
 

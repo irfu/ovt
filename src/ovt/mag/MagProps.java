@@ -46,9 +46,9 @@ import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 
-/** Class contains time INdependent magnetic field properties.
- * Contains references to the (currently) eight activity indexes
- * (MagActivityDataModel, MagActivityDataEditor) which are time-DEpenedent.
+/** Class contains time INdependent magnetic field properties and 
+ * references to the (currently) eight time-DEpendent activity indexes
+ * (MagActivityDataModel, MagActivityDataEditor).
  * 
  * 
  * MagProps = Magnetic(?) properties. The name is somewhat misleading since not all
