@@ -62,6 +62,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                     System.out.println(lib.GetLibraryName() + " not loaded");
                 }
             }
+            System.out.println("Make sure the search path is correct:");
+            System.out.println(System.getProperty("java.library.path"));
+            
         }
         vtkNativeLibrary.DisableOutputWindow(null);
 

@@ -64,7 +64,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String RELEASE_DAY = "October 2015";
     public static final int BUILD = 5;           // Incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev.
     public static final String globalSettingsFileName = "ovt.conf";
-    public static final String DEFAULT_SETTINGS_FILE = "DefaultSettingsFile";
+    public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
     public static final Properties globalProperties = new Properties();
     public static final String OVT_HOMEPAGE ="http://ovt.irfu.se/";
     public static int DEBUG = 0;
