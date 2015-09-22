@@ -563,7 +563,7 @@ private static void set(Element node, Object obj) throws SAXException {
 
 public static String showSaveDialog(JFrame frameOwner, File defaultFile) {
     JFileChooser chooser = new JFileChooser(defaultFile); 
-        chooser.setDialogTitle("Save Settings");
+        chooser.setDialogTitle("Save State");
         chooser.setApproveButtonText("Save");
         if (!defaultFile.isDirectory()) chooser.setSelectedFile(defaultFile);
     	
@@ -594,7 +594,7 @@ public static String showSaveDialog(JFrame frameOwner, File defaultFile) {
 /** Shows Open Dialog and returns selected filename or <CODE>null</CODE> */
 public static String showOpenDialog(JFrame frameOwner, File defaultFile) {
     JFileChooser chooser = new JFileChooser(defaultFile); 
-        chooser.setDialogTitle("Load Settings");
+        chooser.setDialogTitle("Load State");
         chooser.setApproveButtonText("Load");
         if (!defaultFile.isDirectory()) chooser.setSelectedFile(defaultFile);
 	

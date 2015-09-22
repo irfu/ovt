@@ -274,6 +274,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
              Derive and assign this.ovtUserDir (String, path) and make sure
              the corresponding actual directory exists.
             ==================================================================*/
+            //System.out.println("Working Directory = " + System.getProperty("user.dir"));
+            
             final String osName = System.getProperty("os.name").toLowerCase();
             final boolean isMacOs = osName.startsWith("mac os x");
             if (isMacOs) {

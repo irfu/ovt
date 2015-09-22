@@ -181,7 +181,7 @@ private int externalModelType = T87;
 public MagProps(OVTCore core) {
   super("MagModels");
   setParent(core);
-  Log.log("MagProps :: init ...", 3);
+  //Log.log("MagProps :: init ...", 3);
   setIcon(new ImageIcon(OVTCore.getImagesSubdir()+"magnet.gif"));
   showInTree(false);
   this.core = core;
@@ -577,11 +577,11 @@ public Descriptors getDescriptors() {
    * 
    */
   public double[] getActivity(int key, double mjd) {
-    Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
+    //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
     
     if (key <= 100) {
         final double[] values = activityEditorDataModels[key].getValues(mjd);
-        Log.log("   double[] values = "+Arrays.toString(values), 2);
+        //Log.log("   double[] values = "+Arrays.toString(values), 2);
         return values;
     } else {
         final int index = key/100;
