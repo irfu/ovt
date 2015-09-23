@@ -2,9 +2,9 @@ package ovt.mag;
 
 import java.beans.*;
 
-public class MagActivityDataModelBeanInfo extends SimpleBeanInfo {
+public class MagActivityEditorDataModelBeanInfo extends SimpleBeanInfo {
 
-  // Property identifiers //GEN-FIRST:Properties
+  // Property identifiers//GEN-FIRST:Properties
   private static final int PROPERTY_rowCount = 0;
   private static final int PROPERTY_file = 1;
   private static final int PROPERTY_recordAt = 2;
@@ -14,9 +14,9 @@ public class MagActivityDataModelBeanInfo extends SimpleBeanInfo {
 
   static {
     try {
-      properties[PROPERTY_rowCount] = new PropertyDescriptor ( "rowCount", MagActivityDataModel.class, "getRowCount", "setRowCount" );
-      properties[PROPERTY_file] = new PropertyDescriptor ( "file", MagActivityDataModel.class, "getFile", "setFile" );
-      properties[PROPERTY_recordAt] = new IndexedPropertyDescriptor ( "recordAt", MagActivityDataModel.class, null, null, "getRecordAt", "setRecordAt" );
+      properties[PROPERTY_rowCount] = new PropertyDescriptor ( "rowCount", MagActivityEditorDataModel.class, "getRowCount", "setRowCount" );
+      properties[PROPERTY_file] = new PropertyDescriptor ( "file", MagActivityEditorDataModel.class, "getFile", "setFile" );
+      properties[PROPERTY_recordAt] = new IndexedPropertyDescriptor ( "recordAt", MagActivityEditorDataModel.class, null, null, "getRecordAt", "setRecordAt" );
     }
     catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
 
@@ -32,10 +32,10 @@ public class MagActivityDataModelBeanInfo extends SimpleBeanInfo {
 
     // Here you can add code for customizing the event sets array.
 
-  //GEN-LAST:Events
+//GEN-LAST:Events
   private static final int METHOD_fireTableDataChanged15 = 0;
   
-  // Method identifiers //GEN-FIRST:Methods
+  // Method identifiers//GEN-FIRST:Methods
   private static final int METHOD_fireTableDataChanged0 = 0;
 
   // Method array 
@@ -43,7 +43,7 @@ public class MagActivityDataModelBeanInfo extends SimpleBeanInfo {
 
   static {
     try {
-      methods[METHOD_fireTableDataChanged15] = new MethodDescriptor ( Class.forName("ovt.mag.MagActivityDataModel").getMethod("fireTableDataChanged", new Class[] {}));
+      methods[METHOD_fireTableDataChanged15] = new MethodDescriptor ( Class.forName("ovt.mag.MagActivityEditorDataModel").getMethod("fireTableDataChanged", new Class[] {}));
       methods[METHOD_fireTableDataChanged15].setDisplayName ( "" );
     }
     catch( Exception e) {}//GEN-HEADEREND:Methods
@@ -52,10 +52,10 @@ public class MagActivityDataModelBeanInfo extends SimpleBeanInfo {
     
 }//GEN-LAST:Methods
 
-    private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
+    private static java.awt.Image iconColor16 = null;//GEN-BEGIN:IconsDef
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
-    private static java.awt.Image iconMono32 = null; //GEN-END:IconsDef
+    private static java.awt.Image iconMono32 = null;//GEN-END:IconsDef
   private static String iconNameC16 = null;//GEN-BEGIN:Icons
   private static String iconNameC32 = null;
   private static String iconNameM16 = null;

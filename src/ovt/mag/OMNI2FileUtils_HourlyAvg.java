@@ -41,7 +41,6 @@ import ovt.util.FCBPTextTableFileReader;
 import ovt.util.FCBPTextTableFileReader.FileColumnReader;
 import ovt.util.FCBPTextTableFileReader.FileDoubleColumnReader;
 import ovt.util.FCBPTextTableFileReader.FileIntColumnReader;
-import ovt.mag.OMNI2Data;
 import ovt.util.Utils;
 
 /**
@@ -200,13 +199,13 @@ public class OMNI2FileUtils_HourlyAvg {
     private static final int N_chars_per_line = COLUMNS_END[COLUMNS_END.length - 1];   // Excluding CR, LF.
 
     private final double doubleFillValue;
-    private final int intFillValue;
+    private final int INT_FILL_VALUE = Integer.MIN_VALUE;   // Only used internally in the present implementation.
 
 
     //##########################################################################
-    public OMNI2FileUtils_HourlyAvg(double mDoubleFillValue, int mIntFillValue) {
+    public OMNI2FileUtils_HourlyAvg(double mDoubleFillValue/*, int mIntFillValue*/) {
         doubleFillValue = mDoubleFillValue;
-        intFillValue = mIntFillValue;
+        //intFillValue = mIntFillValue;
     }
 
 
@@ -233,8 +232,8 @@ public class OMNI2FileUtils_HourlyAvg {
         final FileIntColumnReader doy_FCR = getFileIntColumnReader(2 - 1, null);   // doy = day of year
         final FileIntColumnReader hod_FCR = getFileIntColumnReader(3 - 1, null);   // hod = hour of day
 
-        final FileIntColumnReader Kp_FCR = getFileIntColumnReader(39 - 1, "99");
-        final FileIntColumnReader DST_FCR = getFileIntColumnReader(41 - 1, "99999");
+        final FileDoubleColumnReader Kp_FCR = getFileDoubleColumnReader(39 - 1, "99");
+        final FileDoubleColumnReader DST_FCR = getFileDoubleColumnReader(41 - 1, "99999");
         final FileDoubleColumnReader IMFx_nT_GSE_GSM_FCR = getFileDoubleColumnReader(13 - 1, "999.9");
         final FileDoubleColumnReader IMFy_nT_GSE_FCR = getFileDoubleColumnReader(14 - 1, "999.9");
         final FileDoubleColumnReader IMFz_nT_GSE_FCR = getFileDoubleColumnReader(15 - 1, "999.9");
@@ -275,27 +274,28 @@ public class OMNI2FileUtils_HourlyAvg {
 
         final OMNI2Data data = new OMNI2Data(beginIncl_mjd, endExcl_mjd);
         
-        data.setDoubleField(OMNI2Data.FieldID.time_mjd, times_mjd);
+        data.setFieldArray(OMNI2Data.FieldID.time_mjd, times_mjd);
         
-        data.setIntField(OMNI2Data.FieldID.Kp, Kp_FCR.getBuffer());
-        data.setIntField(OMNI2Data.FieldID.DST, DST_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.Kp, Kp_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.DST, DST_FCR.getBuffer());
         
-        data.setDoubleField(OMNI2Data.FieldID.velocity_kms, velocity_FCR.getBuffer());
-        data.setDoubleField(OMNI2Data.FieldID.pressure_nP, pressure_FCR.getBuffer());
-        data.setDoubleField(OMNI2Data.FieldID.M_A, MA_FCR.getBuffer());
-        data.setDoubleField(OMNI2Data.FieldID.M_ms, Mms_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.velocity_kms, velocity_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.pressure_nP, pressure_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.M_A, MA_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.M_ms, Mms_FCR.getBuffer());
         
-        data.setDoubleField(OMNI2Data.FieldID.IMFx_nT_GSE, IMFx_nT_GSE_GSM_FCR.getBuffer());
-        data.setDoubleField(OMNI2Data.FieldID.IMFy_nT_GSE, IMFy_nT_GSE_FCR.getBuffer());
-        data.setDoubleField(OMNI2Data.FieldID.IMFz_nT_GSE, IMFz_nT_GSE_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.IMFx_nT_GSE, IMFx_nT_GSE_GSM_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.IMFy_nT_GSE, IMFy_nT_GSE_FCR.getBuffer());
+        data.setFieldArray(OMNI2Data.FieldID.IMFz_nT_GSE, IMFz_nT_GSE_FCR.getBuffer());
 
         return data;
     }
 
 
     //##########################################################################
+    /** Used internally for reading columns which are converted to dates/times. */
     private FileIntColumnReader getFileIntColumnReader(int colIdx, String srcFillValue) {
-        return new FileIntColumnReader(COLUMNS_BEGIN[colIdx], COLUMNS_END[colIdx], srcFillValue, intFillValue, INITIAL_READ_BUFFER_SIZE);
+        return new FileIntColumnReader(COLUMNS_BEGIN[colIdx], COLUMNS_END[colIdx], srcFillValue, INT_FILL_VALUE, INITIAL_READ_BUFFER_SIZE);
     }
 
 

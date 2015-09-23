@@ -31,7 +31,7 @@ Khotyaintsev
 =========================================================================*/
 
 /*
- * MagActivityDataModel.java
+ * MagActivityEditorDataModel.java
  *
  * Created on den 25 mars 2000, 00:30
  */
@@ -57,7 +57,7 @@ import ovt.util.Log;
  * @author Yuri Khotyaintsev
  * @version 1.0
  */
-public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
+public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel {
 
   private static final int DEBUG = 20;  // Log message log level.
     
@@ -82,7 +82,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
   
   
   /** Constructor when using one "index" (data) column. */
-  public MagActivityDataModel(int index, double minValue, double maxValue, double defaultValue, String columnName) {
+  public MagActivityEditorDataModel(int index, double minValue, double maxValue, double defaultValue, String columnName) {
       init(index, minValue, maxValue, new double[]{ defaultValue }, new String[]{ columnName } );
   }
   
@@ -94,7 +94,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
    * @throws FileNotFoundException for file lookup
    * @throws IOException for IO problems
    */
-  public MagActivityDataModel(int index, double minValue, double maxValue, double[] defaultValues, String[] columnNames) {
+  public MagActivityEditorDataModel(int index, double minValue, double maxValue, double[] defaultValues, String[] columnNames) {
       init(index, minValue, maxValue, defaultValues, columnNames);
   }
   
@@ -133,7 +133,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
     final RandomAccessFile fileIn = new RandomAccessFile(file,"r");
     final long length = fileIn.length();
     
-    //if ( length <= 0 ) throw new Exception("MagActivityDataModel: activity file is empty");
+    //if ( length <= 0 ) throw new Exception("MagActivityEditorDataModel: activity file is empty");
     
     /* Read data
     first entry is time in format 1994-04-04 12:00:00
@@ -444,7 +444,6 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
       }
       lo = j;
     }
-
   }
 
   
@@ -523,7 +522,7 @@ public class MagActivityDataModel extends javax.swing.table.AbstractTableModel {
   
   // Seems unused except for src/ovt/mag/MagActivityDataModelBeanInfo.java.
   public void fireTableDataChanged() {
-    ovt.util.Log.log("fireTableDataChanged executed!");
+    ovt.util.Log.log("fireTableDataChanged executed!", DEBUG);
     super.fireTableDataChanged();
   }
 

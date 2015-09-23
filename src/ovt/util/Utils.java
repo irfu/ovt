@@ -29,13 +29,13 @@
  Khotyaintsev, E. P. G. Johansson, F. Johansson)
  
  =========================================================================*/
-
-/*
+/**
+ * Miscellaneous utility functions. Test code can be found in
+ * ovt.util.UtilsTests.java
+ *
  * Utils.java
  *
  * Created on March 23, 2000, 2:11 PM
- * 
- * Test code can be found in ovt.util.UtilsTests.java
  */
 package ovt.util;
 
@@ -867,6 +867,7 @@ public class Utils extends Object {
         return a;
     }
 
+
     /**
      * Entirely analogous with concatDoubleArrays but for int arrays instead.
      */
@@ -887,6 +888,7 @@ public class Utils extends Object {
         }
         return a;
     }
+
 
     /**
      * @author Erik P_SI G Johansson
@@ -1042,13 +1044,13 @@ public class Utils extends Object {
             throw new IllegalArgumentException("Negative N.");
         }
 
-        if (N == 1) {            
+        if (N == 1) {
             if (first != last) {
                 throw new IllegalArgumentException("First and last value can not be different for length=1 array.");
             }
-            
+
             return new double[]{first};
-            
+
         } else {
             // CASE: N==0 or N>=2.
             // NOTE: Does not work for N==1 since it

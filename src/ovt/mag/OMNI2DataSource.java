@@ -33,10 +33,13 @@ package ovt.mag;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import ovt.datatype.Time;
+import ovt.mag.OMNI2Data.FieldID;
 import ovt.util.SegmentsCache;
+import ovt.util.Utils;
 
 /**
  * Class from which OMNI2 data can be retrieved and used by the application.
@@ -48,6 +51,9 @@ import ovt.util.SegmentsCache;
 public class OMNI2DataSource {
 
     //##########################################################################
+    /**
+     * Class which the cache uses as a data source.
+     */
     private static class CacheDataSource implements SegmentsCache.DataSource {
 
         private final OMNI2RawDataSource rawDataSrc;
@@ -96,31 +102,94 @@ public class OMNI2DataSource {
         }
     }
 
-
     //##########################################################################
+    private final SegmentsCache segmentsCache;
+
+
     public OMNI2DataSource(String cacheDir) {
 
         /*==================================
-         Choose OMNI2 raw data source. Can implement and choose other for testing purposes.
+         Choose OMNI2 raw data source. 
+         One can implement and choose another for testing purposes.
          ==================================*/
         final OMNI2RawDataSource rawDataSrc = new OMNI2RawDataSourceImpl(new File(cacheDir));
 
+        /*=====================
+         Setup cache.
+         =====================*/
         // Exact value not so important but should probably not be more than
         // the length of time covered by a year or the underlying OMNI2 files (?).
         final double minDataSourceTScale_mjd = 1;
 
         final int[] yearMinMax = rawDataSrc.getYearMinMax_hourlyAvg();
-        final double searchMin_mjd = Time.getMjd(yearMinMax[0], 1, 1, 0, 0, 0);
+        final double searchMin_mjd = Time.getMjd(yearMinMax[0] + 0, 1, 1, 0, 0, 0);
         final double searchMax_mjd = Time.getMjd(yearMinMax[1] + 1, 1, 1, 0, 0, 0);
 
-        final SegmentsCache sc = new SegmentsCache(
+        segmentsCache = new SegmentsCache(
                 new CacheDataSource(rawDataSrc),
                 minDataSourceTScale_mjd,
                 searchMin_mjd,
                 searchMax_mjd);
     }
-    
-    //public get
+
+
+    /**
+     * Get the value relevant for a specific time. Will start at the relevant
+     * time and search backwards to a point in time where there is data (not
+     * fill value).
+     *
+     * @throws IOException when no such value exists because a boundary was
+     * found.
+     */
+    // TODO: Support down AND up search. Needed for handling boundaries.
+    // Search function outside so can find t interval for global time interval.
+    public double get(double mjd, FieldID fieldID) throws IOException {
+        
+        throw new UnsupportedOperationException();
+        
+        /*class SearchFunction implements SegmentsCache.SearchFunction {
+
+            @Override
+            public Object searchDataSegment(
+                    SegmentsCache.DataSegment seg,
+                    double t_start,
+                    SegmentsCache.SearchDirection dir) {
+
+                final OMNI2Data data = (OMNI2Data) seg;
+                final double[] timeArray = data.getFieldArray(FieldID.time_mjd);
+                final double[] fieldArray = data.getFieldArray(fieldID);
+
+                if (dir == SegmentsCache.SearchDirection.DOWN) {
+                    RoundingMode roundingMode = 
+                } else {
+                }
+                    
+                    
+                final int i_start = Utils.findNearestMatch(timeArray, mjd, RoundingMode.FLOOR);
+                if ((i_start < 0) || (timeArray.length <= i_start)) {
+                    // IMPLEMENTATION NOTE: Could happen(!), if data segment
+                    // boundaries extend beyond the highest lowest datapoint time.
+                    return null;   
+                    
+                }
+
+                /* Look for the first non-fill value.
+                 * ----------------------------------
+                 * IMPLEMENTATION NOTE: If NaN/Inf is used as a fill value,
+                 * then one must use a comparison which treats them
+                 * correctly. Can therefore NOT use the usual "!=" operator.
+                 */
+                /*for (int i = i_start; i >= 0; i--) {
+                    if (Double.compare(fieldArray[i], OMNI2RawDataSource.DOUBLE_FILL_VALUE) != 0) {
+                        return fieldArray[i];
+                    }
+                }
+                return null;
+            }
+        }
+
+        return (double) segmentsCache.search(mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());*/
+    }
 
     //##########################################################################
 }

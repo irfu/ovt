@@ -70,7 +70,7 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
     private javax.swing.JButton applyButton;
     private javax.swing.JButton closeButton;
     // End of variables declaration
-    private MagActivityDataModel dataModel;
+    private MagActivityEditorDataModel dataModel;
     /**
      * Needs reference to magProps only to fire MagPropsChangeEvent and subsequently re-render.
      */
@@ -81,7 +81,7 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
     /**
      * Constructor. Creates new form MagActivityDataEditor.
      */
-    public MagActivityDataEditor(MagActivityDataModel adataModel, MagProps magProps) {
+    public MagActivityDataEditor(MagActivityEditorDataModel adataModel, MagProps magProps) {
         this.dataModel = adataModel;
         this.magProps = magProps;
 
@@ -208,15 +208,15 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
     }
 
 
-    private MagActivityDataModel getDataModel() {
+    private MagActivityEditorDataModel getDataModel() {
         return dataModel;
     }
 
 
     /** Actions triggered when pressing "Apply" button. Does probably not
-     * behave exactly as expected since MagProps reads the "MagActivityDataModel dataModel" 
-     * whenever code asks for "activity" values, e.g. when time is changed, and
-     * can thus use values in the table without the "Apply" button having been pressed first.
+ behave exactly as expected since MagProps reads the "MagActivityEditorDataModel dataModel" 
+ whenever code asks for "activity" values, e.g. when time is changed, and
+ can thus use values in the table without the "Apply" button having been pressed first.
      */
     private void applyButtonActionPerformed() {
         MagPropsEvent evt = new MagPropsEvent(this, dataModel.getIndex());

@@ -150,10 +150,9 @@ public class SegmentsCache {
          * boundaries.
          * @param seg DataSegment to searchDataSegment.
          *
-         * @return The t position of the find. Must(?) be within the DataSegment
-         * interval (inclusive). NaN iff not finding what is sought.
+         * @return Non-null reference if successful, otherwise null.
          */
-        public double searchDataSegment(DataSegment seg, double t_start, SearchDirection dir);
+        public Object searchDataSegment(DataSegment seg, double t_start, SearchDirection dir);
     }
 
     //##########################################################################
@@ -188,7 +187,7 @@ public class SegmentsCache {
     //##########################################################################
 
     public SegmentsCache(DataSource mDataSrc, double mMinDataSourceTScale, double mSearchTMin, double mSearchTMax) {
-        if ((mDataSrc == null) || (mMinDataSourceTScale <= 0) || (mSearchTMax <= mSearchTMin)) {
+        if ((mDataSrc == null) || (mMinDataSourceTScale <= 0) || (mSearchTMax <= mSearchTMin) || (mMinDataSourceTScale < 0)) {
             throw new IllegalArgumentException();
         }
         dataSrc = mDataSrc;
@@ -245,27 +244,33 @@ public class SegmentsCache {
      *
      * The method is needed/useful since the cache works with t intervals which
      * are different from e.g. underlying data points that are not spread evenly
-     * on the t axis. Examples of use cases: Search for next data point,
-     * searchDataSegment for next non-fill value.
+     * on the t axis. Examples of use cases: (1) Search for next data point, (2)
+     * search DataSegment for the next non-fill value.
      *
-     * NOTE: Will not searchDataSegment inside the specified searchDataSegment
-     * limits in t (set in constructor), and an undetermined distance outside.
+     * NOTE: Will search DataSegment inside the specified search limits in t
+     * (set in constructor), and an undetermined but finite distance outside
+     * depending on cached segments.
      *
      * IMPLEMENTATION NOTE: Implementation is not intended to be efficient when
      * searching long distances (in t), although it does work. It is intended
      * for short searches where it will usually succeed on the first DataSegment
-     * it searches.
+     * it searches. Note that one search may lead to caching data, which leads
+     * to subsequent searches maybe finding data in the first segment.
      *
      * IMPLEMENTATION NOTE: This feature could in principle be implemented
-     * separate from this class since it really only _needs_ public methods
+     * separately from this class since it really only _needs_ public methods
      * (slight modification to only use #getSegmentSuperset).
      *
-     * @return t position for what was sought. NaN iff can not find what is
-     * sought.
+     * @return The (non-null) reference that was returned from the search function
+     * if successful. Null iff could not find what was sought.
      */
-    public double search(double t_start, SearchDirection dir, SearchFunction sf) throws IOException {
+    public Object search(double t_start, SearchDirection dir, SearchFunction searchFunc) throws IOException {
         //Log.log(this.getClass().getSimpleName() + " # searchDataSegment", DEBUG);
         //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
+
+        if (!Double.isFinite(t_start) | (searchFunc == null)) {
+            throw new IllegalArgumentException();
+        }
 
         // Move t_start to within the permitted searchDataSegment interval.
         t_start = Math.max(t_start, searchTMin);
@@ -302,15 +307,15 @@ public class SegmentsCache {
             ensureIntervalIsCachedInSingleSegment(t1, t2);   // Contains call to mergeAdjacentSegments.
             final DataSegment seg = findCachedSegmentSuperset(t1, t2);
             //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
-            final double t = sf.searchDataSegment(seg, t_start, dir);
-            if (!Double.isNaN(t)) {
-                return t;
+            final Object searchResults = searchFunc.searchDataSegment(seg, t_start, dir);
+            if (searchResults != null) {
+                return searchResults;
             }
             t_start = seg.getInterval()[i_segmentFarBoundary];
             t1 = t_start;
             t2 = t1 + t_step;
         }
-        return Double.NaN;
+        return null;
     }
 
 

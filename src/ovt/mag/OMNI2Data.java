@@ -32,7 +32,7 @@
 package ovt.mag;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +40,8 @@ import ovt.util.SegmentsCache;
 import ovt.util.Utils;
 
 /**
+ * Container for OMNI2 data.
+ *
  * IMPLEMENTATION NOTE: No constructor that initializes final Fields since it
  * would have such a long list of arguments which are easily confused with each
  * other, which is dangerous. On the other hand, a manual initialization may
@@ -49,6 +51,11 @@ import ovt.util.Utils;
  * CONSISTENT with the data points in it, but the time period can still be much
  * larger.
  *
+ * IMPLEMENTATION NOTE: The class was originally (2015-09-xx) made to handle
+ * both double and integer fields and keep them separate but still be able to
+ * iterate over both kinds of fields at the same time. This was maybe a bit
+ * unnecessary in hindsight and the functionality has been removed/commented
+ * away to simplify. Everything is now scalar double fields.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-xx
@@ -75,22 +82,21 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         Kp, DST,
     }
 
-    private static final EnumSet<FieldID> DOUBLE_FIELDS = EnumSet.of(
-            FieldID.time_mjd,
-            FieldID.IMFx_nT_GSE,
-            FieldID.IMFy_nT_GSE,
-            FieldID.IMFz_nT_GSE,
-            FieldID.pressure_nP,
-            FieldID.velocity_kms,
-            FieldID.M_ms,
-            FieldID.M_A,
-            FieldID.M_ms
-    );
-    private static final EnumSet<FieldID> INT_FIELDS = EnumSet.of(
-            FieldID.Kp,
-            FieldID.DST
-    );
-
+    /*private static final EnumSet<FieldID> DOUBLE_FIELDS = EnumSet.of(
+     FieldID.time_mjd,
+     FieldID.IMFx_nT_GSE,
+     FieldID.IMFy_nT_GSE,
+     FieldID.IMFz_nT_GSE,
+     FieldID.pressure_nP,
+     FieldID.velocity_kms,
+     FieldID.M_ms,
+     FieldID.M_A,
+     FieldID.M_ms,
+     );*/
+    /*private static final EnumSet<FieldID> INT_FIELDS = EnumSet.of(
+     FieldID.Kp,
+     FieldID.DST
+     );*/
     private final Map<FieldID, ArrayData> dataFields = new HashMap();
 
     /**
@@ -118,12 +124,15 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         end_mjd = mEnd_mjd;
 
         // Initialize empty fields.
-        for (FieldID fieldID : DOUBLE_FIELDS) {
+        for (FieldID fieldID : FieldID.values()) {
             dataFields.put(fieldID, new DoubleArray(new double[0]));
         }
-        for (FieldID fieldID : INT_FIELDS) {
-            dataFields.put(fieldID, new IntArray(new int[0]));
-        }
+        /*for (FieldID fieldID : DOUBLE_FIELDS) {
+         dataFields.put(fieldID, new DoubleArray(new double[0]));
+         }
+         for (FieldID fieldID : INT_FIELDS) {
+         dataFields.put(fieldID, new IntArray(new int[0]));
+         }*/
     }
 
 
@@ -133,21 +142,28 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
     }
 
 
-    public void setDoubleField(FieldID fieldID, double[] array) {
-        if (!DOUBLE_FIELDS.contains(fieldID)) {
-            throw new IllegalArgumentException();
-        }
+    public void setFieldArray(FieldID fieldID, double[] array) {
         dataFields.put(fieldID, new DoubleArray(array));
     }
 
+    /*public void setDoubleField(FieldID fieldID, double[] array) {
+     if (!DOUBLE_FIELDS.contains(fieldID)) {
+     throw new IllegalArgumentException();
+     }
+     dataFields.put(fieldID, new DoubleArray(array));
+     }*/
 
-    public void setIntField(FieldID fieldID, int[] array) {
-        if (!INT_FIELDS.contains(fieldID)) {
-            throw new IllegalArgumentException();
-        }
-        dataFields.put(fieldID, new IntArray(array));
+
+    /*public void setIntField(FieldID fieldID, int[] array) {
+     if (!INT_FIELDS.contains(fieldID)) {
+     throw new IllegalArgumentException();
+     }
+     dataFields.put(fieldID, new IntArray(array));
+     }*/
+    public double[] getFieldArray(FieldID fieldID) {
+        return ((DoubleArray) dataFields.get(fieldID)).getArrayCopy();
     }
-    
+
 
     /**
      * Merges multiple instances into one. Instances have to be sorted in time
@@ -159,10 +175,10 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         if (dataList.size() < 1) {
             throw new IllegalArgumentException();
         }
-        
+
         /* ====================================================
          Check assertion: all data blocks are adjacent in time.
-         =====================================================*/        
+         =====================================================*/
         OMNI2Data prevData = null;
         for (OMNI2Data data : dataList) {
             // Argument check
@@ -269,7 +285,9 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
 
         /**
          * Analogous to System#arraycopy. Assumes that both arrays are of the
-         * same class.
+         * same class. NOTE: Does not work with the instance's internal fields,
+         * but should work with instances of the same class as the class where
+         * it is implemented.
          */
         protected abstract void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length);
 
@@ -310,35 +328,39 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         protected int length() {
             return array.length;
         }
+
+
+        public double[] getArrayCopy() {
+            return Arrays.copyOf(array, array.length);
+        }
     }
     //##########################################################################
 
-    private static class IntArray extends ArrayData {
+    /*private static class IntArray extends ArrayData {
 
-        private final int[] array;
-
-
-        public IntArray(int[] mArray) {
-            array = mArray;
-        }
+     private final int[] array;
 
 
-        @Override
-        protected void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
-            System.arraycopy(((IntArray) src).array, srcPos, ((IntArray) dest).array, destPos, length);
-        }
+     public IntArray(int[] mArray) {
+     array = mArray;
+     }
 
 
-        @Override
-        protected ArrayData newArray(int N) {
-            return new IntArray(new int[N]);
-        }
+     @Override
+     protected void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
+     System.arraycopy(((IntArray) src).array, srcPos, ((IntArray) dest).array, destPos, length);
+     }
 
 
-        @Override
-        protected int length() {
-            return array.length;
-        }
-    }
+     @Override
+     protected ArrayData newArray(int N) {
+     return new IntArray(new int[N]);
+     }
 
+
+     @Override
+     protected int length() {
+     return array.length;
+     }
+     }*/
 }

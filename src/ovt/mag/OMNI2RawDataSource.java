@@ -43,6 +43,9 @@ import java.io.IOException;
  */
 public interface OMNI2RawDataSource {
 
+    //public final static int INT_FILL_VALUE = Integer.MIN_VALUE;
+    public final static double DOUBLE_FILL_VALUE = Double.NaN;
+    
     public OMNI2Data getData_hourlyAvg(int year) throws IOException;
 
 

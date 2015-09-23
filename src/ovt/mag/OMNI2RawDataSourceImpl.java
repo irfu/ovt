@@ -83,8 +83,6 @@ import static ovt.util.Utils.downloadURLToFile;
 public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
     
     private final OMNI2FileCache hourlyAvgFileCache;
-    private final static int INT_FILL_VALUE = Integer.MIN_VALUE;
-    private final static double DOUBLE_FILL_VALUE = Double.NaN;
 
     private static final int FIRST_YEAR___HOURLY_AVG = 1963;
     private static final int LAST_YEAR___HOURLY_AVG = getUTCYearDaysAgo(0);
@@ -113,7 +111,7 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
      */
     private static final double CURRENT_TIME_MS = System.currentTimeMillis();   // "measured in milliseconds, between the current time and midnight, January 1, 1970 UTC." Really "long" but stored as double to avoid mistaken integer division.
 
-    private static final OMNI2FileUtils_HourlyAvg hourlyAvg = new OMNI2FileUtils_HourlyAvg(DOUBLE_FILL_VALUE, INT_FILL_VALUE);
+    private static final OMNI2FileUtils_HourlyAvg hourlyAvg = new OMNI2FileUtils_HourlyAvg(DOUBLE_FILL_VALUE);
     
     //##########################################################################
 

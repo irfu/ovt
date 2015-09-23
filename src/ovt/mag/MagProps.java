@@ -47,12 +47,12 @@ import java.util.*;
 import javax.swing.*;
 
 /** Class contains time INdependent magnetic field properties and 
- * references to the (currently) eight time-DEpendent activity indexes
- * (MagActivityDataModel, MagActivityDataEditor).
+ references to the (currently) eight time-DEpendent activity indexes
+ (MagActivityEditorDataModel, MagActivityDataEditor).
  * 
  * 
- * MagProps = Magnetic(?) properties. The name is somewhat misleading since not all
- * indexes have anything to do with magnetism (and not all indexes are 
+ * MagProps = Magnetic properties. The name is somewhat misleading since not all
+ * "indexes" have anything to do with magnetism (and not all indexes are 
  * non-dimensional).
  */
 public class MagProps extends OVTObject 
@@ -98,6 +98,7 @@ public static double mSub=11.0;
 public static double bSub=13.5;
 
 private static final double xlim_default = -30;
+
 /** Minimum distance in the tail. Should be negative.
  * Should be made into a private instance variable (i.e. non-static) with a get method? */
 public /*static*/ double xlim = xlim_default;
@@ -152,7 +153,7 @@ public static final String G2_STR = "G2";
 public static final String MPCLIP = "MP Clipping";  //Added by kono
 
 /** List of data models tied to the editor window for manually editing tables with activity data. */
-private MagActivityDataModel[] activityEditorDataModels = new MagActivityDataModel[MAX_ACTIVITY_INDEX + 1];
+private MagActivityEditorDataModel[] activityEditorDataModels = new MagActivityEditorDataModel[MAX_ACTIVITY_INDEX + 1];
 
 public static final double KPINDEX_DEFAULT = 0;
 public static final double[] IMF_DEFAULT = {0,0,0};
@@ -177,6 +178,8 @@ private int internalModelType = IGRF;
 /** Holds value of property externalModelType. */
 private int externalModelType = T87;
 
+
+
 /** Creates new magProperties. */
 public MagProps(OVTCore core) {
   super("MagModels");
@@ -186,14 +189,14 @@ public MagProps(OVTCore core) {
   showInTree(false);
   this.core = core;
 
-  activityEditorDataModels[KPINDEX] = new MagActivityDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
-  activityEditorDataModels[IMF] = new MagActivityDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
-  activityEditorDataModels[SWP] = new MagActivityDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
-  activityEditorDataModels[DSTINDEX] = new MagActivityDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
-  activityEditorDataModels[MACHNUMBER] = new MagActivityDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
-  activityEditorDataModels[SW_VELOCITY] = new MagActivityDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
-  activityEditorDataModels[G1] = new MagActivityDataModel( G1, 0, 50, 6, "G1");
-  activityEditorDataModels[G2] = new MagActivityDataModel( G2, 0, 50, 10, "G2");
+  activityEditorDataModels[KPINDEX] = new MagActivityEditorDataModel( KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
+  activityEditorDataModels[IMF] = new MagActivityEditorDataModel( IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
+  activityEditorDataModels[SWP] = new MagActivityEditorDataModel( SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
+  activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel( DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
+  activityEditorDataModels[MACHNUMBER] = new MagActivityEditorDataModel( MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
+  activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel( SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
+  activityEditorDataModels[G1] = new MagActivityEditorDataModel( G1, 0, 50, 6, "G1");
+  activityEditorDataModels[G2] = new MagActivityEditorDataModel( G2, 0, 50, 10, "G2");
   
   
   if (!OVTCore.isServer()) {
@@ -244,10 +247,11 @@ public double getModelFactor() {
    * @param internalModelType New value of property internalModelType.
  */
   public void setInternalModelType(int internalModelType)
-            throws IllegalArgumentException {
+      throws IllegalArgumentException {
 
-  if (internalModelType!=NOMODEL && internalModelType!=DIPOLE && internalModelType!=IGRF)
-      throw new IllegalArgumentException("Invalid internal field model type");
+      if (internalModelType!=NOMODEL && internalModelType!=DIPOLE && internalModelType!=IGRF) {
+        throw new IllegalArgumentException("Invalid internal field model type");
+      }
 
       int oldInternalModelType = this.internalModelType;
       this.internalModelType = internalModelType;
@@ -542,7 +546,7 @@ public Descriptors getDescriptors() {
   }
   /*
   public boolean magFieldConstant(double mjd1, double mjd2) {
-    MagActivityDataModel[] indexes = getIndexesFor(getModelTypes());
+    MagActivityEditorDataModel[] indexes = getIndexesFor(getModelTypes());
     for (int i=0; i<indexes.length; i++)
         if (!Vect.equal(indexes[i].getValues(mjd1)), Vect.equal(indexes[i].getValues(mjd2)))
             return false;
@@ -625,21 +629,21 @@ public Descriptors getDescriptors() {
 
   
   /** used by XML */
-  public MagActivityDataModel getKPIndexDataModel() { return activityEditorDataModels[KPINDEX]; }
+  public MagActivityEditorDataModel getKPIndexDataModel() { return activityEditorDataModels[KPINDEX]; }
   /** used by XML */
-  public MagActivityDataModel getIMFDataModel() { return activityEditorDataModels[IMF]; }  
+  public MagActivityEditorDataModel getIMFDataModel() { return activityEditorDataModels[IMF]; }  
   /** used by XML */
-  public MagActivityDataModel getSWPDataModel() { return activityEditorDataModels[SWP]; }  
+  public MagActivityEditorDataModel getSWPDataModel() { return activityEditorDataModels[SWP]; }  
   /** used by XML */
-  public MagActivityDataModel getDSTIndexDataModel() { return activityEditorDataModels[DSTINDEX]; }  
+  public MagActivityEditorDataModel getDSTIndexDataModel() { return activityEditorDataModels[DSTINDEX]; }  
   /** used by XML */
-  public MagActivityDataModel getMachNumberDataModel() { return activityEditorDataModels[MACHNUMBER]; }  
+  public MagActivityEditorDataModel getMachNumberDataModel() { return activityEditorDataModels[MACHNUMBER]; }  
   /** used by XML */
-  public MagActivityDataModel getSWVelocityDataModel() { return activityEditorDataModels[SW_VELOCITY]; }  
+  public MagActivityEditorDataModel getSWVelocityDataModel() { return activityEditorDataModels[SW_VELOCITY]; }  
   /** used by XML */
-  public MagActivityDataModel getG1DataModel() { return activityEditorDataModels[G1]; }  
+  public MagActivityEditorDataModel getG1DataModel() { return activityEditorDataModels[G1]; }  
   /** used by XML */
-  public MagActivityDataModel getG2DataModel() { return activityEditorDataModels[G2]; }  
+  public MagActivityEditorDataModel getG2DataModel() { return activityEditorDataModels[G2]; }  
 
 }
 
