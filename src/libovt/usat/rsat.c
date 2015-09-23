@@ -73,14 +73,14 @@
 /***** global variables *****/
 
 
-extern FILE *elefile;
-struct ELEMENT element;
+FILE *elefile;
+ELEMENT *element;
 
 /* from cnstinit.c */
 
 extern double JD;
-extern double Gei[3];
-extern double Vei[3];
+double Gei[3];
+double Vei[3];
 
 extern struct PCONSTANTS pcnsts;
 extern struct MCONSTANTS mcnsts;
@@ -89,6 +89,7 @@ extern struct MCONSTANTS mcnsts;
 /*************/
 /* rdelement */
 /*************/
+/*
 
 int KOI(void) 
 {
@@ -102,6 +103,9 @@ int KOI(void)
   else
     return (2);
 }
+
+
+*/
 int rdelement (void)
 {
     int    idummy, csum;
@@ -120,18 +124,18 @@ int rdelement (void)
     /***** read in mean elements from 2 card trans format *****/
     /*** read the first "card" into the line buffer ***/
 
-    if (fgets (element.name, 71, elefile) == NULL)
+    if (fgets ((*element).name, 71, elefile) == NULL)
     {
 	return (-1);
     }
 
-    /* fprintf (stdout, "%s\n", element.name); */
+    /* fprintf (stdout, "%s\n", (*element).name); */
     /*** remove the carriage return from the name ***/
-    for (i = 0; i < strlen (element.name); i++)
+    for (i = 0; i < strlen ((*element).name); i++)
     {
-	if (iscntrl (element.name[i]))
+	if (iscntrl ((*element).name[i]))
 	{
-	    element.name[i] = 0x20;		/* space */
+	    (*element).name[i] = 0x20;		/* space */
 	}
     }
     /*** read the second "card" into the line buffer ***/
@@ -221,11 +225,11 @@ int rdelement (void)
      idummy += 2000;
     else
      idummy += 1900;
-    element.epoch = mjd ((long) idummy, 1L, 0.0);
+    (*element).epoch = mjd ((long) idummy, 1L, 0.0);
 
     /* add the epoch julian day */
 
-    element.epoch += ddummy;		/* modified julian day number */
+    (*element).epoch += ddummy;		/* modified julian day number */
 
     /*** xndt2o ***/
 
@@ -237,7 +241,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.xndt2o = ddummy * mcnsts.twopi / pcnsts.xmnpda /
+    (*element).xndt2o = ddummy * mcnsts.twopi / pcnsts.xmnpda /
 	pcnsts.xmnpda;
 
     /*** xndd6o ***/
@@ -256,7 +260,7 @@ int rdelement (void)
 
     if (ddummy == 0.)
     {
-	element.xndd6o = 0.;
+	(*element).xndd6o = 0.;
     }
     else
     {
@@ -268,8 +272,8 @@ int rdelement (void)
 	    return (-1);
 	}
 
-	element.xndd6o = ddummy * pow (10., (double) idummy);
-	element.xndd6o = element.xndd6o * mcnsts.twopi /
+	(*element).xndd6o = ddummy * pow (10., (double) idummy);
+	(*element).xndd6o = (*element).xndd6o * mcnsts.twopi /
 	    pow (pcnsts.xmnpda, 3.);
     }
 
@@ -289,7 +293,7 @@ int rdelement (void)
 
     if (ddummy == 0.)
     {
-	element.bstar = 0.;
+	(*element).bstar = 0.;
     }
     else
     {
@@ -301,7 +305,7 @@ int rdelement (void)
 	    return (-1);
 	}
 
-	element.bstar = ddummy * pow (10., (double) idummy) / pcnsts.ae;
+	(*element).bstar = ddummy * pow (10., (double) idummy) / pcnsts.ae;
     }
 
     /*** read the third "card" into the line buffer ***/
@@ -375,7 +379,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.xincl = ddummy * mcnsts.de2ra;
+    (*element).xincl = ddummy * mcnsts.de2ra;
 
     /*** xnodeo ***/
 
@@ -387,7 +391,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.xnodeo = ddummy * mcnsts.de2ra;
+    (*element).xnodeo = ddummy * mcnsts.de2ra;
 
     /*** eo ***/
 
@@ -400,7 +404,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.eo = ddummy;
+    (*element).eo = ddummy;
 
     /*** omegao ***/
 
@@ -412,7 +416,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.omegao = ddummy * mcnsts.de2ra;
+    (*element).omegao = ddummy * mcnsts.de2ra;
 
     /*** xmo ***/
 
@@ -424,7 +428,7 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.xmo = ddummy * mcnsts.de2ra;
+    (*element).xmo = ddummy * mcnsts.de2ra;
 
     /*** xno ***/
 
@@ -436,11 +440,11 @@ int rdelement (void)
 	return (-1);
     }
 
-    element.xno = ddummy * mcnsts.twopi / pcnsts.xmnpda;
+    (*element).xno = ddummy * mcnsts.twopi / pcnsts.xmnpda;
 
     /***** check for valid elements *****/
 
-    if (element.xno <= 0.)
+    if ((*element).xno <= 0.)
     {
 	return (-1);
     }
@@ -458,37 +462,37 @@ void do_orbit (int iflag, int orbflag)
 {
     double tsince;
 
-    tsince = (JD - element.epoch) * pcnsts.xmnpda;
+    tsince = (JD - (*element).epoch) * pcnsts.xmnpda;
 
     switch (orbflag)
     {
       case 1:
-	sgp4 (&iflag, tsince);
+	sgp4 (&iflag, element, tsince);
 	break;
 
       case 2:
-	sdp4 (&iflag, tsince);
+	sdp4 (&iflag, element, tsince);
 	break;
     }
-    element.x = element.x * pcnsts.xkmper / pcnsts.ae;
+    (*element).x = (*element).x * pcnsts.xkmper / pcnsts.ae;
 
-    element.y = element.y * pcnsts.xkmper / pcnsts.ae;
+    (*element).y = (*element).y * pcnsts.xkmper / pcnsts.ae;
 
-    element.z = element.z * pcnsts.xkmper / pcnsts.ae;
+    (*element).z = (*element).z * pcnsts.xkmper / pcnsts.ae;
 
-    element.xdot = element.xdot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
+    (*element).xdot = (*element).xdot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
 
-    element.ydot = element.ydot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
+    (*element).ydot = (*element).ydot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
 
-    element.zdot = element.zdot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
+    (*element).zdot = (*element).zdot * pcnsts.xkmper / pcnsts.ae * pcnsts.xmnpda / pcnsts.secpda;
 
-    Gei[0] = element.x;
-    Gei[1] = element.y;
-    Gei[2] = element.z;
+    Gei[0] = (*element).x;
+    Gei[1] = (*element).y;
+    Gei[2] = (*element).z;
 
-    Vei[0] = element.xdot;
-    Vei[1] = element.ydot;
-    Vei[2] = element.zdot;
+    Vei[0] = (*element).xdot;
+    Vei[1] = (*element).ydot;
+    Vei[2] = (*element).zdot;
 
     return;
 }

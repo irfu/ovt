@@ -744,22 +744,31 @@ public class Utils extends Object {
              Log.log("   Second suggestion (resource): "+tempStr, 2);*/
         }
 
-        if (fileName == null) {
+        if (fileName == null) { //if the filename is bogus, return null
             return null;
         }
-        File file = new File(OVTCore.getUserDir() + fileName);
+        
+        File file = new File(System.getProperty("user.dir")+ File.separator + fileName); // check if file is in current working directory
         if (!file.exists() | file.isDirectory()) {
             file = null;
         }
         if (file == null) {
-            final ClassLoader classLoader = OVTCore.class.getClassLoader();
-            final java.net.URL fn = classLoader.getResource(fileName);
-            if (fn == null) {
-                return null;
-            }
-            file = new File(fn.getFile());
+            //System.out.println(System.getProperty("user.dir")+File.separator+  fileName + " not found, checking elsewhere");
+
+            file = new File(OVTCore.getUserDir() + fileName);
             if (!file.exists() | file.isDirectory()) {
                 file = null;
+            }
+            if (file == null) {
+                final ClassLoader classLoader = OVTCore.class.getClassLoader();
+                final java.net.URL fn = classLoader.getResource(fileName);
+                if (fn == null) {
+                    return null;
+                }
+                file = new File(fn.getFile());
+                if (!file.exists() | file.isDirectory()) {
+                    file = null;
+                }
             }
         }
         return file;

@@ -1,0 +1,59 @@
+utils.c
+magpack.c
+tsyg96.c
+tsyg2001.c
+cnstinit.c
+deep.c
+usat\deep.c(97) : warning C4028: formal parameter 14 different from declaration
+usat\deep.c(367) : warning C4028: formal parameter 8 different from declaration
+fmod2p_2.c
+getsatpos.c
+usat\getsatpos.c(355) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(386) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(395) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(417) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(435) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(450) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(470) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(485) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(532) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(546) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(563) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(576) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(590) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(603) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(616) : warning C4129: '%' : unrecognized character escape sequence
+usat\getsatpos.c(629) : warning C4129: '%' : unrecognized character escape sequence
+matan2.c
+mjd.c
+rsat.c
+c:\users\frejon\desktop\libovt\usat\satellite.h(82) : warning C4031: second formal parameter list longer than the first list
+c:\users\frejon\desktop\libovt\usat\satellite.h(85) : warning C4031: second formal parameter list longer than the first list
+c:\users\frejon\desktop\libovt\usat\satellite.h(96) : warning C4031: second formal parameter list longer than the first list
+c:\users\frejon\desktop\libovt\usat\satellite.h(96) : warning C4028: formal parameter 2 different from declaration
+c:\users\frejon\desktop\libovt\usat\satellite.h(108) : warning C4031: second formal parameter list longer than the first list
+c:\users\frejon\desktop\libovt\usat\satellite.h(108) : warning C4028: formal parameter 2 different from declaration
+c:\users\frejon\desktop\libovt\usat\satellite.h(116) : warning C4031: second formal parameter list longer than the first list
+c:\users\frejon\desktop\libovt\usat\satellite.h(120) : warning C4028: formal parameter 1 different from declaration
+c:\users\frejon\desktop\libovt\usat\satellite.h(120) : warning C4028: formal parameter 2 different from declaration
+sdp4.c
+sgp4.c
+thetag.c
+Generating Code...
+c:\users\frejon\desktop\libovt\usat\getsatpos.c(185) : warning C4716: 'copy_element' : must return a value
+c:\users\frejon\desktop\libovt\magpack.c(3421) : warning C4700: uninitialized local variable 'bx' used
+c:\users\frejon\desktop\libovt\magpack.c(3422) : warning C4700: uninitialized local variable 'by' used
+c:\users\frejon\desktop\libovt\magpack.c(3423) : warning C4700: uninitialized local variable 'bz' used
+c:\users\frejon\desktop\libovt\utils.c(166) : warning C4716: 'matmult' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(138) : warning C4716: 'printmat' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(241) : warning C4716: 'rotate3' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(178) : warning C4716: 'identity' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(287) : warning C4716: 'rec2sph' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(258) : warning C4716: 'vect_xform' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(223) : warning C4715: 'rmatrix' : not all control paths return a value
+c:\users\frejon\desktop\libovt\utils.c(340) : warning C4716: 'station' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(122) : warning C4716: 'print_d' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(387) : warning C4716: 'cdate' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(1272) : warning C4716: 'sun_vect' : must return a value
+c:\users\frejon\desktop\libovt\utils.c(1250) : warning C4716: 'station_vect' : must return a value
+   Creating library ovt2g-3.0.lib and object ovt2g-3.0.exp

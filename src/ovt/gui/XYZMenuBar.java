@@ -91,7 +91,7 @@ public class XYZMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        menuItem = new JMenuItem("Load Settings...");
+        menuItem = new JMenuItem("Load State...");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             @Override
@@ -118,11 +118,11 @@ public class XYZMenuBar extends JMenuBar {
 
         menu.add(menuItem);
 
-        menuItem = new JMenuItem("Save Settings...");
+        menuItem = new JMenuItem("Save State...");
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfSubdir());
+                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getUserDir());
                 String file = Settings.showSaveDialog(xyzWin, new File(defaultFile));
                 if (file != null) {
                     try {
@@ -285,7 +285,9 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 final HTMLBrowser hw = getVW().getHTMLBrowser();
-                final String url = "file:" + getCore().getDocsSubdir() + "about.html";
+                
+                final String url = "file:" +getCore().getUserDir()+ getCore().getDocsSubdir() + "about.html";
+                //final String url = "file:" + getCore().getDocsSubdir() + "about.html"; FKJN edit 15Sept 2015
                 try {
                     hw.setPage(url);
                 } catch (IOException e) {

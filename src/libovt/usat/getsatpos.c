@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdio.h>
+#include <ctype.h>
 #include "satellite.h"
 
 
@@ -18,15 +19,20 @@ extern struct MCONSTANTS mcnsts;
 
 /**
  * Returns satellite's postion and velocity for the specified times.
- * Input: 
+ * Input:
  *        OrbitFileName - filename
  *        mjd - double array of mjds. All mjds should be in the order: mjd[0] < mjd[1] < ... < mjd[numberOfMjds-1]
  *        numberOfMjds - number of mjds
  * Output:
  *        gei - array of positions of the satellite in GEI coordinate system
- *        vei - array of velocities of the satellite in GEI coordinate system 
+ *        vei - array of velocities of the satellite in GEI coordinate system
  */
-int get_sat_pos_and_vel (char *filename, double *mjd, double *gei[], double* vei[], int numberOfMjds) 
+
+
+ void copy_element(ELEMENT *source_elem, ELEMENT *target_elem);
+
+
+int get_sat_pos_and_vel (char *filename, double *mjd, double *gei[], double* vei[], int numberOfMjds)
 {
     /***** Local variables *****/
 
@@ -51,36 +57,36 @@ int get_sat_pos_and_vel (char *filename, double *mjd, double *gei[], double* vei
     	fprintf (stderr, "Error in opening TLE file: %s\n", filename);
     	return (-1);
     }
-    
+
     /*fseek(tlefile,0,SEEK_SET);  moving pointer to the begining of file.tle */
-   
-    /* DEBUG 
+
+    /* DEBUG
     printf("File %s opened successfuly. Curent position is %d\n",filename,ftell(tlefile)); */
-     
-    
+
+
 
     if (read_element(tlefile, &last_element) != 0) {
     	fprintf(stderr,"%s:%d,%d: error: read_element problem!\n", filename, line_number,line_number+1);
 		return -1;
     }
     line_number+=2;
-    firstJD = last_element.epoch; /* the time of the first data in the TLE file */ 
+    firstJD = last_element.epoch; /* the time of the first data in the TLE file */
     copy_element(&last_element, &element);
-    
 
-    
+
+
 
     /* go through all mjd's and fill in gei[][] and vei[][] */
- 
-    for (i=0; i<numberOfMjds; i++) { 
+
+    for (i=0; i<numberOfMjds; i++) {
 	iflag = 1;
-	
+
 	JD = mjd[i] + 2433282.50; /*is used to convert MJD to JD */
-	
-	/* choose the model - NEAR or DEEP SPACE. Let us do it every time, because orbit 
+
+	/* choose the model - NEAR or DEEP SPACE. Let us do it every time, because orbit
 	   can change in principle  */
 	/***** INPUT CHECK FOR PERIOD VS EPHEMERIS SELECTED *****/
-   	/***** PERIOD GE 225 MINUTES  IS DEEP SPACE *****/   
+   	/***** PERIOD GE 225 MINUTES  IS DEEP SPACE *****/
     	a1 = pow (pcnsts.xke / element.xno, mcnsts.tothrd);
     	temp = pcnsts.ck2 * 1.5 *
       		(cos (element.xincl) * cos (element.xincl) * 3. - 1.) /
@@ -91,44 +97,44 @@ int get_sat_pos_and_vel (char *filename, double *mjd, double *gei[], double* vei
         	(del1 * 134. / 81. + 1.)));
     	delo = temp / (ao * ao);
     	xnodp = element.xno / (delo + 1.);
-   
+
     	if (mcnsts.twopi / xnodp / pcnsts.xmnpda >= .15625)
-    	{	
+    	{
     		use_deep_space = 1; /* DEEP SPACE (sdp4) will be used */
     	}
     		else use_deep_space = 0;    /* NEAR SPACE (sgp4) will be used */
 
-	
-	/* DE BUG 
-        printf("for loop. mjd[%d]. Curent fpos=%d. JD=%f last_element.epoch=%f\n",i,ftell(tlefile),JD, last_element.epoch); 
-    */	
-	
+
+	/* DE BUG
+        printf("for loop. mjd[%d]. Curent fpos=%d. JD=%f last_element.epoch=%f\n",i,ftell(tlefile),JD, last_element.epoch);
+    */
+
         if (JD < firstJD) {
           printf("The requested mjd[%d] = %f is earlier then the first mjd (%f), file='%s'\n",i,mjd[i],firstJD - 2433282.5,filename);
           fclose(tlefile); return(-1);
-        }   
+        }
         if (JD < element.epoch) {
-	  printf("Error: The elements in mjd[] array are not in order!/n"); 
+	  printf("Error: The elements in mjd[] array are not in order!/n");
           printf("The requested mjd[%d] = %f is earlier then elements mjd (%f), file='%s'\n",i,mjd[i],element.epoch - 2433282.5,filename);
           fclose(tlefile); return(-1);
-        }   
-        
-	/* search for the element */ 
-        while (last_element.epoch < JD) {            
-            copy_element(&last_element, &element); 
+        }
 
-            if (read_element(tlefile, &last_element) != 0) { 
+	/* search for the element */
+        while (last_element.epoch < JD) {
+            copy_element(&last_element, &element);
+
+            if (read_element(tlefile, &last_element) != 0) {
 				printf("Error in get_sat_pos_and_vel : read_element problem. File: '%s' Line #%d/%d\n",filename, line_number,line_number+1);
-				printf("\tRequested mjd[%d] = %f\n",i,mjd[i]); 
+				printf("\tRequested mjd[%d] = %f\n",i,mjd[i]);
 		        fclose(tlefile); return(-1);
             };
 	    	line_number+=2;
-			
+
 	    	/* printf("read_element. mjd[%d]. Curent line is %d",i,line_number);
 	    	printf(" JD=%f last_element.epoch=%f ", JD, last_element.epoch);
 	    	printf(" feof()=%d\n",feof(tlefile)); */
-        }       
-               
+        }
+
 		tsince = (JD - element.epoch) * pcnsts.xmnpda;
 
     	switch (use_deep_space)
@@ -168,79 +174,79 @@ int get_sat_pos_and_vel (char *filename, double *mjd, double *gei[], double* vei
 /**
  * Copies source_element to target_element
  */
-copy_element(ELEMENT *source_elem, ELEMENT *target_elem)
+void copy_element(ELEMENT *source_elem, ELEMENT *target_elem)
 {
 
     (*target_elem).xmo    = (*source_elem).xmo;
     (*target_elem).xnodeo = (*source_elem).xnodeo;
     (*target_elem).omegao = (*source_elem).omegao;
     (*target_elem).eo     = (*source_elem).eo;
-    (*target_elem).xincl  = (*source_elem).xincl;   
+    (*target_elem).xincl  = (*source_elem).xincl;
     (*target_elem).xno    = (*source_elem).xno;
     (*target_elem).xndt2o = (*source_elem).xndt2o;
     (*target_elem).xndd6o = (*source_elem).xndd6o;
     (*target_elem).bstar  = (*source_elem).bstar;
     (*target_elem).epoch  = (*source_elem).epoch;
-    (*target_elem).ds50   = (*source_elem).ds50;   
+    (*target_elem).ds50   = (*source_elem).ds50;
 }
 
 
 /** JNI - called from Sat.java
   Input:
-	OrbitFileName(jfilename) 
+	OrbitFileName(jfilename)
   	array of mjd(jmjd)
-	size of mjd array(jn) 
+	size of mjd array(jn)
   Output:
-	array of gei[jn][3](jgei) 
+	array of gei[jn][3](jgei)
 	array of vei[jn][3](jvei)
 	ErrorCode : 0 if everything was ok, -1 in the case of a problem
-*/ 
+*/
 JNIEXPORT jint JNICALL
 Java_ovt_object_TLESat_getSatPosJNI(env,obj,jfilename,jmjd,jgei,jvei,jn)
 JNIEnv* env;
-jobject obj; 
+jobject obj;
 jdoubleArray jmjd;
 jstring jfilename;
 jobjectArray jgei;
 jobjectArray jvei;
-const jint jn; 
+const jint jn;
 {
 jdouble *mjd;
 jint result;
 int i,j,errCode=0;
 jdoubleArray temp_gei;
 jdoubleArray temp_vei;
-jdouble** gei = (jdouble**)calloc(jn,sizeof(jdouble*)); 
+jdouble** gei = (jdouble**)calloc(jn,sizeof(jdouble*));
 jdouble** vei = (jdouble**)calloc(jn,sizeof(jdouble*));
 
 char fname[70];
 
     const char *filename = (*env)->GetStringUTFChars(env,jfilename,0);
     mjd =(*env)->GetDoubleArrayElements(env,jmjd,0);
-    strcpy(fname,filename);   
+    strcpy(fname,filename);
     for (i=0; i<jn; i++) {
-      jdoubleArray temp_gei = (jdoubleArray)(*env)->GetObjectArrayElement(env,jgei,i);/* point temp_gei to the one row of array jgei*/  
-      jdoubleArray temp_vei = (jdoubleArray)(*env)->GetObjectArrayElement(env,jvei,i);/* point temp_vei to the one row of array jvei*/         
+      jdoubleArray temp_gei = (jdoubleArray)(*env)->GetObjectArrayElement(env,jgei,i);/* point temp_gei to the one row of array jgei*/
+      jdoubleArray temp_vei = (jdoubleArray)(*env)->GetObjectArrayElement(env,jvei,i);/* point temp_vei to the one row of array jvei*/
       gei[i] =(*env)->GetDoubleArrayElements(env,temp_gei, 0);/*point gei to the double array[][] - jgei*/
-      vei[i] =(*env)->GetDoubleArrayElements(env,temp_vei, 0);/*point vei to the double array[][] - jvei*/ 
+      vei[i] =(*env)->GetDoubleArrayElements(env,temp_vei, 0);/*point vei to the double array[][] - jvei*/
     }
-   
+
   if (get_sat_pos_and_vel(fname,mjd,gei,vei,jn) != 0) {
     printf("Error in get_sat_pos_and_vel\n");
     errCode = 1;
   }
 
 /*       Misha's proposition - dead duck
-  (*env)->ReleaseStringUTFChars(env, jfilename, filename); 
+  (*env)->ReleaseStringUTFChars(env, jfilename, filename);
   for (i=0; i<jn; i++) {
     (*env)->ReleaseDoubleArrayElements(env, gei_rel[i], gei[i], 0);
-    (*env)->ReleaseDoubleArrayElements(env, vei_rel[i], vei[i], 0);  
+    (*env)->ReleaseDoubleArrayElements(env, vei_rel[i], vei[i], 0);
    }
 */
 // ---- Yuri's idea ----
     for  (i=0;  i<jn;  i++)  {
 	jdoubleArray  temp_gei  =  (jdoubleArray)(*env)->GetObjectArrayElement(env,jgei,i);
-	jdoubleArray  temp_vei  =  (jdoubleArray)(*env)->GetObjectArrayElement(env,jvei,i);    
+	jdoubleArray  temp_vei  =  (jdoubleArray)(*env)->GetObjectArrayElement(env,jvei,i);
 	(*env)->ReleaseDoubleArrayElements(env,  temp_gei,  gei[i],  0);
 	(*env)->ReleaseDoubleArrayElements(env,  temp_vei,  vei[i],  0);
     }
@@ -255,23 +261,23 @@ char fname[70];
 /* KOI is used by read_element */
 /*******************************/
 
-int KOI(void) 
+int KOI(void)
 {
   char test1[5];
   double test2;
 
   strcpy(test1,"77.77");
   sscanf(test1,"%lf",&test2);
-  if (test2 == 77.77) 
+  if (test2 == 77.77)
     return (1);
   else
     return (2);
 }
 
 /**
- * Reads the element from TLE file 
- * Element contains topocentric geocentric right  
- * ascension,  declination, altitude, and azimuth of the        
+ * Reads the element from TLE file
+ * Element contains topocentric geocentric right
+ * ascension,  declination, altitude, and azimuth of the
  * satellite.
  **/
 int read_element (FILE *tlefile, ELEMENT *element)
@@ -280,16 +286,16 @@ int read_element (FILE *tlefile, ELEMENT *element)
     char   eline[80], tstrng[20];
     double ddummy;
     int k;
-    int kod; 
+    int kod;
     char pchar;
-    register i;
+    int i;
 
     for (i = 0; i < 80; i++)
     {
 	eline[i] = '\0';
     }
 
-    
+
 
     /***** read in mean elements from 2 card trans format *****/
     /*** read the first "card" into the line buffer ***/
@@ -313,7 +319,7 @@ int read_element (FILE *tlefile, ELEMENT *element)
 
     /* Graeme Waddington (wgw@vax.ox.ac.uk) reports that fread
      * on VMS and MSDOS systems have some trouble with the <cr><lf>
-     * at the end of the element line.  He suggested changing the 
+     * at the end of the element line.  He suggested changing the
      * 70 below to a 71 to correct the problem.  Perhaps using fgets
      * instead of fread may work also.
      */
@@ -323,12 +329,12 @@ int read_element (FILE *tlefile, ELEMENT *element)
       fprintf(stderr, "Error: fgets (eline, 71, tlefile) == NULL\n");
       return (-1);
     }
-    
-    if (KOI() != 1){    
+
+    if (KOI() != 1){
      for (i = 0; i < 71; i++){
 
-       if (eline[i] == '.') 
-	 eline[i] = ',';    
+       if (eline[i] == '.')
+	 eline[i] = ',';
      }
      pchar = ',';
     }
@@ -347,7 +353,7 @@ int read_element (FILE *tlefile, ELEMENT *element)
 	}
 	else
 	{
-	    idummy = (int) eline[i]; 
+	    idummy = (int) eline[i];
 	    if (isdigit (idummy) != 0)
 	    {
                 if (sscanf (&eline[i], "%1d", &idummy) != 1)
@@ -494,7 +500,7 @@ int read_element (FILE *tlefile, ELEMENT *element)
 
     /* Graeme Waddington (wgw@vax.ox.ac.uk) reports that fread
      * on VMS and MSDOS systems have some trouble with the <cr><lf>
-     * at the end of the element line.  He suggested changing the 
+     * at the end of the element line.  He suggested changing the
      * 70 below to a 71 to correct the problem.  Perhaps using fgets
      * instead of fread may work also.
      */
@@ -505,12 +511,12 @@ int read_element (FILE *tlefile, ELEMENT *element)
 	return (-1);
     }
 
-    if (KOI() != 1){ 
+    if (KOI() != 1){
      for (i = 0; i < 70; i++){
 
-      if (eline[i] == '.') 
-	eline[i] = ',';     
-      } 
+      if (eline[i] == '.')
+	eline[i] = ',';
+      }
     }
 
     /*** check checksum ***/
