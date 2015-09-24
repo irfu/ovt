@@ -756,6 +756,7 @@ public class Utils extends Object {
             //System.out.println(System.getProperty("user.dir")+File.separator+  fileName + " not found, checking elsewhere");
 
             file = new File(OVTCore.getUserDir() + fileName);
+            
             if (!file.exists() | file.isDirectory()) {
                 file = null;
             }

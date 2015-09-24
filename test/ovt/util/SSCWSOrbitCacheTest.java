@@ -16,6 +16,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import ovt.datatype.Time;
 import ovt.util.IndexedSegmentsCache.NoSuchTPositionException;
+import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 import ovt.util.SSCWSOrbitCache.OrbitalData;
 
 /**
@@ -188,7 +189,7 @@ public class SSCWSOrbitCacheTest {
      */
     public SSCWSOrbitCache saveToLoadFromStream(
             SSCWSOrbitCache cache, SSCWSLibrary lib, String satID, double approxProactiveCachingFillMarginMjd)
-            throws IOException, ClassNotFoundException {
+            throws IOException, ClassNotFoundException, NoSuchSatelliteException {
 
         final ByteArrayOutputStream os = new ByteArrayOutputStream();
         final ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -210,7 +211,7 @@ public class SSCWSOrbitCacheTest {
 
     //##########################################################################
     @Test
-    public void test_CacheIntegrity() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException {
+    public void test_CacheIntegrity() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException, NoSuchSatelliteException {
         System.out.println("test_run1");
         Logger.setLevel(2);
 
