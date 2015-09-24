@@ -85,12 +85,16 @@ public class ImageOperations {
             Rectangle vtkRect = frameOwner.getRenpanel().getComponent().getBounds();
             // Program window
             Rectangle OVTscreenRect = frameOwner.getBounds();
+            
+            //frameOwner.getRootPane().getBounds().y;
+            //frameOwner.getRenpanel().getBounds();
                        // Rectangle OVTscreenRect2 = frameOwner.getCore().getXYZWin().getMenuBar();
 
             //frameOwner.getJMenuBar().getBounds();
             // Get virtualisation screen
-            screenRect.x=OVTscreenRect.x+vtkRect.x;
-            screenRect.y=(int) (OVTscreenRect.y+vtkRect.y+frameOwner.getXYZMenuBar().getHeight())+ frameOwner.getJMenuBar().getHeight(); //two menu bars, OVT's and the native OS Jmenubar
+            
+            screenRect.x=OVTscreenRect.x+vtkRect.x+frameOwner.getRootPane().getBounds().x;
+            screenRect.y=(OVTscreenRect.y+vtkRect.y+frameOwner.getXYZMenuBar().getHeight())+ frameOwner.getRootPane().getBounds().y;; //two menu bars, OVT's and the native OS Jmenubar
             screenRect.width=vtkRect.width;
             screenRect.height=vtkRect.height;
 

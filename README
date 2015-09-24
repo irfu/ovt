@@ -88,9 +88,15 @@ DONE!!
 
 Stuff to make OVT_LINUX run:
 
+nothing!
+
+obsolete stuff:
+
+
 export install4J_JAVA_HOME
 
 add libjawt.so to natives or $JAVA_HOME or something
+
 
 create soft links for wrong version id’s
 ln -s natives/libvtkhdf5.so.8.0.2 libvtkhdf5.so.1.8.13
@@ -105,4 +111,5 @@ error at jogl rendering, check linux vtk build.
 
 
 Stuff to make OVT_windows run: (nothing)
-obsolete: 1. move natives to to jre/bin/  add to path
+obsolete: 
+1. move natives to to jre/bin/  add to path
