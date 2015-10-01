@@ -748,6 +748,7 @@ public class Utils extends Object {
             return null;
         }
         
+        // Property "user.dir" = "User working directory". Appears to be the directory where the code is run(?).
         File file = new File(System.getProperty("user.dir")+ File.separator + fileName); // check if file is in current working directory
         if (!file.exists() | file.isDirectory()) {
             file = null;
