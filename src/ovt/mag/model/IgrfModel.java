@@ -236,7 +236,7 @@ public class IgrfModel extends AbstractMagModel {
      int i_column,neededCol,m_idx=-1,n_idx=-1;
      char ghMarker = '\0';
      float flt = 0.0F;
-     final String invalidFileFormat = "Invalid format of IGRF data file.";
+     final String invalidFileFormatMsg = "Invalid format of IGRF data file.";
      BufferedReader inData;
      String str;
      final GandHcoefs ghCoefs = new GandHcoefs(Nmax);  // for Hashtable
@@ -275,7 +275,7 @@ public class IgrfModel extends AbstractMagModel {
         }
         
         if(minY >= maxY) {
-           throw new IOException(invalidFileFormat);
+           throw new IOException(invalidFileFormatMsg+ " Derived start year is greater than the derived end year.");
         }
         return;    // NOTE: Return from init. mode
      }
@@ -327,14 +327,16 @@ public class IgrfModel extends AbstractMagModel {
               flt = Float.parseFloat(tmps);
               
               if(n_idx>Nmax || m_idx>Nmax || n_idx<0 || m_idx<0) {
-                 throw new IOException(invalidFileFormat);
+                  // NOTE: Best to give proper error message since it is not
+                  // obvious that there is an upper limit to n.
+                 throw new IOException(invalidFileFormatMsg+ " Can not interpret n and/or m indices. (Can e.g. only read up to n="+Nmax+")");
               }
 
               switch(ghMarker){
                  case 'g': ghCoefs.setGcoefs(n_idx,m_idx,flt);break;
                  case 'h': ghCoefs.setHcoefs(n_idx,m_idx,flt);break;
                  default: 
-                    throw new IOException(invalidFileFormat);
+                    throw new IOException(invalidFileFormatMsg);
               }
            } else if (tokGH.hasMoreTokens()==false) {  // Is last column?
               if (isaddCol==true)      // addCol already loaded
@@ -347,7 +349,7 @@ public class IgrfModel extends AbstractMagModel {
                     case 'h': addCol.setHcoefs(n_idx,m_idx,flt);
                         break;
                     default: 
-                       throw new IOException(invalidFileFormat);
+                       throw new IOException(invalidFileFormatMsg);
                  }
               }
            }
@@ -355,7 +357,7 @@ public class IgrfModel extends AbstractMagModel {
         }
         // CASE: Iterated over all tokens/columns
         if(i_column < neededCol) {
-           throw new IOException(invalidFileFormat);
+           throw new IOException(invalidFileFormatMsg);
         }
      }
      inData.close();

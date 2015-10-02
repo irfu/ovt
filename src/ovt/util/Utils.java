@@ -684,46 +684,6 @@ public class Utils extends Object {
 
 
     /**
-     * Return instance of File based on argument. fileName is interpreted as
-     * either of two relative paths depending on what works.
-     *
-     * @param returnNullForNonexistentFile determine whether to return a File
-     * object also for non-existent files (non-directories). NOTE: Disabled for
-     * now due to implementation issues. Always "true".
-     */
-    /*public static File findFile(String fileName, boolean returnNullForNonexistentFile) {
-     if (fileName == null) {
-     return null;
-     }
-     File file = new File(OVTCore.getUserDir() + fileName);
-     if (!file.exists() | file.isDirectory()) {
-     file = null;
-     //}
-     //if (file == null) {
-     ClassLoader classLoader = OVTCore.class.getClassLoader();
-     java.net.URL fn = classLoader.getResource(fileName);
-     if (fn == null) {
-     return null;
-     }
-     file = new File(fn.getFile());
-     if (!file.exists() | file.isDirectory()) {
-     file = null;
-     }
-     }
-     return file;
-     }//*/
-    /**
-     * Will only return a File object for something that exists, otherwise null.
-     * Hence there is no need for the caller to check if a non-null return File
-     * object refers to an existing file. Implemented for backward compatibility
-     * with other code.
-     */
-    /*public static File findFile(String fileName) {
-     return findFile(fileName, true);
-     }*/
-    //
-    //
-    /**
      * Will only return a File object for a file (non-directory) that already
      * exists, otherwise null. Hence there is no need for the caller to check if
      * a non-null return File object refers to an existing file. NOTE: The
@@ -732,6 +692,8 @@ public class Utils extends Object {
      *
      * NOTE: The return result from ClassLoader#getResource can refer to a file
      * inside a ".jar" file.
+     * 
+     * NOTE: Uses System.getProperty("user.dir") which neither findSysDir or findUserDir does.
      */
     /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
@@ -748,7 +710,8 @@ public class Utils extends Object {
             return null;
         }
         
-        // Property "user.dir" = "User working directory". Appears to be the directory where the code is run(?).
+        // Property "user.dir" = "User working directory".
+        // Appears to be the directory where the code is run(?).
         File file = new File(System.getProperty("user.dir")+ File.separator + fileName); // check if file is in current working directory
         if (!file.exists() | file.isDirectory()) {
             file = null;
@@ -817,7 +780,7 @@ public class Utils extends Object {
         if (subdirName == null) {
             return null;
         }
-        File file = new File(OVTCore.getUserDir() + subdirName);
+        File file = new File(OVTCore.getUserDir() + subdirName);   // Gets user home directory.
         if (!file.exists() | !file.isDirectory()) {
             file = null;
         }

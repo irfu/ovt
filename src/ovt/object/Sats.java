@@ -208,7 +208,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
         children.fireChildrenChanged();
     }
     
-    /** Used by XML */
+    /** Used by XML. */
     public ClusterSats getClusterSats() { return clusterSats; }
     
     @Override

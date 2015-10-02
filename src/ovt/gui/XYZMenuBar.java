@@ -285,8 +285,8 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 final HTMLBrowser hw = getVW().getHTMLBrowser();
-                
-                final String url = "file:" +getCore().getUserDir()+ getCore().getDocsSubdir() + "about.html";
+
+                final String url = "file:" + getCore().getUserDir() + getCore().getDocsSubdir() + "about.html";
                 //final String url = "file:" + getCore().getDocsSubdir() + "about.html"; FKJN edit 15Sept 2015
                 try {
                     hw.setPage(url);
@@ -481,7 +481,7 @@ public class XYZMenuBar extends JMenuBar {
             public int compare(Object o1, Object o2) {
                 final String text1 = ((JMenuItem) o1).getText();
                 final String text2 = ((JMenuItem) o2).getText();
-                return text1.compareToIgnoreCase(text2);      // Does not adapts to locale.
+                return text1.compareToIgnoreCase(text2);      // NOTE: Does not adapt to locale.
                 // Can use String#compareTo but that (it seems) treats all upper case as coming before all lower case characters.
             }
         });
@@ -498,7 +498,7 @@ public class XYZMenuBar extends JMenuBar {
         /*=====================================
          Look for files in odata in user home.
          =====================================*/
-        File[] files = null;
+        File[] allFiles = new File[0];
         {
             final FilenameFilter filter
                     = (File dir, String file)
@@ -506,25 +506,26 @@ public class XYZMenuBar extends JMenuBar {
 
             final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
             if (userOrbitDir != null) {
-                files = userOrbitDir.listFiles(filter);
+                final File[] userFiles = userOrbitDir.listFiles(filter);
+                allFiles = Utils.concat(allFiles, userFiles);
+            } else {
+                System.out.println("Can not find directory (Utils.findUserDir("+OVTCore.getOrbitDataSubdir()+")).");
             }
 
             // Look for files in system level odata.
             final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataSubdir());
             if (sysOrbitDir != null) {
-                File[] sysFiles = sysOrbitDir.listFiles(filter);
-                if (files == null) {
-                    files = sysFiles;
-                } else {
-                    files = Utils.concat(files, sysFiles);
-                }
+                final File[] sysFiles = sysOrbitDir.listFiles(filter);
+                allFiles = Utils.concat(allFiles, sysFiles);
+            } else {
+                //System.out.println("Can not find directory (Utils.findSysDir("+OVTCore.getOrbitDataSubdir()+")).");
             }
         }
 
-        if (files == null) {
+        /*if (allFiles == null) {
             return null;
-        }
-        final JMenuItem[] menuItems = new JMenuItem[files.length];
+        }*/
+        final JMenuItem[] menuItems = new JMenuItem[allFiles.length];
 
         // ---------------------------------------------------
         // Create one ActionListener used for all Sat in list.
@@ -565,12 +566,12 @@ public class XYZMenuBar extends JMenuBar {
 
         // Iterate over all files found and add one JCheckBoxMenuItem for each
         // one using the ActionListener created above.
-        for (int i = 0; i < files.length; i++) {
-            final String filename = files[i].getName();
+        for (int i = 0; i < allFiles.length; i++) {
+            final String filename = allFiles[i].getName();
             final String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
             final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
             menuItem.setFont(font);
-            menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // select if sat is already added to OVT
+            menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // Select if sat is already added to OVT
             menuItem.addActionListener(actionListener);   // NOTE: Use previously constructed ActionListener.
             menuItems[i] = menuItem;
         }

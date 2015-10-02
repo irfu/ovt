@@ -104,7 +104,13 @@ public class SSCWSSatellitesBookmarksModel {
         // seemed to have some form of bug the produced a never-ending loop.
         final String[] satIDs = value.split(";");
         for (String satId : satIDs) {
-            bookmarkedSatIds.add(satId);
+            // Ignore empty string since empirically, this value has been found
+            // in the config string (due to earlier bugs?).
+            // Should in principle not be needed but can avoid unnecessary log
+            // messages about satellite not found.
+            if (!satId.isEmpty()) {
+                bookmarkedSatIds.add(satId);
+            }
         }
     }
 
