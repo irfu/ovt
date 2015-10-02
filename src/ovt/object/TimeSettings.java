@@ -54,7 +54,7 @@ import ovt.interfaces.*;
  */
 public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
 
-  private final int NBR_OF_STEPS_BEFORE_WARNING = 1000;
+  private final int NBR_OF_STEPS_BEFORE_WARNING = 24*60+100; // Number of minutes per day (plus some for rounding errors).
   private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");   // Initial value used in constructor.
   private final double INITIAL_INTERVAL_MJD = 1;                                 // Initial value used in constructor.
   private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");     // Initial value used in constructor.
@@ -103,12 +103,17 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   /** Sets time and fires time change... hmmm.. may be it is not needed (fire)?... */
   public void setTimeSet(TimeSet ts) throws IllegalArgumentException {
     //Log.log("->setTimeSet("+ts+")");
-    if (ts.getStepMjd() > ts.getIntervalMjd()/2.)
+    if (ts.getStepMjd() > ts.getIntervalMjd()/2.) {
         throw new IllegalArgumentException("Step is greater than half the specified time interval.");
+    }
     
     final int nbrOfSteps = ts.getNumberOfValues();
     if (nbrOfSteps > NBR_OF_STEPS_BEFORE_WARNING)
-        getCore().sendWarningMessage("Warning", "Number of steps ("+nbrOfSteps+") exceeds "+NBR_OF_STEPS_BEFORE_WARNING+". This may slow down the application.");
+        getCore().sendWarningMessage(
+                "Warning", "Using a very high number of steps ("+nbrOfSteps+")."
+                + " This may slow down the application."
+                //+ " (Warning triggered when exceeding "+NBR_OF_STEPS_BEFORE_WARNING+" steps.)"
+        );
     
     ts.adjustInterval();
     ts.adjustCurrentMjd();

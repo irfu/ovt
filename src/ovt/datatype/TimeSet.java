@@ -110,8 +110,8 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   public void setStartMjd(double startMjd) throws IllegalArgumentException {
       double oldStartMjd = this.startMjd;
       if (startMjd == oldStartMjd) return;
-      if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970.");   // Why this limit?
-      //if (startMjd < Time.Y1950) throw new IllegalArgumentException("Start time could not be earlier then 1950.");
+      //if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970.");   // Why this limit?
+      if (startMjd < Time.Y1950) throw new IllegalArgumentException("Start time could not be earlier then 1950.");
       this.startMjd = startMjd;
       firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }
@@ -324,7 +324,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       return false;
   }
 
-  /** returns true if the object intersects with <CODE>ts</CODE> */
+  /** Returns true if the object intersects with <CODE>ts</CODE>. */
   public boolean intersectsWith(ovt.interfaces.TimePeriodSource ts) {
       double start1 = getStartMjd();
       double stop1  = getStopMjd();
@@ -334,7 +334,9 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       return false;
   }
   
-  /** Test code. */
+  /**
+   * Test code.
+   */
   public static void main(String[] args) {
         TimeSet ts = new TimeSet(Time.Y2000, 1, new Interval(0, 1, 0, 0).getIntervalInDays());
         for (int i=0; i<ts.getNumberOfValues(); i++) {

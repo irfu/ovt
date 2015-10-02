@@ -39,28 +39,20 @@ Khotyaintsev
 package ovt.object;
 
 
-import ovt.*;
 import ovt.gui.*;
-import ovt.mag.*;
 import ovt.util.*;
 import ovt.event.*;
-import ovt.beans.*;
 import ovt.beans.editor.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
-import ovt.object.editor.*;
-
-import vtk.*;
 
 import java.io.*;
-import java.util.*;
 import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 
 /**
@@ -161,7 +153,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       pack();
       //setResizable(false);
       
-      // senter the window
+      // center the window
       Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
       Dimension windowSize = getSize();
       setLocation(scrnSize.width/2 - windowSize.width/2,

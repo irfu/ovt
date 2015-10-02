@@ -63,9 +63,9 @@ public class Interval {
 
 
     // Used 1 time.
-    // NOTE: Not possible to set seconds.
     // NOTE: Possible to set impossible combinations.
-    public Interval(int days, int hours, int minutes, double seconds) throws IllegalArgumentException {
+    public Interval(int days, int hours, int minutes, double seconds)
+            throws IllegalArgumentException {
         //time = new Time(1950, 01, day + 1, hour, min, 0);     // NOTE: days + 1.
         this.days = days;
         this.hours = hours;
@@ -160,24 +160,31 @@ public class Interval {
         final String s = toString(false);
         return s;
     }
-    
-    
+
+
     /**
      * Prints out length of interval using days-hours-minutes-seconds. Ignores
      * fields that are zero. Optionally rounds number of seconds to an integer.
      */
     public String toString(boolean roundSeconds) {
-        String res = "";
-        res += (days != 0 ? "" + days + "d " : "");
-        res += (hours != 0 ? "" + hours + "h " : "");
-        res += (minutes != 0 ? "" + minutes + "m " : "");
+
+        final Interval i = new Interval(days, hours, minutes, seconds);
         if (roundSeconds) {
-            final int intSeconds = (int) seconds;
-            res += (intSeconds != 0 ? "" + intSeconds + "s " : "");
-        } else {
-            res += (seconds != 0 ? "" + seconds + "s " : "");
+            /**
+             * NOTE: Important to round properly, not only round down or up.
+             * Rounding up/down can otherwise make e.g. time settings change by
+             * themselves when the user presses "Apply".
+             */
+            i.setSeconds((int) Math.round(seconds));
         }
-        return res.trim();
+        i.normalize();
+
+        String str = "";
+        str += (i.days != 0 ? "" + i.days + "d " : "");
+        str += (i.hours != 0 ? "" + i.hours + "h " : "");
+        str += (i.minutes != 0 ? "" + i.minutes + "m " : "");
+        str += (i.seconds != 0 ? "" + i.seconds + "s " : "");
+        return str.trim();
         //return res;        
     }
 

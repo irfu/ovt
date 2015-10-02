@@ -19,11 +19,15 @@ import java.lang.Math;
 
 /**
  * Apears to calculate the distance to the magnetopause. Uncertain which
- * coordinate system it uses for the IMF B_z component but I suspect GSM.
- * The formulas seem related to, but not identical to, Shue et al., 1997, "A new
+ * coordinate system it uses for the IMF B_z component but I suspect GSM. The
+ * formulas seem related to, but not identical to, Shue et al., 1997, "A new
  * functional form to study the solar wind control of the magnetopause size and
  * shape", JGR vol 102., NO A5, pp 9497-9511<BR>
  * /Erik P G Johansson 2015-09-14
+ *
+ * Web site documentation states "The magnetopause model is according to Shue et
+ * al., JGR, v. 103, p. 17691, 1998. "<BR>
+ * /Erik P G Johansson 2015-10-01
  */
 public class Shue97 {
 

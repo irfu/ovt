@@ -156,10 +156,10 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
       
       // scale the texture
     vtk.vtkTransformTextureCoords trans = new vtk.vtkTransformTextureCoords();
-      trans.SetInputConnection(tss.GetOutputPort());
-      trans.SetPosition(translate);
-      trans.SetScale(0.25, 1, 1); // FKJN Debug!!°!
-      trans.SetOrigin(0, 0.5, 0); // vtk expects maps from -180° to +180°
+    trans.SetInputConnection(tss.GetOutputPort());
+    trans.SetPosition(translate);
+    trans.SetScale(0.25, 1, 1);
+    trans.SetOrigin(0, 0.5, 0); // vtk expects maps from -180° to +180°
 
       // map to graphics library
     vtkPolyDataMapper earthMapper = new vtkPolyDataMapper();

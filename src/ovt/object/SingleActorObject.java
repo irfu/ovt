@@ -108,8 +108,11 @@ protected void hide() {
 
 public void setVisible(boolean visible) {
     if (isVisible() != visible) {
-      if (visible) show();
-      else hide();
+      if (visible) {
+          show();
+      } else { 
+          hide();
+      }
       super.setVisible(visible);
     }
 }

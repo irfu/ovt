@@ -32,23 +32,27 @@ Khotyaintsev
 
 package ovt.mag.model;
 
-//import java.io.*;
-import java.lang.Exception.*;
 
+/** Class for storing all g,h coefficients in the IGRF model
+ * (Earth magnetic field model).
+ */
 class GandHcoefs extends Object{
-   private int Nmaxi;
-   private float Gcoefs[][];
-   private float Hcoefs[][];
+   private final int Nmaxi;
+   private final float Gcoefs[][];
+   private final float Hcoefs[][];
    
    public GandHcoefs(int nmaxi){
       Nmaxi=nmaxi+1;
       Gcoefs=new float[Nmaxi][Nmaxi];
       Hcoefs=new float[Nmaxi][Nmaxi];
-      for(int i=0;i<Nmaxi;++i)
-         for(int j=0;j<Nmaxi;++j)
+      for(int i=0;i<Nmaxi;++i) {
+         for(int j=0;j<Nmaxi;++j) {
             Gcoefs[i][j]=Hcoefs[i][j]=0.0F;
+         }
+      }
    }
    
+   // NOTE: Does not appear to be used.
    public GandHcoefs(GandHcoefs srcGH){
       Nmaxi=srcGH.getNmaxi();
       Gcoefs=new float[Nmaxi][Nmaxi];
@@ -72,7 +76,7 @@ class GandHcoefs extends Object{
       return Nmaxi;
    }
    
-   public static void chkIdx(int ii,int jj) /*throws IOException*/{
+   public static void chkIdx(int ii,int jj) /*throws IOException*/ {
 /*      if(jj<0 || jj>=Nmaxi)
          throw new IOException("GandHcoefs: incorrect index.");*/
    }

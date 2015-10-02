@@ -68,7 +68,8 @@ public class TimeSetCustomizer extends JPanel
   
   private PropertyEditor[] editor = new PropertyEditor[3];
   private MjdEditorPanel startTextField;
-  private IntervalEditorPanel intervalTextField, stepTextField;
+  private IntervalEditorPanel intervalTextField;
+  private IntervalEditorPanel stepTextField;
   
   /** Creates new TimeSettingsCustomizer */
 public TimeSetCustomizer() {

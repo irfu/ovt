@@ -12,8 +12,6 @@ package ovt.mag.model;
 
 import java.io.*;
 import java.util.*;
-import java.lang.Math.*;
-import java.lang.Exception.*;
 
 import ovt.*;
 import ovt.mag.*;
@@ -22,12 +20,14 @@ import ovt.datatype.*;
 import ovt.mag.model.GandHcoefs;
 
 /*
+ * NOTE: Has a highest limit to how high n it can read. Will ignore higher ones!!
+ * Can not trivially raise the limit.
  *
  * @author  root
  * @version 
- */
- 
+ */ 
 public class IgrfModel extends AbstractMagModel {
+    
 
   protected String igrfDatFileName = OVTCore.getMdataSubdir()+"igrf.d";
   public final static int ERROR_YEAR = -10000;
@@ -36,7 +36,7 @@ public class IgrfModel extends AbstractMagModel {
   // Gh[144] IGRF coefficients array 
   public static double Gh[] = new double[144];
   // maximum no of harmonics in igrf
-  protected static int Nmax = 10;          //not more !
+  protected final static int Nmax = 10;          // Can not read higher n than this. Will ignore higher ones!!!
 
   // Excentric dipole coordinates derived from Gh
   protected static double Eccrr[] = {-0.0625,  0.0405,  0.0281 };
@@ -50,10 +50,10 @@ public class IgrfModel extends AbstractMagModel {
   private static Hashtable ghTable=new Hashtable();
   private static int minY,maxY;    // Years limits
   private static GandHcoefs addCol=new GandHcoefs(Nmax);
-  private static boolean isaddCol=false;
+  private static boolean isaddCol=false;   // Flag for whether addCol has already been filled with values.
   private static double mjdPrev=-100000.0;
 
-  /** Creates new Igrf */
+  /** Creates new Igrf. */
   public IgrfModel(MagProps magProps) {
     super(magProps);
   }
@@ -83,7 +83,7 @@ public class IgrfModel extends AbstractMagModel {
     return igrf(geo);
   }
   
-  // Returns the year, for which IGRF coofissients are valid  
+  // Returns the year, for which IGRF coefficients are valid.
 /* ------------------------------------------------------------ 
    FUNCTION: 
       compute igrf field for cartesian geo
@@ -205,84 +205,130 @@ public class IgrfModel extends AbstractMagModel {
     return Eccdz;
   }
   
-  // Initializing GH coefs for year #yy
-  public static void initHashTable(File DatFile,int yy)
-  throws /*FileNotFoundException,*/ IOException{
-     if(!ghTable.containsKey(new Integer(yy)))
-        initHashTable(DatFile,yy,false);
+  /** Initializing GH coefs for year #year */
+  public static void initHashTable(File dataFile, int year)
+  throws /*FileNotFoundException,*/ IOException
+  {
+     if(!ghTable.containsKey(year)) {
+        initHashTable(dataFile,year,false);
+     }
   }
   
-  public static void initHashTable(File DatFile,int yy,boolean initH)
-  throws IOException{
-     int i,j,neededCol,m_idx=-1,n_idx=-1;
-     char ghMarker='\0';
-     float flt=0.0F;
-     String invalidFileFormat=new String("Invalid format of IGRF data file.");
+  /** Read IGRF data file (text table). Make sure that IgrfModel.ghTable contains
+   * information for the specified year (HashTable key) and that IgrfModel.addCol
+   * contains the identical information. Does not read the last column that is
+   * not associated with one year (secular variation?).
+   * 
+   * NOTE: The way of handling errors is not that great. Should ideally
+   * be translate into to error messages for the user (and block the change of
+   * time) but not sure of good way to do this.<BR>
+   * /Erik P G Johansson 2015-10-02
+   * 
+   * @param initHeader Iff true, only read file header (first row) and
+   * initialize minY, maxY, and nothing else. Iff false, then copy g,h values from data file to
+   * IgrfModel.addCol and cache.
+   * @param year Iff initHeader==true, then must be divisible by five and within
+   * range minY-maxY.
+   */
+  public static void initHashTable(File dataFile, int year, boolean initHeader)
+          throws IOException
+  {
+     int i_column,neededCol,m_idx=-1,n_idx=-1;
+     char ghMarker = '\0';
+     float flt = 0.0F;
+     final String invalidFileFormat = "Invalid format of IGRF data file.";
      BufferedReader inData;
-     String str=new String(),tmps=new String();
-     GandHcoefs ghCoefs=new GandHcoefs(Nmax);  // for Hashtable
+     String str;
+     final GandHcoefs ghCoefs = new GandHcoefs(Nmax);  // for Hashtable
 
      try {
-        inData=new BufferedReader(new FileReader(DatFile));
+        inData = new BufferedReader(new FileReader(dataFile));
      } catch (NullPointerException|FileNotFoundException e){
-        throw new IOException("File "+DatFile+" not found.");
+        throw new IOException("File "+dataFile+" not found.");
      }
+     
+     // Read past initial rows with comments.
+     // Implicitly read first line of non-comments ("header").
+     do {
+        str = inData.readLine();
+     } while ((str != null) && str.startsWith("#"));
 
-     str=inData.readLine();        //Getting first Line (header)
-     if(initH==true){              // First time starting (treats header)
+     if (initHeader==true) {            // First time starting (treats header)
         // Reading header
-        StringTokenizer hdTok = new StringTokenizer(str);
-        i=0;
+        final StringTokenizer hdTok = new StringTokenizer(str);
+        i_column = 0;
         while (hdTok.hasMoreTokens()) {
-           ++i;          // skiping "g/h n m" fields
-           tmps=new String(hdTok.nextToken());
-           switch(i){
-              case 4: minY=new Float(tmps).intValue();break;
+           ++i_column;          // Skipping the first three "g/h n m" fields.
+           String temps = hdTok.nextToken();
+           if (i_column==4){
+               minY = (int) Double.parseDouble(temps);
+           }
+           if ((i_column >= 4) && (!temps.contains("-"))) {
+               /* Read year from column
+                * Last column header may have a column header designating a year
+                * interval, e.g. 2015-20, or may entirely lack a column header (i.e. token).
+                * Must therefore be prepared for that the last token might not be
+                * usable, and that the second-last one should be used.
+                */
+               maxY = (int) Double.parseDouble(temps);
            }
         }
-        maxY=new Float(tmps).intValue();
-        if(minY>=maxY)
+        
+        if(minY >= maxY) {
            throw new IOException(invalidFileFormat);
-        return;    // Return from init. mode
+        }
+        return;    // NOTE: Return from init. mode
      }
      
-     //Checking for corrected year number
-     // Why does code check for yy not divisible by five?!
-     // Is the model only valid with a five-year resolution?
-     if((yy%5)!=0 || yy<minY || yy>maxY)
-        throw new IOException("Invalid number of year in IGRF init.");
+     /* Read actual data in file
+      * ------------------------
+      * NOTE: Code checks for year divisible by five since the data file source
+      * only contains data for every even five years.
+     */
+     if((year%5)!=0 || year<minY || year>maxY) {
+         final String msg = "Invalid year in IGRF init."
+                + " The specified year (year="+year+") is outside the allowed"
+                + " interval "+minY+"-"+maxY+" for which IGRF can be derived, or not divisible by 5.";
+        //throw new IllegalArgumentException(msg);
+        throw new IOException(msg);
+        //throw new NoIGRFModelForSpecifiedYear(msg);
+     }
      
      // Is this year in Hashtable?
-     if(ghTable.containsKey(new Integer(yy)))return;
+     if(ghTable.containsKey(year)) {
+         return;
+     }
 
-     // Reading gh coefs. for year ##yy
-     neededCol=4+(yy-minY)/5;          //Definition of needed column
-     while(inData.ready()){
-        str=inData.readLine();
-        if (str == null) break;
-        StringTokenizer tokGH=new StringTokenizer(str);
-        i=0;                           // Number parsed columns
-        while(tokGH.hasMoreTokens()){  // Parsing one line
-           ++i;
-           tmps=tokGH.nextToken();
-           switch(i){
+     // Reading gh coefs. for year ##year
+     neededCol = 4+(year-minY)/5;          // Definition of needed column
+     while (inData.ready()) {  // Iterate over rows in file.
+        str = inData.readLine();
+        if (str == null) {
+            break;
+        }
+        final StringTokenizer tokGH = new StringTokenizer(str);
+        i_column = 0;                   // Number of parsed columns
+        while(tokGH.hasMoreTokens()) {  // Parsing one row in file. - Iterate over tokens on row.
+           ++i_column;
+           final String tmps=tokGH.nextToken();
+           switch(i_column){
               case 1:                  // g/h marker
-                 char tmpc[]=new char[tmps.length()];
-                 tmpc=tmps.toCharArray();
+                 char tmpc[] = tmps.toCharArray();
                  ghMarker=tmpc[0];
                  break;
               case 2:                  // getting n index
-                 n_idx=new Integer(tmps).intValue();
+                 n_idx = Integer.parseInt(tmps);
                  break;
               case 3:                  // getting m index
-                 m_idx=new Integer(tmps).intValue(); 
+                 m_idx = Integer.parseInt(tmps); 
                  break;
            }
-           if(i==neededCol){           // Founded needed column!
-              flt=new Float(tmps).floatValue();
+           if(i_column==neededCol){           // Found the needed column!
+              flt = Float.parseFloat(tmps);
               
-              if(n_idx>Nmax || m_idx>Nmax || n_idx<0 || m_idx<0)
+              if(n_idx>Nmax || m_idx>Nmax || n_idx<0 || m_idx<0) {
                  throw new IOException(invalidFileFormat);
+              }
 
               switch(ghMarker){
                  case 'g': ghCoefs.setGcoefs(n_idx,m_idx,flt);break;
@@ -290,15 +336,16 @@ public class IgrfModel extends AbstractMagModel {
                  default: 
                     throw new IOException(invalidFileFormat);
               }
-           } else if(tokGH.hasMoreTokens()==false){  //Is last column?
-              if(isaddCol==true)       // addCol already loaded
+           } else if (tokGH.hasMoreTokens()==false) {  // Is last column?
+              if (isaddCol==true)      // addCol already loaded
                  break;                // goto the next line
               else {                   // loading addCol
-                 flt=new Float(tmps).floatValue();
+                 flt = Float.parseFloat(tmps);
                  switch(ghMarker){
                     case 'g': addCol.setGcoefs(n_idx,m_idx,flt);
                        break;
-                    case 'h': addCol.setHcoefs(n_idx,m_idx,flt);break;
+                    case 'h': addCol.setHcoefs(n_idx,m_idx,flt);
+                        break;
                     default: 
                        throw new IOException(invalidFileFormat);
                  }
@@ -306,16 +353,19 @@ public class IgrfModel extends AbstractMagModel {
            }
 
         }
-        if(i<neededCol)
+        // CASE: Iterated over all tokens/columns
+        if(i_column < neededCol) {
            throw new IOException(invalidFileFormat);
+        }
      }
      inData.close();
      
      // Putting year #yy (key) & GH coefs. into hash table
-     ghTable.put(new Integer(yy),ghCoefs);
+     ghTable.put(year, ghCoefs);
 
-     if(isaddCol==false)
+     if(isaddCol==false) {
         isaddCol=true;
+     }
   }
 
 /*
@@ -325,29 +375,34 @@ public class IgrfModel extends AbstractMagModel {
  * @see #Gh #Eccrr #Eccdx #Eccdy #Eccdz
  */
 
-  protected void setIgrf(float yearf){
+  protected void setIgrf(float yearf) {
+      
      GandHcoefs gANDh=new GandHcoefs(Nmax);
      GandHcoefs ghFloor=new GandHcoefs(Nmax);
      GandHcoefs ghCeil=new GandHcoefs(Nmax);
-     int i,j,year=(int)yearf,floorY, ceilY;
+     int i,j, floorY, ceilY;
+     int year = (int) yearf;
      float w1a=0.0F,w2a=0.0F,gg,hh;
 
      try {
-       File igrfDatFile = Utils.findFile(igrfDatFileName);
-        if(isaddCol==false)      // Starting for the first time
+        final File igrfDatFile = Utils.findFile(igrfDatFileName);
+        if(isaddCol==false) {     // Starting for the first time
            initHashTable(igrfDatFile,0,true);
+        }
       
+        // Calculate two years defining a five-year interval containing "year" (and "yearf").
         floorY=(int)(year/10)*10;
-        if((year-floorY)>5)
+        if((year-floorY)>5) {
            floorY+=5;
+        }
         ceilY=floorY+5;
 
         initHashTable(igrfDatFile,floorY);     // Requesting FLOOR year
-        ghFloor=(GandHcoefs)ghTable.get(new Integer(floorY));
+        ghFloor=(GandHcoefs)ghTable.get(floorY);
 
-        if(ceilY<=maxY){   // We have not to use additional column
+        if(ceilY<=maxY) {   // We have not to use additional column
            initHashTable(igrfDatFile,ceilY);   // Requesting CEIL year
-           ghCeil=(GandHcoefs)ghTable.get(new Integer(ceilY));
+           ghCeil=(GandHcoefs)ghTable.get(ceilY);
            w1a=((float)ceilY-yearf)/(float)(ceilY-floorY);
            w2a=1.0F-w1a;
         } else {       // Last additional column have be used (after 2000)
@@ -356,7 +411,7 @@ public class IgrfModel extends AbstractMagModel {
            ghCeil=addCol;    // Using addCol
         }
 
-     } catch (IOException e){
+     } catch(IOException e) {
         System.out.println(e);
      }
 
@@ -388,8 +443,8 @@ public class IgrfModel extends AbstractMagModel {
            f*=Math.sqrt(tmp1/tmp2);
            d1=i+1;
            d2=j+1;
-           Gh[k-1]=f*gANDh.getGcoefs(d1-1,d2-1);
-           Gh[k]=f*gANDh.getHcoefs(d1-1,d2-1);
+           Gh[k-1] = f*gANDh.getGcoefs(d1-1,d2-1);
+           Gh[k]   = f*gANDh.getHcoefs(d1-1,d2-1);
            k+=2;
         }
      }
@@ -434,26 +489,26 @@ public class IgrfModel extends AbstractMagModel {
      Eccrr[2]=(lz-gANDh.getGcoefs(1,0)*tmp2d)/(3.0*h0);
   }
 
-/*  //******************************************************
-  // Cheking main block!!!
-  public static void main(String a[])
-  {
-     try{
-        IgrfModel igrf=new IgrfModel();
-        igrf.setIgrf("igrf_www.d",1993.34F);
-        
-//        IgrfModel.initHashTable("igrf_www.d",2000);
-//        for(int i=1999;i<=2010;i+=2){
-//           IgrfModel igrf=new IgrfModel();
-//           igrf.setIgrf("igrf_www.d",(float)i);
-//        }
-     } catch (FileNotFoundException e){
-        System.err.println(e);
-     } catch (IOException e){
-        System.err.println(e);
-     }
-    
-  }
   //******************************************************
-*/
+  
+  /**
+   * Informal test code.
+   */
+  // Checking main block!!!
+  /*public static void main(String a[]) throws IOException
+  {
+      // Does not really work since can not easily instantiate MagProps.
+      
+        //IgrfModel igrf = new IgrfModel(null);
+        //igrf.setIgrf(1993.34F);        
+        
+        IgrfModel.initHashTable(new File("/home/erjo/work_files/ovt/resources/mdata/igrf.d"), 2000);
+        for (int i=1999;i<=2010;i+=2){
+            //IgrfModel igrf = new IgrfModel(null);
+            //igrf.setIgrf((float) i);
+        }
+    
+  }//*/
+  //******************************************************
+    
 }

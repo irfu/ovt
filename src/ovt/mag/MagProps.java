@@ -406,6 +406,7 @@ public double getKPIndex(double mjd) {
   return value;
 }
 
+/** Which coordinate system? */
 public double[] getIMF(double mjd) {
   //return activityEditorDataModels[IMF].getValues(mjd);
   return getActivity(IMF, mjd);

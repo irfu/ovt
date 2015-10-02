@@ -158,12 +158,12 @@ public class TreePanel extends JScrollPane implements ActionListener {
         
         public void mouseClicked(MouseEvent e) {
             //System.out.println("Mouse CLICKed");
-            boolean checkBoxClicked = renderer.isCheckBoxClicked(tree, e);
+            final boolean checkBoxClicked = renderer.isCheckBoxClicked(tree, e);
             if (isLeftButton(e) && e.getClickCount() == 1 && checkBoxClicked) {
-                OVTNode node = (OVTNode) tree.getLastSelectedPathComponent();
+                final OVTNode node = (OVTNode) tree.getLastSelectedPathComponent();
                 if (node != null) {
                     try {
-                        VisualObject obj = (VisualObject) node.getUserObject();
+                        final VisualObject obj = (VisualObject) node.getUserObject();
                         if (obj.isEnabled()) {
                             obj.setVisible(!obj.isVisible());
                             // render if visible state is changed
