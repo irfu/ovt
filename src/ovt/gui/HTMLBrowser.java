@@ -40,11 +40,9 @@ package ovt.gui;
 
 import ovt.util.Utils;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import javax.swing.*;
 import javax.swing.event.*;
 
 /** Basic class for browsing HTML files
