@@ -49,10 +49,11 @@ import javax.swing.*;
  * the (currently) eight time-DEpendent activity indexes
  * (MagActivityEditorDataModel, MagActivityDataEditor).
  *
+ * MagProps = Magnetic properties.
  *
- * MagProps = Magnetic properties. The name is somewhat misleading since not all
- * "indexes" have anything to do with magnetism (and not all indexes are
- * non-dimensional).
+ * NOTE: The words "magnetic", "index", and "activity" are somewhat misleading.
+ * Not everything referred to is magnetic (e.g. the Mach number) and not all
+ * "indexes" are non-dimensional or scalar (e.g. the magnetic field).
  */
 public class MagProps extends OVTObject
         implements MagModel {
@@ -68,7 +69,7 @@ public class MagProps extends OVTObject
      */
     public static double BMAX = 63500;
     /**
-     * magnetic moment of the earth for igrf1985 model
+     * Magnetic moment of the earth for igrf1985 model
      */
     public static final double DIPMOM = -30483.03;
 
@@ -329,7 +330,7 @@ public class MagProps extends OVTObject
     public AbstractMagModel getModel(int modelType) {
         AbstractMagModel model = (AbstractMagModel) models.get(new Integer(modelType));
         if (model == null) {
-    // there is no model of modelType
+            // there is no model of modelType
             // create it
             switch (modelType) {
                 case NOMODEL:
@@ -378,6 +379,7 @@ public class MagProps extends OVTObject
     }
 
 
+    // Appears to be unused. /Erik P G Johansson 2015-10-07
     public AbstractMagModel getInternalModel() {
         if (internalModel == null) {
             internalModel = getModel(getInternalModelType());
@@ -386,6 +388,7 @@ public class MagProps extends OVTObject
     }
 
 
+    // Appears to be unused. /Erik P G Johansson 2015-10-07
     public AbstractMagModel getExternalModel() {
         if (externalModel == null) {
             externalModel = getModel(getExternalModelType());
@@ -485,7 +488,7 @@ public class MagProps extends OVTObject
 //----------- DATA ---------------
 
     public double getKPIndex(double mjd) {
-  //Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
+        //Log.log(this.getClass().getSimpleName()+"#getKPIndex("+mjd+"<=>"+new Time(mjd)+")", 2);   // DEBUG
         //final double value = activityEditorDataModels[KPINDEX].getValues(mjd)[0];
         final double value = getActivity(KPINDEX, mjd)[0];
         //Log.log("   value="+value, 2);   // DEBUG
@@ -589,7 +592,7 @@ public class MagProps extends OVTObject
 
     public Descriptors getDescriptors() {
         if (descriptors == null) {
-    // Add default property descriptor for visible property.    
+            // Add default property descriptor for visible property.    
             // each visual object can be hidden or shown.
             try {
 
@@ -708,7 +711,7 @@ public class MagProps extends OVTObject
      *
      */
     public double[] getActivity(int key, double mjd) {
-    //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
+        //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
 
         if (key <= 100) {
             final double[] values = activityEditorDataModels[key].getValues(mjd);
