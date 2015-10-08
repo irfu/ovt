@@ -43,11 +43,13 @@ import java.io.*;
 import java.util.*;
 
 /**
+ * 
+ * We store all data in double[].
+ * 
  * @author  ko
  * @version 
- * We store all data in double[].
  */
-// Wild guess: Should probably use composition rather than inheritance for IntHashTable.
+// Wild guess: Should probably use composition rather than inheritance for IntHashTable. /Erik P G Johansson 2015-10-07
 public class Characteristics extends IntHashtable {
     
     /** Holds value of property mjd. */
@@ -101,7 +103,7 @@ public class Characteristics extends IntHashtable {
     
     /** Setter for property mjd.
      * @param mjd New value of property mjd.
- */
+     */
     public void setMjd(double mjd) {
         this.mjd = mjd;
     }
@@ -122,11 +124,11 @@ public class Characteristics extends IntHashtable {
     }
     
     public Characteristics getInstance() {
-        Characteristics res = new Characteristics(mjd);
-        Enumeration e = keys();
+        final Characteristics res = new Characteristics(mjd);
+        final Enumeration e = keys();
         while (e.hasMoreElements()) {
-            Object key = e.nextElement();
-            double[] values = (double[])get(key);
+            final Object key = e.nextElement();
+            final double[] values = (double[])get(key);
             //res.put(key, values.clone());
             res.put(key, ((double[])values).clone());
         }

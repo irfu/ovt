@@ -58,7 +58,10 @@ import javax.swing.*;
 
 public class BowShock extends SingleActorObject implements 
   TimeChangeListener, CoordinateSystemChangeListener, 
-  MagPropsChangeListener, MenuItemsSource {
+  MagPropsChangeListener, MenuItemsSource
+{
+    
+  private static final int DEBUG = 20;
 
   
   /** Holds value of property representation. */
@@ -77,7 +80,7 @@ public BowShock(OVTCore core) {
   super(core, "BowShock", "images/bowshock.gif");
   // set the color
   setColor(Color.green); 
-  Log.log("BowShock :: init ...", 3);
+  Log.log("BowShock :: init ...", DEBUG);
 }
 
 
@@ -91,7 +94,7 @@ public BowShock(OVTCore core) {
 
   @Override
   protected void validate() {
-        Log.log("Recalculating BowShock ...", 5);
+        Log.log("Recalculating BowShock ...", DEBUG);
 	// create actor
 	// Here we go!
 
@@ -109,9 +112,8 @@ public BowShock(OVTCore core) {
 	
 	vtkPoints points = new vtkPoints();
         
-        double swp = getMagProps().getSWP(getMjd());
-        
-        double machNumber = getMagProps().getMachNumber(getMjd());
+        final double swp = getMagProps().getSWP(getMjd());        
+        final double machNumber = getMagProps().getMachNumber(getMjd());
         
         // save characteristics
         characteristics.setMjd(getMjd());
@@ -210,7 +212,9 @@ public void setOpacity(double opacity) {
             hide();
             show();
       }
-  } else if (isVisible()) rotate();
+  } else if (isVisible()) {
+      rotate();
+  }
 }
 
   @Override

@@ -19,10 +19,10 @@ import ovt.util.*;
 import ovt.datatype.*;
 import ovt.mag.model.GandHcoefs;
 
-/*
+/**
  * NOTE: Has a highest limit to how high n it can read. Will ignore higher ones!!
  * Can not trivially raise the limit.
- *
+ * 
  * @author  root
  * @version 
  */ 
@@ -224,6 +224,11 @@ public class IgrfModel extends AbstractMagModel {
    * time) but not sure of good way to do this.<BR>
    * /Erik P G Johansson 2015-10-02
    * 
+   * NOTE: This code reads data file "igrf.d" but it is not the only code in OVT to do so.
+   * libovt/magpack.c also reads "igrf.d" and . Therefore, the file format (of igrf.d)
+   * defined by the code here is not automatically the same as that defined in
+   * libovt/magpack.c.
+   *
    * @param initHeader Iff true, only read file header (first row) and
    * initialize minY, maxY, and nothing else. Iff false, then copy g,h values from data file to
    * IgrfModel.addCol and cache.
@@ -246,13 +251,8 @@ public class IgrfModel extends AbstractMagModel {
      } catch (NullPointerException|FileNotFoundException e){
         throw new IOException("File "+dataFile+" not found.");
      }
-     
-     // Read past initial rows with comments.
-     // Implicitly read first line of non-comments ("header").
-     do {
-        str = inData.readLine();
-     } while ((str != null) && str.startsWith("#"));
 
+     str = inData.readLine();
      if (initHeader==true) {            // First time starting (treats header)
         // Reading header
         final StringTokenizer hdTok = new StringTokenizer(str);
@@ -423,8 +423,9 @@ public class IgrfModel extends AbstractMagModel {
            hh=w1a*ghFloor.getHcoefs(i,j)+w2a*ghCeil.getHcoefs(i,j);
            gANDh.setGHcoefs(i,j,gg,hh);
         }
-     if(!ghTable.containsKey(new Integer(year)))
+     if(!ghTable.containsKey(new Integer(year))) {
         ghTable.put(new Integer(year),gANDh);  // Store yaer in Hashtable
+     }
      
      //Calculating (recalculating) Gh
      float tmp1,tmp2,f,f0;

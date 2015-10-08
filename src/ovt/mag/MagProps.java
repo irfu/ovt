@@ -169,14 +169,14 @@ public class MagProps extends OVTObject
      * List of data models tied to the editor window for manually editing tables
      * with activity data.
      */
-    private MagActivityEditorDataModel[] activityEditorDataModels = new MagActivityEditorDataModel[MAX_ACTIVITY_INDEX + 1];
+    private final MagActivityEditorDataModel[] activityEditorDataModels = new MagActivityEditorDataModel[MAX_ACTIVITY_INDEX + 1];
 
     public static final double KPINDEX_DEFAULT = 0;
     public static final double[] IMF_DEFAULT = {0, 0, 0};
     public static final double SWP_DEFAULT = 1.8;
     public static final double DSTINDEX_DEFAULT = -40;
     public static final double MACHNUMBER_DEFAULT = 5.4;
-    public static final double SW_VELOCITY_DEFAULT = 400; // km/s
+    public static final double SW_VELOCITY_DEFAULT = 400;   // km/s
 
     public MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
@@ -710,7 +710,7 @@ public class MagProps extends OVTObject
      * @return activity.
      *
      */
-    public double[] getActivity(int key, double mjd) {
+    private double[] getActivity(int key, double mjd) {
         //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
 
         if (key <= 100) {
@@ -726,7 +726,7 @@ public class MagProps extends OVTObject
 
 
     /**
-     * @return a set of key - double[] pairs. If some components is requested -
+     * @return A set of key - double[] pairs. If some components is requested -
      * INTERNAL_MODEL and EXTERNAL_MODEL are alse valid keys.
      */
     public Characteristics getCharacteristics(int[] keys, double mjd) {

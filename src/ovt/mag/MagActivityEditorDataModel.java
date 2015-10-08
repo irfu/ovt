@@ -58,7 +58,7 @@ import ovt.util.Log;
  */
 public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel {
 
-    private static final int DEBUG = 20;  // Log message log level.
+    private static final int DEBUG = 2;  // Log message log level.
 
     private String name = null;
     private Vector data = new Vector();
@@ -69,8 +69,8 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
     private int columnNumber = 0;
     private int rowCount = 0;   // Number of rows of data = length of the "data" vector.
 
-    private /*protected*/ double lastMjd = -1;   // The time for which "lastValues" is valid.
-    private MagActivityDataRecord lastValues = null;  // Cached reference for last call to getValues(..)
+    private /*protected*/ double cachedMjd = -1;   // The time for which "cachedValues" is valid.
+    private MagActivityDataRecord cachedValues = null;  // Cached reference for last call to getValues(..)
 
     private File file = null;
     private int index;
@@ -194,7 +194,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         data.removeAllElements();
         data.addElement(getDefaultValues().clone());
         rowCount = data.size();
-        lastValues = null;
+        cachedValues = null;
         fireTableDataChanged();
     }
 
@@ -304,23 +304,28 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
      * Derives the relevant value(s) for an arbitrary point in time.
      */
     public double[] getValues(double mjd) {
-        if (mjd == lastMjd && lastValues != null) {
-            Log.log(this.getClass().getSimpleName() + "#getValues(" + mjd + "<=>" + new Time(mjd) + ")" + Arrays.toString(lastValues.values), DEBUG);
-            return lastValues.values;
+        if (mjd == cachedMjd && cachedValues != null) {
+            // CASE: Asks for a different mjd than the last time. ==> Cached value is invalid.
+            Log.log(this.getClass().getSimpleName()
+                    + "#getValues(" + mjd + "<=>" + new Time(mjd) + ") = "
+                    + Arrays.toString(cachedValues.values), DEBUG);
+            return cachedValues.values;
         }
         try {
-            lastValues = getRecordAt(getRow(mjd));
+            cachedValues = getRecordAt(getRow(mjd));
         } catch (IllegalArgumentException e2) {
-            lastValues = getDefaultValues();
+            cachedValues = getDefaultValues();
         }
-        lastMjd = mjd;
-        Log.log(this.getClass().getSimpleName() + "#getValues(" + mjd + "<=>" + new Time(mjd) + ")" + Arrays.toString(lastValues.values), DEBUG);
-        return lastValues.values;
+        cachedMjd = mjd;
+        Log.log(this.getClass().getSimpleName()
+                + "#getValues(" + mjd + "<=>" + new Time(mjd) + ") = "
+                + Arrays.toString(cachedValues.values), DEBUG);
+        return cachedValues.values;
     }
 
 
     /**
-     * Get mjd value for specific row.
+     * Get mjd value for specific row (not arbitrary time).
      */
     public double getMjd(int row) {
         return getRecordAt(row).time.getMjd();
@@ -373,7 +378,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         } else {
             final MagActivityDataRecord rec = getRecordAt(row);
             try {
-                final double dat = new Double((String) value).doubleValue();
+                final double dat = Double.parseDouble((String) value);
                 if (isValid(dat)) {
                     rec.values[col - 1] = dat;
                 } else {
@@ -383,7 +388,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
                 System.out.println("Invalid number format");
             }
         }
-        lastValues = null; //do we need lastmjd = -1 ?
+        cachedValues = null; //do we need lastmjd = -1 ?
     }
 
 
@@ -483,13 +488,12 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
     }
 
 
-    // Make private?
-    public boolean isValid(double value) {
+    private boolean isValid(double value) {
         return value >= minValue && value <= maxValue;
     }
 
 
-  // Seems unused.
+    // Seems unused.
   /*public boolean isValid(Double value) {
      double val = value.doubleValue();
      return val >= minValue && val <= maxValue;
@@ -568,7 +572,6 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
     }
 
 
-    // Seems unused except for src/ovt/mag/MagActivityDataModelBeanInfo.java.
     public void fireTableDataChanged() {
         ovt.util.Log.log("fireTableDataChanged executed!", DEBUG);
         super.fireTableDataChanged();
