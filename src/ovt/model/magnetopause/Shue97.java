@@ -18,33 +18,34 @@ import ovt.util.Utils;
 import java.lang.Math;
 
 /**
- * Apears to calculate the distance to the magnetopause. Uncertain which
- * coordinate system it uses for the IMF B_z component but I suspect GSM. The
- * formulas seem related to, but not identical to, Shue et al., 1997, "A new
- * functional form to study the solar wind control of the magnetopause size and
- * shape", JGR vol 102., NO A5, pp 9497-9511<BR>
- * /Erik P G Johansson 2015-09-14
- *
- * Web site documentation states "The magnetopause model is according to Shue et
- * al., JGR, v. 103, p. 17691, 1998. "<BR>
- * /Erik P G Johansson 2015-10-01
+ * OVT's web site documentation states "The magnetopause model is according to
+ * Shue et al., JGR, v. 103, p. 17691, 1998. "<BR>
+ * /Erik P G Johansson 2015-10-01 (who did NOT write the class)
  */
 public class Shue97 {
 
     public static double getR(double cosTheta, double mjd, MagProps magProps) {
+        // NOTE: Uses B_z in of the IMF (in whatever coordinate system that is).
         return getR(cosTheta, magProps.getSWP(mjd), magProps.getIMF(mjd)[2]);
     }
 
 
-    //[bz]=nT, [swp]=nPa, [teta]=radians
+    /**
+     *
+     * @param cosTheta "solar zenith angle" (Shue et al. 1998). Unit: radians
+     * @param swp Unit: nPa
+     * @param bz Magnetic field. Likely in GSM (Shue et al. 1998 hints that).
+     * Unit: nT
+     * @return Distance to magnetopause. Unit: Earth radiaa.
+     */
     public static double getR(double cosTheta, double swp, double bz) {
         final double cc = -1.0 / 6.6;
         double r, r0, alfa;
 
-        alfa = (0.58 - 0.007 * bz) * (1.0 + 0.024 * Math.log(swp));
-        r0 = (10.22 + 1.29 * Utils.tanh(0.184 * (bz + 8.14))) * Math.pow(swp, cc);
+        alfa = (0.58 - 0.007 * bz) * (1.0 + 0.024 * Math.log(swp));  // Eq. 11 in Shue et al. 1998.
+        r0 = (10.22 + 1.29 * Utils.tanh(0.184 * (bz + 8.14))) * Math.pow(swp, cc);   // Eq. 10 in Shue et al. 1998.
 
-        r = r0 * Math.pow(2.0 / (1.0 + cosTheta), alfa);
+        r = r0 * Math.pow(2.0 / (1.0 + cosTheta), alfa);   // Eq. 1 in Shue et al. 1998.
 
         return r;
     }

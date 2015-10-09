@@ -55,8 +55,7 @@ import javax.swing.*;
  * Not everything referred to is magnetic (e.g. the Mach number) and not all
  * "indexes" are non-dimensional or scalar (e.g. the magnetic field).
  */
-public class MagProps extends OVTObject
-        implements MagModel {
+public class MagProps extends OVTObject implements MagModel {
 
     private ovt.OVTCore core;
 
@@ -107,16 +106,17 @@ public class MagProps extends OVTObject
      * Minimum distance in the tail. Should be negative. Should be made into a
      * private instance variable (i.e. non-static) with a get method?
      */
-    public /*static*/ double xlim = xlim_default;
+    public double xlim = xlim_default;
 
     /**
-     * Altitude (km) for footprint tracing
+     * Altitude (km) for footprint tracing.
+     * Make private?
      */
-    public static double alt = 100;
+    public static final double alt = 100;
     /**
      * Altitude (RE) for footprint tracing
      */
-    protected double footprintAltitude = 100. / Const.RE;
+    private static final double footprintAltitude = 100. / Const.RE;
 
     /**
      * Holds (ModelType, Model) pairs. Hashtable is
@@ -124,9 +124,16 @@ public class MagProps extends OVTObject
     protected Hashtable models = new Hashtable();
 
     /**
-     * Utility field used by bound properties.
+     * Utility field used by bound properties. NOTE: Refers to
+     * java.beans.PropertyChangeListener, i.e. associated with Java Beans.
+     *
+     * Appears to be used only for when changing internal and external (magnetic
+     * field) model. /Erik P G Johansson 2015-10-09
      */
     private OVTPropertyChangeSupport propertyChangeSupport = new OVTPropertyChangeSupport(this);
+    /**
+     * Appears to be used only for when "activity" "Apply" buttons are pressed.
+     */
     private MagPropsChangeSupport magPropsChangeSupport = new MagPropsChangeSupport(this);
 
     protected AbstractMagModel internalModel = null;
@@ -311,7 +318,7 @@ public class MagProps extends OVTObject
      * @param externalModelType New value of property externalModelType.
      */
     public void setExternalModelType(int externalModelType) {
-        System.out.println("Setting exteral model to " + externalModelType);
+        System.out.println("Setting external model to " + externalModelType);
         if (externalModelType != NOMODEL && externalModelType != T87
                 && externalModelType != T89 && externalModelType != T96 && externalModelType != T2001) {
             throw new IllegalArgumentException("Invalid external field model type");
@@ -500,46 +507,39 @@ public class MagProps extends OVTObject
      * Which coordinate system?
      */
     public double[] getIMF(double mjd) {
-        //return activityEditorDataModels[IMF].getValues(mjd);
         return getActivity(IMF, mjd);
     }
 
 
     public double getSWP(double mjd) {
-        //return activityEditorDataModels[SWP].getValues(mjd)[0];
         return getActivity(SWP, mjd)[0];
     }
 
 
     public double getDSTIndex(double mjd) {
-        //return activityEditorDataModels[DSTINDEX].getValues(mjd)[0];
         return getActivity(DSTINDEX, mjd)[0];
     }
 
 
     public double getMachNumber(double mjd) {
-        Log.log(this.getClass().getSimpleName() + "#getMachNumber(" + mjd + "<=>" + new Time(mjd) + ")", 2);   // DEBUG
-        //final double value = activityEditorDataModels[MACHNUMBER].getValues(mjd)[0];
+        //Log.log(this.getClass().getSimpleName() + "#getMachNumber(" + mjd + "<=>" + new Time(mjd) + ")", 2);
         final double value = getActivity(MACHNUMBER, mjd)[0];
-        Log.log("   value=" + value, 2);   // DEBUG
+        //Log.log("   value=" + value, 2);   // DEBUG
         return value;
     }
 
 
     public double getSWVelocity(double mjd) {
-        //return activityEditorDataModels[SW_VELOCITY].getValues(mjd)[0];
         return getActivity(SW_VELOCITY, mjd)[0];
     }
 
 
     public double getG1(double mjd) {
-        //return activityEditorDataModels[G1].getValues(mjd)[0];
         return getActivity(G1, mjd)[0];
     }
 
 
     public double getG2(double mjd) {
-        //return activityEditorDataModels[G2].getValues(mjd)[0];
         return getActivity(G2, mjd)[0];
     }
 
@@ -567,7 +567,7 @@ public class MagProps extends OVTObject
     /**
      * Returns footprint altitude (km)
      *
-     * @depricated since 0.001 Use #getFootprintAltitude()
+     * @deprecated since 0.001 Use #getFootprintAltitude()
      */
     public double getAlt() {
         return alt;
@@ -840,9 +840,54 @@ public class MagProps extends OVTObject
         return activityEditorDataModels[G2];
     }
 
+    //##########################################################################
+//    private interface ActivityDataSource {
+//
+//        /**
+//         * Derives the relevant value(s) for an arbitrary point in time.
+//         */
+//        public double[] getValues(double mjd);
+//
+//    }
+//
+//    public enum DataSourceChoice {
+//
+//        MAG_ACTIVITY_EDITOR, OMNI2
+//    }
+//
+//    // TODO: Make sure works with save/load settings (Java Beans).
+      /** Also serves as data model for the variable that chooses between activityEditorDataMode and OMNI2 data.
+       */
+//    private class ActivityEditorOrOMNI2_DataSource implements ActivityDataSource {
+//
+//        private final MagActivityEditorDataModel editorDataModel;
+//        private DataSourceChoice dataSourceChoice;
+//
+//
+//        public ActivityEditorOrOMNI2_DataSource(
+//                MagActivityEditorDataModel mEditorDataModel,
+//                DataSourceChoice initialDataSourceChoice) {
+//            editorDataModel = mEditorDataModel;
+//            dataSourceChoice = initialDataSourceChoice;
+//        }
+//
+//
+//        public double[] getValues(double mjd) {
+//            if (dataSourceChoice==DataSourceChoice.MAG_ACTIVITY_EDITOR) {
+//                return editorDataModel.getValues(mjd);
+//            } else if (dataSourceChoice==DataSourceChoice.OMNI2) {
+//                throw new UnsupportedOperationException();
+//            } else {
+//                throw new RuntimeException("OVT code bug.");
+//            }
+//        }
+//    }
 }
 
-// ---------------------------------------------------------
+//##############################################################################
+/* Could probably be made private.
+ * Do not confuse with ovt.beans.MagPropsChangeSupport which is almost identical.
+ */
 class MagPropsChangeSupport {
 
     private Vector listeners = new Vector();
@@ -870,7 +915,9 @@ class MagPropsChangeSupport {
     public void fireMagPropsChange(MagPropsEvent evt) {
         Enumeration e = listeners.elements();
         while (e.hasMoreElements()) {
-            ((MagPropsChangeListener) (e.nextElement())).magPropsChanged(evt);
+            // NOTE: A separate variable is useful for inspecting variables when debugging.
+            final MagPropsChangeListener magPropsChangeListener = (MagPropsChangeListener) e.nextElement();
+            magPropsChangeListener.magPropsChanged(evt);
         }
     }
 

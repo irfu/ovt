@@ -69,6 +69,7 @@ public class BowShock extends SingleActorObject implements
   /** Holds value of property opacity. */
   private double opacity = 0.1;
   
+  /** Those MagProps values ("indexes") on which this object depends. */
   private final int[] activityDependsOn = { MagProps.SWP, MagProps.MACHNUMBER };
   /** Holds Characteristics of this object */
   private final Characteristics characteristics = new Characteristics(-1);
@@ -86,10 +87,10 @@ public BowShock(OVTCore core) {
 
   @Override
   protected void show() {
-  super.show();
-  setRepresentation(getRepresentation()); 
-  rotate();
-}
+    super.show();
+    setRepresentation(getRepresentation()); 
+    rotate();
+  }
 
 
   @Override
@@ -110,10 +111,11 @@ public BowShock(OVTCore core) {
 	dPhi   = 2.*Math.PI/(phiResolution );
 	dTheta = thetaMax/(thetaResolution );
 	
-	vtkPoints points = new vtkPoints();
+	final vtkPoints points = new vtkPoints();
         
         final double swp = getMagProps().getSWP(getMjd());        
         final double machNumber = getMagProps().getMachNumber(getMjd());
+        Log.log("   Calculating bow shock using: swp="+swp+", machNumber="+machNumber, DEBUG);
         
         // save characteristics
         characteristics.setMjd(getMjd());
@@ -127,6 +129,8 @@ public BowShock(OVTCore core) {
         int sizex = phiResolution + 1;
         int sizey = thetaResolution + 1;
         
+//        System.out.println("Bowshock99Model.getR(0, swp="+swp+", machNumber="+machNumber+") = "
+//                +Bowshock99Model.getR(0, swp, machNumber));   // DEBUG
 	for (theta=0, i=0; i<sizey; theta+=dTheta, i++) {
           sinTheta = Math.sin(theta);
           cosTheta = Math.cos(theta);
@@ -224,9 +228,12 @@ public void setOpacity(double opacity) {
 
   @Override
   public void magPropsChanged(MagPropsEvent evt) {
-  // check if SWP and MachNumber Changed
+  // check if SWP and MachNumber changed
   if (Vect.contains(activityDependsOn, evt.whatChanged())) { // if data, bowshock depens on changed
-    Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
+    final Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
+    //System.out.println("this.characteristics = "+this.characteristics);
+    //System.out.println("newCh                = "+newCh);
+    
     if (!characteristics.equals(newCh)) {
         invalidate();
         if (isVisible()) {

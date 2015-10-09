@@ -40,7 +40,7 @@ Khotyaintsev
 package ovt.interfaces;
 
 /** 
- * Apparently interface for "things" which can return a magnetic field vector
+ * Apparently interface for "things" which can return a magnetic field vector.
  *
  * @author  root
  * @version 

@@ -72,19 +72,21 @@ public class ImageOperations {
     public static final String PRINT_JOB_NAME = "OVT printing";
     
     private static final String DEFAULT_IMAGE_FILE = "Image.File";
+    
+    /**
+     * BUG: Takes screenshot, including the export dialog window if it overlaps!!
+     */
     public static void exportImage(OVTCore core, String filename) throws Exception {
+        final String ext = FilenameUtils.getExtension(filename);
+        final XYZWindow frameOwner = core.getXYZWin();
         
-        
-        
-        String ext = FilenameUtils.getExtension(filename);
-        XYZWindow frameOwner = core.getXYZWin();
-             /* method 1*/
-            //whole screenshot
-            Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
-            //VTK window
-            Rectangle vtkRect = frameOwner.getRenpanel().getComponent().getBounds();
-            // Program window
-            Rectangle OVTscreenRect = frameOwner.getBounds();
+        /* method 1*/
+        //whole screenshot
+        final Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
+        //VTK window
+        final Rectangle vtkRect = frameOwner.getRenpanel().getComponent().getBounds();
+        // Program window
+        final Rectangle OVTscreenRect = frameOwner.getBounds();
             
             //frameOwner.getRootPane().getBounds().y;
             //frameOwner.getRenpanel().getBounds();
@@ -93,15 +95,15 @@ public class ImageOperations {
             //frameOwner.getJMenuBar().getBounds();
             // Get virtualisation screen
             
-            screenRect.x=OVTscreenRect.x+vtkRect.x+frameOwner.getRootPane().getBounds().x;
-            screenRect.y=(OVTscreenRect.y+vtkRect.y+frameOwner.getXYZMenuBar().getHeight())+ frameOwner.getRootPane().getBounds().y;; //two menu bars, OVT's and the native OS Jmenubar
-            screenRect.width=vtkRect.width;
-            screenRect.height=vtkRect.height;
+        screenRect.x = OVTscreenRect.x+vtkRect.x+frameOwner.getRootPane().getBounds().x;
+        screenRect.y = (OVTscreenRect.y+vtkRect.y+frameOwner.getXYZMenuBar().getHeight()) + frameOwner.getRootPane().getBounds().y; //two menu bars, OVT's and the native OS Jmenubar
+        screenRect.width = vtkRect.width;
+        screenRect.height = vtkRect.height;
 
          
-            BufferedImage capture = new Robot().createScreenCapture(screenRect);
-            //File file = new File(filename);
-            ImageIO.write(capture, ext,new File(filename));
+        final BufferedImage capture = new Robot().createScreenCapture(screenRect);
+        //File file = new File(filename);
+        ImageIO.write(capture, ext, new File(filename));
         
             
             
@@ -418,6 +420,7 @@ public class ImageOperations {
     /*******/
           }
     
+      // Seems unused.
       public static void exportImageold(vtkRenderWindow renderWindow, String filename) {
         vtkImageWriter writer;
         //renderWindow.
@@ -480,6 +483,7 @@ public class ImageOperations {
         writer.Write();
         
     }
+      // Seems unused
       public static final void makeScreenshot(JOGLVisPanel renPanel) {
         
                         
@@ -505,6 +509,9 @@ public class ImageOperations {
         System.out.println(ioe.getMessage());
     } // catch
 } // makeScreenshot method
+      
+      
+     // Seems unused.
      public static void screenCapture(String filename) throws
            AWTException, IOException {
      // capture the whole screen
@@ -584,8 +591,9 @@ public class ImageOperations {
             
             try{
                 exportImage(core, fname); //this kinda works, but makes window unusable.                        
-                } catch (Exception ex) {System.out.println(ex.getMessage());
-             }
+            } catch (Exception ex) {
+                System.out.println(ex.getMessage());
+            }
             /* ********/
             OVTCore.setGlobalSetting(DEFAULT_IMAGE_FILE, fname);
             outputLabel.setVisible(oldVisible);
@@ -613,11 +621,14 @@ public class ImageOperations {
     return bimage;
 }
     public static void print(OVTCore core) {
-        OutputLabel outputLabel = core.getOutputLabel();
-        boolean oldVisible = outputLabel.isVisible();
-        String oldText = outputLabel.getLabelText();
-        if (oldVisible) outputLabel.setLabelText(oldText + "\n" + COPYRIGHT);
-        else outputLabel.setLabelText(COPYRIGHT);
+        final OutputLabel outputLabel = core.getOutputLabel();
+        final boolean oldVisible = outputLabel.isVisible();
+        final String oldText = outputLabel.getLabelText();
+        if (oldVisible) {
+            outputLabel.setLabelText(oldText + "\n" + COPYRIGHT);
+        } else {
+            outputLabel.setLabelText(COPYRIGHT);
+        }
         outputLabel.setVisible(true);
         /*********/
         
@@ -630,7 +641,9 @@ public class ImageOperations {
             printJob.setJobName(PRINT_JOB_NAME);
             printJob.setPrintable(printable);
             boolean pDialogState = printJob.printDialog();
-            if (pDialogState) printJob.print();
+            if (pDialogState) {
+                printJob.print();
+            }
         } catch (java.security.AccessControlException ace) {
             System.err.println("Can't access printer! " + ace);
         } catch (java.awt.print.PrinterException pe) {

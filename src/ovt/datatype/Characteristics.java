@@ -43,7 +43,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * 
+ * Stores data for an arbitrary set of "MagProps" data (SW pressure=swp, Mach number, IMF etc) as key+value.
  * We store all data in double[].
  * 
  * @author  ko
@@ -75,7 +75,9 @@ public class Characteristics extends IntHashtable {
         Enumeration e = keys();
         while (e.hasMoreElements()) {
             Object key = e.nextElement();
-            if (!equal(get(key), obj.get(key))) return false;
+            if (!equal(get(key), obj.get(key))) {
+                return false;
+            }
         }
         return true;
     }
@@ -122,17 +124,40 @@ public class Characteristics extends IntHashtable {
             out.println();
         }
     }
-    
+
+    /** Effectively returns a deep copy (including the hash table values, i.e.
+     * double[] arrays). */
     public Characteristics getInstance() {
         final Characteristics res = new Characteristics(mjd);
         final Enumeration e = keys();
         while (e.hasMoreElements()) {
             final Object key = e.nextElement();
-            final double[] values = (double[])get(key);
+            final double[] values = (double[]) get(key);
             //res.put(key, values.clone());
             res.put(key, ((double[])values).clone());
         }
         return res;
+    }
+    
+    
+    /** Return string representation for debugging. Assumes that the values are
+     * arrays, which they should in OVT.
+     * 
+     * IMPLEMENTATION NOTE: The superclass' implementation of toString() only
+     * prints references if the values are arrays. Therefore better to implement oneself.
+     */
+    @Override
+    public String toString() {
+        String s = "mjd="+mjd;
+        
+        final Enumeration e = keys();
+        while (e.hasMoreElements()) {
+            final Object key = e.nextElement();
+            final double[] values = (double[]) get(key);
+            //res.put(key, values.clone());
+            s = s + ", {key="+key+", values="+Arrays.toString(values)+"}";
+        }
+        return s;
     }
     
     /** Informal test code. */

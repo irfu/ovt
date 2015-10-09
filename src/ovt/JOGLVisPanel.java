@@ -63,7 +63,7 @@ public class JOGLVisPanel extends vtkJoglCanvasComponent implements ovt.interfac
   
   @Override
   public Image getImage() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    throw new UnsupportedOperationException("Not supported yet. "+getClass().getSimpleName()+"#getImage() not implemented."); //To change body of generated methods, choose Tools | Templates.
   }
   
 }

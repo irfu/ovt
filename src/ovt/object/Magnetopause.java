@@ -133,7 +133,7 @@ protected void validate() {
             sinPhi = Math.sin(phi);
             cosPhi = Math.cos(phi);
             
-            r = Shue97.getR(cosTheta, swp, bz);  // Subsolar point on magnetopause?
+            r = Shue97.getR(cosTheta, swp, bz);
             
             x = r * cosTheta;
             z = r * sinTheta * cosPhi;

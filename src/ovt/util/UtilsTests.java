@@ -57,11 +57,11 @@ import static ovt.util.Utils.linearInterpolation;
  * @since 2015
  */
 public class UtilsTests {
-    
+
     public static void main(String[] args) {
         test_getCumulativeIntArray();
     }
-    
+
 
     /**
      * Test code.
@@ -241,7 +241,7 @@ public class UtilsTests {
 
     public static void test_getCumulativeIntArray() {
         final ArrayList<Object[]> testList = new ArrayList();
-        
+
         testList.add(new Object[]{new int[]{}, true, new int[]{}});
         testList.add(new Object[]{new int[]{}, false, new int[]{}});
 
@@ -336,7 +336,8 @@ public class UtilsTests {
 
 
     /**
-     * Test code for cubicSplineInterpolation. Still based on user interaction.
+     * Test code for cubicSplineInterpolation. Not automatic, but still based on
+     * user interaction and manual inspection of graphs for test cases.
      */
     // PROPOSAL: Add markings for the points which are actually tabulated (for the original tabulated curve).
     public static void test_cubicSplineInterpolation() {

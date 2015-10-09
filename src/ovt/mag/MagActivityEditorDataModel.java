@@ -58,7 +58,7 @@ import ovt.util.Log;
  */
 public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel {
 
-    private static final int DEBUG = 2;  // Log message log level.
+    private static final int DEBUG = 20;  // Log message log level.
 
     private String name = null;
     private Vector data = new Vector();
@@ -165,7 +165,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
                 for (int i = 0; i < dataRead.length; i++) {
                     dataRead[i] = Double.parseDouble(tok.nextToken());
                     if (!isValid(dataRead[i])) {
-                        throw new NumberFormatException();
+                        throw new NumberFormatException("Loaded value is outside of (reasonable) range.");
                     }
                 }
                 newData.addElement(new MagActivityDataRecord(time, dataRead));
@@ -349,6 +349,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
                 rec.time = new Time((String) value);
                 final double mjd = rec.time.getMjd();
 
+                // Move the current row so that the whole table is ordered by time.
                 if (row < rowCount - 1) {
                     if (mjd > getMjd(row + 1)) {
                         int i = row + 1;
