@@ -32,6 +32,10 @@ Khotyaintsev
 
 package ovt.datatype;
 
+/**
+ * This class appears to be unused (and is in the wrong package). Delete?!
+ * /Erik P G Johansson 2015-10-14
+ */
 public class ycutfield       //  ycut
 {  
    public static final int NPF = 120;     /* max number of points along a field line */

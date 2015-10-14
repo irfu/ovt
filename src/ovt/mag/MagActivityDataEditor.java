@@ -235,8 +235,10 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
 
 
     /**
-     * Actions triggered when pressing "Apply" button. Does not seem to behave
-     * as is conventional for "Apply" buttons since MagProps reads the
+     * Actions triggered when pressing "Apply" button.
+     * 
+     * NOTE: Does not seem to behave as is conventional for "Apply"
+     * buttons since MagProps reads the
      * "MagActivityEditorDataModel dataModel" whenever external code asks for
      * "activity" values, e.g. when time is changed, and can thus obtain values
      * from the table immediately, i.e. WITHOUT the "Apply" button having been

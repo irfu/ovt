@@ -206,7 +206,9 @@ public void timeChanged(TimeEvent evt) {
             hide();
             show();
       }
-  } else if (isVisible()) rotate();
+  } else if (isVisible()) {
+      rotate();
+  }
 }
 
 public void coordinateSystemChanged(CoordinateSystemEvent evt) {

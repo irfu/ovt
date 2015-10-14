@@ -43,6 +43,7 @@ import ovt.OVTCore;
 
 import java.io.*;
 import java.util.*;
+import ovt.mag.MagProps.MagActivityDataSource;
 import ovt.util.Log;
 
 /**
@@ -56,7 +57,7 @@ import ovt.util.Log;
  * @author Yuri Khotyaintsev
  * @version 1.0
  */
-public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel {
+public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel implements MagActivityDataSource {
 
     private static final int DEBUG = 20;  // Log message log level.
 

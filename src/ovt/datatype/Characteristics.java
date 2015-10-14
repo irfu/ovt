@@ -43,7 +43,7 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Stores data for an arbitrary set of "MagProps" data (SW pressure=swp, Mach number, IMF etc) as key+value.
+ * Stores data for an arbitrary set of "MagProps" data (SW pressure=swp, Mach number, IMF etc) as key+value for a specified point in time.
  * We store all data in double[].
  * 
  * @author  ko
@@ -83,15 +83,21 @@ public class Characteristics extends IntHashtable {
     }
 
     private static boolean equal(Object obj1, Object obj2) {
-        if ((obj1 instanceof double[] ) && (obj2 instanceof double[] )) 
+        if ((obj1 instanceof double[] ) && (obj2 instanceof double[] )) {
             return doubleArraysEqual((double[])obj1, (double[])obj2);
-        else return obj1.equals(obj2); 
+        } else {
+            return obj1.equals(obj2); 
+        }
     }
     
+    // NOTE: Won't work for NaN due to how comparisons work, and maybe not for Inf either.
     private static boolean doubleArraysEqual(double[] a, double[] b) {
         if (a.length != b.length) return false;
-        for (int i=0; i<a.length; i++)
-            if (a[i] != b[i]) return false;
+        for (int i=0; i<a.length; i++) {
+            if (a[i] != b[i]) {
+                return false;
+            }
+        }
         return true;
     }
     

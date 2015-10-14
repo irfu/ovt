@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.gui;

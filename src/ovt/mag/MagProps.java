@@ -2,12 +2,12 @@
 
  Program:   Orbit Visualization Tool
  Source:    $Source: /stor/devel/ovt2g/ovt/mag/MagProps.java,v $
- Date:      $Date: 2006/03/21 12:15:42 $
+ Date:      $Date: 2015/10/14 10:23:00 $
  Version:   $Revision: 2.10 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
- Yuri Khotyaintsev)
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
 
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
 
  =========================================================================*/
 package ovt.mag;
@@ -41,6 +41,8 @@ import ovt.mag.model.*;
 import ovt.object.*;
 
 import java.beans.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import javax.swing.*;
 
@@ -104,13 +106,12 @@ public class MagProps extends OVTObject implements MagModel {
 
     /**
      * Minimum distance in the tail. Should be negative. Should be made into a
-     * private instance variable (i.e. non-static) with a get method?
+     * private instance variable (i.e. non-static) with a getValues method?
      */
     public double xlim = xlim_default;
 
     /**
-     * Altitude (km) for footprint tracing.
-     * Make private?
+     * Altitude (km) for footprint tracing. Make private?
      */
     public static final double alt = 100;
     /**
@@ -174,18 +175,29 @@ public class MagProps extends OVTObject implements MagModel {
 
     /**
      * List of data models tied to the editor window for manually editing tables
-     * with activity data.
+     * (or text files) with activity data.
      */
     private final MagActivityEditorDataModel[] activityEditorDataModels = new MagActivityEditorDataModel[MAX_ACTIVITY_INDEX + 1];
+
+    /**
+     * List of data sources for "activity" data. The "activity" data that the
+     * rest of OVT uses is read from these instances.
+     */
+    private final MagActivityDataSource[] activityDataSources = new MagActivityDataSource[MAX_ACTIVITY_INDEX + 1];
+
+    /**
+     * Editor window for manually editing a table of "activity" values (for one
+     * "index") over time. Public only so that code external to the class can
+     * set the visibility and the location of the windows.
+     */
+    public MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
     public static final double KPINDEX_DEFAULT = 0;
     public static final double[] IMF_DEFAULT = {0, 0, 0};
     public static final double SWP_DEFAULT = 1.8;
     public static final double DSTINDEX_DEFAULT = -40;
     public static final double MACHNUMBER_DEFAULT = 5.4;
-    public static final double SW_VELOCITY_DEFAULT = 400;   // km/s
-
-    public MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
+    public static final double SW_VELOCITY_DEFAULT = 400;   // Unit: km/s
 
     private MagPropsCustomizer magPropsCustomizer = null;
 
@@ -209,6 +221,20 @@ public class MagProps extends OVTObject implements MagModel {
      */
     private int externalModelType = T87;
 
+    /**
+     * Select what to use as a raw data source for the functionality/code that
+     * handles OMNI2 data. All OMNI2 data should pass through this class. See
+     * comments in OMNI2RawDataSource and OMNI2RawDataSourceImpl.
+     */
+    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()));
+
+    /**
+     * Select what to use as a (non-raw) data source for the functionality/code
+     * that handles OMNI2 data. All OMNI2 data should pass through this class.
+     * See comments in OMNI2DataSource.
+     */
+    private static final OMNI2DataSource OMNI2_DATA_SOURCE = new OMNI2DataSource(OMNI2_RAW_DATA_SOURCE);
+
 
     /**
      * Creates new magProperties.
@@ -229,6 +255,17 @@ public class MagProps extends OVTObject implements MagModel {
         activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel(SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
         activityEditorDataModels[G1] = new MagActivityEditorDataModel(G1, 0, 50, 6, "G1");
         activityEditorDataModels[G2] = new MagActivityEditorDataModel(G2, 0, 50, 10, "G2");
+
+        final DataSourceChoice initialDataSourceChoice = DataSourceChoice.MAG_ACTIVITY_EDITOR;
+        //final DataSourceChoice initialDataSourceChoice = DataSourceChoice.OMNI2;
+        activityDataSources[KPINDEX] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[KPINDEX], KPINDEX, KPINDEX_DEFAULT, initialDataSourceChoice);
+        activityDataSources[IMF] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[IMF], IMF, IMF_DEFAULT, initialDataSourceChoice);
+        activityDataSources[SWP] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[SWP], SWP, SWP_DEFAULT, initialDataSourceChoice);
+        activityDataSources[DSTINDEX] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[DSTINDEX], DSTINDEX, DSTINDEX_DEFAULT, initialDataSourceChoice);
+        activityDataSources[MACHNUMBER] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[MACHNUMBER], MACHNUMBER, MACHNUMBER_DEFAULT, initialDataSourceChoice);
+        activityDataSources[SW_VELOCITY] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[SW_VELOCITY], SW_VELOCITY, SW_VELOCITY_DEFAULT, initialDataSourceChoice);
+        activityDataSources[G1] = activityEditorDataModels[G1];
+        activityDataSources[G2] = activityEditorDataModels[G2];
 
         if (!OVTCore.isServer()) {
             activityEditors[KPINDEX] = new MagActivityDataEditor(activityEditorDataModels[KPINDEX], this);
@@ -298,7 +335,7 @@ public class MagProps extends OVTObject implements MagModel {
 
         int oldInternalModelType = this.internalModelType;
         this.internalModelType = internalModelType;
-        propertyChangeSupport.firePropertyChange("internalModelType", new Integer(oldInternalModelType), new Integer(internalModelType));
+        propertyChangeSupport.firePropertyChange("internalModelType", oldInternalModelType, internalModelType);
     }
 
 
@@ -364,7 +401,7 @@ public class MagProps extends OVTObject implements MagModel {
                 default:
                     throw new IllegalArgumentException("Invalid model type :" + modelType);
             }
-            models.put(new Integer(modelType), model);
+            models.put(modelType, model);
         }
         return model;
     }
@@ -714,13 +751,15 @@ public class MagProps extends OVTObject implements MagModel {
         //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
 
         if (key <= 100) {
-            final double[] values = activityEditorDataModels[key].getValues(mjd);
+            //final double[] values = activityEditorDataModels[key].getValues(mjd);
+            final double[] values = activityDataSources[key].getValues(mjd);
             //Log.log("   double[] values = "+Arrays.toString(values), 2);
             return values;
         } else {
             final int index = key / 100;
             final int component = key - index * 100;
-            return new double[]{activityEditorDataModels[index].getValues(mjd)[component]};
+            //return new double[]{activityEditorDataModels[index].getValues(mjd)[component]};
+            return new double[]{activityDataSources[index].getValues(mjd)[component]};
         }
     }
 
@@ -774,6 +813,16 @@ public class MagProps extends OVTObject implements MagModel {
         }
         // keys are - data name, magnetic field depends on
         return getCharacteristics(keys, mjd);
+    }
+
+
+    public void setActivityEditorVisible(int index, boolean makeVisible) {
+        activityEditors[index].setVisible(makeVisible);
+    }
+
+
+    public void setActivityEditorLocation(int index, int x, int y) {
+        activityEditors[index].setLocation(x, y);
     }
 
 
@@ -841,47 +890,127 @@ public class MagProps extends OVTObject implements MagModel {
     }
 
     //##########################################################################
-//    private interface ActivityDataSource {
-//
-//        /**
-//         * Derives the relevant value(s) for an arbitrary point in time.
-//         */
-//        public double[] getValues(double mjd);
-//
-//    }
-//
-//    public enum DataSourceChoice {
-//
-//        MAG_ACTIVITY_EDITOR, OMNI2
-//    }
-//
-//    // TODO: Make sure works with save/load settings (Java Beans).
-      /** Also serves as data model for the variable that chooses between activityEditorDataMode and OMNI2 data.
-       */
-//    private class ActivityEditorOrOMNI2_DataSource implements ActivityDataSource {
-//
-//        private final MagActivityEditorDataModel editorDataModel;
-//        private DataSourceChoice dataSourceChoice;
-//
-//
-//        public ActivityEditorOrOMNI2_DataSource(
-//                MagActivityEditorDataModel mEditorDataModel,
-//                DataSourceChoice initialDataSourceChoice) {
-//            editorDataModel = mEditorDataModel;
-//            dataSourceChoice = initialDataSourceChoice;
-//        }
-//
-//
-//        public double[] getValues(double mjd) {
-//            if (dataSourceChoice==DataSourceChoice.MAG_ACTIVITY_EDITOR) {
-//                return editorDataModel.getValues(mjd);
-//            } else if (dataSourceChoice==DataSourceChoice.OMNI2) {
-//                throw new UnsupportedOperationException();
-//            } else {
-//                throw new RuntimeException("OVT code bug.");
-//            }
-//        }
-//    }
+    public interface MagActivityDataSource {
+
+        /**
+         * Returns the relevant value(s) for an arbitrary point in time.
+         */
+        public double[] getValues(double mjd);
+
+    }
+
+    public enum DataSourceChoice {
+
+        MAG_ACTIVITY_EDITOR, OMNI2
+    }
+
+    /**
+     * Also serves as data model for the variable that chooses between
+     * activityEditorDataMode and OMNI2 data.
+     */
+    private class ActivityEditorOrOMNI2_DataSource implements MagActivityDataSource {
+
+        // TODO: Make sure works with save/load settings (Java Beans).
+        private final MagActivityEditorDataModel editorDataModel;
+        private final int activityIndex;
+        private final OMNI2Data.FieldID fieldID;
+        private final double[] defaultValue;   // Value used/returned in case of error.
+        private final boolean getIMFvector;
+
+        /**
+         * Flag for where to take data from.
+         */
+        private DataSourceChoice dataSourceChoice;
+
+
+        public ActivityEditorOrOMNI2_DataSource(
+                MagActivityEditorDataModel mEditorDataModel,
+                int mActivityIndex,
+                double mDefaultValue,
+                DataSourceChoice initialDataSourceChoice) {
+            this(mEditorDataModel, mActivityIndex, new double[]{mDefaultValue}, initialDataSourceChoice);
+        }
+
+
+        public ActivityEditorOrOMNI2_DataSource(
+                MagActivityEditorDataModel mEditorDataModel,
+                int mActivityIndex,
+                double[] mDefaultValue,
+                DataSourceChoice initialDataSourceChoice) {
+
+            editorDataModel = mEditorDataModel;
+            dataSourceChoice = initialDataSourceChoice;
+            defaultValue = mDefaultValue;
+            activityIndex = mActivityIndex;
+
+            boolean tempGetIMFvector = false;
+            switch (activityIndex) {
+                case KPINDEX:
+                    fieldID = OMNI2Data.FieldID.Kp;
+                    break;
+                case IMF:
+                    fieldID = OMNI2Data.FieldID.IMFx_nT_GSM_GSE;   // Appropriate value to represent all components of IMF?!!!!
+                    tempGetIMFvector = true;
+                    break;
+                case SWP:
+                    fieldID = OMNI2Data.FieldID.SW_ram_pressure_nP;
+                    break;
+                case DSTINDEX:
+                    fieldID = OMNI2Data.FieldID.DST;
+                    break;
+                case MACHNUMBER:
+                    fieldID = OMNI2Data.FieldID.SW_M_ms;
+                    break;
+                case SW_VELOCITY:
+                    fieldID = OMNI2Data.FieldID.SW_velocity_kms;
+                    break;
+                default:
+                    throw new IllegalArgumentException();
+            }
+            getIMFvector = tempGetIMFvector;
+        }
+
+
+        public void setDataSource(DataSourceChoice choice) {
+            this.dataSourceChoice = choice;
+
+            final MagPropsEvent evt = new MagPropsEvent(this, editorDataModel.getIndex());
+            MagProps.this.fireMagPropsChange(evt);
+            MagProps.this.getCore().Render();
+        }
+
+
+        @Override
+        public double[] getValues(double mjd) {
+            if (dataSourceChoice == DataSourceChoice.MAG_ACTIVITY_EDITOR) {
+
+                return editorDataModel.getValues(mjd);
+
+            } else if (dataSourceChoice == DataSourceChoice.OMNI2) {
+
+                try {
+                    return OMNI2_DATA_SOURCE.getValues(mjd, fieldID, getIMFvector);
+                } catch (OMNI2DataSource.ValueNotFoundException ex) {
+
+                    final String msg = "Can not find value (" + getActivityName(activityIndex) + ") for the specified time in the OMNI2 database. Using default value instead. - " + ex.getMessage();
+                    getCore().sendWarningMessage("Can not find OMNI2 value", msg);
+                    Log.log(msg, 0);
+                    return defaultValue;
+
+                } catch (IOException ex) {
+
+                    final String msg = "I/O error when trying to obtain OMNI2 value. Using default value instead. - " + ex.getMessage();
+                    getCore().sendErrorMessage("I/O error when obtaining OMNI2 value", msg);
+                    Log.log(msg, 0);
+                    return defaultValue;
+
+                }
+
+            } else {
+                throw new RuntimeException("OVT code bug.");
+            }
+        }
+    }
 }
 
 //##############################################################################

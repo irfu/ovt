@@ -61,7 +61,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
 
   /** Creates new form MagPropsEditor */
   public MagPropsCustomizer(MagProps magProps,JFrame owner) {
-    super("Magnetic Field");
+    super("Magnetic Field and Activity");
     
     Log.log("MagPropsEditor :: init ...", 3);
     this.magProps = magProps;

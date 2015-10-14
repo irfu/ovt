@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.util;
@@ -43,7 +43,7 @@ import java.util.List;
  * length. FCBP = Fixed column byte positions.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
- * @since 2015
+ * @since 2015-0x-xx
  */
 public class FCBPTextTableFileReader {
 

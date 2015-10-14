@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.util;
@@ -40,7 +40,8 @@ import java.util.List;
  * Cache for a function that<BR>
  * (1) orders/organizes/distributes some form of data on a continuous 1D axis,
  * called "t"<BR>
- * (2) returns data corresponding to an arbitrary segment on the t axis,<BR>
+ * (2) returns data corresponding to an arbitrary (uninterrupted) segment on the
+ * t axis,<BR>
  * (3) always returns equivalent data for a given segment.<BR>
  * (4) that returns a segment t_a-t_c equal to merging the segments t_a-t_b and
  * t_b-t_c {@code (t_a <= t_b <= t_c)} (5) Every data segment has a positive
@@ -75,7 +76,7 @@ import java.util.List;
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
  */
-// NOTE: There is no easy way of implementing the clearing of old cache data.
+// NOTE: There is no easy way of implementing selectively clearing cached data, e.g. data that has not been used for a long time.
 // PROPOSAL: SearchFunction, (SearchFunction) limits.
 // PROPOSAL: Permit DataSource to throw IOException.
 // PROPOSAL: Get segment (transverse/orthogonal) subset.
@@ -244,12 +245,18 @@ public class SegmentsCache {
      *
      * The method is needed/useful since the cache works with t intervals which
      * are different from e.g. underlying data points that are not spread evenly
-     * on the t axis. Examples of use cases: (1) Search for next data point, (2)
-     * search DataSegment for the next non-fill value.
+     * on the t axis. Examples of uses: (1) Search for next/previous data point
+     * where data points are spread out unevenly, (2) search DataSegment for the
+     * next non-fill value.
      *
      * NOTE: Will search DataSegment inside the specified search limits in t
      * (set in constructor), and an undetermined but finite distance outside
      * depending on cached segments.
+     *
+     * NOTE: This function can not handle searching for the NEAREST matching
+     * position (whether at a higher or lower t). Only clean way of doing
+     * searching both up and down and then choose the nearest one. Note that
+     * this requires returning the t value and not just the result.
      *
      * IMPLEMENTATION NOTE: Implementation is not intended to be efficient when
      * searching long distances (in t), although it does work. It is intended
@@ -261,8 +268,8 @@ public class SegmentsCache {
      * separately from this class since it really only _needs_ public methods
      * (slight modification to only use #getSegmentSuperset).
      *
-     * @return The (non-null) reference that was returned from the search function
-     * if successful. Null iff could not find what was sought.
+     * @return The (non-null) reference that was returned from the search
+     * function if successful. Null iff could not find what was sought.
      */
     public Object search(double t_start, SearchDirection dir, SearchFunction searchFunc) throws IOException {
         //Log.log(this.getClass().getSimpleName() + " # searchDataSegment", DEBUG);
@@ -317,7 +324,6 @@ public class SegmentsCache {
         }
         return null;
     }
-
 
     //##########################################################################
     /**

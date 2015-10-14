@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.mag;
@@ -35,7 +35,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import ovt.datatype.Time;
 import ovt.util.FCBPTextTableFileReader;
 import ovt.util.FCBPTextTableFileReader.FileColumnReader;
@@ -50,27 +52,24 @@ import ovt.util.Utils;
  * NOTE: The exact file format is different for different time
  * resolutions/averages.
  *
+ * IMPLEMENTATION NOTE: Implemented as a separate class since reading the file
+ * involves a lot of settings (column definitions). Keeping it as a separate
+ * class makes it easier if one would need to use two or more similar file
+ * formats (in particular OMNI-related file formats) simultaneously in the
+ * future. The class name is also chosen with this in mind. One could also
+ * create OMNI2FileUtils_DailyAvg, OMNI2FileUtils_5MinAvg and so on.
+ *
  * IMPLEMENTATION NOTE: The class does NOT have any form of caching since a user
  * might want to combine data of different time resolution or from different
  * sources (before caching), or use the same cache for more types of data (other
  * variables) etc. A user/caller might want one policy for caching to disk that
  * covers more than this class.
  *
- * IMPLEMENTATION NOTE: Implemented as a separate class since reading the file
- * involves a lot of settings (column definitions). Keeping it as a separate
- * class makes it easier if one would need to use two or more similar file
- * formats (in particular OMNI-related file formats) simultaneously in the
- * future.
- *
- * IMPLEMENTATION NOTE: Takes data as an InputStream rather than a file since
- * reading data from an URL comes as an InputStream (and a file is easily
- * converted to a stream). Not using "Reader" in class name since this
- * tecchnically can refer to another form of stream (stream of characters). Uses
- * InputStream instead of Reader so that the class has control over the
- * byte-to-characters conversion.
+ * IMPLEMENTATION NOTE: The code reads all fields which are required for
+ * OMNI2Data, which may be more than OVT really requires. See OMNI2Data.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
- * @since 2015
+ * @since 2015-0x-xx
  */
 /*
  Excerpt from column descriptions: 
@@ -224,6 +223,20 @@ public class OMNI2FileUtils_HourlyAvg {
     /**
      * Read and interpret hourly average OMNI2 file in the form of a (byte)
      * stream.
+     *
+     * IMPLEMENTATION NOTE: Takes data as an InputStream rather than a file
+     * since reading data from an URL comes as an InputStream (and a file is
+     * easily converted to a stream). Not using "Reader" in class name since
+     * this tecchnically can refer to another form of stream (stream of
+     * characters). Uses InputStream instead of Reader so that the class has
+     * control over the byte-to-characters conversion.
+     *
+     * @param beginIncl_mjd Beginning (inclusive) of the time interval which the
+     * returned OMNI2Data claims to cover. No data points must be earlier than
+     * this value.
+     * @param endExcl_mjd End (exclusive) of the time interval which the
+     * returned OMNI2Data claims to cover. No data points must be later or equal
+     * to this value.
      */
     public OMNI2Data read(InputStream in, double beginIncl_mjd, double endExcl_mjd) throws IOException {
 
@@ -234,9 +247,11 @@ public class OMNI2FileUtils_HourlyAvg {
 
         final FileDoubleColumnReader Kp_FCR = getFileDoubleColumnReader(39 - 1, "99");
         final FileDoubleColumnReader DST_FCR = getFileDoubleColumnReader(41 - 1, "99999");
-        final FileDoubleColumnReader IMFx_nT_GSE_GSM_FCR = getFileDoubleColumnReader(13 - 1, "999.9");
+        final FileDoubleColumnReader IMFx_nT_GSM_GSE_FCR = getFileDoubleColumnReader(13 - 1, "999.9");
         final FileDoubleColumnReader IMFy_nT_GSE_FCR = getFileDoubleColumnReader(14 - 1, "999.9");
         final FileDoubleColumnReader IMFz_nT_GSE_FCR = getFileDoubleColumnReader(15 - 1, "999.9");
+        final FileDoubleColumnReader IMFy_nT_GSM_FCR = getFileDoubleColumnReader(16 - 1, "999.9");
+        final FileDoubleColumnReader IMFz_nT_GSM_FCR = getFileDoubleColumnReader(17 - 1, "999.9");
         final FileDoubleColumnReader velocity_FCR = getFileDoubleColumnReader(25 - 1, "9999.");   // Actual fill value from looking at files.
         final FileDoubleColumnReader pressure_FCR = getFileDoubleColumnReader(29 - 1, "99.99");
         final FileDoubleColumnReader MA_FCR = getFileDoubleColumnReader(38 - 1, "999.9");
@@ -249,51 +264,60 @@ public class OMNI2FileUtils_HourlyAvg {
 
         fileColumnReaders.add(Kp_FCR);
         fileColumnReaders.add(DST_FCR);
-        fileColumnReaders.add(IMFx_nT_GSE_GSM_FCR);
+        fileColumnReaders.add(IMFx_nT_GSM_GSE_FCR);
         fileColumnReaders.add(IMFy_nT_GSE_FCR);
         fileColumnReaders.add(IMFz_nT_GSE_FCR);
+        fileColumnReaders.add(IMFy_nT_GSM_FCR);
+        fileColumnReaders.add(IMFz_nT_GSM_FCR);
         fileColumnReaders.add(velocity_FCR);
         fileColumnReaders.add(pressure_FCR);
         fileColumnReaders.add(MA_FCR);
         fileColumnReaders.add(Mms_FCR);
 
+        // Actually read the file.
         FCBPTextTableFileReader.readTable(new InputStreamReader(in, TEXT_FILE_CHARSET), N_chars_per_line, fileColumnReaders);
 
+        // Create one single time_mjd field/array from the multiple time columns in the file.
         final int[] year = year_FCR.getBuffer();
         final int[] doy = doy_FCR.getBuffer();
         final int[] hod = hod_FCR.getBuffer();
         final double[] times_mjd = new double[year.length];
         for (int i = 0; i < year.length; i++) {
             final double time_mjd = Time.getMjd(year[i], 1, 1, hod[i], 0, 0) + (doy[i] - 1); // Technically cheating with leap seconds, maybe, since differences in mjd are not proportional to physical  time. 
-            
-            if ((times_mjd[i] < beginIncl_mjd) || (endExcl_mjd <= times_mjd[i])) {
+
+            if ((time_mjd < beginIncl_mjd) || (endExcl_mjd <= time_mjd)) {
                 throw new IllegalArgumentException("File times do not fit the stated time interval.");
             }
             times_mjd[i] = time_mjd;
         }
 
-        final OMNI2Data data = new OMNI2Data(beginIncl_mjd, endExcl_mjd);
-        
-        data.setFieldArray(OMNI2Data.FieldID.time_mjd, times_mjd);
-        
-        data.setFieldArray(OMNI2Data.FieldID.Kp, Kp_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.DST, DST_FCR.getBuffer());
-        
-        data.setFieldArray(OMNI2Data.FieldID.velocity_kms, velocity_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.pressure_nP, pressure_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.M_A, MA_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.M_ms, Mms_FCR.getBuffer());
-        
-        data.setFieldArray(OMNI2Data.FieldID.IMFx_nT_GSE, IMFx_nT_GSE_GSM_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.IMFy_nT_GSE, IMFy_nT_GSE_FCR.getBuffer());
-        data.setFieldArray(OMNI2Data.FieldID.IMFz_nT_GSE, IMFz_nT_GSE_FCR.getBuffer());
+        Map<OMNI2Data.FieldID, double[]> fieldArrays = new HashMap();
+
+        fieldArrays.put(OMNI2Data.FieldID.time_mjd, times_mjd);
+        fieldArrays.put(OMNI2Data.FieldID.Kp, Kp_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.DST, DST_FCR.getBuffer());
+
+        fieldArrays.put(OMNI2Data.FieldID.SW_velocity_kms, velocity_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.SW_ram_pressure_nP, pressure_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.SW_M_A, MA_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.SW_M_ms, Mms_FCR.getBuffer());
+
+        fieldArrays.put(OMNI2Data.FieldID.IMFx_nT_GSM_GSE, IMFx_nT_GSM_GSE_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.IMFy_nT_GSE, IMFy_nT_GSE_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.IMFz_nT_GSE, IMFz_nT_GSE_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.IMFy_nT_GSM, IMFy_nT_GSM_FCR.getBuffer());
+        fieldArrays.put(OMNI2Data.FieldID.IMFz_nT_GSM, IMFz_nT_GSM_FCR.getBuffer());
+
+        final OMNI2Data data = new OMNI2Data(beginIncl_mjd, endExcl_mjd, fieldArrays);
 
         return data;
     }
 
 
     //##########################################################################
-    /** Used internally for reading columns which are converted to dates/times. */
+    /**
+     * Used internally for reading columns which are converted to dates/times.
+     */
     private FileIntColumnReader getFileIntColumnReader(int colIdx, String srcFillValue) {
         return new FileIntColumnReader(COLUMNS_BEGIN[colIdx], COLUMNS_END[colIdx], srcFillValue, INT_FILL_VALUE, INITIAL_READ_BUFFER_SIZE);
     }

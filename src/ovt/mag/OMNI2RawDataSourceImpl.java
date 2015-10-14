@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.mag;
@@ -41,32 +41,29 @@ import ovt.datatype.Time;
 import static ovt.util.Utils.downloadURLToFile;
 
 /**
- * Class for utilities referring to all raw OMNI2 data.
+ * Class for utilities referring to all raw OMNI2 data. See the interface
+ * OMNI2RawDataSource which the class implements. The class is only supposed to
+ * be called from the outside through those interface methods.
  *
- * IMPLEMENTATION NOTE: The implementation is chosen such as to make certain
+ * IMPLEMENTATION NOTE: OMNI2 offers data with different time averages but the
+ * current implementation (2015-10-14) only uses one such time average (hourly
+ * average). The implementation is however chosen such as to make certain
  * conceivable future changes reasonably easy:<BR>
  * 1) ADD support for another OMNI2 file type (averages over other time periods)
- * given another equivalent to OMNI2FileUtils_HourlyAvg.<BR>
- * 2) SWITCH between using different OMNI2 file types entirely<BR>
+ * given an equivalent to OMNI2FileUtils_HourlyAvg for the other file type,<BR>
+ * 2) SWITCH between using different OMNI2 file types entirely,<BR>
  * 3) implement usage of OMNI2 with different time resolution at the same time
  * (possibly with different resolution for different time intervals).
  *
- * NOTE: Different OMNI2 data files with different time resolutions have
- * available data for different (global) time intervals (different starting
- * years).
- *
- * NOTE: OMNI2 data files may have fill values for future times.
- *
- * IMPLEMENTATION NOTE: One could in principle move most of the functionality in
- * this class (hourly average data) into OMNI2FileUtils_HourlyAvg too but that
- * would mean mixing "data definitions" code with other code.
- *
- * NOTE: Things that should be common for all OMNI2 data file types (different
- * averages) and therefore should be here:<BR>
- * 1) fill values (not in OMNI2 files, but in java variables), <BR>
- * 2) how/if to cache downloaded data: filenaming conventions on disk, choice of
- * cache directory on disk. <BR>
- * 3) how to handle data availability time interval (for all OMNI2 data, all
+ * IMPLEMENTATION NOTE: The class is intended to contain things that are common
+ * for different OMNI2 data file types (different averages), but not caching
+ * (caching that is INdependent of different OMNI2 file types):<BR>
+ * 1) definitions of fill values (fill values used in java variables; not the fill values
+ * used in OMNI2 files, and which may depend on file type),
+ * <BR>
+ * 2) how/if to cache downloaded OMNI2 files: filenaming conventions on disk,
+ * choice of cache directory on disk. <BR>
+ * 3) how to handle the data availability time interval (for all OMNI2 data, all
  * time resolutions) (?), and how to handle the moving upper time boundary as
  * time progresses (may have to redownload files). <BR>
  *
@@ -74,22 +71,47 @@ import static ovt.util.Utils.downloadURLToFile;
  * walltime) once (twice really) to avoid a minor bug. If current time was read
  * multiple times, a data file could go from "recent enough to use" to "old
  * enough to be redownloaded" during the course of an OVT session. ==> Two
- * different versions of the file may be used read during the course of an OVT
- * session, something which MAY be undesirable.
+ * different versions of the same file may be used during the course of an OVT
+ * session, something which MAY be undesirable since the code (.e.g. caching in
+ * RAM) is not made to handle changes in the underlying OMNI2 data.
+ *
+ * NOTE: Different OMNI2 data files with different time resolutions have
+ * available data for different (global) time intervals (different starting
+ * years).
+ *
+ * NOTE: OMNI2 data files can have fill values for future times.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-10
  */
-public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
-    
+public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
+
+    /**
+     * One single point in time to be used to represent the present. Has to be a
+     * constant over a session to ensure consistent caching behaviour over one
+     * OVT session.
+     */
+    private static final ZonedDateTime REFERENCE_NOW_UTC = ZonedDateTime.now(ZoneOffset.UTC);
+
+    /**
+     * One single point in time to be used to represent the present. Has to be a
+     * constant over a session to ensure consistent caching behaviour over one
+     * OVT session.
+     */
+    // "measured in milliseconds, between the current time and midnight,
+    // January 1, 1970 UTC." Return value is really "long" but is stored as
+    // double to avoid mistaken integer division.
+    private static final double CURRENT_TIME_MS = System.currentTimeMillis();
+
     private final OMNI2FileCache hourlyAvgFileCache;
 
-    private static final int FIRST_YEAR___HOURLY_AVG = 1963;
-    private static final int LAST_YEAR___HOURLY_AVG = getUTCYearDaysAgo(0);
+    private final static int FIRST_YEAR___HOURLY_AVG = 1963;
+    /* Last year for which there is (expected) to be (hourly averaged) OMNI2 data. NOTE: Must be initialized after REFERENCE_NOW_UTC. */
+    private final static int LAST_YEAR___HOURLY_AVG = getUTCYearDaysAgo(0);
 
     /**
      * Determines the boundary between "old data" and "new data". The age refers
-     * to the time when measurements were made.
+     * to the time when the measurements were made.
      */
     private static final int NEWOLD_MEASUREMENTS_AGE_BOUNDARY_DAYS = 365 / 2;
 
@@ -99,22 +121,9 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
     /* How old a _file_ with "old measurements" can get before it is being redownloaded. */
     private static final double OLD_MEASUREMENTS_FILE_AGE_BEFORE_REDOWNLOAD_DAYS = 365;
 
-    /**
-     * One single point in time to be used to represent the present. Necessary
-     * to ensure consistent caching behaviour over one OVT session.
-     */
-    private static final ZonedDateTime REFERENCE_NOW_UTC = ZonedDateTime.now(ZoneOffset.UTC);
+    private static final OMNI2FileUtils_HourlyAvg hourlyAvg = new OMNI2FileUtils_HourlyAvg(OMNI2RawDataSource.DOUBLE_FILL_VALUE);
 
-    /**
-     * One single point in time to be used to represent the present. Necessary
-     * to ensure consistent caching behaviour over one OVT session.
-     */
-    private static final double CURRENT_TIME_MS = System.currentTimeMillis();   // "measured in milliseconds, between the current time and midnight, January 1, 1970 UTC." Really "long" but stored as double to avoid mistaken integer division.
-
-    private static final OMNI2FileUtils_HourlyAvg hourlyAvg = new OMNI2FileUtils_HourlyAvg(DOUBLE_FILL_VALUE);
-    
     //##########################################################################
-
 
     public OMNI2RawDataSourceImpl(File mOMNI2FileDir) {
         hourlyAvgFileCache = new OMNI2FileCache(mOMNI2FileDir);
@@ -123,13 +132,13 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
 
     @Override
     public OMNI2Data getData_hourlyAvg(int year) throws IOException {
-        
-        final double beginIncl_mjd = new Time(year, 1, 1, 0, 0, 0).getMjd();
+
+        final double beginIncl_mjd = new Time(year + 0, 1, 1, 0, 0, 0).getMjd();
         final double endExcl_mjd = new Time(year + 1, 1, 1, 0, 0, 0).getMjd();
-        
+
         if ((year < FIRST_YEAR___HOURLY_AVG) || (LAST_YEAR___HOURLY_AVG < year)) {
             return new OMNI2Data(beginIncl_mjd, endExcl_mjd);   // Return empty data.
-        }        
+        }
 
         double maxFileAgeBeforeRedownload_days;
         if (year >= (getUTCYearDaysAgo(NEWOLD_MEASUREMENTS_AGE_BOUNDARY_DAYS))) {
@@ -151,7 +160,7 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
                 // ==> It might be that there is no data file for the current year yet, as during the very beginning of a year. Assume this.
                 // ==> Ignore error and return empty data.
                 // This is not a perfect treatment but it should reduce the number of unnecessary error messages.
-                return new OMNI2Data(beginIncl_mjd, endExcl_mjd);
+                return new OMNI2Data(beginIncl_mjd, endExcl_mjd);   // Return empty data.
             } else {
                 throw e;
             }
@@ -161,10 +170,11 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
             return hourlyAvg.read(in, beginIncl_mjd, endExcl_mjd);
         }
     }
-    
+
+
     @Override
     public int[] getYearMinMax_hourlyAvg() {
-        return new int[] {FIRST_YEAR___HOURLY_AVG, LAST_YEAR___HOURLY_AVG};
+        return new int[]{FIRST_YEAR___HOURLY_AVG, LAST_YEAR___HOURLY_AVG};
     }
 
 
@@ -187,19 +197,33 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
          * Always tries to return an object to an existing file. If there is no
          * file, then obtain it first.
          *
-         * @return The requested file. Never null.
+         * NOTE: Method is written to be generic and almost unrelated to OMNI2
+         * files. (The printouts are the exception.) Could almost be moved to
+         * ovt.utils.Util.java.
+         *
+         * @param urlStr The URL at which the original file exists.
+         * @param localFilename The file name (not path) of the file on disk
+         * (regardless of whether it exists or not).
+         *
+         * @return The requested file. Never null (will have exception instead).
+         * @throws IOException for I/O errors including requesting a file which
+         * does not exist (e.g. for a year for which there is no data).
          */
-        public File ensureFileExists(String urlStr, String localFilename, double maxFileAgeBeforeRedownload_days) throws IOException {
+        public File ensureFileExists(String urlStr, String localFilename, double maxFileAgeBeforeRedownload_days)
+                throws IOException {
+
             final File file = new File(cacheDir, localFilename);
 
             if (!file.isFile()) {
+                // CASE: There is no local file. ==> Download
 
-                cacheDir.mkdirs();    // Silent error. Lets file writing complain about errors.
+                cacheDir.mkdirs();    // Silent error. Let the later writing to file complain about errors.
 
                 // NOTE: Allow failure to propagate since error here means not having any data.
                 downloadFile(urlStr, file, "First download");
 
             } else {
+                // CASE: There is a local file. ==> Download again if it seems too old.
 
                 /**
                  * NOTE: Uses last modification time to determine whether to
@@ -238,7 +262,8 @@ public class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
             final int bytesDownloaded = downloadURLToFile(urlStr, mLocalFile);
 
             final double duration = (System.nanoTime() - t_start) / 1.0e9;     // Unit: seconds
-            System.out.printf("   Downloaded %d bytes, elapsed time %.1f s - Average speed: %.1f kiB/s\n", bytesDownloaded, duration, bytesDownloaded / duration / 1024.0);
+            System.out.printf("   Downloaded %d bytes, elapsed time %.1f s - Average speed: %.1f kiB/s\n",
+                    bytesDownloaded, duration, bytesDownloaded / duration / 1024.0);
         }
     }
     //##########################################################################

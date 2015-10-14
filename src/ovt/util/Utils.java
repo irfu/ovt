@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 /**
@@ -865,12 +865,12 @@ public class Utils extends Object {
 
 
     /**
-     * @author Erik P_SI G Johansson
+     * @author Erik P G Johansson
      *
      * Find index of a specified value.<BR>
      * NOTE: Behaviour is undefined for any appearance of NaN or Inf anywhere.
      *
-     * @param a Sorted array, monotonically increasing values, i.e. no value
+     * @param ax Sorted array, monotonically increasing values, i.e. no value
      * occurs multiple times.
      *
      * @return The index i for which a[i]==x if there is any. If x lies between
@@ -880,7 +880,8 @@ public class Utils extends Object {
      * a.length.) and -1 (RoundingMode.FLOOR; a.length-1) which should be
      * consistent with other behaviour (sic!).
      */
-    public static int findNearestMatch(double[] a, double x, RoundingMode indexRoundingMode) {
+    // PROPOSAL: Option for taking the index with the nearest value.
+    public static int findNearestMatch(double[] ax, double x, RoundingMode indexRoundingMode) {
         /* Argument check.
          ---------------
          Important since RoundingMode has many confusing forms of rounding.
@@ -890,7 +891,7 @@ public class Utils extends Object {
             throw new IllegalArgumentException("Illegal \"indexRoundingMode\" value.");
         }
 
-        int i = java.util.Arrays.binarySearch(a, x);
+        int i = java.util.Arrays.binarySearch(ax, x);
         if (i < 0) {
             // CASE: No exact match.
             i = -i - 1;  // "Insertion point" in "Arrays" API documentation <=> rounding up (ceil).

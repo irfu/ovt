@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.mag;
@@ -34,8 +34,14 @@ package ovt.mag;
 import java.io.IOException;
 
 /**
- * Interface for raw OMNI2 data sources. One is the actual source of OMNI2 data.
- * Others can be sources for generating test data for test purposes.
+ * Interface for raw OMNI2 data sources. One implementation is the actual source
+ * of OMNI2 data. Other implementations can be sources for generating test data
+ * for testing purposes. All OMNI2 data used by the application should pass
+ * through an implementation of this interface.
+ *
+ * NOTE: The methods are PERMITTED to be DEPENDENT on the format of the
+ * underlying OMNI2 files (or at least by how data is distributed over time and
+ * over data files) but should of course still be as generic as possible.
  *
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
@@ -45,7 +51,12 @@ public interface OMNI2RawDataSource {
 
     //public final static int INT_FILL_VALUE = Integer.MIN_VALUE;
     public final static double DOUBLE_FILL_VALUE = Double.NaN;
-    
+
+
+    /**
+     * @return Never null. For years for which there is no data, an object
+     * representing a time interval without data points is still returned.
+     */
     public OMNI2Data getData_hourlyAvg(int year) throws IOException;
 
 

@@ -76,8 +76,8 @@ public class XYZMenuBar extends JMenuBar {
         menu.setFont(font);
 
         menuItem = new JMenuItem("Export Image...");
-        menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_E, ActionEvent.CTRL_MASK));  // Set accelerator Ctrl-E.
+        //menuItem.setAccelerator(KeyStroke.getKeyStroke(
+        //        KeyEvent.VK_E, ActionEvent.CTRL_MASK)); // Set shortcut Ctrl-E. Added to aid debugging/testing.
 
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
@@ -110,7 +110,7 @@ public class XYZMenuBar extends JMenuBar {
                         OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, file);
                         core.Render();
                     } catch (IOException e2) {
-                        core.sendErrorMessage("Error Loading Settings", e2);
+                        core.sendErrorMessage("Error loading settings", e2);
                     }
                 }
             }
@@ -129,7 +129,7 @@ public class XYZMenuBar extends JMenuBar {
                         Settings.save(core, file);
                         OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, file);
                     } catch (IOException e2) {
-                        core.sendErrorMessage("Error Saving Settings", e2);
+                        core.sendErrorMessage("Error saving settings", e2);
                     }
                 }
             }
@@ -192,7 +192,7 @@ public class XYZMenuBar extends JMenuBar {
         menu.addSeparator();
 
         // Magnetic Field 
-        menuItem = new JMenuItem("Magnetic Field...");
+        menuItem = new JMenuItem("Magnetic Field and Activity...");
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -615,6 +615,7 @@ class ActivityDataMenuItem extends JMenuItem implements ActionListener {
 
     public void actionPerformed(ActionEvent evt) {
         magProps.activityEditors[activityIndex].setVisible(true);
+        //magProps.setActivityEditorVisible(activityIndex, true);
     }
 
 }

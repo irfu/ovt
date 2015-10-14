@@ -7,7 +7,7 @@
  
  
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
- Yuri Khotyaintsev, Erik P G Johansson, Fredrik Johansson)
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without
@@ -26,7 +26,7 @@
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev, E. P. G. Johansson, F. Johansson)
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
  
  =========================================================================*/
 package ovt.mag;
@@ -40,99 +40,143 @@ import ovt.util.SegmentsCache;
 import ovt.util.Utils;
 
 /**
- * Container for OMNI2 data.
+ * Container for OMNI2 data over a certain period of time. Intended to be
+ * treated as immutable after its construction (constructor plus
+ * #setFieldArray).
  *
- * IMPLEMENTATION NOTE: No constructor that initializes final Fields since it
- * would have such a long list of arguments which are easily confused with each
- * other, which is dangerous. On the other hand, a manual initialization may
- * forget to set fields.
+ * NOTE: An instance covers an explicitly specific period in time, which has to
+ * be CONSISTENT with the data points in it, but the specified time period can
+ * still be (much) larger than the time period spanned by the data points.
  *
- * NOTE: An instance covers a specific period in time, which has to be
- * CONSISTENT with the data points in it, but the time period can still be much
- * larger.
+ * IMPLEMENTATION NOTE: The class stores more values than required by OVT
+ * (2015-10-13). This is to make it easy to change OVT to using an alternate
+ * value if necessary (in particular other coordinate system for IMF, or other
+ * Mach number).
  *
  * IMPLEMENTATION NOTE: The class was originally (2015-09-xx) made to handle
- * both double and integer fields and keep them separate but still be able to
- * iterate over both kinds of fields at the same time. This was maybe a bit
- * unnecessary in hindsight and the functionality has been removed/commented
- * away to simplify. Everything is now scalar double fields.
+ * both double and integer fields (as arrays) and keep them separate but still
+ * be able to iterate over both kinds of fields at the same time (using class
+ * ArrayData). This was maybe a bit unnecessary in hindsight and the
+ * functionality has been removed/commented away to simplify. Everything is now
+ * scalar double fields.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-xx
  */
-// QUESTION: Split x,y,z components of magnetic field to get fewer types of arrays?
-// QUESTION: Tie class name to OMNI2?
-// Q: Tie class to OMNI2?
-// Q: Tie class to one request of OMNI2?
-// Units, CS in variable names.
-// Q: What coord sys for magnetic field?!
-// PROPOSAL: Variables for time limits?
-public class OMNI2Data implements SegmentsCache.DataSegment {
+// PROPOSAL: Let every field be an array of double[] arrays, not an array of double scalars.
+//    PRO: More similar to how mag. props. are treated elswhere in the code (e.g. MagProps.java).
+//       PRO: Can group magnetic field components together.
+//          QUESTION: How handle both using GSE and GSM?
+//          QUESTION: How handle fill values?
+//             PROPOSAL: One fill value for all values (all x,y,z components) together.
+//    CON: Less memory-efficient.
+//    NOTE: Need new implementation of ArrayData.
+public final class OMNI2Data implements SegmentsCache.DataSegment {
 
+    /**
+     * Identifiers for various fields in OMNI2 data. GSE, GSM refer to
+     * coordinate systems. nT, nP, kms (=km/s) refer to units.
+     */
     public enum FieldID {
 
         time_mjd,
-        IMFx_nT_GSE,
+        IMFx_nT_GSM_GSE,
         IMFy_nT_GSE,
         IMFz_nT_GSE,
-        pressure_nP,
-        velocity_kms,
-        M_A,
-        M_ms,
-        Kp, DST,
+        IMFy_nT_GSM,
+        IMFz_nT_GSM,
+        SW_ram_pressure_nP,   // Not to be confused with "dynamic pressure".
+        SW_velocity_kms,
+        SW_M_A, // Alfven Mach number.
+        SW_M_ms, // Magnetosonic Mach number
+        Kp, // K_p index
+        DST // DST=Disturbance Storm Time index
     }
 
-    /*private static final EnumSet<FieldID> DOUBLE_FIELDS = EnumSet.of(
-     FieldID.time_mjd,
-     FieldID.IMFx_nT_GSE,
-     FieldID.IMFy_nT_GSE,
-     FieldID.IMFz_nT_GSE,
-     FieldID.pressure_nP,
-     FieldID.velocity_kms,
-     FieldID.M_ms,
-     FieldID.M_A,
-     FieldID.M_ms,
-     );*/
-    /*private static final EnumSet<FieldID> INT_FIELDS = EnumSet.of(
-     FieldID.Kp,
-     FieldID.DST
-     );*/
     private final Map<FieldID, ArrayData> dataFields = new HashMap();
+    //private final Map<FieldID, DoubleArray> doubleFields = new HashMap();
+    //private final Map<FieldID, DoubleArray2D> doubleFields = new HashMap();
 
     /**
-     * Inclusive beginning of the time inteval which the instance is supposed to
-     * cover. Note that this value can not be derived from the data.
+     * Inclusive beginning of the time interval which the instance is supposed
+     * to cover. Note that this value can not be exactly derived from the data.
      */
     private final double begin_mjd;
     /**
-     * Exclusive end of the time inteval which the instance is supposed to
-     * cover. Note that this valuecan not be derived from the data.
+     * Exclusive end of the time interval which the instance is supposed to
+     * cover. Note that this value can not be exactly derived from the data.
      */
     private final double end_mjd;
 
 
     //##########################################################################
     /**
-     * Creates instance. Initializes empty data for specific time interval.
+     * Create instance representing specific time interval that is empty of data
+     * points.
      */
     public OMNI2Data(double mBegin_mjd, double mEnd_mjd) {
+        this(null, mBegin_mjd, mEnd_mjd);
+    }
+
+
+    /**
+     * Creates instance with data for specific time interval.
+     *
+     * @param mDataFields Must contain one key and array for every possible
+     * FieldID. All arrays must have the same length.
+     */
+    public OMNI2Data(double mBegin_mjd, double mEnd_mjd, Map<FieldID, double[]> mDataFields) {
+        this(convertFields(mDataFields), mBegin_mjd, mEnd_mjd);
+    }
+
+
+    /**
+     * The only "real constructor". Tries to implement all other constructors
+     * using this constructor.
+     *
+     * IMPLEMENTATION NOTE: The only reason for the different order of
+     * parameters is to avoid ambiguity with other the constructor due to how
+     * type erasure for generics works (workaround for otherwise unavoidable
+     * compilation errors).
+     *
+     * @param mDataFields Must contain one key and array for every possible
+     * FieldID. All arrays must have the same length. If null, then all fields
+     * will be initialized to have length zero.
+     */
+    private OMNI2Data(Map<FieldID, ArrayData> mDataFields, double mBegin_mjd, double mEnd_mjd) {
         if (mEnd_mjd <= mBegin_mjd) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("mEnd_mjd <= mBegin_mjd");
         }
 
         begin_mjd = mBegin_mjd;
         end_mjd = mEnd_mjd;
 
-        // Initialize empty fields.
-        for (FieldID fieldID : FieldID.values()) {
-            dataFields.put(fieldID, new DoubleArray(new double[0]));
+        if (mDataFields == null) {
+            // Initialize empty fields.
+            for (FieldID fieldID : FieldID.values()) {
+                dataFields.put(fieldID, new DoubleArray(new double[0]));
+            }
+
+        } else {
+
+            int permittedArrayLength = -1;
+            for (FieldID fieldID : FieldID.values()) {
+
+                // Argument checks.
+                if (!mDataFields.containsKey(fieldID)) {
+                    throw new IllegalArgumentException("Argument omits field ID \"" + fieldID + "\".");
+                }
+                final DoubleArray dataField = (DoubleArray) mDataFields.get(fieldID);
+                if (permittedArrayLength < 0) {
+                    permittedArrayLength = dataField.length();
+                } else if (dataField.length() != permittedArrayLength) {
+                    throw new IllegalArgumentException("Arrays have different lengths.");
+                }
+
+                // Set internal array.
+                dataFields.put(fieldID, dataField);
+            }
         }
-        /*for (FieldID fieldID : DOUBLE_FIELDS) {
-         dataFields.put(fieldID, new DoubleArray(new double[0]));
-         }
-         for (FieldID fieldID : INT_FIELDS) {
-         dataFields.put(fieldID, new IntArray(new int[0]));
-         }*/
     }
 
 
@@ -142,42 +186,69 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
     }
 
 
-    public void setFieldArray(FieldID fieldID, double[] array) {
-        dataFields.put(fieldID, new DoubleArray(array));
+    /**
+     * NOTE: Returns reference to internal copy for speed reasons but the caller
+     * is not supposed to alter the array since that would alter the internal
+     * state.
+     */
+    public final double[] getFieldArrayInternal(FieldID fieldID) {
+        //return ((DoubleArray) dataFields.get(fieldID)).getArrayCopy();   // NOTE: Copies entire array.
+        return ((DoubleArray) dataFields.get(fieldID)).getArrayInternal();   // NOTE: Returns reference to INTERNAL array.
     }
 
-    /*public void setDoubleField(FieldID fieldID, double[] array) {
-     if (!DOUBLE_FIELDS.contains(fieldID)) {
-     throw new IllegalArgumentException();
-     }
-     dataFields.put(fieldID, new DoubleArray(array));
-     }*/
+
+    /**
+     * Create an instance using a subset of time from an existing instance.
+     */
+    @Override
+    public SegmentsCache.DataSegment select(double mBegin_mjd, double mEnd_mjd) {
+        if ((mBegin_mjd < this.begin_mjd) || (this.end_mjd < mEnd_mjd)) {
+            throw new IllegalArgumentException("Specified time interval outside the time interval covered by this object.");
+        }
+
+        final int[] indexInterval = Utils.findInterval(getFieldArrayInternal(FieldID.time_mjd), mBegin_mjd, mEnd_mjd, true, false);
+
+        final Map<FieldID, ArrayData> newDataFields = new HashMap();
+        for (FieldID fieldID : FieldID.values()) {
+            newDataFields.put(
+                    fieldID,
+                    dataFields.get(fieldID).select(
+                            indexInterval[0],
+                            indexInterval[1]));
+        }
+
+        return new OMNI2Data(newDataFields, mBegin_mjd, mEnd_mjd);
+    }
 
 
-    /*public void setIntField(FieldID fieldID, int[] array) {
-     if (!INT_FIELDS.contains(fieldID)) {
-     throw new IllegalArgumentException();
-     }
-     dataFields.put(fieldID, new IntArray(array));
-     }*/
-    public double[] getFieldArray(FieldID fieldID) {
-        return ((DoubleArray) dataFields.get(fieldID)).getArrayCopy();
+    //##########################################################################
+    /**
+     * Utility function for being able to more conveniently reuse code in the
+     * constructors.
+     */
+    private static Map<FieldID, ArrayData> convertFields(Map<FieldID, double[]> arrayDataFields) {
+        final Map<FieldID, ArrayData> dataFields = new HashMap();
+        for (FieldID fieldID : FieldID.values()) {
+            dataFields.put(fieldID, new DoubleArray(arrayDataFields.get(fieldID)));
+        }
+        return dataFields;
     }
 
 
     /**
      * Merges multiple instances into one. Instances have to be sorted in time
-     * and adjacent in time.
+     * and (exactly) adjacent in time. Useful when implementing caching.
      *
-     * NOTE: Static method.
+     * NOTE: Static method since no (pre-existing) instance of OMNI2Data is at
+     * the center of attention.
      */
     public static OMNI2Data mergeAdjacent(List<OMNI2Data> dataList) {
         if (dataList.size() < 1) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("dataList is empty.");
         }
 
-        /* ====================================================
-         Check assertion: all data blocks are adjacent in time.
+        /*=====================================================
+         Check assertion: All data blocks are adjacent in time.
          =====================================================*/
         OMNI2Data prevData = null;
         for (OMNI2Data data : dataList) {
@@ -191,56 +262,34 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         /*===================
          Create new instance
          ===================*/
-        final OMNI2Data newData = new OMNI2Data(
-                dataList.get(0).begin_mjd,
-                dataList.get(dataList.size() - 1).end_mjd);
+        final Map<FieldID, ArrayData> newDataFields = new HashMap();
         for (FieldID fieldID : FieldID.values()) {
 
             final List<ArrayData> arrayDataList = new ArrayList();
             for (OMNI2Data data : dataList) {
                 arrayDataList.add(data.dataFields.get(fieldID));
             }
-            newData.dataFields.put(fieldID, ArrayData.merge(arrayDataList));
-        }
-        return newData;
-    }
-
-
-    /*==================================================
-     Create new instance which covers a subset of time.
-     ==================================================*/
-    @Override
-    public SegmentsCache.DataSegment select(double t_begin, double t_end) {
-        if ((t_begin < begin_mjd) || (end_mjd < t_end)) {
-            throw new IllegalArgumentException("Specifying t interval outside the spac covered by this object.");
+            newDataFields.put(fieldID, ArrayData.merge(arrayDataList));
         }
 
-        final double[] timeArray_mjd = ((DoubleArray) dataFields.get(FieldID.time_mjd)).array;
-        final int[] interval = Utils.findInterval(timeArray_mjd, t_begin, t_end, true, false);
-        final OMNI2Data newData = new OMNI2Data(t_begin, t_end);
-
-        for (FieldID fieldID : FieldID.values()) {
-
-            newData.dataFields.put(
-                    fieldID,
-                    dataFields.get(fieldID).select(
-                            interval[0],
-                            interval[1]));
-        }
-        return newData;
+        return new OMNI2Data(
+                newDataFields,
+                dataList.get(0).begin_mjd,
+                dataList.get(dataList.size() - 1).end_mjd);
     }
 
     //##########################################################################
     /**
      * Simple class that "models" an array and supplies some operations on the
      * array. Subclasses implement abstract methods which are specific for
-     * specific kinds of array-like data, including pure Java arrays. Abstract
-     * methods are chosen such that subclasses are easy to implement also for
-     * arrays of primitives. Using this class makes it easy to iterate over
-     * multiple arrays and perform the same operation on each of them despite
-     * using different types of arrays.
+     * specific kinds of array-like data, including arrays of primitives.
+     * Abstract methods are chosen such that subclasses are easy to implement
+     * also for arrays of primitives. Using this class makes it easy to iterate
+     * over multiple arrays OF DIFFERENT TYPES and still perform analogues
+     * operations on each of them.
      *
-     * Could almost be an interface instead of a class.
+     * NOTE: Could (almost?) be an interface plus some static methods instead of
+     * a (super)class.
      */
     // Move to Utils?
     private static abstract class ArrayData {
@@ -262,7 +311,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
 
             int i_newBuf = 0;
             for (ArrayData ad : adList) {
-                newAD.arrayCopy(ad, 0, newAD, i_newBuf, ad.length());     // NOTE: Choosing to use newAD.arrayCopy.
+                newAD.arrayCopyDeep(ad, 0, newAD, i_newBuf, ad.length());     // NOTE: Choosing to use newAD.arrayCopyDeep.
                 i_newBuf += ad.length();
             }
 
@@ -278,18 +327,20 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
             final int N_newBuf = i_endExcl - i_beginIncl;
 
             final ArrayData newAD = newArray(N_newBuf);
-            arrayCopy(this, i_beginIncl, newAD, 0, N_newBuf);
+            arrayCopyDeep(this, i_beginIncl, newAD, 0, N_newBuf);
             return newAD;
         }
 
 
         /**
-         * Analogous to System#arraycopy. Assumes that both arrays are of the
-         * same class. NOTE: Does not work with the instance's internal fields,
-         * but should work with instances of the same class as the class where
-         * it is implemented.
+         * Analogous to System#arraycopy. System#arraycopy can also be used to
+         * implement it for (at least) arrays of primitives. Assumes that both
+         * arrays are of the same class as the instance ("this").
+         *
+         * Should make deep copies of the underlying array components (if they
+         * themselves are objects/arrays).
          */
-        protected abstract void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length);
+        protected abstract void arrayCopyDeep(ArrayData src, int srcPos, ArrayData dest, int destPos, int length);
 
 
         /**
@@ -300,7 +351,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
 
         protected abstract int length();
     }
-    //##########################################################################
+//##########################################################################
 
     private static class DoubleArray extends ArrayData {
 
@@ -313,7 +364,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
 
 
         @Override
-        protected void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
+        protected void arrayCopyDeep(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
             System.arraycopy(((DoubleArray) src).array, srcPos, ((DoubleArray) dest).array, destPos, length);
         }
 
@@ -333,8 +384,71 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
         public double[] getArrayCopy() {
             return Arrays.copyOf(array, array.length);
         }
+
+
+        public double[] getArrayInternal() {
+            return array;
+        }
     }
-    //##########################################################################
+//##########################################################################
+
+    /**
+     * Models an array of double arrays. ArrayData methods refer to operations
+     * on the one "root" array.
+     */
+    private static class DoubleArray2D extends ArrayData {
+
+        private final double[][] array;
+
+
+        public DoubleArray2D(double[][] mArray) {
+            array = mArray;
+        }
+
+
+        @Override
+        protected void arrayCopyDeep(ArrayData mSrc, int srcPos, ArrayData mDest, int destPos, int length) {
+            if (length < 0) {
+                throw new IllegalArgumentException();
+            }
+
+            //System.arraycopy(((DoubleArray) src).array, srcPos, ((DoubleArray) dest).array, destPos, length);  // Shallow copy.
+            final DoubleArray2D src = (DoubleArray2D) mSrc;
+            final DoubleArray2D dest = (DoubleArray2D) mDest;
+
+            for (int i = 0; i < length; i++) {
+                final double[] srcRef = src.array[srcPos + i];
+                if (srcRef == null) {
+                    dest.array[destPos + i] = null;
+                } else {
+                    dest.array[destPos + i] = Arrays.copyOf(srcRef, srcRef.length);
+                }
+            }
+        }
+
+
+        @Override
+        protected ArrayData newArray(int N) {
+            return new DoubleArray2D(new double[N][]);   // NOTE: "new double[N][]" will create array of nulls.
+        }
+
+
+        @Override
+        protected int length() {
+            return array.length;
+        }
+
+
+        public double[][] getArrayCopy() {
+            return Arrays.copyOf(array, array.length);
+        }
+
+
+        public double[][] getArrayInternal() {
+            return array;
+        }
+    }//*/
+//##########################################################################
 
     /*private static class IntArray extends ArrayData {
 
@@ -347,7 +461,7 @@ public class OMNI2Data implements SegmentsCache.DataSegment {
 
 
      @Override
-     protected void arrayCopy(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
+     protected void arrayCopyDeep(ArrayData src, int srcPos, ArrayData dest, int destPos, int length) {
      System.arraycopy(((IntArray) src).array, srcPos, ((IntArray) dest).array, destPos, length);
      }
 

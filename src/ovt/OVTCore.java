@@ -66,7 +66,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
     public static final Properties globalProperties = new Properties();
-    public static final String OVT_HOMEPAGE ="http://ovt.irfu.se/";
+    public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
     public static int DEBUG = 0;
     
     /**
@@ -76,7 +76,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
     //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
 
-    
     private vtkRenderer renderer = null;
     /**
      * @see #setRenderAction(Renderable)
@@ -181,6 +180,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     /** Subdirectory for SSCWS orbit cache files. */
     public static final String getSSCWSCacheSubdir(){
         return "cache" + File.separator + "sscsats" + File.separator;
+    }
+    
+    /** Subdirectory for OMNI2 cache files. */
+    public static final String getOMNI2CacheSubdir(){
+        return "cache" + File.separator + "OMNI2" + File.separator;
     }
     
     public static String getConfSubdir(){
@@ -441,6 +445,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 	  timeSettings.setTimeSet(new TimeSet(startMjd, intervalMjd, stepMjd, currentMjd));
         } catch(Exception ignore){}
         
+        
     }
     
     public TimeSettings getTimeSettings()
@@ -487,9 +492,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     
 
     
-    /** Method to be used when iforming user about the exception occured.
-     *When in GUI produces a popup window with <I>Error</I>
-     *as window title and <CODE>e.getMessage()</CODE> as message.
+    /** Method to be used when informing the user about the exception occurred.
+     * When in GUI produces a popup window with <I>Error</I>
+     * as window title and <CODE>e.getMessage()</CODE> as message.
+     * 
      * @param e Exception
      */
     public void sendErrorMessage(Exception e) {
