@@ -246,7 +246,8 @@ public JMenuItem[] getMenuItems() {
         item.setFont(Style.getMenuFont());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                    getMagProps().activityEditors[MagProps.SWP].setVisible(true);
+                // getMagProps().activityEditors[MagProps.SWP].setVisible(true);
+                getMagProps().setActivityEditorVisible(MagProps.SWP, true);
             }
         });
         menu.add(item);
@@ -254,7 +255,8 @@ public JMenuItem[] getMenuItems() {
         item.setFont(Style.getMenuFont());
         item.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                    getMagProps().activityEditors[MagProps.IMF].setVisible(true);
+                //getMagProps().activityEditors[MagProps.IMF].setVisible(true);
+                getMagProps().setActivityEditorVisible(MagProps.IMF, true);
             }
         });
         menu.add(item);

@@ -251,13 +251,15 @@ public void setOpacity(double opacity) {
     JMenuItem item = new JMenuItem("SWP...");
         item.setFont(Style.getMenuFont());
         item.addActionListener((ActionEvent evt) -> {
-          getMagProps().activityEditors[MagProps.SWP].setVisible(true);
+          //getMagProps().activityEditors[MagProps.SWP].setVisible(true);
+          getMagProps().setActivityEditorVisible(MagProps.SWP, true);
     });
         menu.add(item);
     item = new JMenuItem("Mach Number...");
         item.setFont(Style.getMenuFont());
         item.addActionListener((ActionEvent evt) -> {
-          getMagProps().activityEditors[MagProps.MACHNUMBER].setVisible(true);
+          //getMagProps().activityEditors[MagProps.MACHNUMBER].setVisible(true);
+          getMagProps().setActivityEditorVisible(MagProps.MACHNUMBER, true);
     });
         menu.add(item);
     return new JMenuItem[] { menu };

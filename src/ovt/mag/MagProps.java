@@ -187,10 +187,9 @@ public class MagProps extends OVTObject implements MagModel {
 
     /**
      * Editor window for manually editing a table of "activity" values (for one
-     * "index") over time. Public only so that code external to the class can
-     * set the visibility and the location of the windows.
+     * "index") over time.
      */
-    public MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
+    private final MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
     public static final double KPINDEX_DEFAULT = 0;
     public static final double[] IMF_DEFAULT = {0, 0, 0};

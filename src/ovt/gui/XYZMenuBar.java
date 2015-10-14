@@ -614,8 +614,8 @@ class ActivityDataMenuItem extends JMenuItem implements ActionListener {
 
 
     public void actionPerformed(ActionEvent evt) {
-        magProps.activityEditors[activityIndex].setVisible(true);
-        //magProps.setActivityEditorVisible(activityIndex, true);
+        //magProps.activityEditors[activityIndex].setVisible(true);
+        magProps.setActivityEditorVisible(activityIndex, true);
     }
 
 }

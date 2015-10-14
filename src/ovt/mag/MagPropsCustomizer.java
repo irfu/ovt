@@ -190,8 +190,11 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       G1EditBtn.addActionListener (new java.awt.event.ActionListener () {
         public void actionPerformed (java.awt.event.ActionEvent evt) {
             java.awt.Point pp = getLocation();
-            magProps.activityEditors[MagProps.G1].setLocation(pp.x + 10, pp.y + 10);
-            magProps.activityEditors[MagProps.G1].setVisible(true);
+            //magProps.activityEditors[MagProps.G1].setLocation(pp.x + 10, pp.y + 10);
+            //magProps.activityEditors[MagProps.G1].setVisible(true);
+            magProps.setActivityEditorLocation(MagProps.G1, pp.x + 10, pp.y + 10);
+            magProps.setActivityEditorVisible(MagProps.G1, true);
+            
         }
       } );
   
@@ -206,8 +209,10 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       G2EditBtn.addActionListener (new java.awt.event.ActionListener () {
         public void actionPerformed (java.awt.event.ActionEvent evt) {
             java.awt.Point pp = getLocation();
-            magProps.activityEditors[MagProps.G2].setLocation(pp.x + 10, pp.y + 10);
-            magProps.activityEditors[MagProps.G2].setVisible(true);
+            //magProps.activityEditors[MagProps.G2].setLocation(pp.x + 10, pp.y + 10);
+            //magProps.activityEditors[MagProps.G2].setVisible(true);
+            magProps.setActivityEditorLocation(MagProps.G2, pp.x + 10, pp.y + 10);
+            magProps.setActivityEditorVisible(MagProps.G2, true);
         }
       } );
   
@@ -357,26 +362,34 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
 
   private void dstindexEditBtnActionPerformed (java.awt.event.ActionEvent evt) {
     java.awt.Point pp = this.getLocation();
-    magProps.activityEditors[MagProps.DSTINDEX].setLocation(pp.x + 10, pp.y + 10);
-    magProps.activityEditors[MagProps.DSTINDEX].setVisible(true);
+    //magProps.activityEditors[MagProps.DSTINDEX].setLocation(pp.x + 10, pp.y + 10);
+    //magProps.activityEditors[MagProps.DSTINDEX].setVisible(true);
+    magProps.setActivityEditorLocation(MagProps.DSTINDEX, pp.x + 10, pp.y + 10);
+    magProps.setActivityEditorVisible(MagProps.DSTINDEX, true);
   }
 
   private void swpEditBtnActionPerformed (java.awt.event.ActionEvent evt) {
     java.awt.Point pp = this.getLocation();
-    magProps.activityEditors[MagProps.SWP].setLocation(pp.x + 10, pp.y + 10);
-    magProps.activityEditors[MagProps.SWP].setVisible(true);
+    //magProps.activityEditors[MagProps.SWP].setLocation(pp.x + 10, pp.y + 10);
+    //magProps.activityEditors[MagProps.SWP].setVisible(true);
+    magProps.setActivityEditorLocation(MagProps.SWP, pp.x + 10, pp.y + 10);
+    magProps.setActivityEditorVisible(MagProps.SWP, true);
   }
 
   private void imfEditBtnActionPerformed (java.awt.event.ActionEvent evt) {
     java.awt.Point pp = this.getLocation();
-    magProps.activityEditors[MagProps.IMF].setLocation(pp.x + 10, pp.y + 10);
-    magProps.activityEditors[MagProps.IMF].setVisible(true);
+    //magProps.activityEditors[MagProps.IMF].setLocation(pp.x + 10, pp.y + 10);
+    //magProps.activityEditors[MagProps.IMF].setVisible(true);
+    magProps.setActivityEditorLocation(MagProps.IMF, pp.x + 10, pp.y + 10);
+    magProps.setActivityEditorVisible(MagProps.IMF, true);
   }
 
   private void kpindexEditBtnActionPerformed (java.awt.event.ActionEvent evt) {
     java.awt.Point pp = this.getLocation();
-    magProps.activityEditors[MagProps.KPINDEX].setLocation(pp.x + 10, pp.y + 10);
-    magProps.activityEditors[MagProps.KPINDEX].setVisible(true);
+    //magProps.activityEditors[MagProps.KPINDEX].setLocation(pp.x + 10, pp.y + 10);
+    //magProps.activityEditors[MagProps.KPINDEX].setVisible(true);
+    magProps.setActivityEditorLocation(MagProps.KPINDEX, pp.x + 10, pp.y + 10);
+    magProps.setActivityEditorVisible(MagProps.KPINDEX, true);
   }
 
   public void stateChanged(javax.swing.event.ChangeEvent evt) {
