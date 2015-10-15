@@ -59,7 +59,7 @@ import ovt.util.Log;
  */
 public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel implements MagActivityDataSource {
 
-    private static final int DEBUG = 20;  // Log message log level.
+    private static final int DEBUG = 2;  // Log message log level.
 
     private String name = null;
     private Vector data = new Vector();
@@ -70,9 +70,8 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
     private int columnNumber = 0;
     private int rowCount = 0;   // Number of rows of data = length of the "data" vector.
 
-    private /*protected*/ double cachedMjd = -1;   // The time for which "cachedValues" is valid.
-    private MagActivityDataRecord cachedValues = null;  // Cached reference for last call to getValues(..)
-
+//    private double cachedMjd = -1;   // The time for which "cachedValues" is valid.
+//    private MagActivityDataRecord cachedValues = null;  // Cached reference for last call to getValues(..)
     private File file = null;
     private int index;
 
@@ -195,7 +194,8 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         data.removeAllElements();
         data.addElement(getDefaultValues().clone());
         rowCount = data.size();
-        cachedValues = null;
+//        cachedMjd = -1;
+//        cachedValues = null;
         fireTableDataChanged();
     }
 
@@ -303,25 +303,37 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
 
     /**
      * Derives the relevant value(s) for an arbitrary point in time.
+     *
+     * IMPLEMENTATION NOTE: Used to have an internal cache to speed up calls.
+     * The cache is not as useful as it used to be before implementing the cache in
+     * MagProps#getActivity but it still did a little bit of work work. Remove
+     * the cache entirely?
      */
     public double[] getValues(double mjd) {
-        if (mjd == cachedMjd && cachedValues != null) {
-            // CASE: Asks for a different mjd than the last time. ==> Cached value is invalid.
-            Log.log(this.getClass().getSimpleName()
-                    + "#getValues(" + mjd + "<=>" + new Time(mjd) + ") = "
-                    + Arrays.toString(cachedValues.values), DEBUG);
-            return cachedValues.values;
-        }
+//        if (mjd == cachedMjd && cachedValues != null) {
+//            // CASE: Asks for the same mjd as the last time. ==> Cached value is invalid.
+//            Log.log(this.getClass().getSimpleName()
+//                    + "#getValues(" + mjd + /*"<=>" + new Time(mjd) +*/ ") = "
+//                    + Arrays.toString(cachedValues.values)
+//                    + "   // Cached value", DEBUG);
+//            return cachedValues.values;
+//        }
+        MagActivityDataRecord returnValues;
         try {
-            cachedValues = getRecordAt(getRow(mjd));
+            //cachedValues = getRecordAt(getRow(mjd));
+            returnValues = getRecordAt(getRow(mjd));
         } catch (IllegalArgumentException e2) {
-            cachedValues = getDefaultValues();
+            //cachedValues = getDefaultValues();
+            returnValues = getDefaultValues();
         }
-        cachedMjd = mjd;
+        //cachedMjd = mjd;
         Log.log(this.getClass().getSimpleName()
-                + "#getValues(" + mjd + "<=>" + new Time(mjd) + ") = "
-                + Arrays.toString(cachedValues.values), DEBUG);
-        return cachedValues.values;
+                + "#getValues(" + mjd + /*"<=>" + new Time(mjd) +*/ ") = "
+                + Arrays.toString(returnValues.values)
+                //+ "   // (Non-cached value)"
+                ,DEBUG);
+        //return cachedValues.values;
+        return returnValues.values;
     }
 
 
@@ -390,7 +402,8 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
                 System.out.println("Invalid number format");
             }
         }
-        cachedValues = null; //do we need lastmjd = -1 ?
+//        cachedMjd = -1;
+//        cachedValues = null;
     }
 
 

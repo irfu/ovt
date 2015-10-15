@@ -49,6 +49,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+import ovt.Const;
 import ovt.OVTCore;
 
 import ovt.datatype.Time;
@@ -78,14 +79,16 @@ import ovt.util.SSCWSLibraryTestEmulator;
 // PROPOSAL: Rename to xxxCustomizer in analogy with other window classes.
 // PROPOSAL: Save window location to Settings/properties (config file).
 // PROPOSAL: Initial window location at center of screen.
-// TODO: Automatically appropriate column widths.
 public class SSCWSSatellitesSelectionWindow extends JFrame {
 
     private static final int DEBUG = 1;
     private static final String WINDOW_TITLE = "Satellite orbit data offered online by NASA SSC";
     private static final String INFO_TEXT = "Satellite orbit data offered online by NASA's Satellite Situation Center (SSC)"
-            + " and available through OVT. Note that some of these \"satellites\" may be located at Lagrange points "
-            + "(e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN).";
+            + " and available through OVT."
+            + " Note that some of these \"satellites\" may be located at Lagrange points"
+            + " (e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN)."
+            + " Note also that OVT does not permit setting the current time to earlier than "+Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME)+".";
+            //+ " and hence may not be able to make use of all orbit data.";
     private static final String[] COLUMN_GUI_TITLES = {"Bookmarked", "Added", "Name", "Data begins", "Data ends"};
     //private final String[] COLUMN_GUI_TITLES = {".", ".", ".", "."};
     private static final int COLUMN_INDEX_BOOKMARK = 0;

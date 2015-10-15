@@ -154,8 +154,8 @@ public class OMNI2DataSource {
      *
      * @param fieldID The scalar field for which the data should be returned, if
      * getIMFvector==false.
-     * @param getIMFvector Iff true, then return the IMF vector.
-     * @return Value
+     * @param getIMFVector Iff true, then return the IMF vector.
+     * @return Value. Never null.
      *
      * @throws ValueNotFoundException when no value was found. IOException for
      * I/O errors.
@@ -166,7 +166,7 @@ public class OMNI2DataSource {
     //          Must probably search both up and down and select the nearest one.
     // PROPOSAL: Max distance in time beyond which a found value will yield exception instead of a returned value.
     //    NOTE: Needs different value if searching for the boundaries of OMNI2 data.
-    public double[] getValues(double time_mjd, FieldID fieldID, boolean getIMFvector) throws ValueNotFoundException, IOException {
+    public double[] getValues(double time_mjd, FieldID fieldID, boolean getIMFVector) throws ValueNotFoundException, IOException {
 
         //throw new UnsupportedOperationException("Incomplete implementation.");
         //=====================================================================
@@ -200,7 +200,7 @@ public class OMNI2DataSource {
 
                 }//*/
 
-                if (getIMFvector) {
+                if (getIMFVector) {
                     return searchDataSegment_IMF(data, timeArray, i_start, step);
                 } else {
                     return searchDataSegment_scalar(data, timeArray, i_start, step, fieldID);
@@ -208,7 +208,8 @@ public class OMNI2DataSource {
             }
 
 
-            private double[][] searchDataSegment_scalar(OMNI2Data data, double[] timeArray, int i_start, int step, FieldID mFieldID) {
+            private double[][] searchDataSegment_scalar(
+                    OMNI2Data data, double[] timeArray, int i_start, int step, FieldID mFieldID) {
                 final double[] fieldArray = data.getFieldArrayInternal(mFieldID);
 
                 /* Look for the first non-fill value.
@@ -257,7 +258,8 @@ public class OMNI2DataSource {
             }
         }//=====================================================================
 
-        Log.log(getClass().getSimpleName() + "#getValues("+time_mjd+", "+fieldID+", "+getIMFvector+")", DEBUG);
+        Log.log(getClass().getSimpleName() + "#getValues(" + time_mjd + ", " + fieldID + ", " + getIMFVector + ")", DEBUG);
+
         double[][] result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());
         if (result == null) {
             result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
@@ -270,9 +272,6 @@ public class OMNI2DataSource {
         return result[1];  //*/
     }
 
-    /**
-     *
-     */
     public static class ValueNotFoundException extends Exception {
 
         private ValueNotFoundException(String msg) {

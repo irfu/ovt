@@ -203,11 +203,12 @@ public class IntHashtable extends Dictionary implements Cloneable
     // is equal to null.
     // @see IntHashtable#get
     // @return the old value of the key, or null if it did not have one.
-    public synchronized Object put( int key, Object value )
-	{
+    public synchronized Object put( int key, Object value ) {
+        
 	// Make sure the value is not null.
-	if ( value == null )
+	if ( value == null ) {
 	    throw new NullPointerException();
+        }
 
 	// Makes sure the key is not already in the hashtable.
 	IntHashtableEntry tab[] = table;
@@ -239,7 +240,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	tab[index] = e;
 	++count;
 	return null;
-	}
+    }
 
     /// A put method that takes an Object, for compatibility with
     // java.util.Dictionary.  The Object must be an Integer.

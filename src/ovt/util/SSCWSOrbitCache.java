@@ -40,8 +40,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import ovt.Const;
 import ovt.OVTCore;
 import ovt.datatype.Time;
@@ -458,7 +456,7 @@ public class SSCWSOrbitCache {
          division does round down.
          ======================================================================*/
         final int resolutionFactor = Math.max(requestedTimeResolution / this.satInfo.bestTimeResolution, 1);
-        System.out.println("Downloading data from SSC Web Services.");   // Printout (not log message) is here to cover the SSCWSLibrary for testing.
+        System.out.println("Downloading data from SSC via Web Services.");   // Printout (not log message) is here to cover the SSCWSLibrary for testing.
         final long t_start = System.nanoTime();
         final double[][] coords_axisPos;
         try {

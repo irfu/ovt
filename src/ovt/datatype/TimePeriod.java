@@ -44,7 +44,9 @@ import ovt.interfaces.*;
 import java.beans.*;
 
 /**
- *
+ * Appears to represent a period in time between two specific points in time
+ * (not to be confused with "Interval" which represents a fixed length of time).
+ * 
  * @author  root
  * @version 
  */
@@ -83,8 +85,9 @@ public class TimePeriod extends Object implements TimePeriodSource {
   public void setStartMjd(double startMjd) throws IllegalArgumentException {
       double oldStartMjd = this.startMjd;
       if (startMjd == oldStartMjd) return;
-      if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970.");
-      //if (startMjd < Time.Y1950) throw new IllegalArgumentException("Start time could not be earlier then 1950.");
+      if (startMjd < Time.Y1970) {
+          throw new IllegalArgumentException("Start time can not be earlier then 1970.");   // Why this limit?
+      }
       this.startMjd = startMjd;
       //firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }

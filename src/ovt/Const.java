@@ -34,6 +34,7 @@ Khotyaintsev
 package ovt;
 
 import java.util.*;
+import ovt.datatype.Time;
 
 public final class Const {
 
@@ -77,6 +78,39 @@ public static final int C_SYM  =  2;
 public static final int LIN =   1;
 public static final int LOG =   0;
 
+
+    /**
+     * The earliest permitted time that OVT should permit the user to use in the GUI.
+     * (Internal OVT calculations may have some use for earlier times, e.g. for changing epochs,
+     * but generally probably do not.)
+     * 
+     * NOTE: There are several limits to consider when setting this value:<BR>
+     * (1a) "igrf.d" (IGRF model data) only covers a specific time interval,
+     * (with both a beginning and an end).<BR>
+     * (1b) Code which reads "igrf.d" may do some rounding of years (IGRF only
+     * supplies values every five years anyway) so that the code in reality works for a
+     * somewhat larger interval of time than "igrf.d" explicitly covers, <BR>
+     * (1c) Both magpack.c and IgrfModel.java read "igrf.d", but magpack.c appears
+     * to assume that "igrf.d" begins at 1980 without actually reading the years
+     * from the file!! THIS IS THE MOST LIMITING FACTOR AT THE TIME OF WRITING THIS. <BR>
+     * (2) Time.java code only supports conversion between mjd and year-month-day-hour-minute-second 
+     * back to the first second of 1950 (where mjd=0).<BR>
+     * (3) Other OVT code may have its own explicit limits to time for unknown
+     * reasons. (One known example: TimePeriod.java#setStartMjd.)<BR>
+     * /Erik P G Johansson 2015-10-15
+     * 
+     * The actual earliest time for which OVT seems to work (empirically) without obvious
+     * errors appears to be around November 1975 (not exactly newyear).
+     * Beginning of 1980 is probably a safer limit to use so that IGRF code works correctly
+     * since IGRF data begins at 1980 (and since magpack.c assumes it begins at 1980).
+     * /Erik P G Johansson 2015-10-15
+     * 
+     * 
+     * NOTE: The value was previously been set to Time.Y1970 for unknown reasons.
+     */
+  public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1980;
+  //public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1950;
+  
 
 // Indexes of coordinate systems
 

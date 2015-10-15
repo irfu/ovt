@@ -94,29 +94,65 @@ public abstract class SSCWSLibrary {
         public final int bestTimeResolution;    // Unit: seconds, not mjd!
 
 
-        public SSCWSSatelliteInfo(SatelliteDescription satDescr) {
+        public SSCWSSatelliteInfo(SatelliteDescription satDescr/*, double truncateAvailableBeginTimeMjd*/) {
+            /*if (!Double.isFinite(truncateAvailableBeginTimeMjd)) {
+             throw new IllegalArgumentException();
+             }*/
+
+            //final double satDescr_availableBeginTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getStartTime());
             this.ID = satDescr.getId();
             this.name = satDescr.getName();
+            /*this.availableBeginTimeMjd = Math.max(
+             satDescr_availableBeginTimeMjd,
+             truncateAvailableBeginTimeMjd);*/
             this.availableBeginTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getStartTime());
             this.availableEndTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getEndTime());
             this.bestTimeResolution = satDescr.getResolution();
+
+            /*if (availableEndTimeMjd < availableBeginTimeMjd) {
+             throw new IllegalArgumentException("Satellite data availability interval has negative length.");
+             // Can happen if availableEndTimeMjd < truncateAvailableBeginTimeMjd.
+             }*/
         }
 
 
         /**
          * Constructor that is useful for test code.
          */
-        public SSCWSSatelliteInfo(String mID, String mName, double mAvailableBeginTimeMjd, double mAvailableEndTimeMjd, int mNormalTimeResolution) {
+        public SSCWSSatelliteInfo(
+                String mID, String mName,
+                double mAvailableBeginTimeMjd,
+                double mAvailableEndTimeMjd,
+                int mBestTimeResolution) {
+
             if (mID == null) {
                 throw new NullPointerException("mID is null.");
             } else if (mName == null) {
                 throw new NullPointerException("mName is null.");
+            } else if (mAvailableEndTimeMjd < mAvailableBeginTimeMjd) {
+                throw new IllegalArgumentException("Satellite data availability interval has negative length.");
+            } else if (mBestTimeResolution <= 0) {
+                throw new IllegalArgumentException();
             }
+
             this.ID = mID;
             this.name = mName;
             this.availableBeginTimeMjd = mAvailableBeginTimeMjd;
             this.availableEndTimeMjd = mAvailableEndTimeMjd;
-            this.bestTimeResolution = mNormalTimeResolution;
+            this.bestTimeResolution = mBestTimeResolution;
+        }
+
+
+        /**
+         * Useful for artificially modifying the available time interval due to that OVT can
+         * not handle all points in time.
+         */
+        public SSCWSSatelliteInfo changeAvailableBeginTimeMjd(double mAvailableBeginTimeMjd) {
+            // NOTE: The called constructor should check that the time interval is positive.
+            return new SSCWSSatelliteInfo(
+                    ID, name,
+                    mAvailableBeginTimeMjd, availableEndTimeMjd,
+                    bestTimeResolution);
         }
 
 

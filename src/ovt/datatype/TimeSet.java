@@ -1,3 +1,4 @@
+
 /*=========================================================================
 
   Program:   Orbit Visualization Tool
@@ -35,18 +36,18 @@ Khotyaintsev
  *
  * Created on February 28, 2000, 11:26 AM
  */
+
+
  
 package ovt.datatype;
 
 import ovt.object.*;
-import ovt.object.editor.*;
-import ovt.util.*;
 import ovt.beans.*;
 import ovt.event.*;
 import ovt.interfaces.*;
 
 import java.beans.*;
-import java.lang.reflect.*;
+import ovt.Const;
 
 /** 
  * Represents a sequence of equidistant points in time (mjd = modified Julian day),
@@ -56,7 +57,7 @@ import java.lang.reflect.*;
  * @version 
  */
 public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
-  
+    
   private double startMjd;
   private double intervalMjd;
   private double stepMjd;
@@ -109,9 +110,12 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
    */
   public void setStartMjd(double startMjd) throws IllegalArgumentException {
       double oldStartMjd = this.startMjd;
-      if (startMjd == oldStartMjd) return;
-      //if (startMjd < Time.Y1970) throw new IllegalArgumentException("Start time could not be earlier then 1970.");   // Why this limit?
-      if (startMjd < Time.Y1950) throw new IllegalArgumentException("Start time could not be earlier then 1950.");
+      if (startMjd == oldStartMjd) {
+          return;
+      }
+      if (startMjd < Const.EARLIEST_PERMITTED_GUI_TIME) {
+          throw new IllegalArgumentException("Start time can not be earlier then "+Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME)+".");
+      }
       this.startMjd = startMjd;
       firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }
@@ -311,7 +315,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
            ", current=" + currentMjd);
   }
   
-  /** Equals function. Doesn't care about currentMjd */
+  /** Equals function. Doesn't care about currentMjd. */
   public boolean equals(Object obj) {
       double eps = 1.e-9;
       if (obj instanceof TimeSet) {

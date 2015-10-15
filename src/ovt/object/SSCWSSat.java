@@ -82,7 +82,7 @@ import ovt.util.Utils.OrbitalState;
 //
 public class SSCWSSat extends Sat {
 
-    private static final int DEBUG = 4;   // The minimum log message level for this class.
+    private static final int DEBUG = 20;   // The minimum log message level for this class.
     private static final boolean ALWAYS_REQUEST_BEST_TIME_RESOLUTION = false;   // For debugging.
     /**
      * See DiscreteIntervalToListCache to understand the variable.
@@ -96,6 +96,14 @@ public class SSCWSSat extends Sat {
     private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 10;
     private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";  // Include period.
     private static final int SATELLITE_NBR = 1;  // Made-up value. Assumed to be OK for single satellites(?).
+
+    private static final String CAN_NOT_FILL_ERROR_MSG
+            = "Can not fill the specified time interval with orbit data due to time boundaries";  // Do not end with period.
+    // Can not fill the specified time interval with orbit data since requires data from outside...
+    // There is not enough orbit data to fill the specified time interval.
+    // The orbit data does not cover the time interval.
+    // The specified time interval exceeds the time interval for which there is data.
+    // The specified time interval exceeds the time interval for which there is data.
 
     //##########################################################################
     /**
@@ -187,8 +195,8 @@ public class SSCWSSat extends Sat {
      * NOTE: It appears that class "Settings" calls this method with a File
      * object initialized with the path "null" (a string!) when loading settings
      * which once originated from a null pointer returned from getOrbitFile.
-     * Therefore the method treats the path "null" (the string) the same as the null
-     * pointer.
+     * Therefore the method treats the path "null" (the string) the same as the
+     * null pointer.
      *
      * orbitFile.getPath().equals("null")
      */
@@ -463,7 +471,7 @@ public class SSCWSSat extends Sat {
                         RoundingMode.CEILING, RoundingMode.FLOOR,
                         INDEX_MARGIN, INDEX_MARGIN, timeResolutionToRequest);
             } catch (IndexedSegmentsCache.NoSuchTPositionException e) {
-                throw new IOException("Can not fill the specified time interval with data due to boundaries: " + e.getMessage(), e);
+                throw new IOException(CAN_NOT_FILL_ERROR_MSG+": "+ e.getMessage(), e);
             }
 
             /*=======================
@@ -585,12 +593,12 @@ public class SSCWSSat extends Sat {
             }
 
             //Log.log(this.getClass().getSimpleName() + ".getTimeResolutionToRequest (satInfo.ID=\"" + satInfo.ID + "\")", DEBUG);
-            Log.log("   timeResolution             = " + timeResolution + " [s] (return value before rounding)", DEBUG);
-            Log.log("   perigeeTimescale           = " + perigeeTimescale + " [s]", DEBUG);
-            Log.log("   coordSysRotationPeriod     = " + coordSysRotationPeriod + " [s]", DEBUG);
-            Log.log("   satInfo.bestTimeResolution = " + satInfo.bestTimeResolution + " [s]", DEBUG);
-            Log.log("   orbitalState.P_SI          = " + orbitalState.P_SI + " [s] = " + orbitalState.P_SI / 3600.0 + " [h]", DEBUG);
-            Log.log("   orbitalState.isReasonableEllipticOrbit() = " + orbitalState.isReasonableEllipticOrbit(), DEBUG);
+//            Log.log("   timeResolution             = " + timeResolution + " [s] (return value before rounding)", DEBUG);
+//            Log.log("   perigeeTimescale           = " + perigeeTimescale + " [s]", DEBUG);
+//            Log.log("   coordSysRotationPeriod     = " + coordSysRotationPeriod + " [s]", DEBUG);
+//            Log.log("   satInfo.bestTimeResolution = " + satInfo.bestTimeResolution + " [s]", DEBUG);
+//            Log.log("   orbitalState.P_SI          = " + orbitalState.P_SI + " [s] = " + orbitalState.P_SI / 3600.0 + " [h]", DEBUG);
+//            Log.log("   orbitalState.isReasonableEllipticOrbit() = " + orbitalState.isReasonableEllipticOrbit(), DEBUG);
             return (int) Math.floor(timeResolution);
         }
 
@@ -623,7 +631,7 @@ public class SSCWSSat extends Sat {
                         RoundingMode.FLOOR, RoundingMode.FLOOR,
                         NBR_OF_DATA_POINTS, 0, satInfo.bestTimeResolution);
             } catch (IndexedSegmentsCache.NoSuchTPositionException e) {
-                throw new IOException("Can not fill the specified time interval with data due to boundaries: " + e.getMessage(), e);
+                throw new IOException(CAN_NOT_FILL_ERROR_MSG+": " + e.getMessage(), e);
             }
             if (data.coords_axisPos_kmMjd[3].length < 2) {
                 throw new IOException("Less than two data points available for the specified time interval. Can not calculate orbital period.");

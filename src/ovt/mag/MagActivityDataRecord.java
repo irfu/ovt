@@ -24,7 +24,9 @@ public class MagActivityDataRecord {
     /** Holds value of property time. */
     public ovt.datatype.Time time;
     
-    /** Constructor is for internal use only! Do not use it! */
+    /** Constructor is for internal use only! Do not use it!
+     * (Might possibly refer to that it is used by "XML" i.e.
+     * the save/load settings feature.) */
     public MagActivityDataRecord() {
     }
 

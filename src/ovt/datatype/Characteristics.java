@@ -43,13 +43,16 @@ import java.io.*;
 import java.util.*;
 
 /**
- * Stores data for an arbitrary set of "MagProps" data (SW pressure=swp, Mach number, IMF etc) as key+value for a specified point in time.
+ * Stores data for an arbitrary set of "MagProps" values (SW pressure=swp,
+ * Mach number, IMF etc) as key+value for a specified point in time.
  * We store all data in double[].
+ * 
+ * NOTE: Wild guess: This class should probably use composition rather than
+ * inheritance for IntHashTable. /Erik P G Johansson 2015-10-15
  * 
  * @author  ko
  * @version 
  */
-// Wild guess: Should probably use composition rather than inheritance for IntHashTable. /Erik P G Johansson 2015-10-07
 public class Characteristics extends IntHashtable {
     
     /** Holds value of property mjd. */
@@ -104,7 +107,7 @@ public class Characteristics extends IntHashtable {
     
     /** Getter for property mjd.
      * @return Value of property mjd.
- */
+    */
     public double getMjd() {
         return mjd;
     }

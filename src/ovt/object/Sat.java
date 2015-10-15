@@ -661,6 +661,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     }
 
 
+    @Override
     public void coordinateSystemChanged(CoordinateSystemEvent evt) {
         Enumeration e = getChildren().elements();
         while (e.hasMoreElements()) {
@@ -673,6 +674,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     }
 
 
+    @Override
     public void magPropsChanged(MagPropsEvent evt) {
         mainFieldlineModule.magPropsChanged(evt);
         magFootprintModule.magPropsChanged(evt);
@@ -683,6 +685,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
     }
 
 
+    @Override
     public JMenuItem[] getMenuItems() {
         JMenuItem item0 = new JMenuItem("Info");
         item0.setFont(Style.getMenuFont());

@@ -46,8 +46,6 @@ import ovt.event.*;
 import ovt.interfaces.*;
 
 
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
 
@@ -57,7 +55,7 @@ import javax.swing.event.*;
  * @version
  */
 public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener, ChangeListener {
-    private MagProps magProps;
+    private final MagProps magProps;
 
   /** Creates new form MagPropsEditor */
   public MagPropsCustomizer(MagProps magProps,JFrame owner) {
@@ -329,7 +327,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         "Clipping", 1, 2, new java.awt.Font ("Dialog", 0, 11), java.awt.Color.black));
      //mpClippingChB = (JCheckBox)((ComponentPropertyEditor)magProps.getDescriptors().getDescriptor("mPClipping").getPropertyEditor()).getComponent();
      
-     mpClippingChB = new JCheckBox("clip on magnetopause");
+     mpClippingChB = new JCheckBox("Clip on magnetopause");
      
      panel.add(mpClippingChB);
      return panel;
@@ -392,6 +390,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     magProps.setActivityEditorVisible(MagProps.KPINDEX, true);
   }
 
+    @Override
   public void stateChanged(javax.swing.event.ChangeEvent evt) {
       refreshActivityButtons();
       refreshApplyButtonState();
@@ -405,6 +404,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     doCancel();
   }
 
+    @Override
   public void magPropsChanged(MagPropsEvent evt) {
       refresh();
   }  

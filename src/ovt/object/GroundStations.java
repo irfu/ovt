@@ -65,7 +65,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
     private final File gbStationsFile;
     
     public GroundStations(OVTCore core) {
-        super(core, "Ground based stations", "images/gb_stations.gif", true); // VisualObject constructor
+        super(core, "Ground-based stations", "images/gb_stations.gif", true); // VisualObject constructor
                     // ^-> to OVTObject::setName();
         setParent(core);
         isRootNode = true;
@@ -83,7 +83,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
     /** 
      */
     public GroundStations(GroundStations groundStations) {
-        super(groundStations.getCore(), "Ground based stations", "images/gb_stations.gif", true); // VisualObject constructor
+        super(groundStations.getCore(), "Ground-based stations", "images/gb_stations.gif", true); // VisualObject constructor
         setParent(groundStations);
         gbStationsFile = Utils.findFile(xml_file);
     }

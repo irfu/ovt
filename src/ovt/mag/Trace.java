@@ -38,6 +38,7 @@ Khotyaintsev
  
 package ovt.mag;
 
+import java.util.Arrays;
 import ovt.*;
 import ovt.mag.*;
 import ovt.model.magnetopause.*;
@@ -125,6 +126,13 @@ public static void lastline (MagProps magProps, double mjd, double rv[], double 
 //         for T87,T89 models: KPIndex, Sint,Cost (t- tilt);
 //         for T96 model:      SWP, DSTIndex,Imf_z,Imf_y,TILT
 //         if isMPClip = 1 :   SWP,Imf_z for all models
+// -----------------------------------------------------------------------------
+// NOTE: Empirically, the underlying native code often crashes (segmentation fault, SIGSEGV; Linux)
+// for times (mjd) ca 1975 and earlier, but not consistently.
+// The bug is probably due to reading the "igrf.d" file and assuming that times start at 1980
+// INDEPENDENTLY of the contents of the "igrf.d" file.
+// (There is a hardcoded constant BASEYEAR=1980 there.)
+// /Erik P G Johansson 2015-10-15
 protected static native void lastlineJNI(double mjd, double[] rv, double[] dir, double xlim,double alt, 
       int idir, double epst, int IM, int EM, double Factor, int isMPClip, double[] datTs);
 
@@ -178,7 +186,43 @@ public static void lastline(MagProps magProps, double mjd, double rv[], double d
     dataTsxx[COST] = magProps.getCost(mjd);
   }
   
-  lastlineJNI(mjd,rv,dir,xlim,alt,idir,epst,InternalModel,ExternalModel,Factor,isMPClip ,dataTsxx);
+  
+// Values taken from execution (values can be deleted). Taken from call that did not crash.
+// Should not crash for these values. - May still crash at other location!
+//mjd = 9501.875462962964;
+//rv = new double[] {-30.0, 12.115195762659873, -20.98413600040557};
+//dir = new double[] {0.0, 12.115195762659873, -20.98413600040557};
+//xlim = -30.0;
+//alt = 25484.8;
+//idir = -1;
+//epst = 0.05;
+//InternalModel = 10;
+//ExternalModel = 87;
+//Factor = 1.0;
+//isMPClip = 1;
+//dataTsxx = new double[] {0.0, -0.2940585331432647, 0.9557874131236671, 1.8, 0.0, 0.0, 0.0};
+//   
+//  System.out.println("=============================================");
+//  System.out.println("mjd = "+mjd+";");
+//  System.out.println("rv = "+Arrays.toString(rv));
+//  System.out.println("dir = "+Arrays.toString(dir));
+//  System.out.println("xlim = "+xlim+";");
+//  System.out.println("alt = "+alt+";");
+//  System.out.println("idir = "+idir+";");
+//  System.out.println("epst = "+epst+";");
+//  System.out.println("InternalModel = "+InternalModel+";");
+//  System.out.println("ExternalModel = "+ExternalModel+";");
+//  System.out.println("Factor = "+Factor+";");
+//  System.out.println("isMPClip = "+isMPClip+";");
+//  System.out.println("dataTsxx = "+Arrays.toString(dataTsxx));
+  lastlineJNI(mjd, rv, dir, xlim, alt, idir, epst, InternalModel, ExternalModel, Factor, isMPClip, dataTsxx);
+// (env, cls, mjd, jrv, jdir, xlim, alt, idir, epst, IntMod, ExtMod, Factr, isMPClip, jdataTs)
+//  System.out.println("-----------------------------");
+//  System.out.println("rv = "+Arrays.toString(rv));    // Is updated
+//  System.out.println("dir = "+Arrays.toString(dir));   // Is updated.
+//  System.out.println("dataTsxx = "+Arrays.toString(dataTsxx));    // Does not seem to be updated.
+//  System.out.println("=============================================");
+
 }
 
 

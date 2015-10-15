@@ -40,16 +40,12 @@ package ovt.datatype;
 
 import ovt.beans.*;
 import ovt.beans.editor.*;
-import ovt.object.*;
 
-import java.util.*;
-import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 
 /**

@@ -72,6 +72,7 @@ public class Time {
 
     // Constants that can be used to convert between OVT's mjd and Julian Day for other epochs.
     public static final double Y2000 = Time.getMjd(2000, 1, 1, 0, 0, 0);
+    public static final double Y1980 = Time.getMjd(1980, 1, 1, 0, 0, 0);
     public static final double Y1970 = Time.getMjd(1970, 1, 1, 0, 0, 0);
     public static final double Y1960 = Time.getMjd(1960, 1, 1, 0, 0, 0);
     public static final double Y1950 = Time.getMjd(1950, 1, 1, 0, 0, 0);
@@ -149,13 +150,13 @@ public class Time {
 // this method should be moved away to the TimeFormat class
     public void setTime(String time) throws NumberFormatException {
         try {
-            year = Integer.valueOf(time.substring(0, 4)).intValue();
-            month = Integer.valueOf(time.substring(5, 7)).intValue();
-            day = Integer.valueOf(time.substring(8, 10)).intValue();
-            hour = Integer.valueOf(time.substring(11, 13)).intValue();
-            mins = Integer.valueOf(time.substring(14, 16)).intValue();
+            year = Integer.parseInt(time.substring(0, 4));
+            month = Integer.parseInt(time.substring(5, 7));
+            day = Integer.parseInt(time.substring(8, 10));
+            hour = Integer.parseInt(time.substring(11, 13));
+            mins = Integer.parseInt(time.substring(14, 16));
             if (time.length() >= 19) {
-                sec = Integer.valueOf(time.substring(17, 19)).intValue();
+                sec = Integer.parseInt(time.substring(17, 19));
             } else {
                 sec = 0;
             }
@@ -205,6 +206,7 @@ public class Time {
 
         if ((mjd < Y1950) || (Y3799 < mjd)) {
             throw new IllegalArgumentException("mjd=" + mjd + " is out of range for conversion formula.");
+            // NOTE: OVT may have other restrictions on which times one can use too.
         }
 
         int jday;

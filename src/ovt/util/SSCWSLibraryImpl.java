@@ -31,13 +31,13 @@
  =========================================================================*/
 package ovt.util;
 
-import gov.nasa.gsfc.spdf.ssc.client.CoordinateComponent;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import gov.nasa.gsfc.spdf.ssc.client.CoordinateComponent;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateData;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateSystem;
 import gov.nasa.gsfc.spdf.ssc.client.DataFileRequest;
@@ -68,6 +68,8 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.xml.ws.WebServiceException;
+import ovt.Const;
+import ovt.datatype.Time;
 
 /**
  * Class which supplies a small library of static functions for all accessing of
@@ -125,11 +127,13 @@ import javax.xml.ws.WebServiceException;
  */
 // TODO: Go through code and set all or as many as possible options since one can not trust default values.
 //
+// PROPOSAL: Change satellite data begin times to be in agreement with noSatellitesBeforeTime_mjd/Const.EARLIEST_PERMITTED_GUI_TIME.
 // PROPOSAL: Attempt to make library independent of OVT functions?
 //    Ex: Time conversion functions
 //    Ex: Coordinates system functions (if there are any).
 // PROPOSAL: Display GUI message when downloading (modal info window?).
 //    CON: Should be done by caller.
+//    CON: Want to be as independent of OVT code (in particular GUI code) as possible.
 // 
 // PROPOSAL: Reorganize SSC Web Services exceptions somehow?
 //    PROPOSAL: MalformedURLException seems to originate from "new SatelliteSituationCenterService(...)". Capture somehow? Rethrow as other exception?
@@ -143,7 +147,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * Only one "canonical" singleton instance of SSCWSLibraryImpl is needed
      * (except maybe for some kind of testing). This is that one instance.
      */
-    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl();
+    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl(Const.EARLIEST_PERMITTED_GUI_TIME);
     public static final SSCWSLibrary DEFAULT_INSTANCE = TYPED_INSTANCE;
 
     /**
@@ -157,6 +161,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
             = "http://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
     private static final String QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
     private static final String QNAME_LOCAL_PART = "SatelliteSituationCenterService";
+
+    private final double noSatellitesBeforeTime_mjd;
 
     private SatelliteSituationCenterService sscService = null;
 
@@ -197,11 +203,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     /**
      * Private constructor to prevent instantiation.
      */
-    private SSCWSLibraryImpl() {
-        /*try {
-         } catch (MalformedURLException | SSCExternalException_Exception e) {
-         throw new IOException("Can not retrieve SSC Privacy and Important Notices, or Acknowledgements.");
-         }*/
+    private SSCWSLibraryImpl(double mNoSatellitesBeforeTime_mjd) {
+        noSatellitesBeforeTime_mjd = mNoSatellitesBeforeTime_mjd;
     }
 
 
@@ -287,8 +290,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                 final Future<List<SatelliteDescription>> future = executor.submit(new Task());
                 //==============================================================
 
-                //Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Download satellite list from SSC Web Services.", DEBUG);
-                System.out.println("Downloads satellite list from SSC Web Services.");
+                //Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Download satellite list from SSC via Web Services.", DEBUG);
+                System.out.println("Downloads satellite list from SSC via Web Services.");
                 final long t_start = System.nanoTime();
 
                 //satDescriptions = getSSCInterface().getAllSatellites();   // No timeout.
@@ -314,7 +317,14 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
             allSatelliteInfoCache = new ArrayList();
             for (SatelliteDescription satDescr : satDescriptions) {
-                allSatelliteInfoCache.add(new SSCWSSatelliteInfo(satDescr));
+                final SSCWSSatelliteInfo satInfo = new SSCWSSatelliteInfo(satDescr);
+
+                // Only include satellites with data after noSatellitesBeforeTime_mjd.
+                // Truncate the time interval for those that cover that time.
+                if (noSatellitesBeforeTime_mjd < satInfo.availableEndTimeMjd) {
+                    allSatelliteInfoCache.add(satInfo.changeAvailableBeginTimeMjd(
+                            Math.max(satInfo.availableBeginTimeMjd, noSatellitesBeforeTime_mjd)));
+                }
             }
             allSatelliteInfoCache = Collections.unmodifiableList(allSatelliteInfoCache);
         }
@@ -403,7 +413,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         // Make sure the data uses a supported coordinate system. Should not be needed.
         final CoordinateSystem receivedCS = coordData.getCoordinateSystem();
         if (!coordSys.equals(receivedCS)) {
-            throw new IOException("The orbit data downloaded from SSC Web Services "
+            throw new IOException("The orbit data downloaded from SSC via Web Services "
                     + "uses the \"" + receivedCS + "\" coordinates system, which this method does not support.");
         }
 
@@ -468,7 +478,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         /* Start configuring a DataFileRequest. */
         final DataFileRequest dataFileReq = new DataFileRequest();
         dataFileReq.getSatellites().add(satSpec);
-        
+
         /*==================================================================
          NOTE: The SSC Web Services API documentation claims that
          Request#setBeginTime and Request#setEndTime uses
@@ -514,8 +524,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          ======================================================================*/
         final DataResult dataResult;
         try {
-            //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Download orbit data from SSC Web Services.", DEBUG);
-            System.out.println("Download orbit data from SSC Web Services.");
+            //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Download orbit data from SSC via Web Services.", DEBUG);
+            System.out.println("Downloading orbit data from SSC via Web Services.");
             final long t_start_ns = System.nanoTime();
 
             dataResult = getSSCInterface().getData(dataFileReq);
@@ -524,7 +534,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
             //Log.log(this.getClass().getSimpleName() + ".getTrajectory_GEI: Time used for downloading data: " + duration + " [s]", DEBUG);
             System.out.println("   Time used for downloading data: " + duration_s + " [s]");
         } catch (SSCDatabaseLockedException_Exception | SSCExternalException_Exception | SSCResourceLimitExceededException_Exception e) {
-            throw new IOException("Attempt to download data from SSC Web Services failed: " + e.getMessage(), e);
+            throw new IOException("Attempt to download data from SSC via Web Services failed: " + e.getMessage(), e);
         }
 
         return dataResult;
@@ -564,7 +574,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * Informal test code.
      */
     public static void test() throws IOException {
-        SSCWSLibraryImpl lib = new SSCWSLibraryImpl();
+        SSCWSLibraryImpl lib = new SSCWSLibraryImpl(Time.Y1950);
         List<String> listPIN = lib.getPrivacyAndImportantNotices();
         List<String> listA = lib.getAcknowledgements();
 

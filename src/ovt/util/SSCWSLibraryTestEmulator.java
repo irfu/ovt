@@ -257,7 +257,7 @@ public class SSCWSLibraryTestEmulator extends SSCWSLibrary {
                 downloadFailSat_nbrOfRequests++;
                 if ((downloadFailSat_nbrOfRequests >= DOWNLOADFAILSAT_FIRST_FAIL)
                         && ((downloadFailSat_nbrOfRequests - DOWNLOADFAILSAT_FIRST_FAIL) % DOWNLOADFAILSAT_FAIL_PERIOD == 0)) {
-                    final String msg = "Can not download data from SSC Web Services (DownloadFailSat; Test exception).";
+                    final String msg = "Can not download data from SSC via Web Services (DownloadFailSat; Test exception).";
                     Log.log("EXCEPTION: " + msg, DEBUG);
                     throw new IOException(msg);
                 }
