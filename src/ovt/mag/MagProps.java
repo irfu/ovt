@@ -60,6 +60,8 @@ import javax.swing.*;
 public class MagProps extends OVTObject implements MagModel {
 
     private ovt.OVTCore core;
+    
+    private static final int DEBUG = 20;
 
     /**
      * Minimum absolute value of magnetic field
@@ -773,7 +775,7 @@ public class MagProps extends OVTObject implements MagModel {
             final double[] returnValue = getActivity_cachedReturnValues.get(key);
             if (returnValue != null) {
                 Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
-                        + Arrays.toString(returnValue) + "   // Cached value", 2);
+                        + Arrays.toString(returnValue) + "   // Cached value", DEBUG);
                 return returnValue;
             }
             // CASE: mjd is the same, but there was no cached value for this particular "key".
@@ -802,7 +804,7 @@ public class MagProps extends OVTObject implements MagModel {
 
         // NOTE: This log value comes AFTER any log value in MagActivityEditorDataModel#getValues.
         Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
-                + Arrays.toString(returnValue) + "   // (Non-cached value)", 2);
+                + Arrays.toString(returnValue) + "   // (Non-cached value)", DEBUG);
         return returnValue;
     }
 

@@ -74,7 +74,7 @@ import ovt.util.Utils.OrbitalState;
  * resolution).
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
- * @since 2015
+ * @since 2015-0x-xx
  */
 // PROPOSAL: Change name? 
 //    PRO: The common thread is not SSC Web Services?
@@ -82,7 +82,7 @@ import ovt.util.Utils.OrbitalState;
 //
 public class SSCWSSat extends Sat {
 
-    private static final int DEBUG = 20;   // The minimum log message level for this class.
+    private static final int DEBUG = 2;   // The minimum log message level for this class.
     private static final boolean ALWAYS_REQUEST_BEST_TIME_RESOLUTION = false;   // For debugging.
     /**
      * See DiscreteIntervalToListCache to understand the variable.
@@ -361,30 +361,50 @@ public class SSCWSSat extends Sat {
                     newCache = new SSCWSOrbitCache(
                             ois, mSSCWSLibrary, SSCWS_satID, PROACTIVE_CACHING_FILL_MARGIN_SLOTS * CACHE_SLOT_SIZE_MJD);
                     createNewCache = false;
-                    Log.log("   Successfully read SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\".", DEBUG);
-                    Log.log("   The old cache has " + newCache.getNbrOfFilledCacheSlots() + " filled cache slots.", DEBUG);
+
+                    final String msg1 = "   Successfully read SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\".";
+                    final String msg2 = "   The old cache has " + newCache.getNbrOfFilledCacheSlots() + " filled cache slots.";
+                    //System.out.println(msg1);
+                    //System.out.println(msg2);
+                    Log.log(msg1, DEBUG);
+                    Log.log(msg2, DEBUG);
 
                     final SSCWSSatelliteInfo oldSatInfo = newCache.getSSCWSSatelliteInfo();
                     if ((oldSatInfo.availableBeginTimeMjd != this.satInfo.availableBeginTimeMjd)
                             | (oldSatInfo.availableEndTimeMjd != this.satInfo.availableEndTimeMjd)
                             | (oldSatInfo.bestTimeResolution != this.satInfo.bestTimeResolution)) {
-                        Log.log("   Reject SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\" due to different start & end dates.", DEBUG);
+
+                        final String msg = "   Reject SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\" due to different start & end dates.";
+                        //System.out.println(msg);
+                        Log.log(msg, DEBUG);
                         createNewCache = true;
                     }
 
                     if (CACHE_SLOT_SIZE_MJD != newCache.getSlotSizeMjd()) {
-                        Log.log("   Reject SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\" due to different slot size.", DEBUG);
+                        final String msg = "   Reject SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\" due to different slot size.";
+                        //System.out.println(msg);
+                        Log.log(msg, DEBUG);
+
                         createNewCache = true;
                     }
 
                 } catch (ClassNotFoundException | IOException e) {
-                    final String msg = "Failed to reuse SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\". "
-                            + "Ignoring and creating new empty cache.";
-                    System.out.println(msg);
-                    System.out.println("   Exception: " + e.getMessage());
-                    /* Can not call OVTCore#sendErrorMessage(msg) since this class does not have access to the OVTCore, and
-                     really should be independent of the GUI for testing and modularization reasons.
+                    /**
+                     * Can not call OVTCore#sendErrorMessage(msg) since this
+                     * class does not have access to the OVTCore, and really
+                     * should be independent of the GUI for testing and
+                     * modularization reasons. We also do not really want an
+                     * error message since this is something the code can
+                     * recover from.
                      */
+                    final String msg1 = "Failed to reuse SSCWS satellite orbit cache in \"" + cacheFile.getAbsolutePath() + "\". "
+                            + "Ignoring and creating new empty cache.";
+                    // NOTE: e.getMessage() often null here. Hence the explicit explanation of what is actually printed.
+                    final String msg2 = "   " + e.getClass().getName() + ": e.getMessage() = " + e.getMessage();
+                    //System.out.println(msg1);
+                    //System.out.println(msg2);
+                    Log.log(msg1, DEBUG);
+                    Log.log(msg2, DEBUG);
                     createNewCache = true;
                 }
             }
@@ -471,7 +491,7 @@ public class SSCWSSat extends Sat {
                         RoundingMode.CEILING, RoundingMode.FLOOR,
                         INDEX_MARGIN, INDEX_MARGIN, timeResolutionToRequest);
             } catch (IndexedSegmentsCache.NoSuchTPositionException e) {
-                throw new IOException(CAN_NOT_FILL_ERROR_MSG+": "+ e.getMessage(), e);
+                throw new IOException(CAN_NOT_FILL_ERROR_MSG + ": " + e.getMessage(), e);
             }
 
             /*=======================
@@ -631,7 +651,7 @@ public class SSCWSSat extends Sat {
                         RoundingMode.FLOOR, RoundingMode.FLOOR,
                         NBR_OF_DATA_POINTS, 0, satInfo.bestTimeResolution);
             } catch (IndexedSegmentsCache.NoSuchTPositionException e) {
-                throw new IOException(CAN_NOT_FILL_ERROR_MSG+": " + e.getMessage(), e);
+                throw new IOException(CAN_NOT_FILL_ERROR_MSG + ": " + e.getMessage(), e);
             }
             if (data.coords_axisPos_kmMjd[3].length < 2) {
                 throw new IOException("Less than two data points available for the specified time interval. Can not calculate orbital period.");

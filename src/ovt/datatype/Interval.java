@@ -114,6 +114,12 @@ public class Interval {
      }
      time = new Time(1950, 01, day + 1, hour, min, sec);   // NOTE: Days plus one.
      }*/
+    /** 
+     * Parse string. The format is "[XXd] [XXh] [XXm] [XXs]", but with arbitrary
+     * spacing, arbitrary ordering and repetition.
+     * 
+     * NOTE: Only parses seconds as an integer (the internal variable is double).
+     */
     public Interval(String s) throws NumberFormatException {
         final StringTokenizer st = new StringTokenizer(s, " ");
 
@@ -157,7 +163,7 @@ public class Interval {
      return res;
      }*/
     public String toString() {
-        final String s = toString(false);
+        final String s = toString(false);   // Separate variable to simplify inspecting the variable during debugging?
         return s;
     }
 
@@ -165,17 +171,24 @@ public class Interval {
     /**
      * Prints out length of interval using days-hours-minutes-seconds. Ignores
      * fields that are zero. Optionally rounds number of seconds to an integer.
+     * 
+     * @param roundSeconds Round seconds to integer and print the seconds without
+     * decimals, i.e. without "point"/"period" (e.g. "3.0s")
+     * 
+     * NOTE: Rounding to seconds and removing the "period" is important for parsing
+     * the produced string and for TimeSettingsCustomizer which forbids using the
+     * character. Has caused bugs in the past.
+     * 
+     * IMPLEMENTATION NOTE: Important to round properly.
+     * Only rounding up or only rounding down can otherwise make e.g. time settings change by
+     * themselves when the user presses "Apply".
      */
     public String toString(boolean roundSeconds) {
 
         final Interval i = new Interval(days, hours, minutes, seconds);
         if (roundSeconds) {
-            /**
-             * NOTE: Important to round properly, not only round down or up.
-             * Rounding up/down can otherwise make e.g. time settings change by
-             * themselves when the user presses "Apply".
-             */
-            i.setSeconds((int) Math.round(seconds));
+
+            i.setSeconds((int) Math.round(seconds));   // NOTE: method argument only accepts integers(!).
         }
         i.normalize();
 
@@ -183,7 +196,13 @@ public class Interval {
         str += (i.days != 0 ? "" + i.days + "d " : "");
         str += (i.hours != 0 ? "" + i.hours + "h " : "");
         str += (i.minutes != 0 ? "" + i.minutes + "m " : "");
-        str += (i.seconds != 0 ? "" + i.seconds + "s " : "");
+        //str += (i.seconds != 0 ? "" + i.seconds + "s " : "");
+        if (roundSeconds) {
+            final int seconds = (int) Math.round(i.seconds);
+            str += (seconds != 0 ? "" + seconds + "s " : "");
+        } else {
+            str += (i.seconds != 0 ? "" + i.seconds + "s " : "");
+        }
         return str.trim();
         //return res;        
     }
@@ -230,8 +249,9 @@ public class Interval {
 
 
     // Used 1 time.
-    // NOTE: One of two functions that changes the internal state, and the it is used to "round away" the seconds.
-    // NOTE: Only integer seconds.
+    // NOTE: One of two functions that sets the internal variables directly (besides consturctors),
+    // and then it is used to "round away" the seconds.
+    // NOTE: Only integer seconds despite that Interval#seconds is double.
     public void setSeconds(int sec) {
         // //time.setTime( new Time(1950, 01, time.getDays(), time.getHours(), time.getMinutes(), 0, time.getMsec()) );
         //time.setSeconds(sec);   // Set number of seconds in the fields "seconds", seconds in a minute, 0-59.

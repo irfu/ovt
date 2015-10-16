@@ -106,7 +106,7 @@ public static final int LOG =   0;
      * /Erik P G Johansson 2015-10-15
      * 
      * 
-     * NOTE: The value was previously been set to Time.Y1970 for unknown reasons.
+     * NOTE: The value was previously set to Time.Y1970 for unknown reasons.
      */
   public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1980;
   //public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1950;

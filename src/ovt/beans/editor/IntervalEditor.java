@@ -43,6 +43,7 @@ import ovt.datatype.Interval;
 import java.beans.*;
 
 import java.awt.Component;
+import ovt.util.Log;
 
 /**
  *
@@ -51,18 +52,22 @@ import java.awt.Component;
  */
 public class IntervalEditor extends PropertyEditorSupport {
 
+    private static final int DEBUG = 2;
+    
     /** Creates new IntervalEditor */
     public IntervalEditor() {
     }
     
     public String getAsText() {
-        double mjd = ((Double)getValue());
+        double mjd = (double) getValue();
         return new Interval(mjd).toString(true);
     }
     
     public void setAsText(String s) throws IllegalArgumentException {
         try {
-            Interval interval = new Interval(s);
+            final Interval interval = new Interval(s);
+            //Log.log(getClass().getSimpleName()+"#setAsText", DEBUG);
+            //Log.log("   s = \""+s+"\"", DEBUG);
             setValue(interval.getIntervalInDays());
         } catch (NumberFormatException e2) {
             throw new IllegalArgumentException("Time format : ([_d] [_h] [_m] [_s])");

@@ -241,9 +241,14 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   }
  
   
-  
+  /** Get the time of point i in the interval. 
+   * @param i Index representing a point in the interval, separated by getStepMjd().
+   * i=0 is the first point, i=getNumberOfValues()-1 is the last point.
+   */
   public double get(int i) {
-    if (i >= getNumberOfValues()) throw new IndexOutOfBoundsException(""+i+" [" + getNumberOfValues() + "]");
+    if (i >= getNumberOfValues()) {
+        throw new IndexOutOfBoundsException(""+i+" [" + getNumberOfValues() + "]");
+    }
     return getStartMjd() + getStepMjd()*i;
   }
 
@@ -266,6 +271,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     return (int)(intervalMjd/stepMjd + 1);
   }
 
+  /** Adjust (modify) the interval so that it is an even multiple of steps. */
   public void adjustInterval() {
       double newInterval = get(getNumberOfValues() - 1) - startMjd;
       // check if interval is a little bit less, then the last posible point
@@ -322,8 +328,9 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
           TimeSet ts = (TimeSet)obj;
           if (Math.abs(ts.getStartMjd() - getStartMjd()) < eps  &&
               Math.abs(ts.getIntervalMjd() - getIntervalMjd()) < eps  &&
-              Math.abs(ts.getStepMjd() - getStepMjd()) < eps) 
+              Math.abs(ts.getStepMjd() - getStepMjd()) < eps) {
                   return true;
+          }
       } 
       return false;
   }

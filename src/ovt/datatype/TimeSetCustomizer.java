@@ -162,12 +162,12 @@ private JPanel createMainPanel() {
     intervalTextField = (IntervalEditorPanel)editor[INTERVAL].getCustomEditor();
     stepTextField = (IntervalEditorPanel)editor[STEP].getCustomEditor();
     
-    JLabel label = new JLabel("Start ");
+    JLabel label = new JLabel("Start");
     label.setAlignmentX(CENTER_ALIGNMENT);
     comp.add(label);
     comp.add(startTextField);
     
-    label = new JLabel("Interval ");
+    label = new JLabel("Interval");
     label.setAlignmentX(CENTER_ALIGNMENT);
     comp.add(label);
     comp.add(intervalTextField);

@@ -59,7 +59,7 @@ import ovt.util.Log;
  */
 public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableModel implements MagActivityDataSource {
 
-    private static final int DEBUG = 2;  // Log message log level.
+    private static final int DEBUG = 20;  // Log message log level.
 
     private String name = null;
     private Vector data = new Vector();

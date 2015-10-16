@@ -67,7 +67,7 @@ import ovt.interfaces.MagPropsChangeListener;
  */
 public class MagActivityDataEditor extends javax.swing.JFrame {
     
-    private static final int DEBUG = 2;
+    private static final int DEBUG = 20;
 
     // Variables declaration 
     private javax.swing.JScrollPane jScrollPane1;

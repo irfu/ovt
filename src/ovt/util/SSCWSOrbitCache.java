@@ -65,7 +65,7 @@ import ovt.util.SSCWSLibrary.SSCWSSatelliteInfo;
  * resolution.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
- * @since 2015
+ * @since 2015-0x-xx
  */
 public class SSCWSOrbitCache {
 
@@ -73,37 +73,58 @@ public class SSCWSOrbitCache {
     private static final boolean ASSERT_OUTSIDE_EARTH = false;   // You probably want to disable this during automated testing.
 
     /**
-     * Version number of cached data in an object stream. This number always
-     * comes first in the stream. The Code will reject data with the wrong
-     * version number (higher or lower). This is a functionality to make it
-     * possible to automatically reject old cache files for different reasons
-     * and avoid needing to manually remove them.<BR>
+     * Version number of cached data in an object stream. Refers to BOTH (1) the
+     * cached data itself (it may be right/wrong due to bugs) and (2) the format
+     * in which the data is stored. This number always comes first in the
+     * stream. The code will reject data with a different version number (higher
+     * or lower). This is a functionality to make it possible to automatically
+     * reject old cache files for different reasons and avoid needing to
+     * manually remove them, in particular to avoid having to tell users
+     * upgrading that they need to remove old cache files.<BR>
+     *
      * Examples:<BR>
      * 1) The stream format has changed and old cache files can not be read
      * anymore. The code will give error when reading files in the wrong format
      * (if one uses serialization) but this will avoid the error messages
      * too.<BR>
      * 2) It becomes known that data in old cache files is corrupt (e.g. due to
-     * discovery of bugs).
+     * discovery of bugs; has happened at least once).
      *
      * Old values that should not be used:<BR>
-     * STREAM_FORMAT_VERSION = 0: Cache files were generated with corrupt time
-     * conversion. Stopped using 2015-09-17.
+     * -----------------------------------<BR>
+     * STREAM_DATA_VERSION = 0: The first value ever used. Cache files were
+     * generated with corrupt times (sometimes 30 s off). Stopped using
+     * 2015-09-17.
      */
-    private static final long STREAM_FORMAT_VERSION = 1;
-
-    /**
-     * Comment to put in the stream (file). Meant to be human-readable in case
-     * someone looks in the stream. The value should be ignored when reading it
-     * from the stream.
-     */
-    private static final String STREAM_COMMENT
-            = OVTCore.SIMPLE_APPLICATION_NAME + " " + OVTCore.VERSION
-            + " (Build " + OVTCore.BUILD + "). Contains cached satellite orbit data.";
+    private static final long STREAM_DATA_VERSION = 1;
 
     private final IndexedSegmentsCache segmentsCache;
     private final SSCWSLibrary sscwsLibrary;
     private final SSCWSSatelliteInfo satInfo;
+
+
+    /**
+     * Comment to put in the stream (file). Meant to be human-readable in case
+     * someone looks in the stream. The value should be entirely ignored when
+     * reading it from the stream so that the string can be modified
+     * arbitrarily.
+     *
+     * NOTE: Some variables values stored elsewhere in the stream can be printed
+     * here but those should only be here to make them easily human-readable.
+     * They should NEVER be parsed upon reading the stream or anywhere else.
+     */
+    private String getStreamComment() {
+        return " ### File generated with the software application "
+                + OVTCore.SIMPLE_APPLICATION_NAME + ", version " + OVTCore.VERSION
+                + " (Build " + OVTCore.BUILD + ")."
+                + " This file/stream contains cached satellite orbit (position) data"
+                + " and is only meant to be used by the same software application."
+                + " This particular file contains orbit data for \"" + satInfo.name + "\"."
+                + " ### "
+                + " STREAM_DATA_VERSION=" + STREAM_DATA_VERSION + ";"
+                + " satInfo=[" + satInfo.toString()
+                + "] ### ";
+    }
 
     //##########################################################################
     /**
@@ -193,8 +214,8 @@ public class SSCWSOrbitCache {
      * that it does not contain the same data as at the SSC (e.g. since the time
      * interval of available data has changed).<BR>
      *
-     * NOTE: The caller still has to find a file with cache data that exists, i.e.
-     * can not call this function if the caller does not find any.
+     * NOTE: The caller still has to find a file with cache data that exists,
+     * i.e. can not call this function if the caller does not find any.
      *
      * IMPLEMENTATION NOTE: It is useful to use an ObjectInput stream as
      * argument rather than a file for testing purposes.
@@ -241,13 +262,15 @@ public class SSCWSOrbitCache {
          Might be slightly inefficient if it is rejected but that should be rare.
          ====================================================================*/
         final long stream_format_version = in.readLong();
-        if (stream_format_version != STREAM_FORMAT_VERSION) {
+        if (stream_format_version != STREAM_DATA_VERSION) {
             throw new IOException("Stream format has changed. Can/will not read data from stream. Stream format may have changed or old data was corrupt.");
         }
         final SSCWSSatelliteInfo oldSatInfo;
         try {
+
             // The return value is never used, but the object must be read.
-            // The return value should be a String so there is a point in checking for that.
+            // The return value should be a String so there is a point in assigning
+            // the return value to a variable. It is also useful for temporarily inspecting the variable (debugging?).
             final String streamComment = (String) in.readObject();
 
             oldSatInfo = (SSCWSSatelliteInfo) in.readObject();
@@ -270,8 +293,8 @@ public class SSCWSOrbitCache {
 
 
     public void writeToStream(ObjectOutput out) throws IOException {
-        out.writeLong(STREAM_FORMAT_VERSION);
-        out.writeObject(STREAM_COMMENT);
+        out.writeLong(STREAM_DATA_VERSION);
+        out.writeObject(getStreamComment());
         out.writeObject(satInfo);
         segmentsCache.writeToStream(out);
     }

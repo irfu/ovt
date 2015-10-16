@@ -60,6 +60,8 @@ import ovt.util.Log;
 public class IntervalEditorPanel extends JTextField 
         implements Syncer, PropertyChangeListener {
 
+    private static final int DEBUG = 2;
+    
     private IntervalEditor editor;
     private DocumentListener documentListener;
     
@@ -88,17 +90,22 @@ public IntervalEditorPanel(IntervalEditor ed) {
 private void applyChangesSilently() {
     editor.removePropertyChangeListener(IntervalEditorPanel.this);
     try {
-        editor.setAsText(getText());
+        final String s = getText();
+        //Log.log(getClass().getSimpleName()+"#applyChangesSilently", DEBUG);
+        //Log.log("   s = \""+s+"\"", DEBUG);
+        editor.setAsText(s);
     } catch (IllegalArgumentException ignore) {
     }
     editor.addPropertyChangeListener(IntervalEditorPanel.this);
 }
 
-/** listen to editor's propertyChange event */
+/** Listen to editor's propertyChange event. */
 public void propertyChange(PropertyChangeEvent evt) {
     // oldPropertyValue is changed only from outside
     getDocument().removeDocumentListener( documentListener );
     final String s = editor.getAsText();   
+    //Log.log(getClass().getSimpleName()+"#propertyChange", DEBUG);
+    //Log.log("   s = \""+s+"\"", DEBUG);
     setText(s);  // NOTE: Must use text that can be parsed into an interval again. 
     getDocument().addDocumentListener( documentListener );
 }
@@ -119,7 +126,7 @@ public void sync() throws SyncException {
 class IntervalDocument extends DefaultStyledDocument {
 
     /** Called whenever the user types something into the text field
-     * (and other text field updates too). Calls to setText seem to
+     * (and other text field updates too). All calls to setText seem to
      * indirectly lead to a call to this function.
      * 
      * @param str The string that "someone" tried to INSERT.

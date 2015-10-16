@@ -87,6 +87,8 @@ public abstract class SSCWSLibrary {
      */
     public static class SSCWSSatelliteInfo implements Serializable {
 
+        private static final long serialVersionUID = -8293791156497557006L;
+        
         public final String ID;
         public final String name;
         public final double availableBeginTimeMjd;
@@ -94,25 +96,18 @@ public abstract class SSCWSLibrary {
         public final int bestTimeResolution;    // Unit: seconds, not mjd!
 
 
-        public SSCWSSatelliteInfo(SatelliteDescription satDescr/*, double truncateAvailableBeginTimeMjd*/) {
-            /*if (!Double.isFinite(truncateAvailableBeginTimeMjd)) {
-             throw new IllegalArgumentException();
-             }*/
+        public SSCWSSatelliteInfo(SatelliteDescription satDescr) {
 
-            //final double satDescr_availableBeginTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getStartTime());
             this.ID = satDescr.getId();
             this.name = satDescr.getName();
-            /*this.availableBeginTimeMjd = Math.max(
-             satDescr_availableBeginTimeMjd,
-             truncateAvailableBeginTimeMjd);*/
             this.availableBeginTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getStartTime());
             this.availableEndTimeMjd = SSCWSLibrary.convertXMLGregorianCalendarToMjd(satDescr.getEndTime());
             this.bestTimeResolution = satDescr.getResolution();
 
-            /*if (availableEndTimeMjd < availableBeginTimeMjd) {
-             throw new IllegalArgumentException("Satellite data availability interval has negative length.");
-             // Can happen if availableEndTimeMjd < truncateAvailableBeginTimeMjd.
-             }*/
+            if (availableEndTimeMjd <= availableBeginTimeMjd) {
+                throw new IllegalArgumentException("Satellite data availability time interval has non-positive length.");
+                // Can happen if availableEndTimeMjd < truncateAvailableBeginTimeMjd.
+            }
         }
 
 
@@ -144,8 +139,8 @@ public abstract class SSCWSLibrary {
 
 
         /**
-         * Useful for artificially modifying the available time interval due to that OVT can
-         * not handle all points in time.
+         * Useful for artificially modifying the available time interval due to
+         * that OVT can not handle all points in time.
          */
         public SSCWSSatelliteInfo changeAvailableBeginTimeMjd(double mAvailableBeginTimeMjd) {
             // NOTE: The called constructor should check that the time interval is positive.
@@ -154,6 +149,21 @@ public abstract class SSCWSLibrary {
                     mAvailableBeginTimeMjd, availableEndTimeMjd,
                     bestTimeResolution);
         }
+
+
+        // NOTE: Used for putting string representation in orbit cache files
+        // (it is impractical to find usages of Object#toString using the NetBeans IDE).
+        @Override
+        public String toString() {
+            // PROPOSAL: Add some time: "This data/file/stream was saved XXXX-XX-XX, XX:XX.XX+XX:XX".
+            return //"["
+                    "ID=\"" + ID + "\"; "
+                    + "name=\"" + name + "\"; "
+                    + "availableBeginTimeMjd=" + availableBeginTimeMjd + "; "
+                    + "availableEndTimeMjd=" + availableEndTimeMjd + "; "
+                    + "bestTimeResolution=" + bestTimeResolution //+ "]"
+                    ;
+        }//*/
 
 
         @Override
