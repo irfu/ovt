@@ -60,7 +60,7 @@ import javax.swing.*;
 public class MagProps extends OVTObject implements MagModel {
 
     private ovt.OVTCore core;
-    
+
     private static final int DEBUG = 20;
 
     /**
@@ -754,23 +754,25 @@ public class MagProps extends OVTObject implements MagModel {
      * IMPLEMENTATION NOTE: Uses an internal cache to speed up calls.
      * Empirically, we know that the same call is made many times in a row. This
      * is a good place to have a cache since it covers both sources of activity
-     * data, MagActivityEditorDataModel and OMNI2.
+     * data, MagActivityEditorDataModel and OMNI2. Note that the cache has to be
+     * cleared when changing data source.
      *
      * @param key Specify which activity variable that is sought, and optionally
      * which component of that variable. The rule for requesting some component
      * of activity, let's say you need Z component of IMF (IMF[2]).
      * <CODE>key = IMF*100 + 2</CODE>
      * @return Activity values.
-     *
      */
     private double[] getActivity(int key, double mjd) {
         //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
 
-        // Try to use a cached value first.
-        // --------------------------------
-        // IMPLEMENTATION NOTE: Construct chosen to minimize the number of
-        // Integer objects created and the number of calls to Map#containsKey
-        // (none) and Map#get.
+        /**
+         * Try to use a cached value first.<BR>
+         * --------------------------------
+         * IMPLEMENTATION NOTE: Construct chosen to minimize the number of
+         * Integer objects created and the number of calls to Map#containsKey
+         * (none) and Map#get.
+         */
         if (mjd == getActivity_cachedMjd) {
             final double[] returnValue = getActivity_cachedReturnValues.get(key);
             if (returnValue != null) {
@@ -778,10 +780,11 @@ public class MagProps extends OVTObject implements MagModel {
                         + Arrays.toString(returnValue) + "   // Cached value", DEBUG);
                 return returnValue;
             }
-            // CASE: mjd is the same, but there was no cached value for this particular "key".
+            // CASE: mjd is the same as for cache, but there was no cached value
+            // for this particular "key".
             // ==> Keep cached values.
         } else {
-            // CASE: mjd has changed.
+            // CASE: mjd has changed from what is in the cache.
             // ==> Dismiss all cached values.
             getActivity_cachedMjd = mjd;
             getActivity_cachedReturnValues.clear();
@@ -960,6 +963,9 @@ public class MagProps extends OVTObject implements MagModel {
      * taking data from (1) a MagActivityEditorDataModel and (2) OMNI2 data.
      * Also serves as data model for the variable/flag (visible in the GUI) that
      * chooses between activityEditorDataMode and OMNI2 data.
+     * 
+     * NOTE: Not static class. Uses MagProps for listeners/events, i.e. this
+     * class triggers events to MagProps's listeners.
      */
     class ActivityEditorOrOMNI2_DataSource implements MagActivityDataSource {
 
@@ -1027,7 +1033,7 @@ public class MagProps extends OVTObject implements MagModel {
         public void setDataSourceChoice(DataSourceChoice choice) {
             Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")", 2);
 
-            // Avoid calling listeners unnecessarily.
+            // Avoid doing anything unnecessarily, in particular calling listeners.
             if (this.dataSourceChoice == choice) {
                 return;
             }
@@ -1036,6 +1042,8 @@ public class MagProps extends OVTObject implements MagModel {
             final MagPropsEvent evt = new MagPropsEvent(this, editorDataModel.getIndex());
             MagProps.this.fireMagPropsChange(evt);
             MagProps.this.getCore().Render();
+            MagProps.this.getActivity_cachedMjd = Double.NaN;
+            MagProps.this.getActivity_cachedReturnValues.clear();
         }
 
 
@@ -1056,15 +1064,16 @@ public class MagProps extends OVTObject implements MagModel {
                     return OMNI2_DATA_SOURCE.getValues(mjd, fieldID, getIMFvector);
                 } catch (OMNI2DataSource.ValueNotFoundException ex) {
 
-                    final String msg = "Can not find value (" + getActivityName(editorDataModel.getIndex()) + ") for the specified time in the OMNI2 database. Using default value instead. - " + ex.getMessage();
-                    getCore().sendWarningMessage("Can not find OMNI2 value", msg);
+                    final String msg = "Can not find value (" + getActivityName(editorDataModel.getIndex()) + ")"
+                            + " for the specified time in the OMNI2 database. Using default value instead. - " + ex.getMessage();
+                    getCore().sendWarningMessage("Can not find OMNI2 value.", msg);
                     Log.log(msg, 0);
                     return defaultValue;
 
                 } catch (IOException ex) {
 
                     final String msg = "I/O error when trying to obtain OMNI2 value. Using default value instead. - " + ex.getMessage();
-                    getCore().sendErrorMessage("I/O error when obtaining OMNI2 value", msg);
+                    getCore().sendErrorMessage("I/O error when trying to obtain OMNI2 value.", msg);
                     Log.log(msg, 0);
                     return defaultValue;
 
