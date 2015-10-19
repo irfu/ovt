@@ -172,7 +172,7 @@ public class DiscreteIntervalToListCache<O extends Serializable> {
 
 
     /**
-     * Write the cached data (but not other settings) to a strean.
+     * Write the cached data (but not other settings) to a stream.
      * 
      * IMPLEMENTATION NOTE: The writing to stream captures the class of cached
      * objects, not the class specified through Java generics when instantiating

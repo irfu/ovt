@@ -285,9 +285,10 @@ public class OMNI2FileUtils_HourlyAvg {
         for (int i = 0; i < year.length; i++) {
             final double time_mjd = Time.getMjd(year[i], 1, 1, hod[i], 0, 0) + (doy[i] - 1); // Technically cheating with leap seconds, maybe, since differences in mjd are not proportional to physical  time. 
 
-            if ((time_mjd < beginIncl_mjd) || (endExcl_mjd <= time_mjd)) {
-                throw new IllegalArgumentException("File times do not fit the stated time interval.");
-            }
+            /* // Check assertion. Check is now made in OMNI2Data constructor.
+             if ((time_mjd < beginIncl_mjd) || (endExcl_mjd <= time_mjd)) {
+             throw new IllegalArgumentException("File times do not fit the stated time interval.");
+             }*/
             times_mjd[i] = time_mjd;
         }
 
@@ -308,7 +309,17 @@ public class OMNI2FileUtils_HourlyAvg {
         fieldArrays.put(OMNI2Data.FieldID.IMFy_nT_GSM, IMFy_nT_GSM_FCR.getBuffer());
         fieldArrays.put(OMNI2Data.FieldID.IMFz_nT_GSM, IMFz_nT_GSM_FCR.getBuffer());
 
-        final OMNI2Data data = new OMNI2Data(beginIncl_mjd, endExcl_mjd, fieldArrays);
+        final OMNI2Data data;
+        try {
+            data = new OMNI2Data(beginIncl_mjd, endExcl_mjd, fieldArrays);
+        } catch (IllegalArgumentException e) {
+            /**
+             * Can be triggered if time is outside of time interval. Needs to
+             * rethrow the IllegalArgumentException as IOException so that
+             * caller can handle it correctly.
+             */
+            throw new IOException("Can not interpret OMNI2 file format.", e);
+        }
 
         return data;
     }

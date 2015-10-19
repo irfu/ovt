@@ -147,9 +147,18 @@ public class Time {
     }
 
 
-// this method should be moved away to the TimeFormat class
+    // this method should be moved away to the TimeFormat class
+    /**
+     * Set time from string.<BR>
+     *
+     * Assumes format YYYY_MM_DD_hh_mm_[ss___...], where underscore is entirely
+     * arbitrary and the last part optional. ss=integer which means that the
+     * code can not read second decimals.
+     */
     public void setTime(String time) throws NumberFormatException {
         try {
+            // Assumes format: YYYY_MM_DD_hh_mm_[ss___...]
+            //                 01234567890123456 789
             year = Integer.parseInt(time.substring(0, 4));
             month = Integer.parseInt(time.substring(5, 7));
             day = Integer.parseInt(time.substring(8, 10));
@@ -376,12 +385,10 @@ public class Time {
      * User may otherwise try to set year after setting day-of-year.
      */
     /*public void setDayOfYear(int year, int doy) {
-        // Wikipedia: "The years 2000 and 2400 are leap years, while 1800, 1900, 2100, 2200, 2300 and 2500 are common years."
-        final boolean isLeapYearException = (year % 100 == 0) && (year % 400 != 0);
-        final boolean isLeapYear = (year % 4 == 0) && !isLeapYearException;
-    }*/
-
-
+     // Wikipedia: "The years 2000 and 2400 are leap years, while 1800, 1900, 2100, 2200, 2300 and 2500 are common years."
+     final boolean isLeapYearException = (year % 100 == 0) && (year % 400 != 0);
+     final boolean isLeapYear = (year % 4 == 0) && !isLeapYearException;
+     }*/
     /**
      * This is a quick hack. There could be a better solution
      */

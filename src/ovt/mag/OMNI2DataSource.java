@@ -65,6 +65,13 @@ import ovt.util.Utils;
  */
 public class OMNI2DataSource {
 
+    // Exact value not so important but should probably not be more than
+    // the length of time covered by a year or the underlying OMNI2 files (?).
+    private static final double MIN_DATA_SOURCE_T_SCALE_DAYS = 1;
+
+    private final static int DEBUG = 24;   // Log level for log messages.
+    
+    
     //##########################################################################
     /**
      * Class which the cache uses as a data source.
@@ -119,17 +126,12 @@ public class OMNI2DataSource {
 
     //##########################################################################
     private final SegmentsCache segmentsCache;
-    private final static int DEBUG = 2;   // Log level for log messages.
 
 
     public OMNI2DataSource(OMNI2RawDataSource rawDataSrc) {
         /*=====================
          Setup cache.
          =====================*/
-        // Exact value not so important but should probably not be more than
-        // the length of time covered by a year or the underlying OMNI2 files (?).
-        final double minDataSourceTScale_mjd = 1;
-
         // Derive approximate beginning and end of time interval that covers all data.
         final int[] yearMinMax = rawDataSrc.getYearMinMax_hourlyAvg();
         final double searchMin_mjd = Time.getMjd(yearMinMax[0] + 0, 1, 1, 0, 0, 0);
@@ -137,7 +139,7 @@ public class OMNI2DataSource {
 
         segmentsCache = new SegmentsCache(
                 new CacheDataSource(rawDataSrc),
-                minDataSourceTScale_mjd,
+                MIN_DATA_SOURCE_T_SCALE_DAYS,
                 searchMin_mjd,
                 searchMax_mjd);
     }
@@ -163,12 +165,11 @@ public class OMNI2DataSource {
     // PROPOSAL: Search function outside so can find t interval for global time interval.
     // QUESTION: How find the nearest mjd, not the nearest in a search direction?
     //    NOTE: Not enough to implement Utils.findNearestMatch for rounding-to-nearest due to fill values and segment boundaries.
-    //          Must probably search both up and down and select the nearest one.
+    //          Must probably search both up and down and selectSubset the nearest one.
     // PROPOSAL: Max distance in time beyond which a found value will yield exception instead of a returned value.
     //    NOTE: Needs different value if searching for the boundaries of OMNI2 data.
     public double[] getValues(double time_mjd, FieldID fieldID, boolean getIMFVector) throws ValueNotFoundException, IOException {
 
-        //throw new UnsupportedOperationException("Incomplete implementation.");
         //=====================================================================
         class SearchFunction implements SegmentsCache.SearchFunction {
 
@@ -264,11 +265,12 @@ public class OMNI2DataSource {
         if (result == null) {
             result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
             if (result == null) {
-                throw new ValueNotFoundException("Can not find OMNI2 value for " + fieldID + ".");
+                throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " at time_mjd=" + time_mjd + ".");
             }
         }
 
         // CASE: "result" is not null.
+        //final double dataPointTime_mjd = result[0][0];
         return result[1];  //*/
     }
 

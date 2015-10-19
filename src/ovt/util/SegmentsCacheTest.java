@@ -101,7 +101,7 @@ public class SegmentsCacheTest {
 
 
             @Override
-            public SegmentsCache.DataSegment select(double t_begin, double t_end) {
+            public SegmentsCache.DataSegment selectSubset(double t_begin, double t_end) {
                 if (!SegmentsCache.intervalIsSuperset(interval[0], interval[1], t_begin, t_end)) {
                     throw new AssertionError();
                 }

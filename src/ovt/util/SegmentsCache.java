@@ -33,6 +33,7 @@ package ovt.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 
@@ -82,6 +83,9 @@ import java.util.List;
 // PROPOSAL: Get segment (transverse/orthogonal) subset.
 public class SegmentsCache {
 
+    private final static int DEBUG = 4;
+    
+    
     /**
      * Class which models data for a finite t interval. Instances are stored
      * inside the cache.
@@ -105,7 +109,7 @@ public class SegmentsCache {
          * Some exception if the interval does not descrive a subset (e.g.
          * IllegalArgumentException).
          */
-        public DataSegment select(double t_begin, double t_end);
+        public DataSegment selectSubset(double t_begin, double t_end);
     }
     //##########################################################################
 
@@ -172,7 +176,7 @@ public class SegmentsCache {
             // Not entirely synced with equals, but only for length-2 arrays.
         }
     };
-    private final int DEBUG = 2;
+
     private final DataSource dataSrc;
     private final List<DataSegment> cachedSegments = new ArrayList();   // NOTE: Not sorted by default.
 
@@ -208,7 +212,7 @@ public class SegmentsCache {
         final DataSegment seg = getSegmentSuperset(t_begin, t_end);
 
         // Extract the data.
-        return seg.select(t_begin, t_end);
+        return seg.selectSubset(t_begin, t_end);
     }
 
 
@@ -272,7 +276,10 @@ public class SegmentsCache {
      * function if successful. Null iff could not find what was sought.
      */
     public Object search(double t_start, SearchDirection dir, SearchFunction searchFunc) throws IOException {
-        //Log.log(this.getClass().getSimpleName() + " # searchDataSegment", DEBUG);
+        Log.log(
+                this.getClass().getSimpleName() + " # searchDataSegment"
+                + "(t_start="+t_start+", dir="+dir+", searchFunc=...)",
+                DEBUG);
         //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
 
         if (!Double.isFinite(t_start) | (searchFunc == null)) {
@@ -295,7 +302,7 @@ public class SegmentsCache {
 
         // t1,t2 = Minimum interval limits for segment to request, without specifying which is lower/upper boundary.
         double t1 = t_start;
-        double t2 = t_start + t_step;
+        double t2 = t_start + t_step;  // NOTE: Can be higher OR LOWER than t1.
 
         /**
          * IMPLEMENTATION NOTE: Needs to limit search to boundaries to avoid
@@ -314,6 +321,9 @@ public class SegmentsCache {
             ensureIntervalIsCachedInSingleSegment(t1, t2);   // Contains call to mergeAdjacentSegments.
             final DataSegment seg = findCachedSegmentSuperset(t1, t2);
             //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
+            Log.log("Call searchFunc.searchDataSegment", DEBUG);
+            Log.log("   seg.getInterval()="+Arrays.toString(seg.getInterval())+", t_start="+t_start+", dir="+dir , DEBUG);
+
             final Object searchResults = searchFunc.searchDataSegment(seg, t_start, dir);
             if (searchResults != null) {
                 return searchResults;
@@ -324,6 +334,7 @@ public class SegmentsCache {
         }
         return null;
     }
+
 
     //##########################################################################
     /**
@@ -403,7 +414,7 @@ public class SegmentsCache {
         final List<double[]> intervalsToAdd = removeIntervals(seg.getInterval(), getCachedTIntervals());
 
         for (double[] intervalToAdd : intervalsToAdd) {
-            DataSegment segToAdd = seg.select(intervalToAdd[0], intervalToAdd[1]);
+            DataSegment segToAdd = seg.selectSubset(intervalToAdd[0], intervalToAdd[1]);
             cachedSegments.add(segToAdd);
         }
     }
@@ -502,7 +513,7 @@ public class SegmentsCache {
 
 
     /**
-     * Given an interval a, remove multiple intervals from it as if it was a
+     * Given an interval, remove multiple intervals from it as if it was a
      * set-theoretic difference. Return a list with the intervals that describe
      * what remains.
      *
@@ -534,8 +545,8 @@ public class SegmentsCache {
     /**
      * NOTE: Pure utility function independent of the actual cache.
      *
-     * @return True iff the first interval is a (not necessarily strict)
-     * superset of the latter.
+     * @return True iff the first interval is a superset (not necessarily
+     * strict) of the latter.
      */
     // Move to Utils?
     public static boolean intervalIsSuperset(

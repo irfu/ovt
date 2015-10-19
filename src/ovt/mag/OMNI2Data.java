@@ -41,8 +41,9 @@ import ovt.util.Utils;
 
 /**
  * Container for OMNI2 data over a certain period of time. Intended to be
- * treated as immutable after its construction (constructor plus
- * #setFieldArray).
+ * TREATED AS IMMUTABLE after its construction (constructor plus
+ * #setFieldArray), although it may return references to internal arrays which
+ * the caller is then supposed to make sure are not altered.
  *
  * NOTE: An instance covers an explicitly specific period in time, which has to
  * be CONSISTENT with the data points in it, but the specified time period can
@@ -85,7 +86,7 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
         IMFz_nT_GSE,
         IMFy_nT_GSM,
         IMFz_nT_GSM,
-        SW_ram_pressure_nP,   // Not to be confused with "dynamic pressure".
+        SW_ram_pressure_nP, // Not to be confused with "dynamic pressure".
         SW_velocity_kms,
         SW_M_A, // Alfven Mach number.
         SW_M_ms, // Magnetosonic Mach number
@@ -93,7 +94,7 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
         DST // DST=Disturbance Storm Time index
     }
 
-    private final Map<FieldID, ArrayData> dataFields = new HashMap();
+    private final Map<FieldID, DoubleArray> dataFields = new HashMap();
     //private final Map<FieldID, DoubleArray> doubleFields = new HashMap();
     //private final Map<FieldID, DoubleArray2D> doubleFields = new HashMap();
 
@@ -140,11 +141,11 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
      * compilation errors).
      *
      * @param mDataFields Must contain one key and array for every possible
-     * FieldID. All arrays must have the same length. If null, then all fields
+     * FieldID. All arrays must have the same length. If NULL, then all fields
      * will be initialized to have length zero.
      */
     private OMNI2Data(Map<FieldID, ArrayData> mDataFields, double mBegin_mjd, double mEnd_mjd) {
-        if (mEnd_mjd <= mBegin_mjd) {
+        if (!(mBegin_mjd < mEnd_mjd)) {
             throw new IllegalArgumentException("mEnd_mjd <= mBegin_mjd");
         }
 
@@ -152,7 +153,8 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
         end_mjd = mEnd_mjd;
 
         if (mDataFields == null) {
-            // Initialize empty fields.
+
+            // Initialize empty internal fields.
             for (FieldID fieldID : FieldID.values()) {
                 dataFields.put(fieldID, new DoubleArray(new double[0]));
             }
@@ -162,21 +164,43 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
             int permittedArrayLength = -1;
             for (FieldID fieldID : FieldID.values()) {
 
-                // Argument checks.
+                // Argument checks
                 if (!mDataFields.containsKey(fieldID)) {
                     throw new IllegalArgumentException("Argument omits field ID \"" + fieldID + "\".");
                 }
-                final DoubleArray dataField = (DoubleArray) mDataFields.get(fieldID);
+
+                final DoubleArray doubleArray = (DoubleArray) mDataFields.get(fieldID);
                 if (permittedArrayLength < 0) {
-                    permittedArrayLength = dataField.length();
-                } else if (dataField.length() != permittedArrayLength) {
+                    permittedArrayLength = doubleArray.length();
+                }
+
+                // Argument check
+                if (doubleArray.length() != permittedArrayLength) {
                     throw new IllegalArgumentException("Arrays have different lengths.");
                 }
 
-                // Set internal array.
-                dataFields.put(fieldID, dataField);
+                // Set internal value.
+                dataFields.put(fieldID, doubleArray);
             }
         }
+
+        // Argument check. 
+        final double[] time_mjd = dataFields.get(FieldID.time_mjd).getArrayInternal();
+        for (double t : time_mjd) {
+            if ((t < mBegin_mjd) || (mEnd_mjd <= t)) // NOTE: Inclusive beginning boundary, exclusive end boundary.
+            {
+                throw new IllegalArgumentException("Data contains data points outside the stated time interval.");
+            }
+        }
+
+        for (int i = 0; i < time_mjd.length; i++) {
+            final double t = time_mjd[i];
+
+            if ((i >= 1) && !(time_mjd[i - 1] < time_mjd[i])) {
+                throw new IllegalArgumentException("Data points not sorted (monotonically increasing) in time.");
+            }
+        }
+
     }
 
 
@@ -198,12 +222,31 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
 
 
     /**
-     * Create an instance using a subset of time from an existing instance.
+     * Create an instance using a subset of time from this existing instance.
      */
     @Override
-    public SegmentsCache.DataSegment select(double mBegin_mjd, double mEnd_mjd) {
+    public SegmentsCache.DataSegment selectSubset(double mBegin_mjd, double mEnd_mjd) {
         if ((mBegin_mjd < this.begin_mjd) || (this.end_mjd < mEnd_mjd)) {
             throw new IllegalArgumentException("Specified time interval outside the time interval covered by this object.");
+        }
+
+        return createNew(mBegin_mjd, mEnd_mjd);
+    }
+
+
+    /**
+     * Create an instance using data from this existing instance. Time covered
+     * by the new instance, but not in this instance, will automatically be
+     * empty in the new instance.
+     *
+     * NOTE: Useful for testing purposes, since can then use one OMNI2Data
+     * instance as the basis for all test data and then extract time segments
+     * from that for each request for data.
+     */
+    // PROPOSAL: Better name. reuseData? createNewUsingOldData?!
+    public SegmentsCache.DataSegment createNew(double mBegin_mjd, double mEnd_mjd) {
+        if (!(mBegin_mjd < mEnd_mjd)) {
+            throw new IllegalArgumentException();
         }
 
         final int[] indexInterval = Utils.findInterval(getFieldArrayInternal(FieldID.time_mjd), mBegin_mjd, mEnd_mjd, true, false);
@@ -223,12 +266,20 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
 
     //##########################################################################
     /**
-     * Utility function for being able to more conveniently reuse code in the
-     * constructors.
+     * Utility function for being able to more conveniently recycle code in the
+     * constructors, when one additional constructor existed. Can probably be
+     * rationalized away.
      */
+    // PROPOSAL: Rationalize away?
     private static Map<FieldID, ArrayData> convertFields(Map<FieldID, double[]> arrayDataFields) {
         final Map<FieldID, ArrayData> dataFields = new HashMap();
-        for (FieldID fieldID : FieldID.values()) {
+
+        /**
+         * IMPLEMENTATION NOTE: Iterate over the keys in the keySet, NOT all
+         * FieldID values. We only want to convert the Map, not do any argument
+         * checking. Assertions should be checked elsewhere.
+         */
+        for (FieldID fieldID : arrayDataFields.keySet()) {
             dataFields.put(fieldID, new DoubleArray(arrayDataFields.get(fieldID)));
         }
         return dataFields;
@@ -359,6 +410,9 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
 
 
         public DoubleArray(double[] mArray) {
+            if (mArray == null) {
+                throw new IllegalArgumentException("Using null as argument.");
+            }
             array = mArray;
         }
 

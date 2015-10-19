@@ -305,9 +305,9 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
      * Derives the relevant value(s) for an arbitrary point in time.
      *
      * IMPLEMENTATION NOTE: Used to have an internal cache to speed up calls.
-     * The cache is not as useful as it used to be before implementing the cache in
-     * MagProps#getActivity but it still did a little bit of work work. Remove
-     * the cache entirely?
+     * The cache is not as useful as it used to be before implementing the cache
+     * in MagProps#getActivity but it still did a little bit of work work.
+     * Remove the cache entirely?
      */
     public double[] getValues(double mjd) {
 //        if (mjd == cachedMjd && cachedValues != null) {
@@ -327,11 +327,10 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
             returnValues = getDefaultValues();
         }
         //cachedMjd = mjd;
-        Log.log(this.getClass().getSimpleName()
-                + "#getValues(" + mjd + /*"<=>" + new Time(mjd) +*/ ") = "
-                + Arrays.toString(returnValues.values)
-                //+ "   // (Non-cached value)"
-                ,DEBUG);
+        /*Log.log(this.getClass().getSimpleName()
+                + "#getValues(" + mjd + ") = "
+                + Arrays.toString(returnValues.values) //+ "   // (Non-cached value)"
+                , DEBUG);*/
         //return cachedValues.values;
         return returnValues.values;
     }
