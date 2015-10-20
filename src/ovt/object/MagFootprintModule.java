@@ -192,7 +192,8 @@ implements MagPropsChangeListener, MenuItemsSource, BeansSource {
 
             glyph = new vtkGlyph3D();
             glyph.SetInputData(polyData);
-            glyph.SetSourceData(cone.GetOutput());
+//            glyph.setSo
+            glyph.SetSourceConnection(cone.GetOutputPort());
             glyph.SetVectorModeToUseVector();
             glyph.SetScaleModeToDataScalingOff();
             //glyph.SetColorModeToColorByVector();
@@ -203,6 +204,7 @@ implements MagPropsChangeListener, MenuItemsSource, BeansSource {
 
             vtkPolyDataMapper mapper = new vtkPolyDataMapper();
             mapper.SetInputData(glyph.GetOutput());
+            mapper.SetInputConnection(glyph.GetOutputPort());
             //mapper.SetInputConnection(glyph.GetOutputPort());
 
             mapper.SetScalarModeToUsePointData();

@@ -281,7 +281,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         renPanel.resetCamera();
         renPanel.getComponent().requestFocus();
         core.getCamera().setViewFrom(Camera.VIEW_FROM_X); //Fixed origin bug 
-        core.getCamera().setProjection(1); //Fix clipping bug FKJN 15Sept2015
+        //core.getCamera().setProjection(1); //Fix clipping bug FKJN 15Sept2015
         //core.Render();
 
     }
