@@ -51,10 +51,10 @@ import ovt.util.Utils;
  * dependent on the format of the underlying OMNI2 data files and may change if
  * implementing support for other OMNI2 files), and<BR>
  * (2) the rest of OVT (which should be ignorant of the format of the underlying
- * OMNI2 data files), but still without references to the GUI.
+ * OMNI2 data files), minus the GUI (almost).
  *
  * NOTE: Has no good way of finding the beginning and end time of available
- * data.
+ * data. Does throw proper exception when the code fails to obtain data though.
  *
  * IMPLEMENTATION NOTE: Implemented as an instantiated class to make automated
  * testing without the GUI and an arbitrary implementation of OMNI2RawDataSource
@@ -69,9 +69,14 @@ public class OMNI2DataSource {
     // the length of time covered by a year or the underlying OMNI2 files (?).
     private static final double MIN_DATA_SOURCE_T_SCALE_DAYS = 1;
 
-    private final static int DEBUG = 24;   // Log level for log messages.
-    
-    
+    /**
+     * Greatest tolerated time (days) between the time for which data is requested, and
+     * the time of the data point used.
+     */
+    private final double maxTimeDifference_days;
+
+    private final static int DEBUG = 4;   // Log level for log messages.
+
     //##########################################################################
     /**
      * Class which the cache uses as a data source.
@@ -128,7 +133,9 @@ public class OMNI2DataSource {
     private final SegmentsCache segmentsCache;
 
 
-    public OMNI2DataSource(OMNI2RawDataSource rawDataSrc) {
+    public OMNI2DataSource(OMNI2RawDataSource rawDataSrc, double mMaxTimeDifference_days) {
+        maxTimeDifference_days = mMaxTimeDifference_days;
+        
         /*=====================
          Setup cache.
          =====================*/
@@ -154,6 +161,9 @@ public class OMNI2DataSource {
      *
      * NOTE: Will NOT return the time for found value.
      *
+     * NOTE: Defines how time should be interpreted, i.e. which data point in
+     * time should be used.
+     *
      * @param fieldID The scalar field for which the data should be returned, if
      * getIMFvector==false.
      * @param getIMFVector Iff true, then return the IMF vector.
@@ -173,6 +183,11 @@ public class OMNI2DataSource {
         //=====================================================================
         class SearchFunction implements SegmentsCache.SearchFunction {
 
+            /**
+             * Returns null on failure and double[][] on success. [0][0]=the
+             * time (mjd) where the result was found, [1]=array of acativity
+             * values.
+             */
             @Override
             public Object searchDataSegment(
                     SegmentsCache.DataSegment seg,
@@ -259,12 +274,16 @@ public class OMNI2DataSource {
             }
         }//=====================================================================
 
-        Log.log(getClass().getSimpleName() + "#getValues(" + time_mjd + ", " + fieldID + ", " + getIMFVector + ")", DEBUG);
+        Log.log(getClass().getSimpleName() + "#getValues("
+                + time_mjd + ", " + fieldID + ", " + getIMFVector + ")", DEBUG);
 
         double[][] result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());
-        if (result == null) {
+
+        if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
+
             result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
-            if (result == null) {
+
+            if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
                 throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " at time_mjd=" + time_mjd + ".");
             }
         }
@@ -274,9 +293,10 @@ public class OMNI2DataSource {
         return result[1];  //*/
     }
 
+    //##########################################################################
     public static class ValueNotFoundException extends Exception {
 
-        private ValueNotFoundException(String msg) {
+        public ValueNotFoundException(String msg) {
             super(msg);
         }
     }

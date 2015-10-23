@@ -57,7 +57,7 @@ import javax.swing.event.*;
 import javax.swing.border.*;
 
 /**
- * A window, which shows satelite's position, velosity, footprints, etc.
+ * A window, which shows a satellite's position, velocity, footprints, etc.
  */ 
 
 public class OrbitMonitorModule extends AbstractSatModule {
@@ -525,7 +525,9 @@ protected JPanel getSpinPanel() {
 
 public void refresh() {
       int[] records = new int[DumpRecord.numOfFields];
-      for (int i=0; i<DumpRecord.numOfFields; i++) records[i] = i;
+      for (int i=0; i<DumpRecord.numOfFields; i++) { 
+          records[i] = i;
+      }
       double[] values = getValues(records, getMjd());
 
       time.setText(timeFormat.format(values[DumpRecord.TIME]));
@@ -568,6 +570,10 @@ public void refresh() {
 
 
 
+/** Appears to return one value (array component) for every component in parameter
+ * "records". Every component in "records" is a DumpRecord constant that specifies
+ * what data is requested.
+ */
 public double[] getValues(int[] records, double mjd) {
   int inSolarWind = -1; // indicates weather a s/c is in solar wind
   //Log.log("getValues() for "+new Time(mjd)+" "+mjd);
@@ -762,9 +768,9 @@ public double[] getValues(int[] records, double mjd) {
             break;    
 	/*defalut:  WHY THIS STATEMENT IS UNREACHABLE!?!!----------
 	    throw new IllegalArgumentException("Wrong record id "+records[n]);*/
-      }
+      }  // switch
             
-    }
+    }  // for loop
     return res;
 }
 

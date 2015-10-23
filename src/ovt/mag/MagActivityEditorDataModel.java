@@ -308,6 +308,17 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
      * The cache is not as useful as it used to be before implementing the cache
      * in MagProps#getActivity but it still did a little bit of work work.
      * Remove the cache entirely?
+     * /Erik P G Johansson 2015-10-23 (who did not write that code)
+     *
+     * IMPLEMENTATION NOTE: It appears that #getValues can return references to
+     * an array which is later modified when the corresponding table entry is
+     * modified. Can most likely be modifed to return a deep copy but I have
+     * refrained from doing so, since it might have to do with how data
+     * propagates throughout OVT when the "Apply"/"Update Visualization" button
+     * is pressed (which triggers code which does not update information the way
+     * one would expect from the name "Apply"). I know this is a long shot but I
+     * have done so to be on the safe side and not introduce bugs. <BR>
+     * /Erik P G Johansson 2015-10-23 (who did not write that code)
      */
     public double[] getValues(double mjd) {
 //        if (mjd == cachedMjd && cachedValues != null) {
@@ -328,11 +339,12 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         }
         //cachedMjd = mjd;
         /*Log.log(this.getClass().getSimpleName()
-                + "#getValues(" + mjd + ") = "
-                + Arrays.toString(returnValues.values) //+ "   // (Non-cached value)"
-                , DEBUG);*/
+         + "#getValues(" + mjd + ") = "
+         + Arrays.toString(returnValues.values) //+ "   // (Non-cached value)"
+         , DEBUG);*/
         //return cachedValues.values;
         return returnValues.values;
+        //return returnValues.values.clone();  // Better return deep copy?
     }
 
 

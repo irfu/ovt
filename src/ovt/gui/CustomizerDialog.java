@@ -38,25 +38,7 @@ Khotyaintsev
 
 package ovt.gui;
 
-import ovt.*;
-import ovt.mag.*;
-import ovt.util.*;
-import ovt.event.*;
-import ovt.beans.*;
-import ovt.object.*;
-import ovt.datatype.*;
-import ovt.interfaces.*;
-import ovt.object.editor.*;
-
-import java.io.*;
-import java.util.*;
-import java.lang.*;
-import java.beans.*;
-
-import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.event.*;
 
 /**
  *

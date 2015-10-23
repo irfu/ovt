@@ -1,7 +1,7 @@
 /*=========================================================================
  
  Program:   Orbit Visualization Tool
- Source:    $Source: /ovt/mag/OMNI2DataSource.java $
+ Source:    $Source: /ovt/mag/OMNI2DataSourceTest.java $
  Date:      $Date: 2015/10/16 13:16:00 $
  Version:   $Revision: 1.0 $
  
@@ -128,12 +128,9 @@ public class OMNI2DataSourceTest {
 
     private static double[] getTestDataFieldArray(FieldID fieldID, int N) {
         final double[] y = new double[N];
-
         for (int i = 0; i < N; i++) {
             y[i] = getTestDataScalar(fieldID, i);
         }
-        //final double[] = {2,65,8,3,6,4,8,4,9,2,5,2,2,1,7,5,6,6,94,142,4};
-
         return y;
     }
 
@@ -141,7 +138,7 @@ public class OMNI2DataSourceTest {
     /**
      * Create an OMNI2DataSource with test data based on #getTestDataFieldArray.
      */
-    private static OMNI2DataSource createOMNI2DataSource() {
+    private static OMNI2DataSource createOMNI2DataSource(double mMaxTimeDifference) {
         final double[] time_mjd = new double[]{
             Time.getMjd(2000, 1, 01, 0, 0, 0), // index 0
             Time.getMjd(2000, 2, 01, 0, 0, 0),
@@ -174,7 +171,7 @@ public class OMNI2DataSourceTest {
         dataFields.get(FieldID.IMFz_nT_GSM)[5] = OMNI2RawDataSource.DOUBLE_FILL_VALUE;
 
         final OMNI2RawDataSourceTestEmulator rawDataSrc = new OMNI2RawDataSourceTestEmulator(2000, 2010, dataFields);
-        final OMNI2DataSource dataSrc = new OMNI2DataSource(rawDataSrc);
+        final OMNI2DataSource dataSrc = new OMNI2DataSource(rawDataSrc, mMaxTimeDifference);
 
         return dataSrc;
     }
@@ -182,36 +179,45 @@ public class OMNI2DataSourceTest {
 
     public static void main(String[] args) throws OMNI2DataSource.ValueNotFoundException, IOException {
         Log.setDebugLevel(2);
+        final int N_shufflings = 10;
 
         final List<Object[]> testList = new ArrayList();
-        testList.add(new Object[]{Time.getMjd(1999, 01, 01, 0, 0, 0), FieldID.SW_M_A, false, 0});   // Before beginning of data.
-        testList.add(new Object[]{Time.getMjd(1999, 01, 01, 0, 0, 0), FieldID.DST, false, 1});   // Before beginning of data, and first later data point has fill value.
-        testList.add(new Object[]{Time.getMjd(1999, 01, 01, 0, 0, 0), FieldID.SW_M_A, true, 1}); // Before beginning of data, and first later data point has fill value.
-        testList.add(new Object[]{Time.getMjd(2005, 06, 11, 0, 0, 0), FieldID.SW_M_A, true, 4});  // Next lower value is fill value.
-        testList.add(new Object[]{Time.getMjd(2004, 3, 31, 23, 59, 59.9), FieldID.SW_M_A, false, 2});        // Time just before data point (subsecond).
-        testList.add(new Object[]{Time.getMjd(2004, 3, 31, 23, 59, 59.9 + 1.0), FieldID.SW_M_A, false, 3});  // Time exactly on data point.
-        testList.add(new Object[]{Time.getMjd(2010, 12, 31, 0, 0, 0), FieldID.SW_M_A, false, 9});  // After data point range.
-        testList.add(new Object[]{Time.getMjd(2020, 12, 31, 0, 0, 0), FieldID.SW_M_A, false, 9});  // Many years after data point range.
-        testList.add(new Object[]{Time.getMjd(2006, 12, 31, 23, 59, 59.9), FieldID.SW_M_A, false, 6}); // Previous data point one year before.
+        testList.add(new Object[]{Time.getMjd(1999, 01, 03, 0, 0, 0), FieldID.SW_M_A, false, 0, false});   // Before beginning of data.
+        testList.add(new Object[]{Time.getMjd(1999, 01, 03, 0, 0, 0), FieldID.DST, false, 1, true});   // Before beginning of data, and first later data point has fill value, and the following one is too far away.
+        testList.add(new Object[]{Time.getMjd(1999, 01, 03, 0, 0, 0), FieldID.SW_M_A, false, 0, false}); // Before beginning of data, and first later data point has fill value.
+        testList.add(new Object[]{Time.getMjd(2005, 06, 11, 0, 0, 0), FieldID.SW_M_A, true, 4, false});  // Next lower value is fill value.
+        testList.add(new Object[]{Time.getMjd(2000, 3, 31, 23, 59, 59.9), FieldID.SW_M_A, false, 2, false});        // Time just before data point (subsecond).
+        testList.add(new Object[]{Time.getMjd(2004, 3, 31, 23, 59, 59.9), FieldID.SW_M_A, false, 3, false});        // Time just before data point (subsecond).
+        testList.add(new Object[]{Time.getMjd(2004, 3, 31, 23, 59, 59.9 + 1.0), FieldID.SW_M_A, false, 3, false});  // Time exactly on data point.
+        testList.add(new Object[]{Time.getMjd(2007, 1, 31, 0, 0, 0), FieldID.SW_M_A, false, 3, true});  // Data points too far away.
+        testList.add(new Object[]{Time.getMjd(2010, 12, 31, 0, 0, 0), FieldID.SW_M_A, false, 9, false});  // After data point range.
+        testList.add(new Object[]{Time.getMjd(2020, 12, 31, 0, 0, 0), FieldID.SW_M_A, false, 9, true});  // Many years after data point range.
+        testList.add(new Object[]{Time.getMjd(2006, 12, 31, 23, 59, 59.9), FieldID.SW_M_A, false, 6, true}); // Previous data point one year before.
 
         boolean ok = true;
-        for (long randSeed = 0; randSeed < 10; randSeed++) {
+        for (long randSeed = 0; randSeed < N_shufflings; randSeed++) {
             final Random randGen = new Random(randSeed);
             //System.out.println(randGen.nextInt()+", "+randGen.nextInt()+", "+randGen.nextInt()+", "+randGen.nextInt());
-            final List<Object[]> suhffledTestList = new ArrayList(testList);
-            Collections.shuffle(suhffledTestList, randGen);
+            final List<Object[]> shuffledTestList = new ArrayList(testList);
+            Collections.shuffle(shuffledTestList, randGen);
 
-            final OMNI2DataSource dataSrc = createOMNI2DataSource();
+            final OMNI2DataSource dataSrc = createOMNI2DataSource(365);
 
-            for (int i = 0; i < testList.size(); i++) {
-                final double mjd = (double) suhffledTestList.get(i)[0];
-                final FieldID fieldID = (FieldID) suhffledTestList.get(i)[1];
-                final boolean getIMFVector = (boolean) suhffledTestList.get(i)[2];
-                final int index = (int) suhffledTestList.get(i)[3];
+            for (Object[] test : shuffledTestList) {
+                final double mjd = (double) test[0];
+                final FieldID fieldID = (FieldID) test[1];
+                final boolean getIMFVector = (boolean) test[2];
+                final int index = (int) test[3];
+                final boolean expectException = (boolean) test[4];
 
-                final double[] testValues = dataSrc.getValues(mjd, fieldID, getIMFVector);
-                final double[] actualValues = getTestDataValues(fieldID, getIMFVector, index);
-                ok = ok && Arrays.equals(testValues, actualValues);
+                try {
+                    final double[] testValues = dataSrc.getValues(mjd, fieldID, getIMFVector);
+                    final double[] actualValues = getTestDataValues(fieldID, getIMFVector, index);
+                    ok = ok && Arrays.equals(testValues, actualValues);
+                    ok = ok && !expectException;
+                } catch (OMNI2DataSource.ValueNotFoundException e) {
+                    ok = ok && expectException;
+                }
             }
         }
 

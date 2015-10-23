@@ -33,7 +33,7 @@ Khotyaintsev
 /*
  * MagPropsEditor.java
  *
- * Class for a window that offers magnetic field settings.
+ * Class for a window that offers magnetic field-related settings.
  *
  * Created on den 3 april 2000, 16:06
  */
@@ -59,7 +59,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
 
   /** Creates new form MagPropsEditor */
   public MagPropsCustomizer(MagProps magProps,JFrame owner) {
-    super("Magnetic Field and Activity");
+    super("Magnetic Field");
     
     Log.log("MagPropsEditor :: init ...", 3);
     this.magProps = magProps;

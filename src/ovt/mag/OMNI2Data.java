@@ -76,7 +76,11 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
 
     /**
      * Identifiers for various fields in OMNI2 data. GSE, GSM refer to
-     * coordinate systems. nT, nP, kms (=km/s) refer to units.
+     * coordinate systems. nT, nP, kms (=km/s) refer to units. The range of
+     * possible values are similar but not the same as the "activity indices"
+     * defined by MagProps. These may include (1) data read from OMNI2 files
+     * that is (presently) not used, and (2) columns for (magnetic field) vector
+     * components.
      */
     public enum FieldID {
 
@@ -187,16 +191,17 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
         // Argument check. 
         final double[] time_mjd = dataFields.get(FieldID.time_mjd).getArrayInternal();
         for (double t : time_mjd) {
-            if ((t < mBegin_mjd) || (mEnd_mjd <= t)) // NOTE: Inclusive beginning boundary, exclusive end boundary.
+            if ((t < mBegin_mjd) || (mEnd_mjd <= t)) // NOTE: Inclusive beginning boundary, EXCLUSIVE end boundary.
             {
                 throw new IllegalArgumentException("Data contains data points outside the stated time interval.");
             }
         }
 
-        for (int i = 0; i < time_mjd.length; i++) {
+        for (int i = 1; i < time_mjd.length; i++) {
             final double t = time_mjd[i];
+            final double t_prev = time_mjd[i - 1];
 
-            if ((i >= 1) && !(time_mjd[i - 1] < time_mjd[i])) {
+            if (!(t_prev < t)) {
                 throw new IllegalArgumentException("Data points not sorted (monotonically increasing) in time.");
             }
         }

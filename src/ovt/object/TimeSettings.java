@@ -48,13 +48,20 @@ import ovt.interfaces.*;
 
 
 /** 
+ * Presumably the class that keeps track of the current time (one instance of
+ * TimeSet) for the entire OVT.
+ * (Note that is is the only class which uses TimeChangeSupport, i.e. the only
+ * one that HAS/sends messages to TimeChangeListeners. Note that only one
+ * instance is created in all of OVT, and that is in OVTCore.)
+ * /Erik P G Johansson, 2015-10-22
+ * 
  *
  * @author  mykola
  * @version 
  */
-public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource { // implements java.io.Serializable 
+public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource, TimeSettingsInterface { // implements java.io.Serializable 
 
-  private final int NBR_OF_STEPS_BEFORE_WARNING = 24*60+100; // Number of minutes per day (plus some for rounding errors).
+  private final int NBR_OF_STEPS_BEFORE_WARNING = 24*60+100; // Set to the number of minutes per day (plus some for rounding errors).
   private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");   // Initial value used in constructor.
   private final double INITIAL_INTERVAL_MJD = 1;                                 // Initial value used in constructor.
   private final double INITIAL_STEP_MJD = MinutesAndSeconds.getInDays("10:00");     // Initial value used in constructor.
@@ -83,6 +90,7 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);    
   }
 
+  @Override
   public void addTimeChangeListener (TimeChangeListener listener) {
     timeChangeSupport.addTimeChangeListener (listener);
   }

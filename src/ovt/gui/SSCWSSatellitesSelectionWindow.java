@@ -81,16 +81,15 @@ import ovt.util.SSCWSLibraryTestEmulator;
 // PROPOSAL: Initial window location at center of screen.
 public class SSCWSSatellitesSelectionWindow extends JFrame {
 
-    private static final int DEBUG = 1;
+    //private static final int DEBUG = 2;
     private static final String WINDOW_TITLE = "Satellite orbit data offered online by NASA SSC";
     private static final String INFO_TEXT = "Satellite orbit data offered online by NASA's Satellite Situation Center (SSC)"
             + " and available through OVT."
             + " Note that some of these \"satellites\" may be located at Lagrange points"
             + " (e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN)."
-            + " Note also that OVT does not permit setting the current time to earlier than "+Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME)+".";
-            //+ " and hence may not be able to make use of all orbit data.";
+            + " Note also that OVT does not permit setting the current time to earlier than " + Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME) + ".";
+    //+ " and hence may not be able to make use of all orbit data.";
     private static final String[] COLUMN_GUI_TITLES = {"Bookmarked", "Added", "Name", "Data begins", "Data ends"};
-    //private final String[] COLUMN_GUI_TITLES = {".", ".", ".", "."};
     private static final int COLUMN_INDEX_BOOKMARK = 0;
     private static final int COLUMN_INDEX_GUI_TREE_ADDED = 1;
     private static final int COLUMN_INDEX_SATELLITE_NAME = 2;
@@ -123,25 +122,25 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
         /*================
          Create text area
          ===============*/
-        final JTextArea textArea = new JTextArea();
+        final JTextArea infoTextArea = new JTextArea();
         {
             final String infoText = INFO_TEXT
                     + "\n\nSSC Acknowledgements: " + mSSCWSLib.getAcknowledgements().get(0)
                     + "\nSSC Privacy and Important Notices: " + mSSCWSLib.getPrivacyAndImportantNotices().get(0);
-            textArea.setText(infoText);
-            textArea.setWrapStyleWord(true);
-            textArea.setLineWrap(true);
-            textArea.setEditable(false);
-            textArea.setOpaque(false);  // Use the background color of the window by making it transparent.
-            textArea.setFont(Style.getLabelFont());
-            textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+            infoTextArea.setText(infoText);
+            infoTextArea.setWrapStyleWord(true);
+            infoTextArea.setLineWrap(true);
+            infoTextArea.setEditable(false);
+            infoTextArea.setOpaque(false);  // Use the background color of the window by making it transparent.
+            infoTextArea.setFont(Style.getLabelFont());
+            infoTextArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
             final GridBagConstraints c = new GridBagConstraints();
             c.gridx = 0;
             c.gridy = 0;
             c.weightx = 1;
             c.fill = GridBagConstraints.HORIZONTAL;
-            this.getContentPane().add(textArea, c);
+            this.getContentPane().add(infoTextArea, c);
         }
 
 
@@ -179,13 +178,18 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
             c.fill = GridBagConstraints.BOTH;
             this.getContentPane().add(tableScrollPane, c);
         }
-        /* Needed to get convenient initial width, roughly the width needed to
-         display all data in all columns. Unknown why this has to be done manually.
-         Unknown why extra small margin is needed even without scroll pane
-         (the command changes the content pane, not the window; an otherwie common mistake).
-         Added additional extra arbitrary width margin to cover vertical scroll pane.
-         This is probably not how one is supposed to, but lacking something better,
-         it will have to do.
+
+        /**
+         * Needed to get convenient initial width, roughly the width needed to
+         * display all data in all columns. Unknown why this has to be done
+         * manually. Unknown why extra small margin is needed even without
+         * scroll pane (the command changes the content pane, not the window; an
+         * otherwise common mistake). Added additional extra arbitrary width
+         * margin to cover vertical scroll pane. This is probably not how one is
+         * supposed to, but lacking something better, it will have to do. It is
+         * not crucial that this works. If it fails, the initial window size can
+         * not display all the content but the user can still resize the window
+         * to make it do so.
          */
         this.getContentPane().setPreferredSize(
                 new Dimension(table.getPreferredSize().width + 10 + 50,
@@ -202,7 +206,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension frameSize = getSize();
         setLocation(scrnSize.width / 2 - frameSize.width / 2, scrnSize.height / 2 - frameSize.height / 2);
-
     }
 
 
@@ -236,6 +239,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
             final int newColumnWidth = (int) (Math.max(headerWidth, cellWidth));   // Margin helps but not sure why it is needed.
             column.setPreferredWidth(newColumnWidth);
+            //column.setPreferredWidth(30);   // TEST
             totColumnWidth = totColumnWidth + newColumnWidth;
         }
         //System.out.println("totColumnWidth = " + totColumnWidth);
@@ -297,7 +301,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                 if (core != null) {
                     try {
                         return core.getXYZWin().sscwsSatAlreadyAdded(satInfo.ID);
-                    } catch (IOException|NoSuchSatelliteException e) {
+                    } catch (IOException | NoSuchSatelliteException e) {
                         /* It is very, very unlikely that this exception will be
                          thrown since it can only happen if (1) the list of satellites
                          has not already been downloaded, or (2) the satellite ID
@@ -444,11 +448,14 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     /**
      * Informal test code.
      */
-    public static void test() throws IOException {
+    public static void main(String[] args) throws IOException {
         //final SSCWSLibrary lib = SSCWSLibraryImpl.DEFAULT_INSTANCE;        
         final SSCWSLibrary lib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;
 
         final JFrame frame = new SSCWSSatellitesSelectionWindow(lib, null, new SSCWSSatellitesBookmarksModel());
+
+        // Needed to prevent lingering processes when testing (launching & closing repeatedly).
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
 

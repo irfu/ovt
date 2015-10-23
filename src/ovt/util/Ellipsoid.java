@@ -41,7 +41,7 @@ public class Ellipsoid {
 
 
   /** 
-   * Create ellispoid <code>(r/ae)^2 + (z/(1-f)ae)^2 = 1 with the main axis along z.</code>
+   * Create ellipsoid <code>(r/ae)^2 + (z/(1-f)ae)^2 = 1 with the main axis along z.</code>
    */
   public Ellipsoid (double ae, double f) {
     this.ae = ae;
@@ -196,7 +196,7 @@ public class Ellipsoid {
       }
       t = dZ / (k + dR);
 
-    }
+    } // for loop
 
     throw new IllegalArgumentException("unable to converge in"
                              + " ovt.util.Ellipsoid.toEllipsoidic (Cartesian, eMax)");
@@ -246,6 +246,7 @@ public class Ellipsoid {
 
 
 
+  /** Informal test code. */
   public static void main (String[] args) {
     if (args.length != 5) {
       System.err.println ("usage: java Ellipsoid ae f x y z");

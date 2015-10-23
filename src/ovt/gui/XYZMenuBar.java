@@ -181,7 +181,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
-                KeyEvent.VK_V, ActionEvent.CTRL_MASK));
+                KeyEvent.VK_V, ActionEvent.CTRL_MASK));   // Ctrl-V. Collides with "Paste" keyboard shortcut (Windows).
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 getCore().getCamera().setCustomizerVisible(true);
@@ -192,7 +192,7 @@ public class XYZMenuBar extends JMenuBar {
         menu.addSeparator();
 
         // Magnetic Field 
-        menuItem = new JMenuItem("Magnetic Field and Activity...");
+        menuItem = new JMenuItem("Magnetic Field...");
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
         menuItem.setAccelerator(KeyStroke.getKeyStroke(
@@ -204,6 +204,17 @@ public class XYZMenuBar extends JMenuBar {
         });
         menu.add(menuItem);
 
+        menuItem = new JMenuItem("OMNI2 Settings...");
+        menuItem.setFont(Style.getMenuFont());
+        menuItem.setAccelerator(KeyStroke.getKeyStroke(
+                KeyEvent.VK_O, ActionEvent.CTRL_MASK));
+        menuItem.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                    getCore().getXYZWin().setOMNI2SettingsWindowVisible(true);
+            }
+        });
+        menu.add(menuItem);
+        
         menu.addSeparator();
 
         // JMenuItems for the activity indexes (multiple menu items, one per index).

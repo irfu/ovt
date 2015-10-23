@@ -32,6 +32,9 @@ Khotyaintsev
 
 /*
  * IntervalEditor.java
+ * 
+ * NOTE: Not to be confused with ovt.beans.IntervalEditor.
+ * /Erik P G Johansson 2015-10-21
  *
  * Created on June 21, 2002, 4:13 PM
  */
@@ -52,7 +55,7 @@ import ovt.util.Log;
  */
 public class IntervalEditor extends PropertyEditorSupport {
 
-    private static final int DEBUG = 2;
+    //private static final int DEBUG = 2;
     
     /** Creates new IntervalEditor */
     public IntervalEditor() {

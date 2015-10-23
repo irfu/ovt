@@ -66,7 +66,7 @@ import ovt.interfaces.MagPropsChangeListener;
  * @version 1.0
  */
 public class MagActivityDataEditor extends javax.swing.JFrame {
-    
+
     private static final int DEBUG = 20;
 
     // Variables declaration 
@@ -86,15 +86,18 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
      */
     private MagProps magProps;
     private DataEditorMenuBar menuBar = new DataEditorMenuBar();
-    private MagProps.ActivityEditorOrOMNI2_DataSource dataSourceChoiceDataModel;
+    private MagProps.ActivityEditorOrOMNI2_DataModel dataSourceChoiceDataModel;
 
 
     /**
      * Constructor. Creates new form MagActivityDataEditor.
+     *
+     * @param mDataSourceChoiceDataModel Data model to use for editor/OMNI2
+     * checkbox. Iff null, then there should be no checkbox.
      */
     public MagActivityDataEditor(MagActivityEditorDataModel adataModel, MagProps magProps,
-            MagProps.ActivityEditorOrOMNI2_DataSource mDataSourceChoiceDataModel) {
-        
+            MagProps.ActivityEditorOrOMNI2_DataModel mDataSourceChoiceDataModel) {
+
         this.dataModel = adataModel;
         this.magProps = magProps;
         this.dataSourceChoiceDataModel = mDataSourceChoiceDataModel;
@@ -221,61 +224,20 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
         buttonsPanel.add(closeButton);
         getRootPane().setDefaultButton(closeButton);
 
-        
-        
         final JPanel lowerPanel = new JPanel();   // Create JPanel for GUI components below the actual table.
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.Y_AXIS));
 
         if (dataSourceChoiceDataModel != null) {
-            lowerPanel.add(createOMNI2CheckBox());
+            lowerPanel.add(new MagProps.ActivityEditorOrOMNI2_CheckBox(
+                    "Use downloaded OMNI2 data instead of this table",
+                    dataSourceChoiceDataModel));
             buttonsPanel.setAlignmentX(Component.LEFT_ALIGNMENT);    // Needed to make the _CHECKBOX_ left-aligned (Linux)!
         }
         lowerPanel.add(buttonsPanel);
 
-        
-        
         // select the first line
         table.getSelectionModel().setSelectionInterval(0, 0);
         getContentPane().add(lowerPanel, java.awt.BorderLayout.SOUTH);
-    }
-    
-    private JCheckBox createOMNI2CheckBox() {
-            final JCheckBox omni2CheckBox = new JCheckBox("Use downloaded OMNI2 data instead of this table");
-            omni2CheckBox.setSelected(
-                    dataSourceChoiceDataModel.getDataSourceChoice() == MagProps.DataSourceChoice.OMNI2);
-            
-            magProps.addMagPropsChangeListener(new MagPropsChangeListener() {
-                // NOTE: Important that this method does not trigger any call to "listeners" (in practise
-                // MagProps) since that would trigger MagProps into calling its listeners, i.e. this instance.
-                public void magPropsChanged(MagPropsEvent evt) {
-                      if (evt.getSource() == dataSourceChoiceDataModel) {
-                          // NOTE: Unnecessary to check evt.whatChanged() since
-                          // the source object implies it.
-                          
-                          /** Java API: "Sets the state of the button. Note that
-                           * this method does not trigger an actionEvent." */
-                          omni2CheckBox.setSelected(
-                                  dataSourceChoiceDataModel.getDataSourceChoice() == MagProps.DataSourceChoice.OMNI2);
-                      }
-                  }
-            });
-            
-            omni2CheckBox.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    Log.log("omni2CheckBox~actionPerformed : omni2CheckBox.isSelected() == "
-                            +omni2CheckBox.isSelected(), DEBUG);
-                    //Log.log("e = "+e, DEBUG);
-                    
-                    if (omni2CheckBox.isSelected()) {                    
-                        dataSourceChoiceDataModel.setDataSourceChoice(MagProps.DataSourceChoice.OMNI2);
-                    } else {
-                        dataSourceChoiceDataModel.setDataSourceChoice(MagProps.DataSourceChoice.MAG_ACTIVITY_EDITOR);
-                    }
-                }
-            });
-            
-            return omni2CheckBox;
     }
 
 
@@ -286,17 +248,17 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
 
 
     /**
-     * Actions triggered when pressing "Apply" button.
-     * 
-     * NOTE: Does not seem to behave as is conventional for "Apply"
-     * buttons since MagProps reads the
-     * "MagActivityEditorDataModel dataModel" whenever external code asks for
-     * "activity" values, e.g. when time is changed, and can thus obtain values
-     * from the table immediately, i.e. WITHOUT the "Apply" button having been
-     * pressed first.
+     * Actions triggered when pressing the "Apply" button.
+     *
+     * NOTE: Does not seem to behave as is conventional for "Apply" buttons
+     * since MagProps reads the "MagActivityEditorDataModel dataModel" whenever
+     * external code asks for "activity" values, e.g. when time is changed, and
+     * can thus obtain values from the table immediately, i.e. WITHOUT the
+     * "Apply" button having been pressed first.
      */
     private void applyButtonActionPerformed() {
-        MagPropsEvent evt = new MagPropsEvent(this, dataModel.getIndex());
+        final MagPropsEvent evt = new MagPropsEvent(this, dataModel.getIndex());
+        magProps.getActivity_clearCache(dataModel.getIndex());
         magProps.fireMagPropsChange(evt);
         magProps.getCore().Render();
     }

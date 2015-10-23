@@ -45,6 +45,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
+import ovt.mag.OMNI2SettingsWindow;
 import ovt.object.Camera;
 import ovt.object.SSCWSSat;
 import ovt.object.Sat;
@@ -100,6 +101,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private final ToolBarContainer toolBarContainer;
     protected HTMLBrowser htmlBrowser;
     private SSCWSSatellitesSelectionWindow sscwsSatellitesSelectionWindow;
+    private final OMNI2SettingsWindow omni2Win;
 
     private final SSCWSSatellitesBookmarksModel sscwsBookmarks = new SSCWSSatellitesBookmarksModel();
 
@@ -230,7 +232,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         // create Help Window
         htmlBrowser = new HTMLBrowser(core);
+        
+        // Create OMNI2 settings window.
+        omni2Win = new OMNI2SettingsWindow(core.getMagProps(), core.getTimeSettings());
 
+        // Create data model (used by GUI) for SSC bookmarks.
         sscwsBookmarks.loadFromGlobalSettingsValue(OVTCore.getGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS));
 
         addWindowListener(new WindowAdapter() {
@@ -245,7 +251,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         }
         if (!windowResizable) {
             setResizable(windowResizable);
-        }
+        }        
 
         // TEST/DEBUG
         // Automatically add satellites in the GUI (add to the left-hand GUI tree) as if the user had done it.
@@ -400,8 +406,40 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     public HTMLBrowser getHTMLBrowser() {
         return htmlBrowser;
     }
+    
+    
+    public void setOMNI2SettingsWindowVisible(boolean visible) {
+        this.omni2Win.setVisible(visible);
+        
+    }
 
 
+    /**
+     * NOTE: Creates the JFrame-based object the first time it is requested and
+     * then "caches it".
+     * 
+     * NOTE: Takes care of error message.
+     * 
+     * @return null if error when creating the window (may not be able to
+     * download list of satellites). Otherwise a reference to the window.
+     */
+    public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() {
+        if (sscwsSatellitesSelectionWindow == null) {
+            try {
+                final SSCWSSatellitesSelectionWindow temp = new SSCWSSatellitesSelectionWindow(
+                        OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarksModel());
+                sscwsSatellitesSelectionWindow = temp;
+            } catch (IOException e) {
+                /**
+                 * NOTE: Important to catch IOException here.
+                 */
+                getCore().sendErrorMessage(e);
+            }
+        }
+        return sscwsSatellitesSelectionWindow;
+    }
+
+    
     public SSCWSSatellitesBookmarksModel getSSCWSBookmarksModel() {
         return sscwsBookmarks;
     }
@@ -446,31 +484,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     public TreePanel getTreePanel() {
         return treePanel;
-    }
-
-
-    /**
-     * NOTE: Creates the JFrame-based object the first time it is requested and
-     * then "caches it".
-     * 
-     * NOTE: Takes care of error message.
-     * 
-     * @return null if error when creating the window. Otherwise a reference to the window.
-     */
-    public SSCWSSatellitesSelectionWindow getSSCWSSatellitesSelectionWindow() {
-        if (sscwsSatellitesSelectionWindow == null) {
-            try {
-                final SSCWSSatellitesSelectionWindow temp = new SSCWSSatellitesSelectionWindow(
-                        OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarksModel());
-                sscwsSatellitesSelectionWindow = temp;
-            } catch (IOException e) {
-                /**
-                 * NOTE: Important to catch IOException here.
-                 */
-                getCore().sendErrorMessage(e);
-            }
-        }
-        return sscwsSatellitesSelectionWindow;
     }
 
 

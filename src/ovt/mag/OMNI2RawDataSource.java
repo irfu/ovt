@@ -39,6 +39,10 @@ import java.io.IOException;
  * for testing purposes. All OMNI2 data used by the application should pass
  * through an implementation of this interface.
  *
+ * IMPLEMENTATION NOTE: Conceptually, this interface should in practice describe
+ * (be based upon) the true implementation, OMNI2RawDataSourceImpl, rather than
+ * that class implementing this interface.
+ *
  * NOTE: The methods are PERMITTED to be DEPENDENT on the format of the
  * underlying OMNI2 files (or at least by how data is distributed over time and
  * over data files) but should of course still be as generic as possible.

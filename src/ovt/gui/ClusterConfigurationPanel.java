@@ -64,7 +64,8 @@ public class ClusterConfigurationPanel extends JPanel
   protected JLabel[] dist2 = new JLabel[4];  // added by kono
   
   // added by kono
-  protected final String[] row_names={"XYZ box (km)", "Ellipsoid (km)", "FAC box (km)", "Distances between satellites (km)"};
+  protected final String[] row_names = {
+      "XYZ box [km]", "Ellipsoid [km]", "FAC box [km]", "Distances between satellites [km]"};
   protected String[] title = {
     "dx = ", "dy = ", "dz = ", 
     "a = ", "b = ", "c = ",

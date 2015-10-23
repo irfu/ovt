@@ -45,6 +45,10 @@ import java.beans.*;
 import java.util.*;
 
 /**
+ * NOTE 1: Seems unused. Delete?!
+ * NOTE 2: Not to be confused with ovt.beans.editor.IntervalEditor.
+ * /Erik P G Johansson 2015-10-21
+ * 
  *
  * @author  ko
  * @version 

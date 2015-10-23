@@ -74,7 +74,9 @@ public class CGMC {
 
   public void loadYear(int _year) throws IOException {
     //typ can be "g2c" or "c2g"
-    if( initialized && (_year == year) ) return;
+    if( initialized && (_year == year) ) {
+        return;
+    }
     initialized = false;
     year = _year;
     double lat,lon,flat,flon;
@@ -90,12 +92,12 @@ public class CGMC {
     try{
       f = new ElectPotFileReader(pFile);
     }catch(IOException e){
-System.out.println("CGMC: newFiles(\""+path+"\","+year+") - start");
+      System.out.println("CGMC: newFiles(\""+path+"\","+year+") - start");
       try {
         newFiles(path,year);
-System.out.println("CGMC: newFiles() - finish");
+        System.out.println("CGMC: newFiles() - finish");
       }catch(Exception e2){
-System.out.println(getClass().getName() + " -> " + e2.toString());
+        System.out.println(getClass().getName() + " -> " + e2.toString());
         throw new IOException(e2.toString());
       }
       f = new ElectPotFileReader(pFile);
@@ -138,7 +140,9 @@ System.out.println(getClass().getName() + " -> " + e2.toString());
   public double[] transform(double[] latlon) throws Exception {
     int ilat,ilon;
     double lat,lon,plat,plon,a11,a12,a21,a22;
-    if(! initialized ) throw new Exception("CGMC not initialized");
+    if(! initialized ) {
+        throw new Exception("CGMC not initialized");
+    }
     lat = latlon[0];
     lon = latlon[1];
     while( lon < 0 ) lon += 360;

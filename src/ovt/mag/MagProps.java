@@ -31,6 +31,8 @@
  =========================================================================*/
 package ovt.mag;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import ovt.*;
 import ovt.beans.*;
 import ovt.util.*;
@@ -54,14 +56,15 @@ import javax.swing.*;
  * MagProps = Magnetic properties.
  *
  * NOTE: The words "magnetic", "index", and "activity" are somewhat misleading.
- * Not everything referred to is magnetic (e.g. the Mach number) and not all
- * "indexes" are non-dimensional or scalar (e.g. the magnetic field).
+ * Not everything referred to is magnetic (e.g. the Mach number, SW pressure)
+ * and not all "indexes" are non-dimensional and scalar (e.g. the magnetic
+ * field).
  */
-public class MagProps extends OVTObject implements MagModel {
+public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     private ovt.OVTCore core;
 
-    private static final int DEBUG = 20;
+    private static final int DEBUG = 2;
 
     /**
      * Minimum absolute value of magnetic field
@@ -94,7 +97,7 @@ public class MagProps extends OVTObject implements MagModel {
      */
 //public static double model=-10.0;
     /**
-     * arbitrary factor from <code>0.5</code> to <code>1.5</code> Field =
+     * Arbitrary factor from <code>0.5</code> to <code>1.5</code> Field =
      * internalField + ModelFactor * externalFiels
      *
      * @see ovt.calc.MagPack#magbv(double[])
@@ -127,13 +130,16 @@ public class MagProps extends OVTObject implements MagModel {
     protected Hashtable models = new Hashtable();
 
     /**
-     * Utility field used by bound properties. NOTE: Refers to
-     * java.beans.PropertyChangeListener, i.e. associated with Java Beans.
+     * Utility field used by bound properties.
+     *
+     * NOTE: Refers to java.beans.PropertyChangeListener, i.e. associated with
+     * Java Beans.
      *
      * Appears to be used only for when changing internal and external (magnetic
      * field) model. /Erik P G Johansson 2015-10-09
      */
     private OVTPropertyChangeSupport propertyChangeSupport = new OVTPropertyChangeSupport(this);
+
     /**
      * Appears to be used only for when "activity" "Apply" buttons are pressed.
      */
@@ -182,6 +188,11 @@ public class MagProps extends OVTObject implements MagModel {
     private final MagActivityEditorDataModel[] activityEditorDataModels = new MagActivityEditorDataModel[MAX_ACTIVITY_INDEX + 1];
 
     /**
+     * List of data models for choosing between table/editors, and OMNI2 data.
+     */
+    private final Map<Integer, ActivityEditorOrOMNI2_DataModel> activityEditorOrOMNI2_dataModels = new HashMap();
+
+    /**
      * List of data sources for "activity" data. The "activity" data that the
      * rest of OVT uses is read from these instances.
      */
@@ -193,12 +204,38 @@ public class MagProps extends OVTObject implements MagModel {
      */
     private final MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
-    public static final double KPINDEX_DEFAULT = 0;
-    public static final double[] IMF_DEFAULT = {0, 0, 0};
-    public static final double SWP_DEFAULT = 1.8;
-    public static final double DSTINDEX_DEFAULT = -40;
-    public static final double MACHNUMBER_DEFAULT = 5.4;
-    public static final double SW_VELOCITY_DEFAULT = 400;   // Unit: km/s
+    private static final double KPINDEX_DEFAULT = 0;
+    private static final double[] IMF_DEFAULT = {0, 0, 0};
+    private static final double SWP_DEFAULT = 1.8;
+    private static final double DSTINDEX_DEFAULT = -40;
+    private static final double MACHNUMBER_DEFAULT = 5.4;
+    private static final double SW_VELOCITY_DEFAULT = 400;   // Unit: km/s
+    private static final double G1_DEFAULT = 6;
+    private static final double G2_DEFAULT = 10;
+
+    // Map (associative array) with default values. Makes it easier to iterate
+    // over and obtain value given an index.
+    private static final Map<Integer, double[]> ACTIVITY_DEFAULTS = new HashMap();
+    // Map with strings representing units for those activity indices which have a unit.
+    private static final Map<Integer, String> UNIT_STRINGS = new HashMap();
+
+
+    {
+        ACTIVITY_DEFAULTS.put(KPINDEX, new double[]{KPINDEX_DEFAULT});
+        ACTIVITY_DEFAULTS.put(IMF, IMF_DEFAULT);
+        ACTIVITY_DEFAULTS.put(SWP, new double[]{SWP_DEFAULT});
+        ACTIVITY_DEFAULTS.put(DSTINDEX, new double[]{DSTINDEX_DEFAULT});
+        ACTIVITY_DEFAULTS.put(MACHNUMBER, new double[]{MACHNUMBER_DEFAULT});
+        ACTIVITY_DEFAULTS.put(SW_VELOCITY, new double[]{SW_VELOCITY_DEFAULT});
+        ACTIVITY_DEFAULTS.put(G1, new double[]{G1_DEFAULT});
+        ACTIVITY_DEFAULTS.put(G2, new double[]{G2_DEFAULT});
+
+        UNIT_STRINGS.put(IMF, "nT");
+        UNIT_STRINGS.put(SWP, "nPa");
+        UNIT_STRINGS.put(SW_VELOCITY, "km/s");
+    }
+
+    private static final int[] ACTIVITY_INDICES_OMNI2_AVAILABLE = {KPINDEX, IMF, SWP, DSTINDEX, MACHNUMBER, SW_VELOCITY};
 
     private MagPropsCustomizer magPropsCustomizer = null;
 
@@ -224,17 +261,24 @@ public class MagProps extends OVTObject implements MagModel {
 
     /**
      * Select what to use as a raw data source for the functionality/code that
-     * handles OMNI2 data. All OMNI2 data should pass through this class. See
-     * comments in OMNI2RawDataSource and OMNI2RawDataSourceImpl.
+     * handles OMNI2 data. All OMNI2 data should pass through this class. Can
+     * choose an emulator with made-up data for testing purposes.
+     *
+     * See comments in OMNI2RawDataSource and OMNI2RawDataSourceImpl.
      */
-    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()));
+    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(
+            new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()));
+//    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceTestEmulator();
+
+    private static final double MAX_TIME_TO_VALUE_DAYS = 1.0 / 24.0;
 
     /**
      * Select what to use as a (non-raw) data source for the functionality/code
      * that handles OMNI2 data. All OMNI2 data should pass through this class.
      * See comments in OMNI2DataSource.
      */
-    private static final OMNI2DataSource OMNI2_DATA_SOURCE = new OMNI2DataSource(OMNI2_RAW_DATA_SOURCE);
+    private static final OMNI2DataSource OMNI2_DATA_SOURCE = new OMNI2DataSource(
+            OMNI2_RAW_DATA_SOURCE, MAX_TIME_TO_VALUE_DAYS);
 
 
     /**
@@ -248,45 +292,71 @@ public class MagProps extends OVTObject implements MagModel {
         showInTree(false);
         this.core = core;
 
-        activityEditorDataModels[KPINDEX] = new MagActivityEditorDataModel(KPINDEX, 0, 9, KPINDEX_DEFAULT, "KP Index");
+        activityEditorDataModels[KPINDEX] = new MagActivityEditorDataModel(KPINDEX, 0, 9, KPINDEX_DEFAULT, "Kp Index");
         activityEditorDataModels[IMF] = new MagActivityEditorDataModel(IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
         activityEditorDataModels[SWP] = new MagActivityEditorDataModel(SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
         activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel(DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
-        activityEditorDataModels[MACHNUMBER] = new MagActivityEditorDataModel(MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Mach Number");
+        activityEditorDataModels[MACHNUMBER] = new MagActivityEditorDataModel(MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Magnetosonic Mach Number");
         activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel(SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
-        activityEditorDataModels[G1] = new MagActivityEditorDataModel(G1, 0, 50, 6, "G1");
-        activityEditorDataModels[G2] = new MagActivityEditorDataModel(G2, 0, 50, 10, "G2");
+        activityEditorDataModels[G1] = new MagActivityEditorDataModel(G1, 0, 50, G1_DEFAULT, "G1");
+        activityEditorDataModels[G2] = new MagActivityEditorDataModel(G2, 0, 50, G2_DEFAULT, "G2");
 
-        final DataSourceChoice initialDataSourceChoice = DataSourceChoice.MAG_ACTIVITY_EDITOR;   // TEST
+        /*============================================
+         * Initialize activityDataSources and
+         * activityEditorOrOMNI2_dataModels.
+         ============================================*/
+        final DataSourceChoice initialDataSourceChoice = DataSourceChoice.MAG_ACTIVITY_EDITOR;
         //final DataSourceChoice initialDataSourceChoice = DataSourceChoice.OMNI2;
-        activityDataSources[KPINDEX] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[KPINDEX], KPINDEX_DEFAULT, initialDataSourceChoice);
-        activityDataSources[IMF] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[IMF], IMF_DEFAULT, initialDataSourceChoice);
-        activityDataSources[SWP] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[SWP], SWP_DEFAULT, initialDataSourceChoice);
-        activityDataSources[DSTINDEX] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[DSTINDEX], DSTINDEX_DEFAULT, initialDataSourceChoice);
-        activityDataSources[MACHNUMBER] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[MACHNUMBER], MACHNUMBER_DEFAULT, initialDataSourceChoice);
-        activityDataSources[SW_VELOCITY] = new ActivityEditorOrOMNI2_DataSource(activityEditorDataModels[SW_VELOCITY], SW_VELOCITY_DEFAULT, initialDataSourceChoice);
+        for (int activityIndex : ACTIVITY_INDICES_OMNI2_AVAILABLE) {
+            final ActivityEditorOrOMNI2_DataSource dataSource = new ActivityEditorOrOMNI2_DataSource(
+                    this,
+                    activityEditorDataModels[activityIndex],
+                    initialDataSourceChoice);
+            activityEditorOrOMNI2_dataModels.put(activityIndex, dataSource);
+
+            dataSource.addMagPropsChangeListener(new MagPropsChangeListener() {
+
+                @Override
+                public void magPropsChanged(MagPropsEvent evt) {
+                    // NOTE: The codes references MagProps INSTANCE variables (not static variables).
+
+                    getActivity_clearCache(evt.whatChanged());
+                    MagProps.this.fireMagPropsChange(evt);   // Pass on the event to listeners.
+                    MagProps.this.getCore().Render();
+                }
+            });
+            activityDataSources[activityIndex] = dataSource;
+        }
         activityDataSources[G1] = activityEditorDataModels[G1];
         activityDataSources[G2] = activityEditorDataModels[G2];
 
+        /*============================
+         * Initialize activityEditors
+         ===========================*/
         if (!OVTCore.isServer()) {
-            activityEditors[KPINDEX] = new MagActivityDataEditor(activityEditorDataModels[KPINDEX], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[KPINDEX]);
-            activityEditors[IMF] = new MagActivityDataEditor(activityEditorDataModels[IMF], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[IMF]);
-            activityEditors[SWP] = new MagActivityDataEditor(activityEditorDataModels[SWP], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[SWP]);
-            activityEditors[DSTINDEX] = new MagActivityDataEditor(activityEditorDataModels[DSTINDEX], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[DSTINDEX]);
-            activityEditors[MACHNUMBER] = new MagActivityDataEditor(activityEditorDataModels[MACHNUMBER], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[MACHNUMBER]);
-            activityEditors[SW_VELOCITY] = new MagActivityDataEditor(activityEditorDataModels[SW_VELOCITY], this,
-                    (ActivityEditorOrOMNI2_DataSource) activityDataSources[SW_VELOCITY]);
+            for (int index : ACTIVITY_INDICES_OMNI2_AVAILABLE) {
+                activityEditors[index] = new MagActivityDataEditor(
+                        activityEditorDataModels[index],
+                        this,
+                        (ActivityEditorOrOMNI2_DataSource) activityDataSources[index]);
+            }
             activityEditors[G1] = new MagActivityDataEditor(activityEditorDataModels[G1], this, null);
             activityEditors[G2] = new MagActivityDataEditor(activityEditorDataModels[G2], this, null);
             magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
             addMagPropsChangeListener(magPropsCustomizer);
         }
         customizerVisible = false;
+    }
+
+
+    /**
+     * IMPLEMENTATION NOTE: Only clears the getActivity cache for a specific
+     * activity index. Important to be able to only clear a specific activity
+     * index since the code uses the cache for deciding whether to display GUI
+     * error messages.
+     */
+    public void getActivity_clearCache(int activityIndex) {
+        MagProps.this.getActivity_cachedReturnValues.remove(activityIndex);
     }
 
 
@@ -739,8 +809,21 @@ public class MagProps extends OVTObject implements MagModel {
         throw new IllegalArgumentException("Illegal index : " + index);
     }
 
-    private double getActivity_cachedMjd = Double.NaN;
+
+    /**
+     * @return For activity indices that have a unit, return a string. Otherwise
+     * null.
+     */
+    public static String getUnitString(int activityIndex) {
+        return UNIT_STRINGS.get(activityIndex);
+    }
+
+    /**
+     * Cache for the method "getActivity". Cached values are valid for the point
+     * in time getActivity_cachedMjd.
+     */
     private final Map<Integer, double[]> getActivity_cachedReturnValues = new HashMap();
+    private double getActivity_cachedMjd = Double.NaN;
 
 
     /**
@@ -748,14 +831,21 @@ public class MagProps extends OVTObject implements MagModel {
      * specific value for a specific activity index.
      *
      * NOTE: It appears that all reading of "activity" data by OVT goes through
-     * this method. Note that the method is still private. /Erik P G Johansson
-     * 2015-10-07.
+     * this method. Note that the method is still private though. /Erik P G
+     * Johansson 2015-10-07.
      *
-     * IMPLEMENTATION NOTE: Uses an internal cache to speed up calls.
-     * Empirically, we know that the same call is made many times in a row. This
-     * is a good place to have a cache since it covers both sources of activity
-     * data, MagActivityEditorDataModel and OMNI2. Note that the cache has to be
-     * cleared when changing data source.
+     * NOTE: Uses an internal cache to speed up calls. Empirically, we know that
+     * the same call is made many times in a row. This is a good place to have a
+     * cache since it covers both sources of activity data,
+     * MagActivityEditorDataModel and OMNI2. Note that the cache has to be
+     * partially cleared when changing data source.
+     *
+     * NOTE: This method HANDLES ERRORS with error messages in the GUI. Note
+     * that it also uses the cache to decide whether to display error messages.
+     * Only triggers an error message once for every activity key before
+     * changing time/mjd (clearing the cache). The cache thus makes sure that
+     * multiple calls for the same activity key will still only trigger one
+     * error message. (Is this really appropriate?)
      *
      * @param key Specify which activity variable that is sought, and optionally
      * which component of that variable. The rule for requesting some component
@@ -768,21 +858,24 @@ public class MagProps extends OVTObject implements MagModel {
 
         /**
          * Try to use a cached value first.<BR>
-         * --------------------------------
+         * --------------------------------<BR>
          * IMPLEMENTATION NOTE: Construct chosen to minimize the number of
          * Integer objects created and the number of calls to Map#containsKey
          * (none) and Map#get.
          */
         if (mjd == getActivity_cachedMjd) {
+            // CASE: The cache contains values for the same time (mjd).
             final double[] returnValue = getActivity_cachedReturnValues.get(key);
             if (returnValue != null) {
-                Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
-                        + Arrays.toString(returnValue) + "   // Cached value", DEBUG);
+                // CASE: There is a relevant value in the cache.
+//                Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
+//                        + Arrays.toString(returnValue) + "   // Cached value", DEBUG);
+
                 return returnValue;
             }
             // CASE: mjd is the same as for cache, but there was no cached value
             // for this particular "key".
-            // ==> Keep cached values.
+            // ==> Keep cached values, and continue.
         } else {
             // CASE: mjd has changed from what is in the cache.
             // ==> Dismiss all cached values.
@@ -790,25 +883,110 @@ public class MagProps extends OVTObject implements MagModel {
             getActivity_cachedReturnValues.clear();
         }
 
-        final double[] returnValue;
-        if (key <= 100) {
-            returnValue = activityDataSources[key].getValues(mjd);
-            //final double[] values = activityDataSources[key].getValues(mjd);
-            //Log.log("   double[] values = "+Arrays.toString(values), 2);
-            //return values;
-        } else {
-            final int index = key / 100;
-            final int component = key - index * 100;
-            //return new double[]{activityDataSources[index].getValues(mjd)[component]};
-            returnValue = new double[]{activityDataSources[index].getValues(mjd)[component]};
+        /*=======================================================================
+         * CASE: Could not use the cache. ==> Retrieve value(s) from the source.
+         ======================================================================*/
+        double[] returnValue;
+        int index = -1;
+        try {
+
+            if (key <= 100) {
+                index = key;
+                returnValue = activityDataSources[index].getValues(mjd);
+                //final double[] values = activityDataSources[key].getValues(mjd);
+                //Log.log("   double[] values = "+Arrays.toString(values), 2);
+                //return values;
+            } else {
+                index = key / 100;
+                final int component = key - index * 100;
+                //return new double[]{activityDataSources[index].getValues(mjd)[component]};
+                returnValue = new double[]{activityDataSources[index].getValues(mjd)[component]};
+            }
+
+        } catch (OMNI2DataSource.ValueNotFoundException ex) {
+            returnValue = ACTIVITY_DEFAULTS.get(index);
+
+            /* CASE: Some visualization in OVT requires an activity value and OVT is
+             * configured to obtain it from OMNI2 where it can not be found.
+             */
+            final String msg = "Can not find value (" + getActivityName(index) + ")"
+                    + " for the specified time in the OMNI2 database.\n"
+                    + "Using a default value " + Arrays.toString(returnValue) + " instead.";
+            // NOTE: Excludes ex.getMessage() from the message to keep it short.            
+            // NOTE: The return value is an array, in particular IMF, and must be prepared to print several values.
+            getCore().sendWarningMessage("Can not find activity value required for visualizations", msg);
+            Log.log(msg, DEBUG);
+
+        } catch (IOException ex) {
+            returnValue = ACTIVITY_DEFAULTS.get(index);
+
+            final String msg = "I/O error when trying to obtain OMNI2 value (" + getActivityName(index) + ").\n"
+                    + "Using a default value " + Arrays.toString(returnValue) + " instead. - "
+                    + ex.getMessage();
+            getCore().sendErrorMessage("Can not find activity value required for visualizations", msg);
+            Log.log(msg, DEBUG);
         }
 
-        getActivity_cachedReturnValues.put(key, returnValue);
+        /**
+         * NOTE: Also caches default values! Partly to avoid multiple error
+         * messages for the same index & time, but also since the underlying
+         * data sources are not expected to change during a session anyway.<BR>
+         * NOTE: Store deep copy of the values to make sure they are not altered
+         * after the fact. MagActivityEditorDataModel#getValues is known to have
+         * returned references to arrays which have later changed (2015-10-23)
+         * when the table was updated.
+         */
+        getActivity_cachedReturnValues.put(key, returnValue.clone());
 
         // NOTE: This log value comes AFTER any log value in MagActivityEditorDataModel#getValues.
-        Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
-                + Arrays.toString(returnValue) + "   // (Non-cached value)", DEBUG);
-        return returnValue;
+//        Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
+//                + Arrays.toString(returnValue) + "   // (Non-cached value)", DEBUG);
+        return returnValue.clone();
+    }
+
+
+    /**
+     * Partly analogous to getActivity but always takes data from OMNI2. Its
+     * main purpose is to translate from the activity indices that MagProps
+     * defines and the OMNI2Data.FieldID values (file columns) that OMNI2 code
+     * uses.
+     *
+     * NOTE: Throws exceptions as opposed to getActivity which handles
+     * exceptions (gives error/warning messages).
+     */
+    // Move to OMNI2DataSource?!
+    public double[] getActivityOMNI2(int activityIndex, double mjd)
+            throws OMNI2DataSource.ValueNotFoundException, IOException {
+        boolean getIMFvector = false;
+        final OMNI2Data.FieldID fieldID;
+        switch (activityIndex) {
+            case KPINDEX:
+                fieldID = OMNI2Data.FieldID.Kp;
+                break;
+            case IMF:
+                fieldID = OMNI2Data.FieldID.IMFx_nT_GSM_GSE;   // Value should not be relevant since getIMFvector==true.
+                getIMFvector = true;
+                break;
+            case SWP:
+                fieldID = OMNI2Data.FieldID.SW_ram_pressure_nP;
+                break;
+            case DSTINDEX:
+                fieldID = OMNI2Data.FieldID.DST;
+                break;
+            case MACHNUMBER:
+                fieldID = OMNI2Data.FieldID.SW_M_ms;
+                break;
+            case SW_VELOCITY:
+                fieldID = OMNI2Data.FieldID.SW_velocity_kms;
+                break;
+            default:
+                // NOTE: Will yield exception for G1, G2 since these are not in
+                // the OMNI2 data (or at least not read from OMNI2 data.).
+                // /2015-10-14
+                throw new IllegalArgumentException();
+        }
+
+        return OMNI2_DATA_SOURCE.getValues(mjd, fieldID, getIMFvector);
     }
 
 
@@ -861,6 +1039,12 @@ public class MagProps extends OVTObject implements MagModel {
         }
         // keys are - data name, magnetic field depends on
         return getCharacteristics(keys, mjd);
+    }
+
+
+    @Override
+    public ActivityEditorOrOMNI2_DataModel getActivityEditorOrOMNI2_DataModel(int activityIndex) {
+        return activityEditorOrOMNI2_dataModels.get(activityIndex);
     }
 
 
@@ -949,31 +1133,43 @@ public class MagProps extends OVTObject implements MagModel {
          * time. Not that the implementation gets to choose which data point(s)
          * (when in time) to use for the request time.
          */
-        public double[] getValues(double mjd);
+        public double[] getValues(double mjd) throws OMNI2DataSource.ValueNotFoundException, IOException;
 
     }
 
+    //##########################################################################
     public enum DataSourceChoice {
 
         MAG_ACTIVITY_EDITOR, OMNI2
     }
 
+    //##########################################################################
+    public interface ActivityEditorOrOMNI2_DataModel {
+
+        public DataSourceChoice getDataSourceChoice();
+
+
+        public void setDataSourceChoice(DataSourceChoice choice);
+
+
+        public void addMagPropsChangeListener(MagPropsChangeListener listener);
+    }
+
     /**
      * Class which is a data source for "activity data" and can switch between
-     * taking data from (1) a MagActivityEditorDataModel and (2) OMNI2 data.
-     * Also serves as data model for the variable/flag (visible in the GUI) that
-     * chooses between activityEditorDataMode and OMNI2 data.
-     * 
-     * NOTE: Not static class. Uses MagProps for listeners/events, i.e. this
-     * class triggers events to MagProps's listeners.
+     * taking data from (1) a MagActivityEditorDataModel and (2) OMNI2 data.<BR>
+     *
+     * IMPORTANT: Also serves as data model for the variable/flag/checkbox
+     * (visible in the GUI) that decides whether activity data (for a specific
+     * activity/index) should be taken from the editor/table, or OMNI2 data.<BR>
      */
-    class ActivityEditorOrOMNI2_DataSource implements MagActivityDataSource {
+    static class ActivityEditorOrOMNI2_DataSource implements MagActivityDataSource, ActivityEditorOrOMNI2_DataModel {
 
         // TODO: Make sure works with save/load settings (Java Beans).
         private final MagActivityEditorDataModel editorDataModel;
-        private final OMNI2Data.FieldID fieldID;
-        private final boolean getIMFvector;    // Iff true, then fieldID is irrelevant.
-        private final double[] defaultValue;   // Value used/returned in case of error.
+        private final MagProps magProps;
+        private final MagPropsChangeSupport magPropsChangeSupport = new MagPropsChangeSupport(this);
+        private final int activityIndex;
 
         /**
          * Flag for where to take data from.
@@ -982,56 +1178,41 @@ public class MagProps extends OVTObject implements MagModel {
 
 
         public ActivityEditorOrOMNI2_DataSource(
+                MagProps mMagProps,
                 MagActivityEditorDataModel mEditorDataModel,
                 double mDefaultValue,
                 DataSourceChoice initialDataSourceChoice) {
-            this(mEditorDataModel, new double[]{mDefaultValue}, initialDataSourceChoice);
+
+            this(mMagProps, mEditorDataModel, initialDataSourceChoice);
         }
 
 
+        /**
+         * Footnote: Gets the activity index from the data model.
+         */
         public ActivityEditorOrOMNI2_DataSource(
+                MagProps mMagProps,
                 MagActivityEditorDataModel mEditorDataModel,
-                double[] mDefaultValue,
                 DataSourceChoice initialDataSourceChoice) {
 
+            magProps = mMagProps;
             editorDataModel = mEditorDataModel;
             dataSourceChoice = initialDataSourceChoice;
-            defaultValue = mDefaultValue;
-            final int activityIndex = editorDataModel.getIndex();
+            activityIndex = editorDataModel.getIndex();
 
-            boolean tempGetIMFvector = false;
-            switch (activityIndex) {
-                case KPINDEX:
-                    fieldID = OMNI2Data.FieldID.Kp;
-                    break;
-                case IMF:
-                    fieldID = OMNI2Data.FieldID.IMFx_nT_GSM_GSE;   // Appropriate value to represent all components of IMF?!!!!
-                    tempGetIMFvector = true;
-                    break;
-                case SWP:
-                    fieldID = OMNI2Data.FieldID.SW_ram_pressure_nP;
-                    break;
-                case DSTINDEX:
-                    fieldID = OMNI2Data.FieldID.DST;
-                    break;
-                case MACHNUMBER:
-                    fieldID = OMNI2Data.FieldID.SW_M_ms;
-                    break;
-                case SW_VELOCITY:
-                    fieldID = OMNI2Data.FieldID.SW_velocity_kms;
-                    break;
-                default:
-                    // NOTE: Will yield exception for G1, G2 since these are not in
-                    // the OMNI2 data (or at least not read from OMNI2 data.).
-                    // /2015-10-14
-                    throw new IllegalArgumentException();
-            }
-            getIMFvector = tempGetIMFvector;
+        }
+
+
+        @Override
+        public void addMagPropsChangeListener(MagPropsChangeListener listener) {
+            magPropsChangeSupport.addMagPropsChangeListener(listener);
         }
 
 
         public void setDataSourceChoice(DataSourceChoice choice) {
-            Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")", 2);
+            Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")"
+                    + "   // activityIndex=" + activityIndex
+                    + " (" + magProps.getActivityName(activityIndex) + ")", 2);
 
             // Avoid doing anything unnecessarily, in particular calling listeners.
             if (this.dataSourceChoice == choice) {
@@ -1040,10 +1221,7 @@ public class MagProps extends OVTObject implements MagModel {
             this.dataSourceChoice = choice;
 
             final MagPropsEvent evt = new MagPropsEvent(this, editorDataModel.getIndex());
-            MagProps.this.fireMagPropsChange(evt);
-            MagProps.this.getCore().Render();
-            MagProps.this.getActivity_cachedMjd = Double.NaN;
-            MagProps.this.getActivity_cachedReturnValues.clear();
+            magPropsChangeSupport.fireMagPropsChange(evt);
         }
 
 
@@ -1052,43 +1230,79 @@ public class MagProps extends OVTObject implements MagModel {
         }
 
 
-        @Override
-        public double[] getValues(double mjd) {
+        public double[] getValues(double mjd) throws OMNI2DataSource.ValueNotFoundException, IOException {
             if (dataSourceChoice == DataSourceChoice.MAG_ACTIVITY_EDITOR) {
 
                 return editorDataModel.getValues(mjd);
 
             } else if (dataSourceChoice == DataSourceChoice.OMNI2) {
 
-                try {
-                    return OMNI2_DATA_SOURCE.getValues(mjd, fieldID, getIMFvector);
-                } catch (OMNI2DataSource.ValueNotFoundException ex) {
-
-                    final String msg = "Can not find value (" + getActivityName(editorDataModel.getIndex()) + ")"
-                            + " for the specified time in the OMNI2 database. Using default value instead. - " + ex.getMessage();
-                    getCore().sendWarningMessage("Can not find OMNI2 value.", msg);
-                    Log.log(msg, 0);
-                    return defaultValue;
-
-                } catch (IOException ex) {
-
-                    final String msg = "I/O error when trying to obtain OMNI2 value. Using default value instead. - " + ex.getMessage();
-                    getCore().sendErrorMessage("I/O error when trying to obtain OMNI2 value.", msg);
-                    Log.log(msg, 0);
-                    return defaultValue;
-
-                }
+                return magProps.getActivityOMNI2(editorDataModel.getIndex(), mjd);
 
             } else {
                 throw new RuntimeException("OVT code bug.");
             }
         }
     }
+
+//##############################################################################
+    /**
+     * Class for a JCheckBox that chooses between using data from OMNI2 or the
+     * editor/table (MagActivityDataEditor).
+     */
+    public static class ActivityEditorOrOMNI2_CheckBox extends JCheckBox {
+
+        ActivityEditorOrOMNI2_CheckBox(
+                String text,
+                MagProps.ActivityEditorOrOMNI2_DataModel dataModel) {
+
+            setText(text);
+
+            //------------------------------------------------------------------
+            // Make this checkbox react to changes in the data model.
+            //magProps.addMagPropsChangeListener(new MagPropsChangeListener() {
+            dataModel.addMagPropsChangeListener(new MagPropsChangeListener() {
+                // NOTE: Important that this method does not trigger any call to "listeners" (in practise
+                // MagProps) since that would trigger MagProps into calling its listeners, i.e. this instance.
+                public void magPropsChanged(MagPropsEvent evt) {
+                    if (evt.getSource() == dataModel) {
+                        // NOTE: Unnecessary to check evt.whatChanged() since
+                        // the source object implies it.
+
+                        /**
+                         * Java API: "Sets the state of the button. Note that
+                         * this method does not trigger an actionEvent."
+                         */
+                        setSelected(dataModel.getDataSourceChoice() == MagProps.DataSourceChoice.OMNI2);
+                    }
+                }
+            });
+            //------------------------------------------------------------------
+            // Make the data model react to changes in (the state of) this checkbox.
+            this.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+//                    Log.log("Editor/OMNI2 checkbox~actionPerformed : isSelected() == "
+//                            + ActivityEditorOrOMNI2_CheckBox.this.isSelected(), DEBUG);
+                    //Log.log("e = "+e, DEBUG);
+
+                    if (ActivityEditorOrOMNI2_CheckBox.this.isSelected()) {
+                        dataModel.setDataSourceChoice(MagProps.DataSourceChoice.OMNI2);
+                    } else {
+                        dataModel.setDataSourceChoice(MagProps.DataSourceChoice.MAG_ACTIVITY_EDITOR);
+                    }
+                }
+            });
+        }
+    }
+
 }
 
 //##############################################################################
 /* Could probably be made private.
  * Do not confuse with ovt.beans.MagPropsChangeSupport which is almost identical.
+ * If this class is made private and maybe static, make sure that the compiler does not
+ * confusee it with ovt.beans.MagPropsChangeSupport.
  */
 class MagPropsChangeSupport {
 

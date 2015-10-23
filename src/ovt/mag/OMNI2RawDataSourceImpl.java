@@ -53,7 +53,8 @@ import static ovt.util.Utils.downloadURLToFile;
  * given an equivalent to OMNI2FileUtils_HourlyAvg for the other file type,<BR>
  * 2) SWITCH between using different OMNI2 file types entirely,<BR>
  * 3) implement usage of OMNI2 with different time resolution at the same time
- * (possibly with different resolution for different time intervals).
+ * (possibly with different resolution for different time intervals).<BR>
+ * NOTE: The suffix "_hourlyAvg" refers to identifiers for hourly averaged data.
  *
  * IMPLEMENTATION NOTE: The class is intended to contain things that are common
  * for different OMNI2 data file types (different averages), but not caching
@@ -168,6 +169,8 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
 
         try (InputStream in = new FileInputStream(file)) {
             return hourlyAvg.read(in, beginIncl_mjd, endExcl_mjd);
+        } catch (IOException e) {
+            throw new IOException("Can not read or interpret file \""+file.getCanonicalPath()+"\": "+e.getMessage(), e);
         }
     }
 
@@ -220,7 +223,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
                 cacheDir.mkdirs();    // Silent error. Let the later writing to file complain about errors.
 
                 // NOTE: Allow failure to propagate since error here means not having any data.
-                downloadFile(urlStr, file, "First download");
+                downloadFile(urlStr, file, "Downloading this file for the first time.");
 
             } else {
                 // CASE: There is a local file. ==> Download again if it seems too old.

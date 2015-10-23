@@ -123,6 +123,9 @@ public void sync() throws SyncException {
 }
 
 }
+
+//##############################################################################
+
 class IntervalDocument extends DefaultStyledDocument {
 
     /** Called whenever the user types something into the text field
@@ -141,15 +144,19 @@ class IntervalDocument extends DefaultStyledDocument {
             Toolkit.getDefaultToolkit().beep();
     }
     
-    private static boolean onlyContainsPermittedCharacters(String str){
-      if (str != null )
-      for (int i=0;i<str.length();i++)
-        if (!java.lang.Character.isDigit(str.charAt(i)) &&
-            !java.lang.Character.isSpaceChar(str.charAt(i)) &&
-            (str.charAt(i) != 'd') &&
-            (str.charAt(i) != 'h') &&
-            (str.charAt(i) != 'm') &&
-            (str.charAt(i) != 's')) return false;
+    private static boolean onlyContainsPermittedCharacters(String intervalStr){
+      if (intervalStr != null ) {
+        for (int i=0;i<intervalStr.length();i++) {
+            if (!java.lang.Character.isDigit(intervalStr.charAt(i)) &&
+                !java.lang.Character.isSpaceChar(intervalStr.charAt(i)) &&
+                (intervalStr.charAt(i) != 'd') &&
+                (intervalStr.charAt(i) != 'h') &&
+                (intervalStr.charAt(i) != 'm') &&
+                (intervalStr.charAt(i) != 's')) {
+            return false;
+            }
+        }
+      }
       
       return true;
     }
