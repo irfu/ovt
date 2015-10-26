@@ -511,9 +511,15 @@ public class XYZMenuBar extends JMenuBar {
          =====================================*/
         File[] allFiles = new File[0];
         {
+            // Excludes files since "Cluster[1-4].ltof" are used by ClusterSats
+            // (or some code in the neighbourhood)
+            // and are therefore treated specially somewhere else.
+//            final FilenameFilter filter
+//                    = (File dir, String file)
+//                    -> file.endsWith(".tle") || (file.endsWith(".ltof") && !(file.startsWith("Cluster")));
             final FilenameFilter filter
                     = (File dir, String file)
-                    -> file.endsWith(".tle") || (file.endsWith(".ltof") && !file.startsWith("Cluster"));
+                    -> file.endsWith(".tle") || (file.endsWith(".ltof") && !(file.matches("Cluster[1-4].ltof")));
 
             final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
             if (userOrbitDir != null) {
