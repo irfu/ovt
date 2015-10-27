@@ -149,14 +149,14 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         parent.getChildren().fireChildRemoved(this);
     }
     
-    /** Saves groung stations properties to config
+    /** Saves ground stations properties to config
      * @throws IOException
      */    
     public void save() throws IOException {
         GroundbasedStationsDOM.save(this, gbStationsFile.toString());
     }
 
-    /** Loads groung stations properties from config
+    /** Loads ground stations properties from config
      * @throws IOException
      */    
    public void load() throws IOException {

@@ -216,7 +216,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     // Map (associative array) with default values. Makes it easier to iterate
     // over and obtain value given an index.
     private static final Map<Integer, double[]> ACTIVITY_DEFAULTS = new HashMap();
-    // Map with strings representing units for those activity indices which have a unit.
+    // Map with strings representing units for those activity indices which have a unit (others are not set).
+    // Not used everywhere yet since other hardcoded constants do exist (2015-10-23).
     private static final Map<Integer, String> UNIT_STRINGS = new HashMap();
 
 
@@ -229,7 +230,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         ACTIVITY_DEFAULTS.put(SW_VELOCITY, new double[]{SW_VELOCITY_DEFAULT});
         ACTIVITY_DEFAULTS.put(G1, new double[]{G1_DEFAULT});
         ACTIVITY_DEFAULTS.put(G2, new double[]{G2_DEFAULT});
-
         UNIT_STRINGS.put(IMF, "nT");
         UNIT_STRINGS.put(SWP, "nPa");
         UNIT_STRINGS.put(SW_VELOCITY, "km/s");
@@ -1119,6 +1119,77 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     public MagActivityEditorDataModel getG2DataModel() {
         return activityEditorDataModels[G2];
+    }
+
+
+    /**
+     * Intended to be read by "XML" (Java Beans used for save/load settings).
+     *
+     * IMPLEMENTATION NOTE: Ideally we would want to return something like
+     * {@code Map<Integer, DataSourceChoice>} but doing that with Java Beans
+     * seems to be complicated and require an overkill solution (too much code)
+     * for our purposes. Instead we convert the result to a string which can
+     * easily be handled as a Java Beans property by default.<BR>
+     * /Erik P G Johansson 2015-10-27
+     */
+    public String getActivityEditorOrOMNI2Choices() {
+//        Log.log(getClass().getSimpleName() + "#getActivityEditorOrOMNI2Choices()", DEBUG);
+        final StringBuilder s = new StringBuilder();
+        for (int activityIndex : ACTIVITY_INDICES_OMNI2_AVAILABLE) {
+            final DataSourceChoice choice = activityEditorOrOMNI2_dataModels.get(activityIndex).getDataSourceChoice();
+            String choiceStr;
+
+            if (choice == DataSourceChoice.MAG_ACTIVITY_EDITOR) {
+                choiceStr = "Table_editor";   // E=Editor.
+            } else if (choice == DataSourceChoice.OMNI2) {
+                choiceStr = "OMNI2";   // O=OMNI2
+            } else {
+                throw new NoSuchElementException("activityEditorOrOMNI2_dataModels.get(index).getDataSourceChoice() returned \"" + choice + "\"."
+                        + " This should never be able to happen and indicates a pure code bug.");
+            }
+
+            if (s.length() != 0) {
+                s.append(';');
+            }
+            s.append(activityIndex + "=" + choiceStr);
+        }
+//        Log.log("   s=\"" + s + "\"", DEBUG);
+        return s.toString();
+    }
+
+
+    /**
+     * Intended to be called by "XML" (Java Beans used for save/load settings).
+     *
+     * IMPLEMENTATION NOTE: The implementation should preferably be prepared
+     * for that "choices" may contain activity index values that are not used in
+     * this version OVT and that those indices should be ignored. This way one
+     * could (with some luck) get some basic backward compatibility with
+     * settings saved in an earlier version of OVT with OMNI2 support for a
+     * different set of "activity variables".
+     */
+    public synchronized void setActivityEditorOrOMNI2Choices(String s) {
+//        Log.log(getClass().getSimpleName() + "#setActivityEditorOrOMNI2Choices(...)", DEBUG);
+        final StringTokenizer st = new StringTokenizer(s, "=;");
+        while (st.hasMoreTokens()) {
+            final int activityIndex = Integer.parseInt(st.nextToken());
+            final String choiceStr = st.nextToken();
+
+            final DataSourceChoice choice;
+            if (choiceStr.equals("Table_editor")) {
+                choice = DataSourceChoice.MAG_ACTIVITY_EDITOR;
+            } else if (choiceStr.equals("OMNI2")) {
+                choice = DataSourceChoice.OMNI2;
+            } else {
+                throw new NoSuchElementException("Found string choiceStr=\"" + choiceStr + "\" which can not be parsed.");
+            }
+
+            final MagProps.ActivityEditorOrOMNI2_DataModel dataModel = activityEditorOrOMNI2_dataModels.get(activityIndex);
+            if (dataModel != null) {
+//                Log.log("   activityIndex=" + activityIndex + "; choice=" + choice, DEBUG);
+                dataModel.setDataSourceChoice(choice);
+            }
+        }
     }
 
     //##########################################################################

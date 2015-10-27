@@ -4,83 +4,90 @@ import java.beans.*;
 
 public class MagPropsBeanInfo extends SimpleBeanInfo {
 
-  // Property identifiers //GEN-FIRST:Properties
-  private static final int PROPERTY_MPClipping = 0;
-  private static final int PROPERTY_SWVelocityDataModel = 1;
-  private static final int PROPERTY_KPIndexDataModel = 2;
-  private static final int PROPERTY_customizerVisible = 3;
-  private static final int PROPERTY_DSTIndexDataModel = 4;
-  private static final int PROPERTY_internalModelType = 5;
-  private static final int PROPERTY_externalModelType = 6;
-  private static final int PROPERTY_SWPDataModel = 7;
-  private static final int PROPERTY_machNumberDataModel = 8;
-  private static final int PROPERTY_IMFDataModel = 9;
+    // Property identifiers//GEN-FIRST:Properties
+    private static final int PROPERTY_activityEditorOrOMNI2Choices = 0;
+    private static final int PROPERTY_customizerVisible = 1;
+    private static final int PROPERTY_DSTIndexDataModel = 2;
+    private static final int PROPERTY_externalModelType = 3;
+    private static final int PROPERTY_IMFDataModel = 4;
+    private static final int PROPERTY_internalModelType = 5;
+    private static final int PROPERTY_KPIndexDataModel = 6;
+    private static final int PROPERTY_machNumberDataModel = 7;
+    private static final int PROPERTY_MPClipping = 8;
+    private static final int PROPERTY_SWPDataModel = 9;
+    private static final int PROPERTY_SWVelocityDataModel = 10;
 
-  // Property array 
-  private static PropertyDescriptor[] properties = new PropertyDescriptor[10];
+    // Property array 
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[11];
 
-  static {
-    try {
-      properties[PROPERTY_MPClipping] = new PropertyDescriptor ( "MPClipping", MagProps.class, "isMPClipping", "setMPClipping" );
-      properties[PROPERTY_MPClipping].setDisplayName ( "Clip on MP" );
-      properties[PROPERTY_MPClipping].setShortDescription ( "Clip fieldlines on magnetopause" );
-      properties[PROPERTY_SWVelocityDataModel] = new PropertyDescriptor ( "SWVelocityDataModel", MagProps.class, "getSWVelocityDataModel", null );
-      properties[PROPERTY_KPIndexDataModel] = new PropertyDescriptor ( "KPIndexDataModel", MagProps.class, "getKPIndexDataModel", null );
-      properties[PROPERTY_customizerVisible] = new PropertyDescriptor ( "customizerVisible", MagProps.class, "isCustomizerVisible", "setCustomizerVisible" );
-      properties[PROPERTY_DSTIndexDataModel] = new PropertyDescriptor ( "DSTIndexDataModel", MagProps.class, "getDSTIndexDataModel", null );
-      properties[PROPERTY_internalModelType] = new PropertyDescriptor ( "internalModelType", MagProps.class, "getInternalModelType", "setInternalModelType" );
-      properties[PROPERTY_internalModelType].setPreferred ( true );
-      properties[PROPERTY_internalModelType].setDisplayName ( "Internal Model" );
-      properties[PROPERTY_externalModelType] = new PropertyDescriptor ( "externalModelType", MagProps.class, "getExternalModelType", "setExternalModelType" );
-      properties[PROPERTY_externalModelType].setDisplayName ( "External Model" );
-      properties[PROPERTY_SWPDataModel] = new PropertyDescriptor ( "SWPDataModel", MagProps.class, "getSWPDataModel", null );
-      properties[PROPERTY_machNumberDataModel] = new PropertyDescriptor ( "machNumberDataModel", MagProps.class, "getMachNumberDataModel", null );
-      properties[PROPERTY_IMFDataModel] = new PropertyDescriptor ( "IMFDataModel", MagProps.class, "getIMFDataModel", null );
+    private static PropertyDescriptor[] getPdescriptor(){
+        return properties;
     }
-    catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
+
+    static {
+        try {
+            properties[PROPERTY_activityEditorOrOMNI2Choices] = new PropertyDescriptor ( "activityEditorOrOMNI2Choices", ovt.mag.MagProps.class, "getActivityEditorOrOMNI2Choices", "setActivityEditorOrOMNI2Choices" ); // NOI18N
+            properties[PROPERTY_customizerVisible] = new PropertyDescriptor ( "customizerVisible", ovt.mag.MagProps.class, "isCustomizerVisible", "setCustomizerVisible" ); // NOI18N
+            properties[PROPERTY_DSTIndexDataModel] = new PropertyDescriptor ( "DSTIndexDataModel", ovt.mag.MagProps.class, "getDSTIndexDataModel", null ); // NOI18N
+            properties[PROPERTY_externalModelType] = new PropertyDescriptor ( "externalModelType", ovt.mag.MagProps.class, "getExternalModelType", "setExternalModelType" ); // NOI18N
+            properties[PROPERTY_externalModelType].setDisplayName ( "External Model" );
+            properties[PROPERTY_IMFDataModel] = new PropertyDescriptor ( "IMFDataModel", ovt.mag.MagProps.class, "getIMFDataModel", null ); // NOI18N
+            properties[PROPERTY_internalModelType] = new PropertyDescriptor ( "internalModelType", ovt.mag.MagProps.class, "getInternalModelType", "setInternalModelType" ); // NOI18N
+            properties[PROPERTY_internalModelType].setPreferred ( true );
+            properties[PROPERTY_internalModelType].setDisplayName ( "Internal Model" );
+            properties[PROPERTY_KPIndexDataModel] = new PropertyDescriptor ( "KPIndexDataModel", ovt.mag.MagProps.class, "getKPIndexDataModel", null ); // NOI18N
+            properties[PROPERTY_machNumberDataModel] = new PropertyDescriptor ( "machNumberDataModel", ovt.mag.MagProps.class, "getMachNumberDataModel", null ); // NOI18N
+            properties[PROPERTY_MPClipping] = new PropertyDescriptor ( "MPClipping", ovt.mag.MagProps.class, "isMPClipping", "setMPClipping" ); // NOI18N
+            properties[PROPERTY_MPClipping].setDisplayName ( "Clip on MP" );
+            properties[PROPERTY_MPClipping].setShortDescription ( "Clip fieldlines on magnetopause" );
+            properties[PROPERTY_SWPDataModel] = new PropertyDescriptor ( "SWPDataModel", ovt.mag.MagProps.class, "getSWPDataModel", null ); // NOI18N
+            properties[PROPERTY_SWVelocityDataModel] = new PropertyDescriptor ( "SWVelocityDataModel", ovt.mag.MagProps.class, "getSWVelocityDataModel", null ); // NOI18N
+        }
+        catch(IntrospectionException e) {
+            e.printStackTrace();
+        }//GEN-HEADEREND:Properties
 
     // Here you can add code for customizing the properties array.
 
 }//GEN-LAST:Properties
 
-  // EventSet identifiers//GEN-FIRST:Events
+    // EventSet identifiers//GEN-FIRST:Events
 
-  // EventSet array
-  private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
-//GEN-HEADEREND:Events
+    // EventSet array
+    private static EventSetDescriptor[] eventSets = new EventSetDescriptor[0];
+
+    private static EventSetDescriptor[] getEdescriptor(){
+        return eventSets;
+    }//GEN-HEADEREND:Events
 
     // Here you can add code for customizing the event sets array.
 
-  //GEN-LAST:Events
+//GEN-LAST:Events
   private static final int METHOD_fireMagPropsChange16 = 0;
-  // Method identifiers //GEN-FIRST:Methods
-  private static final int METHOD_fireMagPropsChange0 = 0;
+    // Method identifiers//GEN-FIRST:Methods
 
-  // Method array 
-  private static MethodDescriptor[] methods = new MethodDescriptor[1];
+    // Method array 
+    private static MethodDescriptor[] methods = new MethodDescriptor[0];
 
-  static {
-    try {
-      methods[METHOD_fireMagPropsChange16] = new MethodDescriptor ( Class.forName("ovt.mag.MagProps").getMethod("fireMagPropsChange", new Class[] {}));
-      methods[METHOD_fireMagPropsChange16].setDisplayName ( "" );
-    }
-    catch( Exception e) {}//GEN-HEADEREND:Methods
+    private static MethodDescriptor[] getMdescriptor(){
+        return methods;
+    }//GEN-HEADEREND:Methods
 
     // Here you can add code for customizing the methods array.
     
-}//GEN-LAST:Methods
+//GEN-LAST:Methods
 
-    private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
+    private static java.awt.Image iconColor16 = null;//GEN-BEGIN:IconsDef
     private static java.awt.Image iconColor32 = null;
     private static java.awt.Image iconMono16 = null;
-    private static java.awt.Image iconMono32 = null; //GEN-END:IconsDef
+    private static java.awt.Image iconMono32 = null;//GEN-END:IconsDef
   private static String iconNameC16 = null;//GEN-BEGIN:Icons
   private static String iconNameC32 = null;
   private static String iconNameM16 = null;
   private static String iconNameM32 = null;//GEN-END:Icons
 
-  private static int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
-  private static int defaultEventIndex = -1;//GEN-END:Idx
+    private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
+    private static final int defaultEventIndex = -1;//GEN-END:Idx
 
 
     /**
