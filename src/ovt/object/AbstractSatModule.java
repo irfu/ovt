@@ -127,8 +127,9 @@ protected Sat sat;
   }
   
   /** Returns Sat's Trajectory */
-  public Trajectory getTrajectory() 
-	{ return sat.getTrajectory(); }
+  public Trajectory getTrajectory() {
+      return sat.getTrajectory();
+  }
         
   public boolean canBeVisible()
         { return sat.canBeVisible(); }

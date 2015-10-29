@@ -310,8 +310,8 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         long start = System.currentTimeMillis();
         int N = timeMjdMap.length;
 
-        double[][] gei_arr = new double[N][3];
-        double[][] vei_arr = new double[N][3];
+        final double[][] gei_arr = new double[N][3];
+        final double[][] vei_arr = new double[N][3];
 
         try {
             fill_GEI_VEI(timeMjdMap, gei_arr, vei_arr);
@@ -337,7 +337,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
             for (int i = 0; i < 3; i++) {
                 trp.gei[i] = gei_arr[k][i] / Const.RE;   // NOTE: Changes units: km --> Earth radii.
-                trp.vei[i] = vei_arr[k][i];         // NOTE: Does not change units.
+                trp.vei[i] = vei_arr[k][i];         // NOTE: Does NOT change units.
             }
 
             final double velocity = Vect.absv(trp.vei);
@@ -354,11 +354,12 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             trp.gsm = trans.geo2gsm(trp.geo);  // Transform geo to gsm        
             trp.gse = trans.gei2gse(trp.gei);  // Transform gei to gse        
             trp.sm = trans.gsm2sm(trp.gsm);    // Transform again.. .-)
+            
 
             tra.put(trp);
         }
 
-        long endtime = System.currentTimeMillis();
+        final long endtime = System.currentTimeMillis();
         Log.log("Coordinate transformation time: " + (endtime - fill_time) / 1000.0 + " seconds", 3);
 
         System.out.println(getName() + "'s trajectory has " + tra.size() + " points.");

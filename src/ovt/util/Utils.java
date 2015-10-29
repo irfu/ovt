@@ -142,7 +142,7 @@ public class Utils extends Object {
 
 
     /**
-     * Calculates unit sun vector (GEI) for modified julian day (mjd)
+     * Calculates unit sun vector (GEI) for a modified julian day (mjd).
      */
     public static double[] sunmjd(double mjd) {
         double sunv[] = sun_vect(new Julian(mjd));

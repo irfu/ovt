@@ -52,7 +52,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import java.awt.*;
 /**
- * This class caries about ploting magnetisphere
+ * This class cares about plotting the magnetosphere.
  */
 
 public class Magnetosphere extends VisualObject implements
@@ -432,7 +432,9 @@ private double getFieldlineRadius() {
 }
 
 public MagnetosphereActor getActor(double mjd) {
-  if (!isValid()) validate();
+  if (!isValid()) {
+      validate();
+  }
   Characteristics charact = getMagProps().getMagFieldCharacteristics(mjd);
   MagnetosphereActor m_act = actorCollection.getActor(charact);
 
@@ -446,10 +448,13 @@ public MagnetosphereActor getActor(double mjd) {
   }
 
   // check for acror's fieldline's radius size
-  if (Math.abs(m_act.getFieldlineRadius() - getFieldlineRadius()) > 0.0001)
+  if (Math.abs(m_act.getFieldlineRadius() - getFieldlineRadius()) > 0.0001) {
           m_act.setFieldlineRadius(getFieldlineRadius());
+  }
   // check if the actor is wireframe
-  if (m_act.isWireframe() != wireframe) m_act.setWireframe(wireframe);
+  if (m_act.isWireframe() != wireframe) {
+      m_act.setWireframe(wireframe);
+  }
 
   return m_act;
 }
@@ -536,10 +541,11 @@ public void setVisible(boolean visible) {
       double oldFieldlineRadiusScale = this.fieldlineRadiusScale;
       this.fieldlineRadiusScale = fieldlineRadiusScale;
       if (actor != null) {
-          if (Math.abs(actor.getFieldlineRadius() - getFieldlineRadius()) > 0.0001)
-          actor.setFieldlineRadius(getFieldlineRadius());
-        }
-      firePropertyChange("fieldlineRadiusScale", new Double(oldFieldlineRadiusScale), new Double(fieldlineRadiusScale));
+          if (Math.abs(actor.getFieldlineRadius() - getFieldlineRadius()) > 0.0001) {
+            actor.setFieldlineRadius(getFieldlineRadius());
+          }
+      }
+      firePropertyChange("fieldlineRadiusScale", oldFieldlineRadiusScale, fieldlineRadiusScale);
   }
 
   /** Getter for property wireframe.
@@ -606,10 +612,6 @@ public void setScalarcolor(boolean scalarcolor) {
         if (descriptors == null) {
             try {
                 descriptors = super.getDescriptors();
-
-
-
-
 
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("fieldlineRadiusScale", this);
                 pd.setLabel("Fieldline Thickness...");

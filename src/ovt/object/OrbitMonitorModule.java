@@ -33,27 +33,23 @@ Khotyaintsev
 package ovt.object;
 
 import ovt.*;
-import ovt.gui.*;
 import ovt.beans.*;
 import ovt.util.*;
 import ovt.event.*;
 import ovt.datatype.*;
-import ovt.interfaces.*;
 import ovt.model.bowshock.*;
 import ovt.model.magnetopause.*;
 
 import java.beans.*;
 
-import java.io.*;
-import java.util.*;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.Arrays;
 
 import javax.swing.*;
-import javax.swing.event.*;
 import javax.swing.border.*;
 
 /**
@@ -127,7 +123,7 @@ public OrbitMonitorModule(Sat sat) {
         pd.setDisplayName("Distance unit");
         pd.setLabel("unit");
         
-        String[] values = { RE, km };
+        final String[] values = { RE, km };
         GUIPropertyEditor editor = new ComboBoxPropertyEditor(pd, values, values);
         pd.setPropertyEditor(editor);
         addPropertyChangeListener("distanceUnit", editor);
@@ -565,27 +561,37 @@ public void refresh() {
       
       
       // spin
-      for (int i=0; i<3; i++) spin[i].setText(spinFormat.format(values[DumpRecord.SPIN[i]]));            
+      for (int i=0; i<3; i++) {
+          spin[i].setText(spinFormat.format(values[DumpRecord.SPIN[i]]));
+      }
 }
 
 
 
-/** Appears to return one value (array component) for every component in parameter
+/** Appears to return one value (array component) for every component in the parameter
  * "records". Every component in "records" is a DumpRecord constant that specifies
  * what data is requested.
+ * 
+ * NOTE: From experience, this code may suffer from trp.gsm components being NaN
+ * when using time outside of what the IGRF code can handle.
+ * /Erik P G Johansson 2015-10-28.
  */
 public double[] getValues(int[] records, double mjd) {
   int inSolarWind = -1; // indicates weather a s/c is in solar wind
-  //Log.log("getValues() for "+new Time(mjd)+" "+mjd);
-  double[] res = new double[records.length];
+  //Log.log(getClass().getCanonicalName()+"#getValues() for "+new Time(mjd)+" "+mjd);
+  final double[] res = new double[records.length];
   
-  TrajectoryPoint trp = getTrajectory().get(mjd);
-  if (trp == null) { return null; }
+  final TrajectoryPoint trp = getTrajectory().get(mjd);
+  if (trp == null) {
+      return null;
+  }
     
   // final double NO_FP = Double.MAX_VALUE;  
   
   double mult = 1.; // for different units (RE, km)
-  if (getDistanceUnit().equals(km)) mult = Const.RE;
+  if (getDistanceUnit().equals(km)) {
+      mult = Const.RE;
+  }
   
   double[] pos, bv = null, dist_diff = null;
   double[][] fp = null;
@@ -692,6 +698,7 @@ public double[] getValues(int[] records, double mjd) {
     // by default... 
     res[n] = Double.NaN;
     switch (records[n]) {
+        case DumpRecord.NONE : break;   // This alternative is used. Unknown why.
         case DumpRecord.TIME :	res[n] = mjd; break;
         case DumpRecord.POS_X : res[n] = pos[0]*mult; break;
         case DumpRecord.POS_Y : res[n] = pos[1]*mult; break;
@@ -718,12 +725,25 @@ public double[] getValues(int[] records, double mjd) {
 	    res[n] = (fieldlinesPresent) ? flBMax : Double.NaN; 
 	    break;    
         case DumpRecord.DIST_TO_MP : 
-            // distance to mpause
-            res[n] = mult*Shue97.distance_to_magnetopause(trp.gsm, getMagProps().getSWP(mjd), getMagProps().getIMF(mjd)[2]);
+            // Distance to mpause
+            res[n] = mult*Shue97.distance_to_magnetopause(
+                    trp.gsm, getMagProps().getSWP(mjd), getMagProps().getIMF(mjd)[2]);
             break;
         case DumpRecord.DIST_TO_BS : 
-            // distance to bowshock
-            res[n] = mult*Bowshock99Model.getDistanceToBowshock(trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd), 0.01);
+            // Distance to bowshock
+            // NOTE: Try-catch disabled since the cause of frequent IGRF problems
+            // (extrapolation) should be solved. /Erik P G Johansson 2015-10-29
+//            try {
+            res[n] = mult*Bowshock99Model.getDistanceToBowshock(
+                    trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd), 0.01);
+//            } catch(IllegalArgumentException e) {
+//                e.printStackTrace();
+//                Log.log(e.getMessage(), 0);
+//                // (Almost) ignore this exception as it can be triggered by non-finite trp.gsm
+//                // values (in particular NaN for times when IGRF does not work).
+//                // res[n] gets the default value by default.
+//                // Other functions in this method appear to simply return NaN for such cases (no exception).
+//            }
 	    break;
         case DumpRecord.FP1_LAT : 
             res[n] = fp[0][0];
@@ -756,18 +776,21 @@ public double[] getValues(int[] records, double mjd) {
             res[n] = (inSolarWind == 1) ? dist_diff[1]*mult : Double.NaN;
             break;
 	case DumpRecord.DIST_TO_BS_ALONG_IMF : 
-            res[n] = (inSolarWind == 1) ? Bowshock99Model.getDistanceToBowshockAlongIMF(trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd))*mult : Double.NaN;
+            res[n] = (inSolarWind == 1)
+                    ? Bowshock99Model.getDistanceToBowshockAlongIMF(
+                        trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd))*mult
+                    : Double.NaN;
             break;
         case DumpRecord.THETA_IMF_NBS : 
             if (inSolarWind == 1) {
-	    	  res[n] = Utils.toDegrees(Bowshock99Model.getThetaIMF_N(trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd)));
-		 
+	    	  res[n] = Utils.toDegrees(Bowshock99Model.getThetaIMF_N(
+                          trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd)));
 	    } else {
 		  res[n] = Double.NaN;
 	    }
             break;    
-	/*defalut:  WHY THIS STATEMENT IS UNREACHABLE!?!!----------
-	    throw new IllegalArgumentException("Wrong record id "+records[n]);*/
+	default:
+	    throw new IllegalArgumentException("Wrong record id "+records[n]);
       }  // switch
             
     }  // for loop

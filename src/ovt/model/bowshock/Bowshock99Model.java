@@ -130,6 +130,8 @@ public class Bowshock99Model {
         double k = getK(swp, machNumber);
         double x_shift = k * e / oe2;
         Ellipsoid el = new Ellipsoid(k / soe2, 1 - 1 / soe2);
+        
+        // NOTE: Uses x as z coordinate since getMinDistance uses this as symmetry axis.
         return el.getMinDistance(gsm[1], gsm[2], gsm[0] + x_shift, eMax);
     }
 

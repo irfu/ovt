@@ -334,6 +334,24 @@ public class Matrix3x3 {
                 - get(1, 2) * get(2, 1) * get(0, 0);
     }
 
+
+    /**
+     * Mostly intended for debugging, or maybe for whether to throw exception.
+     *
+     * @return True iff exactly all of the matrix components are finite.
+     */
+    public boolean isFinite() {
+        for (int i = 0; i < matrix.length; i++) {
+            final double[] vector = matrix[i];
+            for (int j = 0; j < vector.length; j++) {
+                if (!Double.isFinite(vector[j])) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     /*
      public double[][] getArray() {
      return matrix;
@@ -357,6 +375,7 @@ public class Matrix3x3 {
         return newMatrix;
     }
 
+    //##########################################################################
 
     /**
      * Informal test code.

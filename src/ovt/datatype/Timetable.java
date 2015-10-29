@@ -57,14 +57,17 @@ public class Timetable {
   }
   
   public void put(double mjd, Object obj) {
-    keys.addElement(new Double(mjd));
+    keys.addElement(mjd);
     values.addElement(obj); 
   }
 
+  /**
+   * Return an element corresponding to a time within a time difference/distance eps from mjd.
+   */
   public Object getElement(double mjd, double eps) {
       Enumeration e = keys();
       while (e.hasMoreElements()) {
-          double key = ((Double)e.nextElement()).doubleValue();
+          double key = ((Double) e.nextElement());
           if (Math.abs(key - mjd) < eps) {
               return getElement(key);
           }
@@ -72,6 +75,9 @@ public class Timetable {
       return null;
   }
   
+  /**
+   * Return an element corresponding (almost exactly) to a time mjd.
+   */
   public Object getElement(double mjd) { 
     int index = keys.indexOf(new Double(mjd));
     //System.out.println("index=" + index);

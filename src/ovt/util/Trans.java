@@ -428,8 +428,8 @@ public class Trans {
    *  @param Eccdz excentric dipole coordinates???
    */
   protected static Matrix3x3 geo_gsm_trans_matrix(double mjd, double[] Eccdz) {
-    double sunv[] = Utils.sunmjd(mjd);
-    double[][] temp = new double[3][];
+    final double sunv[] = Utils.sunmjd(mjd);
+    final double[][] temp = new double[3][];
     temp[0] = gei2geo(sunv, mjd);
     temp[1] = Vect.crossn(Eccdz, temp[0]);
     temp[2] = Vect.crossn(temp[0], temp[1]);

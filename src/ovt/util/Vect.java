@@ -242,7 +242,7 @@ public static double[] crossn(double a[], double b[]) {
 }
 
 
-/** Normalized vector product. */
+/** Normalized vector product. c is the result. */
 public static void crossn(double a[], double b[], double c[]) {
     double x;
 

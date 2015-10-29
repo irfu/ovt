@@ -129,6 +129,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     protected Hashtable models = new Hashtable();
 
+    private static final DataSourceChoice INITIAL_DATA_SOURCE_CHOICE = DataSourceChoice.MAG_ACTIVITY_EDITOR;
+
     /**
      * Utility field used by bound properties.
      *
@@ -305,13 +307,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
          * Initialize activityDataSources and
          * activityEditorOrOMNI2_dataModels.
          ============================================*/
-        final DataSourceChoice initialDataSourceChoice = DataSourceChoice.MAG_ACTIVITY_EDITOR;
-        //final DataSourceChoice initialDataSourceChoice = DataSourceChoice.OMNI2;
         for (int activityIndex : ACTIVITY_INDICES_OMNI2_AVAILABLE) {
             final ActivityEditorOrOMNI2_DataSource dataSource = new ActivityEditorOrOMNI2_DataSource(
                     this,
                     activityEditorDataModels[activityIndex],
-                    initialDataSourceChoice);
+                    INITIAL_DATA_SOURCE_CHOICE);
             activityEditorOrOMNI2_dataModels.put(activityIndex, dataSource);
 
             dataSource.addMagPropsChangeListener(new MagPropsChangeListener() {
@@ -1161,12 +1161,13 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     /**
      * Intended to be called by "XML" (Java Beans used for save/load settings).
      *
-     * IMPLEMENTATION NOTE: The implementation should preferably be prepared
-     * for that "choices" may contain activity index values that are not used in
-     * this version OVT and that those indices should be ignored. This way one
-     * could (with some luck) get some basic backward compatibility with
+     * IMPLEMENTATION NOTE: The implementation should preferably be prepared for
+     * that "choices" may contain activity index values that are not used in
+     * this version of OVT and that those indices should be ignored. This way
+     * one could (with some luck) get some basic backward compatibility with
      * settings saved in an earlier version of OVT with OMNI2 support for a
-     * different set of "activity variables".
+     * different set of "activity variables" (assuming the meaning of index
+     * values has not changed).
      */
     public synchronized void setActivityEditorOrOMNI2Choices(String s) {
 //        Log.log(getClass().getSimpleName() + "#setActivityEditorOrOMNI2Choices(...)", DEBUG);
