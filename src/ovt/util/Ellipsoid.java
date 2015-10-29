@@ -70,18 +70,32 @@ public class Ellipsoid {
                           (g2 * n + ell.h) * sphi);
   }
 
+  /**
+   * NOTE: Appears, at a cursory look, to use Z as the (cylindrical) symmetry axis,
+   * not X which is the direction toward the Sun in e.g. the GSM coordinate system.
+   */
   public Ellipsoidic toEllipsoidic(Cartesian cart, double eMax) {
-    //throws EllipsoidError {
+      //System.out.println(getClass().getName()+"#toEllipsoidic(cart=" + cart.toString() + ", eMax=" + eMax + ").");
+      if (!Double.isFinite(cart.x) || !Double.isFinite(cart.y) || !Double.isFinite(cart.z)) {
+          throw new IllegalArgumentException("Argument is not finite. cart="+cart.toString());
+          /** JUSTIFICATION FOR CHECK: In the past, using a time outside of
+           * what the IGRF code (IgrfModel.java?) can handle has led to 
+           * cart.x=NaN and cart.y=NaN which has led to the algorithm failing
+           * which has in turn led to exception (thrown after the end of the algorithm).
+           * /Erik P G Johansson 2015-10-28
+           */
+      }
 
     // compute some miscellaneous variables outside of the loop
+    // NOTE: Special treatment of z as cylindircal symmetry axis(?).
     double z2         = cart.z * cart.z;
-    double r2         = cart.x * cart.x + cart.y * cart.y;
+    double r2         = (cart.x * cart.x) + (cart.y * cart.y);
     double r          = Math.sqrt(r2);
     double g2r2ma2    = g2 * (r2 - ae2);
-    double g2r2ma2mz2 = g2r2ma2 - z2;
+    //double g2r2ma2mz2 = g2r2ma2 - z2;   // Not used?!!
     double g2r2ma2pz2 = g2r2ma2 + z2;
     double dist       = Math.sqrt(r2 +z2);
-    double threshold  = Math.max(1.0e-14 * dist, eMax);
+    //double threshold  = Math.max(1.0e-14 * dist, eMax);   // Not used?!!
     boolean inside    = (g2r2ma2pz2 <= 0);
 
     // point at the center
@@ -198,9 +212,8 @@ public class Ellipsoid {
 
     } // for loop
 
-    throw new IllegalArgumentException("unable to converge in"
-                             + " ovt.util.Ellipsoid.toEllipsoidic (Cartesian, eMax)");
-
+    throw new IllegalArgumentException("Unable to converge in "
+            + getClass().getName() + "#toEllipsoidic(cart=" + cart.toString() + ", eMax=" + eMax + ").");
   }
   
   /**
@@ -289,6 +302,11 @@ class Cartesian {
     this.x = x;
     this.y = y;
     this.z = z;
+  }
+  
+  // For debugging.
+  public String toString() {
+      return "[x="+x+", y="+y+", z="+z+"]";
   }
 }
 
