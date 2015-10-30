@@ -52,8 +52,9 @@ import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 
 /**
  * Informal manual test code for comparing trajectories to determine differences
- * in coordinate systems or time. Used in particular to verify the coordinate
- * system used by SSCWS satellites data.
+ * in coordinates or time. Used in particular to verify the coordinate system
+ * used by SSCWS satellites data (compare to TLE and LTOF files for the same
+ * satellites).
  *
  * Theories for why trajectories may differ:<BR>
  * 1) Interpolation<BR>
@@ -76,7 +77,7 @@ import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
  */
-public class SSCWSSat_CompareTrajectoriesTest {
+public class CompareTrajectoriesTest {
 
     /**
      * Useful when modifying OVT code obtaining/deriving SSCWS data.
@@ -330,7 +331,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
         compareTrajectories(
                 new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
                 new TLEFileDataSource("/home/erjo/work_files/ovt/build/classes/odata/akebono.tle"),
-                Utils.newLinearArray(startMjd,  startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
+                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
     }
 
@@ -638,7 +639,7 @@ public class SSCWSSat_CompareTrajectoriesTest {
         @Override
         public void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr_posAxis_km, double[][] vei_arr) throws IOException {
             try {
-                SSCWSSat_CompareTrajectoriesTest.fill_pos_vel_RawSSCWS(satID, timeMjdMap, gei_arr_posAxis_km, vei_arr, coordSys);
+                CompareTrajectoriesTest.fill_pos_vel_RawSSCWS(satID, timeMjdMap, gei_arr_posAxis_km, vei_arr, coordSys);
             } catch (NoSuchSatelliteException e) {
                 throw new IOException(e);
             }

@@ -57,6 +57,9 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     static {
+        // NOTE: vtkNativeLibrary.LoadAllNativeLibraries doc says:
+        // "@return true if all library have been successfully loaded"
+        // Detect failure without try-catch exceptions.
         if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
             for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
                 if (!lib.IsLoaded()) {
@@ -64,7 +67,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                 }
             }
             System.out.println("Make sure the search path is correct:");
-            System.out.println(System.getProperty("java.library.path"));
+            System.out.println("java.library.path = "+System.getProperty("java.library.path"));
             
         }
         vtkNativeLibrary.DisableOutputWindow(null);
