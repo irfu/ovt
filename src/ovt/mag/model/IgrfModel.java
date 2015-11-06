@@ -26,11 +26,11 @@ import ovt.mag.model.GandHcoefs;
  * cached data only approximately correct: <BR>
  * (1) The cache contains one set of coefficients for every integer year,<BR>
  * but<BR>
- * (2) derived (interpolated/extrapolated) data in the cache are derived for
- * a non-integer year (approximate month-resolution) which may vary from request
+ * (2) derived (interpolated/extrapolated) data in the cache are derived for a
+ * non-integer year (approximate month-resolution) which may vary from request
  * to request (for the same year), and <BR>
- * (3) whether to use cached data is partly determined by whether the new time
- * is sufficiently close (max N days difference) to the previous one, not
+ * (3) whether to use cached data or not is partly determined by whether the new
+ * time is sufficiently close (max N days difference) to the previous one, not
  * whether the new time is within the same year or within the same approximate
  * month.<BR>
  * /Erik P G Johansson 2015-10-30 (who did not write the class)
@@ -73,11 +73,12 @@ public class IgrfModel extends AbstractMagModel {
      */
     private static final Hashtable ghTable = new Hashtable();
     private static int minY, maxY;    // Years limits
-    private static final GandHcoefs ghSVCoefficients = new GandHcoefs(Nmax);   // Secular variation (SV) coefficients.
+    private static final GandHcoefs ghSVCoefficients = new GandHcoefs(Nmax);   // Secular variation (SV) coefficients. Previously called "addCol".
     private static boolean hasReadGHSVCoefficients = false;   // Flag for whether ghSVCoefficients has already been filled with values.
     private static double mjdPrev = -100000.0;
     private static final double INVALIDATION_TIME_MARGIN_DAYS = 31.0;
     private static final int EXTRAPOLATION_WARNING_THRESHOLD_YEARS = 5;
+    private boolean hasShownExtrapolationWarning = false;
 
 
     /**
@@ -252,7 +253,7 @@ public class IgrfModel extends AbstractMagModel {
      * Read _some_ data from the IGRF data file (text table). Either (1) read
      * the column headers to determine the span of years covered, or (2) read
      * ONE specified year from IGRF data file and put the information in the
-     * IgrfModel.ghTable. Make sure that IgrfModel.addCol contains the
+     * IgrfModel.ghTable. Make sure that IgrfModel.ghSVCoefficients contains the
      * corresponding information for the column for secular variation.
      *
      * NOTE: The way of handling errors is not that great. Should ideally be
@@ -394,10 +395,10 @@ public class IgrfModel extends AbstractMagModel {
                             throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG);
                     }
                 } else if (!tokGH.hasMoreTokens()) {  // Is last column?
-                    if (hasReadGHSVCoefficients) // addCol already loaded
+                    if (hasReadGHSVCoefficients) // ghSVCoefficients already loaded
                     {
                         break;                // goto the next line
-                    } else {                   // loading addCol
+                    } else {                   // loading ghSVCoefficients
                         flt = Float.parseFloat(tmps);
                         switch (ghMarker) {
                             case 'g':
@@ -498,8 +499,10 @@ public class IgrfModel extends AbstractMagModel {
                 floorY += 5;
             }
             final int ceilY = floorY + 5;
-            // Make sure floorY refers to a year for which there is IGRF file data (not previously extrapolated data).
-            // This is important to make it possible to interpolate beyond five years after the last IGRF data year (maxY).
+            // Make sure floorY refers to a year for which there is IGRF file data
+            // (not previously extrapolated data). This is important to make it
+            // possible to interpolate beyond five years after the last IGRF data
+            // year (maxY).
             floorY = Math.min(maxY, floorY);
 
             // Request g & h coefficients for year "floorY".
@@ -519,15 +522,22 @@ public class IgrfModel extends AbstractMagModel {
                 // CASE: Last additional column (secular variation) has been used. Prepare for extrapolation.
                 w1a = 1.0F;
                 w2a = floatYear - (float) floorY;   // Unit: years
-                ghCeil = ghSVCoefficients;    // Using addCol (secular variation). Unit year^-1.
+                ghCeil = ghSVCoefficients;    // Using ghSVCoefficients (secular variation). Unit year^-1.
 
-                if (w2a > EXTRAPOLATION_WARNING_THRESHOLD_YEARS) {
-                    // NOTE: Will not display warning dialog window during launch when there is no GUI present.
+                if ((w2a > EXTRAPOLATION_WARNING_THRESHOLD_YEARS) & (!hasShownExtrapolationWarning)) {
+
+                    // NOTE: Command will automatically not display warning dialog window
+                    // during launch when there is no GUI present.
+                    // NOTE: "This warning will not be displayed again" is technically wrong for putting in the log.
                     this.magProps.getCore().sendWarningMessage(
                             "Extrapolating IGRF data",
                             "Extrapolating " + (int) w2a + " years"
                             + " into the future from the last year with data (" + floorY + ")"
-                            + " in \"" + igrfDatFile.getCanonicalPath() + "\".");
+                            + " in \"" + igrfDatFile.getCanonicalPath() + "\"."
+                            + "\nThis warning will not be displayed again.");
+                    if (OVTCore.isGuiPresent()) {
+                        hasShownExtrapolationWarning = true;
+                    }
                 }//*/
             }
 
@@ -535,7 +545,7 @@ public class IgrfModel extends AbstractMagModel {
             // ------------------------------------------------------------------
             // Either
             // (1) INTERPOLATE between ghFloor (year floorY) and ghCeil (year ceilY), or
-            // (2) EXTRAPOLATE from ghFloor (year floorY) using ghCeil=addCol
+            // (2) EXTRAPOLATE from ghFloor (year floorY) using ghCeil=ghSVCoefficients
             // depending on how w1a, w2a have been set.
             for (int i = 0; i <= Nmax; ++i) {
                 for (int j = 0; j <= i; ++j) {
