@@ -452,6 +452,13 @@ public Component getComponent() {
     return component;
 }
 
+public void setToolTipText(String text) {
+    getComponent();  // Somewhat ugly but needed for initializing this.slider. Not using the result to avoid typecasting.
+    if (slider != null) {
+        slider.setToolTipText(text);
+    }
+}
+
 private void updateSlider() {
     if (slider != null) {
         slider.removeChangeListener(changeListener);

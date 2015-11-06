@@ -44,15 +44,14 @@ import vtk.*;
 
 import java.beans.*;
 import java.lang.Math;
-import java.lang.reflect.*;
 import java.util.*;
 
-import java.awt.event.*;
-
-import javax.swing.*;
 import java.awt.*;
 /**
  * This class cares about plotting the magnetosphere.
+ * 
+ * NOTE: Contains two classes with similarily-named methods: Magnetosphere and
+ * MagnetosphereActor. Do not confuse the two.
  */
 
 public class Magnetosphere extends VisualObject implements
@@ -149,7 +148,8 @@ private double fieldlineRadiusScale = 1.;
 
 
 /** Holds value of property wireframe. */
-private boolean wireframe = true;
+private boolean wireframe = true;   // Default value when launching application.
+
 private boolean scalarcolor = true;
 
 public Magnetosphere(OVTCore core) {
@@ -559,14 +559,17 @@ public void setVisible(boolean visible) {
    * @param wireframe New value of property wireframe.
    */
   public void setWireframe(boolean wireframe) {
-      boolean oldWireframe = this.wireframe;
+      final boolean oldWireframe = this.wireframe;
       this.wireframe = wireframe;
-      if (actor != null)
-        if (actor.isWireframe() != wireframe) actor.setWireframe(wireframe);
-      propertyChangeSupport.firePropertyChange("wireframe", new Boolean(oldWireframe), new Boolean(wireframe));
+      if (actor != null) {
+        if (actor.isWireframe() != wireframe) {
+            actor.setWireframe(wireframe);
+        }
+      }
+      propertyChangeSupport.firePropertyChange("wireframe", oldWireframe, wireframe);
   }
 
-    public boolean isScalarcolor() {
+  public boolean isScalarcolor() {
       return scalarcolor;
   }
     
@@ -575,7 +578,7 @@ public void setScalarcolor(boolean scalarcolor) {
       this.scalarcolor = scalarcolor;
       if (actor != null)
         if (actor.isScalarcolor() != scalarcolor) actor.setScalarcolor(scalarcolor);
-      propertyChangeSupport.firePropertyChange("scalarcolor", new Boolean(oldScalarcolor), new Boolean(scalarcolor));
+      propertyChangeSupport.firePropertyChange("scalarcolor", oldScalarcolor, scalarcolor);
   }
   //copied from SingleActorSatModule FKJN
   /** Getter for property color.
@@ -614,7 +617,7 @@ public void setScalarcolor(boolean scalarcolor) {
                 descriptors = super.getDescriptors();
 
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("fieldlineRadiusScale", this);
-                pd.setLabel("Fieldline Thickness...");
+                pd.setLabel("Fieldline Thickness (non-wireframe)...");
                 pd.setDisplayName("Magnetospheric Fieldline Thickness");
                 ExponentialSliderPropertyEditor fieldlineRadiusScaleEditor = new ExponentialSliderPropertyEditor(pd,
                     1./8., 8., new double[]{1./8.,1./2., 1, 2, 8});
@@ -625,6 +628,8 @@ public void setScalarcolor(boolean scalarcolor) {
                     }
                 });
                 pd.setPropertyEditor(new WindowedPropertyEditor(fieldlineRadiusScaleEditor, getCore().getXYZWin()));
+                fieldlineRadiusScaleEditor.setToolTipText(
+                        "Set the fieldline thickness that applies when the \"Wireframe\" option is disabled.");
                 descriptors.put(pd);
 
 
@@ -698,7 +703,7 @@ class MagnetosphereActor extends vtkActor {
         vtkLogLookupTable lut  = new vtkLogLookupTable();
           lut.SetHueRange(0.6667, 0);
 
-        setWireframe(true);
+        setWireframe(true);    // Not the default value in the application GUI.
         setFieldlineRadius(NORMAL_FL_RADIUS);
 	mapper.SetScalarModeToUsePointData();
         mapper.ScalarVisibilityOn();
