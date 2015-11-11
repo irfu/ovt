@@ -113,11 +113,10 @@ public class LTOFSat extends Sat {
 
 
     /**
-     * Reads LTOFile, computes positions and velocities for given times.
+     * Reads LTOF file, computes positions and velocities for given times.
      */
     @Override
     protected void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
-        //throw new RuntimeException("UNFINISHED IMPLEMENTATION.");
 
         try {
             fill_GEI_VEI_Raw(orbitFile, timeMjdMap, gei_arr, vei_arr);
@@ -134,8 +133,8 @@ public class LTOFSat extends Sat {
      * Read arbitrary LTOF file. The structure of the LTOF is given in
      * docs/LTOF.pdf
      *
-     * Some information on the LTOF format can be found in the "CLUSTER
-     * Data Disposition System - Data Delivery Interface Document (DDID)"
+     * Some information on the LTOF format can be found in the "CLUSTER Data
+     * Disposition System - Data Delivery Interface Document (DDID)"
      * http://www.jsoc.rl.ac.uk/pub/fd_files/index.php
      *
      * IMPLEMENTATION NOTE: This method is only used by the method fill_GEI_VEI
@@ -154,11 +153,9 @@ public class LTOFSat extends Sat {
          ==============*/
         if ((gei_arr.length > 0) && (gei_arr[0].length != 3)) {
             throw new IllegalArgumentException("Illegal array dimensions: gei_arr_posAxis[0].length != 3");
-        }
-        if ((vei_arr.length > 0) && (vei_arr[0].length != 3)) {
+        } else if ((vei_arr.length > 0) && (vei_arr[0].length != 3)) {
             throw new IllegalArgumentException("Illegal array dimensions: vei_arr_posAxis[0].length != 3");
-        }
-        if ((timeMjdMap.length != gei_arr.length)
+        } else if ((timeMjdMap.length != gei_arr.length)
                 | (timeMjdMap.length != vei_arr.length)) {
             throw new IllegalArgumentException("Illegal array dimensions. Lengths are not identical.");
         }
@@ -189,7 +186,6 @@ public class LTOFSat extends Sat {
                     //if (codeOfLine>=1 && codeOfLine<99 ){   //Satellite ID (sc_id)
                     rec.sc_id = codeOfLine;  // Set up number of satellite (sc_id)!!!
                 }
-
                 {
                     final String line = inData.readLine(); // Read 2nd record: 200+satin ...
                     lineNumber++;
@@ -229,7 +225,7 @@ public class LTOFSat extends Sat {
                     }
                 }
 
-                // Calculate and fill in gei_arr vei_arr for the time valid for this LTOF record.
+                // Calculate and fill in "gei_arr", "vei_arr" for the time valid for this LTOF record.
                 while (mjd <= rec.dayEnd && i_mjdTimeMap < timeMjdMap.length) {  //Treatment of MJDs as much as possible.
                     //Log.log("k="+k+" timeMap.length="+timeMap.length+" ");
                     mjd = timeMjdMap[i_mjdTimeMap];

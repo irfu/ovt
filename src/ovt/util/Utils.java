@@ -451,17 +451,25 @@ public class Utils extends Object {
 
 
     /**
-     * Returns R, Delta, Alpha in degrees r*cos(delta)*cos(phi) = x
-     * r*cos(delta)*sin(phi) = y r*sin(delta) = z c phi = atan(y/x) delta =
-     * asin(z/r) r = sqrt(x*x + y*y + z*z)
+     * Convert from Cartesian to spherical coordinates.
+     * Returns R, Delta, Alpha in degrees
+     * 
+     * x = r*cos(delta)*cos(phi)<BR>
+     * y = r*cos(delta)*sin(phi)<BR>
+     * z = r*sin(delta)<BR>
+     * 
+     * phi = atan(y/x)<BR>
+     * delta = asin(z/r)<BR>
+     * r = sqrt(x*x + y*y + z*z)<BR>
      */
     public static double[] rec2sph(double[] xyz) {
-        double irad = 180. / Math.PI;
+        final double irad = 180. / Math.PI;   // Conversion factor radians-to-degrees.
+        final int X = 0;
+        final int Y = 1;
+        final int Z = 2;
+        
+        final double radius = Math.sqrt(xyz[X] * xyz[X] + xyz[Y] * xyz[Y] + xyz[Z] * xyz[Z]);
         double arg, phi, delta;
-        int X = 0;
-        int Y = 1;
-        int Z = 2;
-        double radius = Math.sqrt(xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]);
 
         /*if ((xyz[Y] != 0.) && (xyz[X] != 0.)) {
          phi = irad * Math.atan2 (xyz[Y], xyz[X]);
@@ -692,8 +700,9 @@ public class Utils extends Object {
      *
      * NOTE: The return result from ClassLoader#getResource can refer to a file
      * inside a ".jar" file.
-     * 
-     * NOTE: Uses System.getProperty("user.dir") which neither findSysDir or findUserDir does.
+     *
+     * NOTE: Uses System.getProperty("user.dir") which neither findSysDir or
+     * findUserDir does.
      */
     /* OLD IMPLEMENTATION 2015-04-24 */
     public static File findFile(String fileName) {
@@ -709,10 +718,10 @@ public class Utils extends Object {
         if (fileName == null) { //if the filename is bogus, return null
             return null;
         }
-        
+
         // Property "user.dir" = "User working directory".
         // Appears to be the directory where the code is run(?).
-        File file = new File(System.getProperty("user.dir")+ File.separator + fileName); // check if file is in current working directory
+        File file = new File(System.getProperty("user.dir") + File.separator + fileName); // check if file is in current working directory
         if (!file.exists() | file.isDirectory()) {
             file = null;
         }
@@ -720,7 +729,7 @@ public class Utils extends Object {
             //System.out.println(System.getProperty("user.dir")+File.separator+  fileName + " not found, checking elsewhere");
 
             file = new File(OVTCore.getUserDir() + fileName);
-            
+
             if (!file.exists() | file.isDirectory()) {
                 file = null;
             }
@@ -1084,16 +1093,17 @@ public class Utils extends Object {
 
     /**
      * Look for jumps greater or equal to threshold. Return list of indices for
-     * which a[i + 1] - a[i] >= minJumpGap. NOTE: Does not check for negative
-     * jumps.
+     * which a[i + 1] - a[i] >= minJumpGap. NOTE: There are no implied absolute
+     * values.
      *
      * Behaviour is undefined for NaN, +Inf, -Inf.
      *
      * @a Array of numbers. Not necessarily increasing.
+     * @return List of integers i for which a[i + 1] - a[i] >= minJumpGap.
      */
     public static List<Integer> findJumps(double[] a, double minJumpGap) {
         final List<Integer> dataGaps = new ArrayList();
-        for (int i = 0; i < a.length - 1; i++) {
+        for (int i = 0; i < a.length - 1; i++) {   // NOTE: Skip last index
             // Check if there is a (positive) jump.
             if (a[i + 1] - a[i] >= minJumpGap) {
                 dataGaps.add(i);
@@ -1284,24 +1294,27 @@ public class Utils extends Object {
             double[] Y_int_result,
             double[] Yp_int_result,
             SplineInterpolationBC bcL, SplineInterpolationBC bcU) {
+        
         /* Naming convention:
          _int = interpolated (interpolation) point.
          Lower case initial = individual nbr (scalar).
          Upper case initial = array.
          */
 
+       
         // Argument checks
         if ((X.length != Y.length)
                 | (X_int.length != Y_int_result.length)
                 | (X_int.length != Yp_int_result.length)) {
             throw new IllegalArgumentException("Array sizes do not match.");
-        } else if ((X_int[0] < X[0]) | (X[X.length - 1] < X_int[X_int.length - 1])) {
-            throw new IllegalArgumentException("X_int contains values outside the x range of the tabulated funcion.");
+        }
+        final int N = X.length;
+        final int N_int = X_int.length;
+        if ((N > 0) && (N_int > 0) && ((X_int[0] < X[0]) | (X[X.length - 1] < X_int[X_int.length - 1]))) {
+            throw new IllegalArgumentException("X_int contains values outside the x range of the tabulated function.");
         }
 
         final double[] Ypp = find2ndDeriv_cubicSplineInterpolation(X, Y, bcL, bcU, 0, 0);
-        final int N = X.length;
-        final int N_int = X_int.length;
         final double x_last = X[X.length - 1];
 
         for (int i_int = 0; i_int < N_int; i_int++) {

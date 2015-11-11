@@ -61,14 +61,23 @@ import javax.swing.*;
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
-    public static final String RELEASE_DAY = "October 2015";
-    public static final int BUILD = 5;           // Incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev.
+    public static final String RELEASE_DAY = "November 2015";
+    // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
+    // BUILD incremented to "6" (from "5") 2015-11-11 (for demo version).
+    public static final int BUILD = 6;           
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
     public static final Properties globalProperties = new Properties();
     public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
     public static int DEBUG = 0;
     
+    // Include RELEASE_DAY? (Might not be updated during development.)
+    private static final String HTTP_AGENT_PROPERTY_STRING =
+            SIMPLE_APPLICATION_NAME +" (OVT), version "+VERSION
+            +", build "+BUILD+" (" + ovt.OVTCore.OVT_HOMEPAGE + "); "
+            + System.getProperty("os.name") + ", "
+            + System.getProperty("os.arch");
+
     /**
      * Select what to use as a data source for the functionality/code that
      * handles SSC Web Services satellites.
@@ -134,7 +143,17 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         this.renPanel = renPanel;
         this.renderer = renPanel.getRenderer();
         // use renPanel.Render() instead of renderer.Render().
-               
+
+        /* NASA SSC documentation:
+         * "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
+         * to a value that identifies your client application in each SSC Web Service request that it makes.
+         * This will allow us to measure the usefulness of these services and justify their continued
+         * support. It isn't too important what value you use but it's best if it uniquely identifies
+         * your application."
+         * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
+         */
+        System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
+
         setServer(true);
         Initialize();
         isInitialized = true;

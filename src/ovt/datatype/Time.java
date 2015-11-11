@@ -595,7 +595,8 @@ public class Time {
         //final ovt.util.TimeFormat tf = new ovt.util.TimeFormat();
 
         System.out.println("mjd=0   : " + new Time(0.0));   // Determine epoch (back conversion not checked here).
-        System.out.println("--");
+        System.out.println("--");      
+
 
         {
             // Test whether conversion and reverse conversion match each other.

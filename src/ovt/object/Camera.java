@@ -55,6 +55,20 @@ import javax.swing.*;
 import javax.swing.event.*;
 
 /**
+ * BUG: Clipping range (cam.GetClippingRange/SetClippingRange) seems to change.
+ * The clipping range is correct (as read by GetClippingRange) at the start, but changes at
+ * every rotation with the mouse, and zooming in/out (moving the camera closer/away?).
+ * Changing projection seems
+ * to fix the problem in the actual rendering but it is unknown why.
+ * The problem (in the rendering) seems to only be present if
+ * using parallel projection initially, even if one later changes
+ * projection during a session, including changing to perspective and back
+ * to parallel(!). Also, the clipping values don't seem to match the actual clipping in the rendering.<BR>
+ * NOTE: The ratio between the
+ * front and back of the undesired clipping range is often exactly 1000, depending
+ * on distance (could be a clue to how VTK's clipping range works). <BR>
+ * NOTE: Camera is (can be) also initialized in XYZWindow.<BR>
+ * /Erik P G Johansson 2015-11-10 (not author of this class)
  *
  * @author  ko
  * @version
@@ -82,6 +96,9 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     /** Maximum camera distance from focal point */
     public static final double R_MAX = 200.;
     
+    private static final double CLIPPING_RANGE_NEAR = 0.0001;
+    private static final double CLIPPING_RANGE_BACK = 1000.01;
+    
     
     protected CameraCustomizer customizer;
     public vtkCamera cam;
@@ -91,8 +108,12 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     
     /** Holds value of property customizerVisible. */
     private boolean customizerVisible;
-    /** Holds value of property view. */
-    protected int view;
+    
+    /** Holds value of property "viewFrom".
+     * The value represents "from where" the camera should at the focal point i.e. from a specific
+     * direction, or from something else. Assigned using constants.
+     */
+    protected int viewFrom;
     protected String[] viewNames           = {"Custom", "X", "Y", "Z", "-X", "-Y", "-Z"};
     protected String[] viewWithSatNames    = {"Custom", "X", "Y", "Z", "-X", "-Y", "-Z", "p. to Orbit"};
     
@@ -107,13 +128,14 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     protected ComboBoxPropertyEditor viewFromEditor;
     protected ExponentialSliderPropertyEditor rEditor;
             
-    /** Holds value of property projection. By default 
-     * <CODE>PERSPECTIVE_PROJECTION</CODE> because it is by default in vtk.
+    /** Holds value of property projection.
+     * 
+     * Set to either PARALLEL_PROJECTION or PERSPECTIVE_PROJECTION.
      */
-    private int projection = PARALLEL_PROJECTION;
+    private int projection;
     
     /** Holds value of property viewAngle. */
-    private double viewAngle;    
+    private double viewAngle;
     
     PositionSource focalPoint = new PositionSource() {
         public double[] getPosition() {
@@ -131,17 +153,28 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         light = getCore().getRenPanel().getCameraLight();
         
         // set initial viewUp and position 
-        cam.SetParallelProjection(1); // on, by default
+//        System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         cam.SetViewUp(0,0,1);
         cam.SetPosition(0, R_MAX, 0);
         cam.SetFocalPoint(0, 0, 0);
         cam.SetParallelScale(8.);
         
+         // Set parallel project. Seems to produce clipping problems until first projection change in the GUI. Unknown why.
+        cam.SetParallelProjection(1);
+        projection = PARALLEL_PROJECTION;
+        
+//        Set perspective projection initially. Seems to "solve" clipping problems for unknown reason. Bad "bugfix".
+//                
+//        cam.SetParallelProjection(0);
+//        projection = PERSPECTIVE_PROJECTION;
+        
+//        System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+        
         viewTo = core.getEarth();
         
         setViewFrom(VIEW_FROM_Y);
         
-        // should be cpecified after viewTo = core.getEarth()
+        // Should be specified after viewTo = core.getEarth()
         viewToObjects = new ViewToObjects(this);
         
         Descriptors propertyDescriptors = new Descriptors();
@@ -312,7 +345,23 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             RenPanel vp =  getCore().getXYZWin().getVisualizationPanel();
             vp.addCameraChangeListener(this);
         }
+        
+        // DEBUG / TEMP        
+        /*{
+            final java.util.Timer t = new java.util.Timer();
+            t.scheduleAtFixedRate(new TimerTask() {
+                public void run() {
+                    System.out.println("Time#run : cam.GetClippingRange()="+Arrays.toString(cam.GetClippingRange())
+                            +"; view="+viewFrom);
+                }
+            },        
+            1000,//Set how long before to start calling the TimerTask (in milliseconds)        
+            2000);//Set the amount of time between each execution (in milliseconds)
+            
+            System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+        }//*/
     }
+    
     
     /** Getter for property position.
      * @return Value of property position.
@@ -321,12 +370,14 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         return cam.GetPosition();
     }
     
+    
     /** Setter for property position.
      * @param position New value of property position.
      *
      * @throws PropertyVetoException
      */
     public void setPosition(double[] position) throws IllegalArgumentException {
+//        System.out.println("setPosition : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         double[] oldPosition = getPosition();
         
         //vetoableChangeSupport.fireVetoableChange("position", oldPosition, position);
@@ -352,18 +403,23 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         
         //cam.OrthogonalizeViewUp();
         //Render();
+//        System.out.println("setPosition : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         firePropertyChange ("position", oldPosition, position);
     }
     
+    
     /** Set the position related to focal point */
     public void setRelativePosition(double[] position) throws IllegalArgumentException {
+//        System.out.println("setRelativePosition");
         setPosition(Vect.add(getFocalPoint(), position));
     }
+    
     
     /** Set the position related to focal point */
     public double[] getRelativePosition() {
         return Vect.sub(getPosition(), getFocalPoint());
     }
+    
     
     /** Getter for camera focalpoint position.
      * @return Value of property position.
@@ -371,6 +427,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     public double[] getFocalPoint() {
         return cam.GetFocalPoint();
     }
+    
     
     /** Setter for camera focalpoint position.
      * @param position New value of property position.
@@ -389,9 +446,16 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         firePropertyChange ("focalpoint", oldPosition, position);
     }
     
-    // its called by time-, CS-cahnge-listeners
+    
+    /** Is called by time-, CS-change-listeners.
+     *
+     * Somewhat misleading name. Automatically sets the camera position and (updates) the focal
+     * point according to settings in this.viewFrom and this.viewTo.
+     */    
+    // Change name?
     public void update() {
-        double radius = Vect.absv(Vect.sub(getPosition(), getFocalPoint()));
+//        System.out.println("update "+System.currentTimeMillis());
+        final double radius = Vect.absv(Vect.sub(getPosition(), getFocalPoint()));
         
         try {
             // update the Focal Point (specified by ViewTo)
@@ -418,7 +482,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
                     cam.SetViewUp(1,0,0);
                     break;
                 case VIEW_PERPENDICULAR_TO_ORBIT:
-                    // we are in the sattelite following mode
+                    // we are in the satellite following mode
                     // and look always perpendicular to orbit
                     Sat sat = (Sat)viewTo;
                     double[] n = normalToOrbit(sat);
@@ -446,12 +510,15 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
                     setPosition(cam_pos);
                     break;
             }
-        } catch (IllegalArgumentException e) { System.out.println("WASSUP?? Unexpected "+e);}
+        } catch (IllegalArgumentException e) {
+            System.out.println("Camera#update() failed. Unexpected "+e);
+        }
     }
 
-    /** computes normal vector to orbit in specyfied point r */
+    
+    /** computes normal vector to orbit in specified point r */
 public double[] normalToOrbit(Sat sat) {
-    // workaround extream conditions
+    // workaround extrem conditions
     Trajectory tr = sat.getTrajectory();
     double[] r = tr.get(getMjd()).get(getCS());
     TimeSet timeSet = getCore().getTimeSettings().getTimeSet();
@@ -484,11 +551,18 @@ public double[] normalToOrbit(Sat sat) {
 }
 
 public void reset() {
+    // From VTK documentation 2015-11-10:
+    // "void vtkRenderer::ResetCamera 	( 		)
+    // Automatically set up the camera based on the visible actors. The camera
+    // will reposition itself to view the center point of the actors, and move
+    // along its initial view plane normal (i.e., vector defined from camera
+    // position to focal point) so that all of the actors can be seen."
     getRenderer().ResetCamera();
     setViewFrom(VIEW_CUSTOM);
-    setViewTo(focalPoint); // hmm... let it be.
+    setViewTo(focalPoint); // Equivalent to 
     firePropertyChange("position", null, null);
 }
+
 
     /** Setter for property r.
      * @param r New value of property r.
@@ -496,24 +570,33 @@ public void reset() {
      * @throws IllegalArgumentException
      */
 public void setR(double r) throws IllegalArgumentException {
-    double oldR = getR();
+    final double oldR = getR();
     //Log.log("R="+r+ " oldR="+oldR);
-    if (r < 1 && getViewTo().equals("Earth")) throw new IllegalArgumentException("R < 1");
-    if (r < 0) throw new IllegalArgumentException("R < 0");
+    if (r < 1 && getViewTo().equals("Earth")) {
+        throw new IllegalArgumentException("R < 1");
+    } else if (r < 0) {
+        throw new IllegalArgumentException("R < 0");
+    }
     //vetoableChangeSupport.fireVetoableChange("r", new Double (oldR), new Double (r));
-    double[] r_delta_phi = Utils.rec2sph(getRelativePosition());
+    final double[] r_delta_phi = Utils.rec2sph(getRelativePosition());
     r_delta_phi[0] = r;
     setRelativePosition(Utils.sph2rec(r_delta_phi));
     propertyChangeSupport.firePropertyChange ("r", new Double (oldR), new Double (r));
 }
-    /** Getter for property r.
+
+
+    /** Getter for property r. Distance between camera position and focal point.
      * @return Value of property r.
      */
 public double getR() {
     return Utils.rec2sph(getRelativePosition())[0];
 }
 
+
     /** Setter for property delta.
+     * 
+     * delta = Angle in the spherical coordinates of relative camera position.
+     * 
      * @param delta New value of property delta.
      *
      * @throws IllegalArgumentException
@@ -532,12 +615,17 @@ public void setDelta(double delta) throws IllegalArgumentException {
     cameraChanged(new CameraEvent());
 }
 
+
     /** Getter for property delta.
+     * 
+     * delta = Angle in the spherical coordinates of relative camera position.
+     * 
      * @return Value of property delta.
      */
 public double getDelta() {
     return Utils.rec2sph(getRelativePosition())[1];
 }
+
 
     /** Setter for property phi.
      * @param phi New value of property phi.
@@ -554,21 +642,30 @@ public void setPhi(double phi) throws IllegalArgumentException {
     cameraChanged(new CameraEvent());
 }
 
+
     /** Getter for property phi.
      * @return Value of property phi.
      */
-public double getPhi() {
-    return Utils.rec2sph(getRelativePosition())[2];
-}
+    public double getPhi() {
+        return Utils.rec2sph(getRelativePosition())[2];
+    }
 
-public void coordinateSystemChanged(CoordinateSystemEvent evt) {
-    update();
-}
+    
+    @Override
+    public void coordinateSystemChanged(CoordinateSystemEvent evt) {
+        update();
+    }
 
-public void timeChanged(TimeEvent evt) {
-    update();
-}
+    
+    // NOTE: Time changed may imply that the "target" (i.e. the intended focal
+    // point) has changed, if it a CUSTOM target.
+    @Override
+    public void timeChanged(TimeEvent evt) {
+//        System.out.println("timeChanged");
+        update();
+    }
 
+    
     /** Setter for property viewUp.
      * @param viewUp New value of property viewUp.
      *
@@ -581,12 +678,14 @@ public void setViewUp(double[] viewUp) throws IllegalArgumentException {
     propertyChangeSupport.firePropertyChange ("viewUp", oldViewUp, viewUp);
 }
 
+
     /** Getter for property viewUp.
      * @return Value of property viewUp.
      */
 public double[] getViewUp() {
     return cam.GetViewUp();
 }
+
 
     /** Setter for property customizerVisible.
      * @param customizerVisible New value of property customizerVisible.
@@ -599,6 +698,8 @@ public void setCustomizerVisible(boolean customizerVisible) {
         propertyChangeSupport.firePropertyChange ("customizerVisible", new Boolean (oldCustomizerVisible), new Boolean (customizerVisible));
     }
 }
+
+
     /** Getter for property customizerVisible.
      * @return Value of property customizerVisible.
      */
@@ -606,27 +707,35 @@ public boolean isCustomizerVisible() {
     return customizerVisible;
 }
 
+
 /** This property should be marked as hidden - so it will be hidden for a server version */
 public CameraCustomizer getCustomizerWindow() {
     return customizer;
 }
 
-    /** Setter for property view.
-     * @param view New value of property view.
+
+    /** Setter for property viewFrom.
+     * @param viewFrom New value of property viewFrom.
      */
-public void setViewFrom(int view) throws IllegalArgumentException {
+public void setViewFrom(int viewFrom) throws IllegalArgumentException {
+//    System.out.println("setViewFrom("+view+")");    
+    
     // view == 0  means no special view - "Custom"
-    int oldView = this.view;
-    this.view = view;
-    Log.log("viewFrom : " + view + " oldViewFrom: " + oldView, 8);
-    if (view != VIEW_CUSTOM) update();
-    propertyChangeSupport.firePropertyChange ("viewFrom", new Integer (oldView), new Integer (view));
+    final int oldView = this.viewFrom;
+    this.viewFrom = viewFrom;
+    Log.log("viewFrom : " + viewFrom + " oldViewFrom: " + oldView, 8);
+    if (viewFrom != VIEW_CUSTOM) { 
+        update();
+    }
+    propertyChangeSupport.firePropertyChange ("viewFrom", new Integer (oldView), new Integer (viewFrom));
 }
-    /** Getter for property view.
-     * @return Value of property view.
+
+
+    /** Getter for property viewFrom.
+     * @return Value of property viewFrom.
      */
 public int getViewFrom() {
-    return view;
+    return viewFrom;
 }
 
 
@@ -636,6 +745,7 @@ public int getViewFrom() {
      * @throws IllegalArgumentException
      */
 public void setViewTo(PositionSource viewTo) throws IllegalArgumentException {
+
     PositionSource oldViewTo = this.viewTo;
     Log.log("viewTo : " + viewTo + " oldViewTo: " + oldViewTo, 8);
     this.viewTo = viewTo;
@@ -678,21 +788,28 @@ public void setViewTo(PositionSource viewTo) throws IllegalArgumentException {
     update();
     propertyChangeSupport.firePropertyChange ("viewTo", oldViewTo, viewTo);
 }
+
+
     /** Getter for property viewTo.
      * @return Value of property viewTo.
      */
 public PositionSource getViewTo()
 { return viewTo; }
 
+
 public void resetClippingRange() {
     //getRenderer().ResetCameraClippingRange(-1000,1000,-1000,1000,-1000,1000);
     //getRenderer().ResetCameraClippingRange();
-    cam.SetClippingRange(0.0001, 1000.01);
-    //System.out.println("Reset camera clipping");
+//    System.out.println("resetClippingRange : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+//    System.out.println("Reset camera clipping");
+    cam.SetClippingRange(CLIPPING_RANGE_NEAR, CLIPPING_RANGE_BACK);
+//    System.out.println("resetClippingRange : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
 }
 
+
+@Override
 public void cameraChanged(CameraEvent evt) {
-    //System.out.println("Camera change");
+//    System.out.println("Camera change");
     resetClippingRange();
     
     // this is not a good way to do..
@@ -738,9 +855,11 @@ public void cameraChanged(CameraEvent evt) {
     }
 }
 
+
 public PropertyChangeListener getViewToObjectsNameChangeListener() {
     return viewToObjects.objectNameChangeListener;
 }
+
 
 public PropertyChangeListener getViewToObjectsVisibilityChangeListener() {
     return viewToObjects.objectVisibilityChangeListener;
@@ -796,20 +915,25 @@ public int getProjection() {
  * @param projection New value of property projection.
  */
 public void setProjection(int projection) {
-    int oldProjection = this.projection;
-    if (projection == oldProjection) return; // no change 
+//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));        
+    final int oldProjection = this.projection;
+    if (projection == oldProjection) {
+        return; // no change 
+    }
     this.projection = projection;
     switch (projection) {
         case PARALLEL_PROJECTION    : 
             // derive scale from R
             double scale = getR()*Math.tan(Utils.toRadians(0.5*getViewAngle()));
             setParallelScale(scale);
-            setR(R_MAX); // move camera away ! This cause STRANGE clipping of objects!
+//            System.out.println("setProjection : scale = "+scale);
+            setR(R_MAX); // move camera away ! This causes STRANGE clipping of objects!
             cam.SetParallelProjection(1); 
             break;
         case PERSPECTIVE_PROJECTION : 
             // derive R from scale
             double r = getParallelScale()/Math.tan(Utils.toRadians(0.5*getViewAngle()));
+//            System.out.println("setProjection : r = "+r);
             setR(r);
             cam.SetParallelProjection(0); 
             break;
@@ -817,6 +941,7 @@ public void setProjection(int projection) {
     }
      // 1 is on I hope
     propertyChangeSupport.firePropertyChange("projection", new Integer(oldProjection), new Integer(projection));
+//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));    
 }
 
 /** Getter for property parallelScale.
@@ -830,8 +955,11 @@ public double getParallelScale() {
  * @param parallelScale New value of property parallelScale.
  */
 public void setParallelScale(double parallelScale) {
+//    System.out.println("setParallelScale : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
     double oldParallelScale = getParallelScale();
     cam.SetParallelScale(parallelScale);
+//    System.out.println("setParallelScale : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+
     propertyChangeSupport.firePropertyChange("parallelScale", new Double(oldParallelScale), new Double(parallelScale));
 }
 

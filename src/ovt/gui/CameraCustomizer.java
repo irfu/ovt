@@ -52,6 +52,8 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /**
+ * Presumably represents/implements the configuration window "View Control" for configuring
+ * the camera view (camera position, focal point, projection etc.).
  *
  * @author  ko
  * @version 

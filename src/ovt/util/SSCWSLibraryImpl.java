@@ -122,8 +122,12 @@ import ovt.datatype.Time;
  * Bobby Robert.M.Candey@nasa.gov 1-301-286-6707 NASA Goddard Space Flight
  * Center, Code 672 Greenbelt MD 20771 USA
  *
+ * NOTE: NASA SSC encourages user to set<BR>
+ * {@code System.setProperty("http.agent", ...);}. This is done in OVTCore
+ * instead of here since it is a global setting.
+ *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
- * @since 2015
+ * @since 2015-0x-xx
  */
 // TODO: Go through code and set all or as many as possible options since one can not trust default values.
 //
@@ -232,17 +236,6 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         if (sscService != null) {
             return sscService.getSatelliteSituationCenterPort();
         } else {
-            /* "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
-             to a value that identifies your client application in each SSC Web Service request that it makes.
-             This will allow us to measure the usefulness of these services and justify their continued
-             support. It isn't too important what value you use but it's best if it uniquely identifies
-             your application."
-             http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
-             */
-            System.setProperty("http.agent", "Orbit Visualization Tool (OVT; " + ovt.OVTCore.OVT_HOMEPAGE + ") ("
-                    + System.getProperty("os.name") + " "
-                    + System.getProperty("os.arch") + ")");
-
             try {
                 sscService = new SatelliteSituationCenterService(
                         new URL(WSDL_URL_STRING),
@@ -291,7 +284,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                 //==============================================================
 
                 //Log.log(this.getClass().getSimpleName() + ".getAllSatelliteInfo: Download satellite list from SSC via Web Services.", DEBUG);
-                System.out.println("Downloads satellite list from SSC via Web Services.");
+                System.out.println("Downloading satellite list from SSC via Web Services.");
                 final long t_start = System.nanoTime();
 
                 //satDescriptions = getSSCInterface().getAllSatellites();   // No timeout.
@@ -369,12 +362,16 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
         if (coordSys != CoordinateSystem.GEI_J_2000) {
             System.out.println(""
-                    + "===========================================================\n"
+                    + "====================================================================\n"
+                    + "====================================================================\n"
+                    + "====================================================================\n"
                     + "WARNING! Downloading satellite orbit data from SSC in a coordinate\n"
-                    + "system different from GEI_J_2000. This setting has probably \n"
-                    + "been made for testing purposes but should not be used in an \n"
-                    + "official version.\n"
-                    + "===========================================================");
+                    + "system different from GEI_J_2000. This setting has probably been\n"
+                    + "made for testing purposes but should not be used in an official\n"
+                    + "release version.\n"
+                    + "====================================================================\n"
+                    + "====================================================================\n"
+                    + "====================================================================");
         }
 
         final DataResult dataResult;

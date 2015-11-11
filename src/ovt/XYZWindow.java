@@ -52,7 +52,7 @@ import ovt.object.Sat;
 import vtk.rendering.jogl.vtkAbstractJoglComponent;
 
 /**
- * Represents OVT's main window.
+ * Represents OVT's main window. Contains OVT's global "main" method.
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -255,13 +255,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         if (!windowResizable) {
             setResizable(windowResizable);
         }        
-
-        // TEST/DEBUG
-        // Automatically add satellites in the GUI (add to the left-hand GUI tree) as if the user had done it.
-        //addSSCWSSatAction("ace");
-        //addSSCWSSatAction("Enterprise");
-        //addSSCWSSatAction("ZzzzSat10");
-        //addSSCWSSatAction("ZzzzSat11");
     }
 
 
@@ -289,9 +282,25 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         setVisible(true);
         renPanel.resetCamera();
         renPanel.getComponent().requestFocus();
-        core.getCamera().setViewFrom(Camera.VIEW_FROM_X); //Fixed origin bug 
-        //core.getCamera().setProjection(1); //Fix clipping bug FKJN 15Sept2015
-        //core.Render();
+        
+        // Set what the camera should look at initially, and what it should follow.
+        core.getCamera().setViewTo(core.getEarth());
+        
+        // 1) Set the camera's "ViewFrom" property, to give the 
+        // camera position a good initial VALUE: View Earth from the X axis.
+        // 2) Set the camera's "ViewFrom" property AGAIN, to give the camera position a
+        // good (matter of taste) initial default BEHAVIOUR: Set the ViewFrom property to "Custom",
+        // so that it does not automatcally snap back to a view from X axis when rotated, time changed etc.
+        // See implementation and use of method Camera#update().
+        // /Erik P G Johansson 2015-11-10
+        core.getCamera().setViewFrom(Camera.VIEW_FROM_X);   //  Fixed origin bug. /Fredrik Johansson 2015-0x-xx
+        core.getCamera().setViewFrom(Camera.VIEW_CUSTOM);
+        
+        // Using PARALLEL projection initially leads to camera clipping problems for unknown reason.
+        // See comments on bug in class "Camera".
+        core.getCamera().setProjection(Camera.PERSPECTIVE_PROJECTION); // Fix clipping bug Fredrik Johansson 15Sept2015
+        core.getCamera().setProjection(Camera.PARALLEL_PROJECTION);
+        core.Render();
 
     }
 
@@ -394,7 +403,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
-     * Main method. Here we launch OVT
+     * Main method for entire OVT. This is where OVT is launched.
      *
      * @param arg
      */

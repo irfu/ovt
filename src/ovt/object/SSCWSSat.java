@@ -93,8 +93,12 @@ public class SSCWSSat extends Sat {
      * See DiscreteIntervalToListCache to understand this variable. Must be
      * non-negative.
      */
-    private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 10;
-    private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";  // Include period.
+    private static final int PROACTIVE_CACHING_FILL_MARGIN_SLOTS = 5;
+    /**
+     * String added immediately after the "file base name" without any implicit
+     * period. Therefore, you (probably) want to begin with a period.
+     */
+    private static final String SSCWS_CACHE_FILE_SUFFIX = ".SSCWS.cache";
     private static final int SATELLITE_NBR = 1;  // Made-up value. Assumed to be OK for single satellites(?).
 
     private static final String CAN_NOT_FILL_ERROR_MSG
@@ -328,9 +332,11 @@ public class SSCWSSat extends Sat {
 
 
         /**
-         * @param cacheFile If null, then don't try to read from a cache file.
+         * @param cacheFile If null, then don't try to read from a cache file
+         * (but still use in-RAM cache).
          */
-        public DataSource(SSCWSLibrary mSSCWSLibrary, String SSCWS_satID, File cacheFile) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
+        public DataSource(SSCWSLibrary mSSCWSLibrary, String SSCWS_satID, File cacheFile)
+                throws IOException, SSCWSLibrary.NoSuchSatelliteException {
             this.satInfo = mSSCWSLibrary.getSatelliteInfo(SSCWS_satID);
 
             /*==============================================
