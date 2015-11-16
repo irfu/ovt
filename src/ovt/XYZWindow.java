@@ -42,8 +42,6 @@ import java.awt.event.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 import ovt.mag.OMNI2SettingsWindow;
 import ovt.object.Camera;
@@ -67,26 +65,25 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                 }
             }
             System.out.println("Make sure the search path is correct:");
-            System.out.println("java.library.path = "+System.getProperty("java.library.path"));
-            
+            System.out.println("java.library.path = " + System.getProperty("java.library.path"));
+
         }
         vtkNativeLibrary.DisableOutputWindow(null);
 
-    /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
+        /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
 
-    dir == ('../directory/to/the/VTK/DLLs');
-    File[] files = dir.listFiles();
-    if (files != null) {
+         dir == ('../directory/to/the/VTK/DLLs');
+         File[] files = dir.listFiles();
+         if (files != null) {
          for (int i = 0; i < files.length; i++) {
-        // only the lib-name needed, without file extension
-	System.loadLibrary(files[i].getName().substring(0,files[i].getName().length()-4));
-        if (files[i].isDirectory()) {
-		listDir(files[i]);
-                }
-        }
-    }
-*/
-
+         // only the lib-name needed, without file extension
+         System.loadLibrary(files[i].getName().substring(0,files[i].getName().length()-4));
+         if (files[i].isDirectory()) {
+         listDir(files[i]);
+         }
+         }
+         }
+         */
     }
 
     protected OVTCore core;
@@ -116,11 +113,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_ORIGIN_X = "XYZWindow.originx";
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
     private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
-
-    //private static final int DEFAULT_VISUALIZATION_PANEL_WIDTH = 600;
-    //private static final int DEFAULT_VISUALIZATION_PANEL_HEIGHT = 600;
-    //private static final int DEFAULT_XYZWINDOW_WIDTH = 600;
-    //private static final int DEFAULT_XYZWINDOW_HEIGHT = 600;
 
 
     public XYZWindow() {
@@ -235,7 +227,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         // create Help Window
         htmlBrowser = new HTMLBrowser(core);
-        
+
         // Create OMNI2 settings window.
         omni2Win = new OMNI2SettingsWindow(core.getMagProps(), core.getTimeSettings());
 
@@ -254,7 +246,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         }
         if (!windowResizable) {
             setResizable(windowResizable);
-        }        
+        }
     }
 
 
@@ -282,10 +274,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         setVisible(true);
         renPanel.resetCamera();
         renPanel.getComponent().requestFocus();
-        
+
         // Set what the camera should look at initially, and what it should follow.
         core.getCamera().setViewTo(core.getEarth());
-        
+
         // 1) Set the camera's "ViewFrom" property, to give the 
         // camera position a good initial VALUE: View Earth from the X axis.
         // 2) Set the camera's "ViewFrom" property AGAIN, to give the camera position a
@@ -295,11 +287,11 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         // /Erik P G Johansson 2015-11-10
         core.getCamera().setViewFrom(Camera.VIEW_FROM_X);   //  Fixed origin bug. /Fredrik Johansson 2015-0x-xx
         core.getCamera().setViewFrom(Camera.VIEW_CUSTOM);
-        
+
         // Using PARALLEL projection initially leads to camera clipping problems for unknown reason.
         // See comments on bug in class "Camera".
         core.getCamera().setProjection(Camera.PERSPECTIVE_PROJECTION); // Fix clipping bug Fredrik Johansson 15Sept2015
-        core.getCamera().setProjection(Camera.PARALLEL_PROJECTION);
+        //core.getCamera().setProjection(Camera.PARALLEL_PROJECTION);
         core.Render();
 
     }
@@ -408,30 +400,44 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * @param arg
      */
     public static void main(String[] arg) {
-        XYZWindow XYZwin = new XYZWindow();
-        XYZwin.start();
-        //XYZwin.quit();   // DEBUG
+        try {
 
+            final XYZWindow XYZwin = new XYZWindow();
+            XYZwin.start();
+            //XYZwin.quit();   // DEBUG
+
+        } catch (Throwable e) {
+            // NOTE: NOT using OVTCore#sendErrorMessage since the code should not
+            // rely on (OVTCore) "core" being successfully initialized here.
+            //
+            // NOTE: Not ideal since this does not take OVTCore#canDisplayGuiMessages
+            // into account like OVTCore#sendErrorMessage does.
+            // Use ovt.gui.ErrorMessageWindow?
+            if (!GraphicsEnvironment.isHeadless()) {
+                JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage(), "Fatal error", JOptionPane.ERROR_MESSAGE);
+            }
+            throw e;
+        }
     }
 
 
     public HTMLBrowser getHTMLBrowser() {
         return htmlBrowser;
     }
-    
-    
+
+
     public void setOMNI2SettingsWindowVisible(boolean visible) {
         this.omni2Win.setVisible(visible);
-        
+
     }
 
 
     /**
      * NOTE: Creates the JFrame-based object the first time it is requested and
      * then "caches it".
-     * 
+     *
      * NOTE: Takes care of error message.
-     * 
+     *
      * @return null if error when creating the window (may not be able to
      * download list of satellites). Otherwise a reference to the window.
      */
@@ -451,7 +457,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         return sscwsSatellitesSelectionWindow;
     }
 
-    
+
     public SSCWSSatellitesBookmarksModel getSSCWSBookmarksModel() {
         return sscwsBookmarks;
     }
@@ -574,7 +580,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
              used to find the satellite when removing it from the tree(?). */
             sat.setName(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
             sat.setOrbitFile(null);   // The only valid parameter value.
-        } catch (IOException|SSCWSLibrary.NoSuchSatelliteException e) {
+        } catch (IOException | SSCWSLibrary.NoSuchSatelliteException e) {
             getCore().sendErrorMessage(e);
             return;
         }
@@ -600,7 +606,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
             /*getCore().getSats().removeSat(sat);
              getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.*/
-        } catch (IOException|SSCWSLibrary.NoSuchSatelliteException e) {
+        } catch (IOException | SSCWSLibrary.NoSuchSatelliteException e) {
             getCore().sendErrorMessage(e);
         }
     }

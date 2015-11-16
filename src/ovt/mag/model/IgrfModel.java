@@ -5,6 +5,27 @@
  Date:      $Date: 2001/06/21 14:17:41 $
  Version:   $Revision: 2.1 $
 
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Yuri Khotyaintsev)
+ All rights reserved.
+ 
+ Redistribution and use in source and binary forms, with or without
+ modification is permitted provided that the following conditions are met:
+ 
+ * No part of the software can be included in any commercial package without
+ written consent from the OVT team.
+ 
+ * Redistributions of the source or binary code must retain the above
+ copyright notice, this list of conditions and the following disclaimer.
+ 
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
+ INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
+ 
+ OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ Khotyaintsev
 
  =========================================================================*/
 package ovt.mag.model;
@@ -12,7 +33,6 @@ package ovt.mag.model;
 import java.io.*;
 import java.util.*;
 
-import ovt.*;
 import ovt.mag.*;
 import ovt.util.*;
 import ovt.datatype.*;
@@ -44,7 +64,7 @@ import ovt.mag.model.GandHcoefs;
  */
 public class IgrfModel extends AbstractMagModel {
 
-    protected String igrfDatFileName = OVTCore.getMdataSubdir() + "igrf.d";
+    protected String igrfDataRelativePath;
     //public final static int ERROR_YEAR = -10000;
     //protected int year = ERROR_YEAR;    // Never used? Only assigned?!
 
@@ -86,6 +106,7 @@ public class IgrfModel extends AbstractMagModel {
      */
     public IgrfModel(MagProps magProps) {
         super(magProps);
+        igrfDataRelativePath = magProps.getCore().getMdataSubdir() + "igrf.d";  // NOTE: Will always produce a valid string.
     }
 
 
@@ -239,12 +260,12 @@ public class IgrfModel extends AbstractMagModel {
 
 
     /**
-     * Initializing GH coefs for year #year
+     * Initializing GH coeffs for year #year.
      */
-    public static void initHashTable(File dataFile, int year)
-            throws /*FileNotFoundException,*/ IOException {
+    public static void initHashTable(File igrfFile, int year)
+            throws IOException {
         if (!ghTable.containsKey(year)) {
-            initHashTableFromFile(dataFile, year, false);
+            initHashTableFromFile(igrfFile, year, false);
         }
     }
 
@@ -265,8 +286,10 @@ public class IgrfModel extends AbstractMagModel {
      * OVT to do so. libovt/magpack.c also reads "igrf.d". Therefore, the file
      * format (of "igrf.d") implicitly defined by the code here is not
      * automatically the same as that implicitly defined by the code in
-     * libovt/magpack.c. /Erik P G Johansson 2015-10-29 (who did not write the
-     * method)
+     * libovt/magpack.c.<BR>
+     * /Erik P G Johansson 2015-10-29 (who did not write the method)
+     *
+     * @param igrfFile Must not be null
      *
      * @param year Iff initHeader==true, then must be divisible by five and
      * within the range minY-maxY. Iff initHeader==false, then its value is
@@ -279,20 +302,30 @@ public class IgrfModel extends AbstractMagModel {
      * @throws IOException for misc. I/O errors, file format errors, AND invalid
      * year (not present in file).
      */
-    public static void initHashTableFromFile(File dataFile, int year, boolean initHeader)
+    public static void initHashTableFromFile(File igrfFile, int year, boolean initHeader)
             throws IOException {
+
+        // Check assertion:
+        // NOTE: File#isFile() checks for "normal" (non-directory) files.
+        if (!igrfFile.isFile()) {
+            throw new IOException("Can not find IGRF file \"" + igrfFile + "\"");
+        }
+
         int i_column, m_idx = -1, n_idx = -1;
         char ghMarker = '\0';
         float flt = 0.0F;
-        final String INVALID_FILE_FORMAT_EXCEPTION_MSG = "Invalid format of IGRF data file, \"" + dataFile.getCanonicalPath() + "\".";
+        // NOTE: Will throw exception if dataFile does not refer to an existing file.
+        // Therefore good to check for this first.
+        final String INVALID_FILE_FORMAT_EXCEPTION_MSG
+                = "Invalid format of IGRF data file, \"" + igrfFile.getCanonicalPath() + "\".";
         final BufferedReader inData;
         String str;
         final GandHcoefs ghCoefs = new GandHcoefs(Nmax);  // for Hashtable
 
         try {
-            inData = new BufferedReader(new FileReader(dataFile));
-        } catch (NullPointerException | FileNotFoundException e) {
-            throw new IOException("File " + dataFile + " not found.");
+            inData = new BufferedReader(new FileReader(igrfFile));
+        } catch (FileNotFoundException e) {
+            throw new IOException("File " + igrfFile + " not found.");
         }
 
         str = inData.readLine();
@@ -325,7 +358,8 @@ public class IgrfModel extends AbstractMagModel {
             }
 
             if (minY >= maxY) {
-                throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG + " Derived start year is greater than the derived end year.");
+                throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG
+                        + " Derived start year is greater than the derived end year.");
             }
 
             return;    // NOTE: EXIT and do nothing more!!
@@ -338,7 +372,7 @@ public class IgrfModel extends AbstractMagModel {
          * only contains data for every even five years.
          ==============================================================*/
         if ((year % 5) != 0 || (year < minY) || (maxY < year)) {
-            final String msg = "Can not read year from IGRF data file, \"" + dataFile.getCanonicalPath() + "\"."
+            final String msg = "Can not read year from IGRF data file, \"" + igrfFile.getCanonicalPath() + "\"."
                     + " The specified year (year=" + year + ") for this function is either (1) outside the allowed"
                     + " interval " + minY + "-" + maxY + " for which there is data in the IGRF data file, or (2) not divisible by 5.";
             throw new IOException(msg);
@@ -453,25 +487,25 @@ public class IgrfModel extends AbstractMagModel {
     }
 
 
-    /*
-     * Sets up coefficients <code>Gh</code> for magnetic field computation 
-     * and position of the eccentric dipole (re)
-     *   <code>Eccrr</code>, <code>Eccdx</code>, <code>Eccdy</code>, <code>Eccdz</code>
+    /**
+     * Sets up coefficients <code>Gh</code> for magnetic field computation and
+     * position of the eccentric dipole (re) <code>Eccrr</code>,
+     * <code>Eccdx</code>, <code>Eccdy</code>, <code>Eccdz</code>-
      *
-     * NOTE: Not to be confused with setIGRF(double mjd).
-     * NOTE: Code is only able to extrapolate forward in time, not backward.
-     * 
+     * NOTE: Not to be confused with setIGRF(double mjd). NOTE: Code is only
+     * able to extrapolate forward in time, not backward.
+     *
      * NOTE: Can send/display warning message.
-     *  
-     * NOTE: MINOR BUG -
-     * The g & h coefficients are interpolated to a non-integer year ("floatYear"),
-     * but the result is still stored in the cache with an entry which implies that
-     * the data is valid for an integer year (intYear)!
-     * This implies that the g & h coefficients (and hence GSM coordinates?)
-     * for a given year may be slightly different for different OVT sessions
-     * depending on which dates in a given year triggered filling the cache entry for that year.
-     * Note that IGRF data for years in the IGRF data file (igrf.d) are not overwritten
-     * since years already present in the cache are never overwritten.
+     *
+     * NOTE: MINOR BUG - The g & h coefficients are interpolated to a
+     * non-integer year ("floatYear"), but the result is still stored in the
+     * cache with an entry which implies that the data is valid for an integer
+     * year (intYear)! This implies that the g & h coefficients (and hence GSM
+     * coordinates?) for a given year may be slightly different for different
+     * OVT sessions depending on which dates in a given year triggered filling
+     * the cache entry for that year. Note that IGRF data (in RAM) for years in
+     * the IGRF data file (igrf.d) are not overwritten since years already
+     * present in the cache are never overwritten.<BR>
      * /Erik P G Johansson 2015-10-29 (who did not write the code)
      *
      * @see #Gh #Eccrr #Eccdx #Eccdy #Eccdz
@@ -486,13 +520,19 @@ public class IgrfModel extends AbstractMagModel {
         float w1a = 0.0F, w2a = 0.0F;  // Constants for interpolation (weights) or extrapolation. Initial values are used in case of exception (initHashTable).
 
         try {
-            final File igrfDatFile = Utils.findFile(igrfDatFileName);
+            final File igrfFile = Utils.findExistingFile(igrfDataRelativePath);   // throws FileNotFoundException
+//            if (igrfFile == null) {
+//                // NOTE: It is not ideal to have only the relative path in the error message, but since
+//                // Utils.findFile does not say anything about where it looked for files, this will have to do.
+//                throw new FileNotFoundException("Can not find IGRF data file \"" + igrfDataRelativePath + "\" (relative path).");
+//            }
             if (!hasReadGHSVCoefficients) {     // Starting for the first time
-                initHashTableFromFile(igrfDatFile, 0, true);   // "Initialize cache".
+                initHashTableFromFile(igrfFile, 0, true);   // "Initialize cache".
             }
 
             // Derive floorY and ceilY (both divisible by five) defining
             // a five-year interval containing "year" (and "floatYear").
+            // If uses extrapolation, the interval could be greater than five years.
             int floorY = (int) (intYear / 10) * 10;
             //if((intYear-floorY)>5) { // NOTE: Years XXX[0-5] (six-year interval) ==> floorY=XXX0, whereas years XXX[6-9] (four-year interval) ==> floorY=XXX5
             if ((intYear - floorY) >= 5) {
@@ -507,17 +547,22 @@ public class IgrfModel extends AbstractMagModel {
 
             // Request g & h coefficients for year "floorY".
             // NOTE: Should ideally be sure that one only reads data that originates from the IGRF data file.
-            initHashTable(igrfDatFile, floorY);
+            initHashTable(igrfFile, floorY);
             final GandHcoefs ghFloor = (GandHcoefs) ghTable.get(floorY);
 
             final GandHcoefs ghCeil;  // g & h coefficients for year ceilY, OR(!) secular variation (year^-1) for g & h coefficients.
             // Assign ghCeil, and construct constants used for interpolation or extrapolation.
             if (ceilY <= maxY) {
                 // CASE: Prepare for interpolation. We do not use the additional column (secular variation).
-                initHashTable(igrfDatFile, ceilY);   // Requesting CEIL year
+                initHashTable(igrfFile, ceilY);   // Requesting CEIL year
                 ghCeil = (GandHcoefs) ghTable.get(ceilY);
                 w1a = ((float) ceilY - floatYear) / (float) (ceilY - floorY);
                 w2a = 1.0F - w1a;
+
+                // Not the ideal place to reset since the code might not reach
+                // this point due to ("31 day") caching functionality.
+                // Not entirely bad either though.
+                hasShownExtrapolationWarning = false;
             } else {
                 // CASE: Last additional column (secular variation) has been used. Prepare for extrapolation.
                 w1a = 1.0F;
@@ -526,16 +571,23 @@ public class IgrfModel extends AbstractMagModel {
 
                 if ((w2a > EXTRAPOLATION_WARNING_THRESHOLD_YEARS) & (!hasShownExtrapolationWarning)) {
 
-                    // NOTE: Command will automatically not display warning dialog window
-                    // during launch when there is no GUI present.
-                    // NOTE: "This warning will not be displayed again" is technically wrong for putting in the log.
+                    // NOTE: This code can be triggered during OVT launch,
+                    // during the splash screen.
+                    // NOTE: "This warning will not be displayed again" is
+                    // technically wrong when putting message in the log.
                     this.magProps.getCore().sendWarningMessage(
-                            "Extrapolating IGRF data",
-                            "Extrapolating " + (int) w2a + " years"
+                            "Excessive extrapolation",
+                            "Extrapolating IGRF data " + (int) w2a + " years"
                             + " into the future from the last year with data (" + floorY + ")"
-                            + " in \"" + igrfDatFile.getCanonicalPath() + "\"."
-                            + "\nThis warning will not be displayed again.");
-                    if (OVTCore.isGuiPresent()) {
+                            + " in \"" + igrfFile.getCanonicalPath() + "\"."
+                    //                            + "\n"+OVTCore.SIMPLE_APPLICATION_NAME+" permits this.
+                    //                            + "\nThis warning will not be displayed again."
+                    );
+
+                    // Assumes that sendWarningMessage displayed message only if
+                    // canDisplayGuiMessages()==true. Not really good to rely on
+                    // implementation detail.
+                    if (magProps.getCore().canDisplayGuiMessages()) {
                         hasShownExtrapolationWarning = true;
                     }
                 }//*/
@@ -584,9 +636,11 @@ public class IgrfModel extends AbstractMagModel {
             // NOTE: Bad way of handling exception but not sure of what would be better.
             // If failure to read IGRF data file due to using a high year, then 
             // it will/should lead to all coefficients being zero. ==> Dipole direction and GSM undefined.
+            //
             // NOTE: Error should preferably lead to erronoues g & h values not being stored in the cache at least(?).
             e.printStackTrace();
             System.out.println(e);
+            this.magProps.getCore().sendErrorMessage("I/O error when reading IGRF data", e);
         }
 
         // Calculating (recalculating) Gh
@@ -613,7 +667,7 @@ public class IgrfModel extends AbstractMagModel {
                 k += 2;
             }
         }
-     //this.year=year;
+        //this.year=year;
 
         // Calculating (recalculating) d?,Eccrr, ...
         final double h0
@@ -666,12 +720,12 @@ public class IgrfModel extends AbstractMagModel {
         //IgrfModel igrf = new IgrfModel(null);
         //igrf.setIgrf(1993.34F);        
         //File file = new File("/home/erjo/.ovt/3.0/mdata/igrf.d_new");
-        File file = new File("/home/erjo/.ovt/3.0/mdata/igrf.d_old");
+        File igrfFilePath = new File("/home/erjo/.ovt/3.0/mdata/igrf.d_old");
 
-        IgrfModel.initHashTableFromFile(file, 2000, true);
-        IgrfModel.initHashTable(file, 2010);
-        IgrfModel.initHashTable(file, 2015);
-        IgrfModel.initHashTable(file, 2020);
+        IgrfModel.initHashTableFromFile(igrfFilePath, 2000, true);
+        IgrfModel.initHashTable(igrfFilePath, 2010);
+        IgrfModel.initHashTable(igrfFilePath, 2015);
+        IgrfModel.initHashTable(igrfFilePath, 2020);
         for (int i = 1999; i <= 2010; i += 2) {
             //IgrfModel igrf = new IgrfModel(null);
             //igrf.setIgrf((float) i);

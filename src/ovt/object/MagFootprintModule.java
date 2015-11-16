@@ -114,7 +114,6 @@ implements MagPropsChangeListener, MenuItemsSource, BeansSource {
 
     public void update() {
         OVTCore.setStatus("Computing footprints for " + getSat().getName());
-        int k;
         Fieldline f_l;
         FieldlineCollection f_l_coll;
         MagPoint magPoint;

@@ -38,13 +38,11 @@ Khotyaintsev
  
 package ovt.mag;
 
-import java.util.Arrays;
+import java.io.FileNotFoundException;
+import javax.swing.JOptionPane;
 import ovt.*;
 import ovt.mag.*;
-import ovt.model.magnetopause.*;
 import ovt.util.*;
-import ovt.event.*;
-import ovt.object.*;
 import ovt.datatype.*;
 import ovt.interfaces.*;
 
@@ -99,13 +97,28 @@ public static final int G2       = 6;
   
 //------------------- field-line tracing  ---------------------------
 
+  /** The native code implementation (magpack.c) appears to set an internal
+   * variable that is then used by other (native code) functions in the same file.
+   * If this is not a valid path, then that can probably trigger later crashes
+   * in the native code.
+   * /Erik P G Johansson 2015-11-13.
+   */
 protected static native void mdirectoryJNI(String Dir);
 
+
+
 static {
-    
-    mdirectoryJNI(Utils.findFile(OVTCore.getMdataSubdir() +"igrf.d").getAbsolutePath());
-    //mdirectoryJNI(Utils.findFile(OVTCore.getMdataSubdir() +"igrf.d").getAbsolutePath().substring(0,42));
-    //    mdirectoryJNI(OVTCore.getMdataSubdir());
+    Log.log(Trace.class.getCanonicalName()+"#<static init>", 2);
+    try {
+        final String igrfdPath = Utils.findExistingFile(OVTCore.getMdataSubdir() +"igrf.d").getAbsolutePath();
+        Log.log(Trace.class.getCanonicalName()+"#<static init> : mdirectoryJNI(igrfdPath = \""+igrfdPath+"\")", 2);
+        mdirectoryJNI(igrfdPath);
+    } catch (FileNotFoundException e) {
+        
+        // TEMPORARY / DEBUG
+        Log.log(Trace.class.getCanonicalName()+"#<static init> : Error: "+e.getMessage(), 0);
+        JOptionPane.showMessageDialog(null, e.getMessage(), "Could not find file", JOptionPane.ERROR_MESSAGE);
+    }
 }
 
 public static void lastline (MagProps magProps, double mjd, double rv[], double dir[], int idir, double alt) {
@@ -187,42 +200,8 @@ public static void lastline(MagProps magProps, double mjd, double rv[], double d
   }
   
   
-// Values taken from execution (values can be deleted). Taken from call that did not crash.
-// Should not crash for these values. - May still crash at other location!
-//mjd = 9501.875462962964;
-//rv = new double[] {-30.0, 12.115195762659873, -20.98413600040557};
-//dir = new double[] {0.0, 12.115195762659873, -20.98413600040557};
-//xlim = -30.0;
-//alt = 25484.8;
-//idir = -1;
-//epst = 0.05;
-//InternalModel = 10;
-//ExternalModel = 87;
-//Factor = 1.0;
-//isMPClip = 1;
-//dataTsxx = new double[] {0.0, -0.2940585331432647, 0.9557874131236671, 1.8, 0.0, 0.0, 0.0};
-//   
-//  System.out.println("=============================================");
-//  System.out.println("mjd = "+mjd+";");
-//  System.out.println("rv = "+Arrays.toString(rv));
-//  System.out.println("dir = "+Arrays.toString(dir));
-//  System.out.println("xlim = "+xlim+";");
-//  System.out.println("alt = "+alt+";");
-//  System.out.println("idir = "+idir+";");
-//  System.out.println("epst = "+epst+";");
-//  System.out.println("InternalModel = "+InternalModel+";");
-//  System.out.println("ExternalModel = "+ExternalModel+";");
-//  System.out.println("Factor = "+Factor+";");
-//  System.out.println("isMPClip = "+isMPClip+";");
-//  System.out.println("dataTsxx = "+Arrays.toString(dataTsxx));
   lastlineJNI(mjd, rv, dir, xlim, alt, idir, epst, InternalModel, ExternalModel, Factor, isMPClip, dataTsxx);
-// (env, cls, mjd, jrv, jdir, xlim, alt, idir, epst, IntMod, ExtMod, Factr, isMPClip, jdataTs)
-//  System.out.println("-----------------------------");
-//  System.out.println("rv = "+Arrays.toString(rv));    // Is updated
-//  System.out.println("dir = "+Arrays.toString(dir));   // Is updated.
-//  System.out.println("dataTsxx = "+Arrays.toString(dataTsxx));    // Does not seem to be updated.
-//  System.out.println("=============================================");
-
+  //         (env, cls, mjd, jrv, jdir, xlim, alt, idir, epst, IntMod, ExtMod, Factr, isMPClip, jdataTs)
 }
 
 
@@ -258,7 +237,6 @@ public static Fieldline traceline(MagProps magProps, double mjd, double[] rv, do
  *         for T96 model:      SWP, DSTIndex,Imf_z,Imf_y,TILT
  *         if isMPClip = 1 :   SWP,Imf_z for all models
  */
-
 protected static native void tracelineJNI(double mjd, double[] rv, double alt, double step, int is, double xlim, int mx,
    double[] xx,double[] yy, double[] zz, double[] ss, double[] bx, double[] by,double[] bz,
    int IM, int EM, double Factor, int isMPClip, int[] n, double[] datTs);
@@ -522,14 +500,15 @@ public int rhand(double s, double r[], double drds[]) {
 
 class BsstepOutput {
 
-        public double x=0;
-        public double hnext = 0;
-        public int error=0;
+    public double x = 0;
+    public double hnext = 0;
+    public int error = 0;
 
-BsstepOutput(double ex, double hanext, int err) {
+
+    BsstepOutput(double ex, double hanext, int err) {
         x = ex;
         hnext = hanext;
         error = err;
-}
+    }
 }
 

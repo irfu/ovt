@@ -451,13 +451,13 @@ public class Utils extends Object {
 
 
     /**
-     * Convert from Cartesian to spherical coordinates.
-     * Returns R, Delta, Alpha in degrees
-     * 
+     * Convert from Cartesian to spherical coordinates. Returns R, Delta, Alpha
+     * in degrees
+     *
      * x = r*cos(delta)*cos(phi)<BR>
      * y = r*cos(delta)*sin(phi)<BR>
      * z = r*sin(delta)<BR>
-     * 
+     *
      * phi = atan(y/x)<BR>
      * delta = asin(z/r)<BR>
      * r = sqrt(x*x + y*y + z*z)<BR>
@@ -467,7 +467,7 @@ public class Utils extends Object {
         final int X = 0;
         final int Y = 1;
         final int Z = 2;
-        
+
         final double radius = Math.sqrt(xyz[X] * xyz[X] + xyz[Y] * xyz[Y] + xyz[Z] * xyz[Z]);
         double arg, phi, delta;
 
@@ -701,11 +701,45 @@ public class Utils extends Object {
      * NOTE: The return result from ClassLoader#getResource can refer to a file
      * inside a ".jar" file.
      *
+     * NOTE: Indirectly uses System.getProperty("user.dir") which neither
+     * findSysDir or findUserDir does.
+     *
+     * NOTE: "Legacy method" which wraps a newer method to produce the same
+     * behaviour as the older implementation.
+     *
+     * @param fileName Relative path to a file.
+     *
+     * @return Null, if no existing (non-directory) file was found.
+     */
+    public static File findFile(String fileName) {
+        if (fileName == null) {
+            return null;
+        }
+
+        try {
+            return findExistingFile(fileName);
+        } catch (FileNotFoundException e) {
+            return null;
+        }
+    }
+
+
+    /**
+     * Modified version of older (until 2015-11-16) findFile method. This
+     * version throws an exception for non-existing files which makes it
+     * possible to display proper error messages with the path(s) that were
+     * tried.
+     *
+     * Looks for existing file at path relative to, in order, (1) the current
+     * directory, (2) OVTCore#getUserDir()) (home directory), (3) some
+     * "resource".
+     *
      * NOTE: Uses System.getProperty("user.dir") which neither findSysDir or
      * findUserDir does.
+     *
+     * @param fileName Relative path to an existing file. Must not be null.
      */
-    /* OLD IMPLEMENTATION 2015-04-24 */
-    public static File findFile(String fileName) {
+    public static File findExistingFile(String fileName) throws FileNotFoundException {
         {
             // DEBUG
             /*Log.log("Utils#findFile(fileName="+fileName+")");
@@ -715,33 +749,32 @@ public class Utils extends Object {
              Log.log("   Second suggestion (resource): "+tempStr, 2);*/
         }
 
-        if (fileName == null) { //if the filename is bogus, return null
-            return null;
-        }
-
         // Property "user.dir" = "User working directory".
         // Appears to be the directory where the code is run(?).
-        File file = new File(System.getProperty("user.dir") + File.separator + fileName); // check if file is in current working directory
+        final String path1 = System.getProperty("user.dir") + File.separator + fileName;
+        Log.log("findExistingFile : path1 = "+path1, 2);
+        File file = new File(path1);
         if (!file.exists() | file.isDirectory()) {
-            file = null;
-        }
-        if (file == null) {
-            //System.out.println(System.getProperty("user.dir")+File.separator+  fileName + " not found, checking elsewhere");
 
-            file = new File(OVTCore.getUserDir() + fileName);
+            final String path2 = OVTCore.getUserDir() + fileName;
+            Log.log("findExistingFile : path2 = "+path2, 2);
+            file = new File(path2);
 
             if (!file.exists() | file.isDirectory()) {
-                file = null;
-            }
-            if (file == null) {
                 final ClassLoader classLoader = OVTCore.class.getClassLoader();
                 final java.net.URL fn = classLoader.getResource(fileName);
                 if (fn == null) {
-                    return null;
+//                    return null;
+                    throw new FileNotFoundException("Could neither find file \""
+                            + path1 + "\" or \"" + path2 + "\", nor resource \"" + fileName + "\".");
                 }
-                file = new File(fn.getFile());
+                final String path3 = fn.getFile();
+                Log.log("findExistingFile : path3 = "+path3, 2);
+                file = new File(path3);
                 if (!file.exists() | file.isDirectory()) {
-                    file = null;
+//                    file = null;
+                    throw new FileNotFoundException("Could neither find file \""
+                            + path1 + "\", \"" + path2 + "\", nor \"" + path3 + "\".");
                 }
             }
         }
@@ -1294,14 +1327,12 @@ public class Utils extends Object {
             double[] Y_int_result,
             double[] Yp_int_result,
             SplineInterpolationBC bcL, SplineInterpolationBC bcU) {
-        
+
         /* Naming convention:
          _int = interpolated (interpolation) point.
          Lower case initial = individual nbr (scalar).
          Upper case initial = array.
          */
-
-       
         // Argument checks
         if ((X.length != Y.length)
                 | (X_int.length != Y_int_result.length)

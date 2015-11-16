@@ -51,7 +51,9 @@ import java.io.*;
  * @version 
  */
 public class Log extends Object {
+    
     protected static PrintStream out = System.err;
+    
     // 0 - no debug
     // 1 - some essential things
     protected static int debugLevel = 0;

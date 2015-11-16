@@ -118,7 +118,7 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     final int nbrOfSteps = ts.getNumberOfValues();
     if (nbrOfSteps > NBR_OF_STEPS_BEFORE_WARNING)
         getCore().sendWarningMessage(
-                "Warning", "Using a very high number of steps ("+nbrOfSteps+")."
+                "Using high number of steps", "Using a very high number of steps ("+nbrOfSteps+")."
                 + " This may slow down the application."
                 //+ " (Warning triggered when exceeding "+NBR_OF_STEPS_BEFORE_WARNING+" steps.)"
         );

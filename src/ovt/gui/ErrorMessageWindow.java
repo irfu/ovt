@@ -54,12 +54,12 @@ import javax.swing.border.*;
 public class ErrorMessageWindow extends JDialog  {
     private final static String SHOW_DETAILS = "Details >>";
     private final static String HIDE_DETAILS   = "<< Details";
-    private Exception e = new Exception();
-    private JLabel messageLabel = new JLabel();
-    private JButton okButton = new JButton("OK");
-    private JButton detailsButton = new JButton(SHOW_DETAILS);
-    private JTextArea detailsTA = new JTextArea(25, 80);
-    private JScrollPane detailsPanel = new JScrollPane();
+    private final Exception e = new Exception();
+    private final JLabel messageLabel = new JLabel();
+    private final JButton okButton = new JButton("OK");
+    private final JButton detailsButton = new JButton(SHOW_DETAILS);
+    private final JTextArea detailsTA = new JTextArea(25, 80);   // TA = Text Area
+    private final JScrollPane detailsPanel = new JScrollPane();
     
     /** Creates a new instance of ErrorMessageWindow */
     public ErrorMessageWindow(Frame owner, Exception e) {
