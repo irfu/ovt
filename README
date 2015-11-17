@@ -128,7 +128,8 @@ Before release:
 
 jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkestore.jks> -storepass $PASS <path_to_ovt.jar> server
 
-replace local paths and $PASS with keystone(?!!) password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
+Replace local paths and $PASS with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
+
 
 
 ===================================================================

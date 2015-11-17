@@ -101,6 +101,8 @@ public static final int G2       = 6;
    * variable that is then used by other (native code) functions in the same file.
    * If this is not a valid path, then that can probably trigger later crashes
    * in the native code.
+   * 
+   * 
    * /Erik P G Johansson 2015-11-13.
    */
 protected static native void mdirectoryJNI(String Dir);

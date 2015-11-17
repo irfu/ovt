@@ -277,17 +277,17 @@ public class IgrfModel extends AbstractMagModel {
      * IgrfModel.ghTable. Make sure that IgrfModel.ghSVCoefficients contains the
      * corresponding information for the column for secular variation.
      *
-     * NOTE: The way of handling errors is not that great. Should ideally be
-     * translated into error messages for the user (and block the change of
-     * time) but not sure of a good way to do this.<BR>
-     * /Erik P G Johansson 2015-10-29 (who did not write the method)
-     *
      * NOTE: This code reads data file "igrf.d" but it is not the only code in
      * OVT to do so. libovt/magpack.c also reads "igrf.d". Therefore, the file
      * format (of "igrf.d") implicitly defined by the code here is not
      * automatically the same as that implicitly defined by the code in
      * libovt/magpack.c.<BR>
      * /Erik P G Johansson 2015-10-29 (who did not write the method)
+     *
+     * NOTE: The way of handling errors is not that great. Should ideally be
+     * translated into error messages for the user (and block the change of
+     * time) but I am not sure of a good way to do this.<BR>
+     * /Erik P G Johansson 2015-11-17 (who did not write the method)
      *
      * @param igrfFile Must not be null
      *
@@ -308,18 +308,18 @@ public class IgrfModel extends AbstractMagModel {
         // Check assertion:
         // NOTE: File#isFile() checks for "normal" (non-directory) files.
         if (!igrfFile.isFile()) {
-            throw new IOException("Can not find IGRF file \"" + igrfFile + "\"");
+            throw new IOException("Can not find IGRF data file \"" + igrfFile + "\".");
         }
 
-        int i_column, m_idx = -1, n_idx = -1;
+        int m_idx = -1, n_idx = -1;
         char ghMarker = '\0';
-        float flt = 0.0F;
         // NOTE: Will throw exception if dataFile does not refer to an existing file.
         // Therefore good to check for this first.
         final String INVALID_FILE_FORMAT_EXCEPTION_MSG
-                = "Invalid format of IGRF data file, \"" + igrfFile.getCanonicalPath() + "\".";
+                //                = "Invalid format of IGRF data file, \"" + igrfFile.getCanonicalPath() + "\".";
+                = "The IGRF data file has an invalid format, \"" + igrfFile.getCanonicalPath() + "\".";
         final BufferedReader inData;
-        String str;
+        ;
         final GandHcoefs ghCoefs = new GandHcoefs(Nmax);  // for Hashtable
 
         try {
@@ -328,15 +328,15 @@ public class IgrfModel extends AbstractMagModel {
             throw new IOException("File " + igrfFile + " not found.");
         }
 
-        str = inData.readLine();
+        final String firstLine = inData.readLine();
 
         if (initHeader) {
             //====================================================================
             // Read header (column names) and initialize this.minY and this.maxY.
             // Then exit.
             //====================================================================
-            final StringTokenizer hdTok = new StringTokenizer(str);
-            i_column = 0;
+            final StringTokenizer hdTok = new StringTokenizer(firstLine);
+            int i_column = 0;
             while (hdTok.hasMoreTokens()) {
                 ++i_column;          // Skipping the first three "g/h n m" fields.
                 final String tempStr = hdTok.nextToken();
@@ -359,7 +359,7 @@ public class IgrfModel extends AbstractMagModel {
 
             if (minY >= maxY) {
                 throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG
-                        + " Derived start year is greater than the derived end year.");
+                        + " The derived start year is greater than the derived end year.");
             }
 
             return;    // NOTE: EXIT and do nothing more!!
@@ -372,10 +372,10 @@ public class IgrfModel extends AbstractMagModel {
          * only contains data for every even five years.
          ==============================================================*/
         if ((year % 5) != 0 || (year < minY) || (maxY < year)) {
-            final String msg = "Can not read year from IGRF data file, \"" + igrfFile.getCanonicalPath() + "\"."
+            final String msg = "Can not read year."
                     + " The specified year (year=" + year + ") for this function is either (1) outside the allowed"
                     + " interval " + minY + "-" + maxY + " for which there is data in the IGRF data file, or (2) not divisible by 5.";
-            throw new IOException(msg);
+            throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG + "\n" + msg);
         }
 
         // Is this year in Hashtable?
@@ -386,36 +386,48 @@ public class IgrfModel extends AbstractMagModel {
         //===================================
         // Read g & h coeffs. for year ##year
         //===================================
-        final int neededCol = 4 + (year - minY) / 5;          // Definition of needed column
+        // The number of required columns (excluding secular variation column which is optional).
+        // NOTE: N_requiredColumns refers to the number of required columns
+        // for the current request. Hence the number may vary even for the same file.
+        final int N_requiredColumns = 3 + 1 + (year - minY) / 5;
+
         while (inData.ready()) {  // Iterate over rows in file.
-            str = inData.readLine();
-            if (str == null) {
+            /* Java API, BufferedReader#readLine():
+             * "Returns: A String
+             * containing the contents of the line, not including any
+             * line-termination characters, or null if the end of the stream has
+             * been reached" */
+            final String currentLine = inData.readLine();
+            if (currentLine == null) {
                 break;
             }
-            final StringTokenizer tokGH = new StringTokenizer(str);
-            i_column = 0;                   // Number of parsed columns
+            final StringTokenizer tokGH = new StringTokenizer(currentLine);
+            int i_column = 0;               // Number of parsed columns (i_column==1 means first column).
             while (tokGH.hasMoreTokens()) {  // Parsing one row in file. - Iterate over tokens on row.
                 ++i_column;
-                final String tmps = tokGH.nextToken();
+                final String tokenStr = tokGH.nextToken();
                 switch (i_column) {
                     case 1:                  // g/h marker
-                        char tmpc[] = tmps.toCharArray();
+                        char tmpc[] = tokenStr.toCharArray();
                         ghMarker = tmpc[0];
                         break;
                     case 2:                  // getting n index
-                        n_idx = Integer.parseInt(tmps);
+                        n_idx = Integer.parseInt(tokenStr);
                         break;
                     case 3:                  // getting m index
-                        m_idx = Integer.parseInt(tmps);
+                        m_idx = Integer.parseInt(tokenStr);
                         break;
                 }
-                if (i_column == neededCol) {           // Found the needed column!
-                    flt = Float.parseFloat(tmps);
+
+                if (i_column == N_requiredColumns) {           // Found the requested column!
+                    final float flt = Float.parseFloat(tokenStr);
 
                     if (n_idx > Nmax || m_idx > Nmax || n_idx < 0 || m_idx < 0) {
                         // NOTE: Best to give proper error message since it is not
                         // obvious that there is an upper limit to n.
-                        throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG + " Can not interpret n and/or m indices. (Can e.g. only read up to n=" + Nmax + ")");
+                        throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG
+                                + " Can not interpret n and/or m indices."
+                                + " (For example, the code can only read up to n,m=" + Nmax + ")");
                     }
 
                     switch (ghMarker) {
@@ -426,14 +438,15 @@ public class IgrfModel extends AbstractMagModel {
                             ghCoefs.setHcoefs(n_idx, m_idx, flt);
                             break;
                         default:
-                            throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG);
+                            throw new IOException(
+                                    INVALID_FILE_FORMAT_EXCEPTION_MSG + " First column is neither g nor h.");
                     }
                 } else if (!tokGH.hasMoreTokens()) {  // Is last column?
                     if (hasReadGHSVCoefficients) // ghSVCoefficients already loaded
                     {
                         break;                // goto the next line
                     } else {                   // loading ghSVCoefficients
-                        flt = Float.parseFloat(tmps);
+                        final float flt = Float.parseFloat(tokenStr);
                         switch (ghMarker) {
                             case 'g':
                                 ghSVCoefficients.setGcoefs(n_idx, m_idx, flt);
@@ -442,15 +455,31 @@ public class IgrfModel extends AbstractMagModel {
                                 ghSVCoefficients.setHcoefs(n_idx, m_idx, flt);
                                 break;
                             default:
-                                throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG);
+                                throw new IOException(
+                                        INVALID_FILE_FORMAT_EXCEPTION_MSG + " First column is neither g nor h.");
                         }
                     }
                 }
 
             }
-            // CASE: Iterated over all tokens/columns
-            if (i_column < neededCol) {
-                throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG);
+            // CASE: The code has finished iterating over all tokens/columns on the current line.
+            if (i_column < N_requiredColumns) {
+                /**
+                 * IMPORTANT NOTE: magpack.c also reads "igrf.d" and can not
+                 * handle empty lines (it crashes the application). Therefore
+                 * this Java code implicitly checks for that too rather than
+                 * permit and ignore them. This way, the user has a chance to
+                 * get a meaningful error message before then.<BR>
+                 * /Erik P G Johansson 2015-11-17
+                 *
+                 * NOTE: N_requiredColumns refers to the number of required
+                 * columns for the current request. Hence the number may vary
+                 * even for the same file and should probably NOT be in the
+                 * error message.
+                 */
+                throw new IOException(INVALID_FILE_FORMAT_EXCEPTION_MSG
+                        + " Found a line with " + i_column + " columns which is"
+                        + " fewer than expected.");
             }
         }
         inData.close();
@@ -580,8 +609,7 @@ public class IgrfModel extends AbstractMagModel {
                             "Extrapolating IGRF data " + (int) w2a + " years"
                             + " into the future from the last year with data (" + floorY + ")"
                             + " in \"" + igrfFile.getCanonicalPath() + "\"."
-                    //                            + "\n"+OVTCore.SIMPLE_APPLICATION_NAME+" permits this.
-                    //                            + "\nThis warning will not be displayed again."
+                            + "\nNOTE: This warning will NOT be displayed everytime this occurs."
                     );
 
                     // Assumes that sendWarningMessage displayed message only if
