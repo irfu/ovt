@@ -94,4 +94,10 @@ public class Log extends Object {
             out.println(" " + str);
         }
     }
+    
+    public static void printStackTraceOnOut(Exception e) {
+        // NOTE: Throwable#printStackTrace prints both the contents of
+        // the exception (message, toString()) and the stack trace.
+        e.printStackTrace(out);
+    }
 }

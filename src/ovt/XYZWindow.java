@@ -51,6 +51,8 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
 
 /**
  * Represents OVT's main window. Contains OVT's global "main" method.
+ * 
+ * PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command line argument if there is one?
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -413,6 +415,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             // NOTE: Not ideal since this does not take OVTCore#canDisplayGuiMessages
             // into account like OVTCore#sendErrorMessage does.
             // Use ovt.gui.ErrorMessageWindow?
+            //
+            // NOTE: Does NOT seem to capture crashing native code.
             if (!GraphicsEnvironment.isHeadless()) {
                 JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage(), "Fatal error", JOptionPane.ERROR_MESSAGE);
             }

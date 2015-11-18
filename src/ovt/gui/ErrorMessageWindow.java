@@ -35,6 +35,9 @@ Khotyaintsev
  * ErrorMessageWindow.java
  *
  * Created on ?'??????, 12, ??????? 2003, 12:18
+ *
+ * NOTE: Only displays message originating from an exception. It does not appear
+ * the caller can add extra text for context.
  */
 
 package ovt.gui;

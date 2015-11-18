@@ -102,8 +102,6 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
 
     /**
-     * NOTE: xyzWin == null can be used for test code.
-     *
      * @throws IOException if the initialization can not obtain list of SSCWS
      * satellites. There should NEVER be a window with an empty list since OVT
      * will reuse the window (the object) when the user asks for it again AND

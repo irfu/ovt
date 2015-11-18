@@ -306,7 +306,11 @@ public class IgrfModel extends AbstractMagModel {
             throws IOException {
 
         // Check assertion:
-        // NOTE: File#isFile() checks for "normal" (non-directory) files.
+        // ----------------
+        // NOTE: From testing, File#isFile() returns
+        // true : symbolic link (linux) which points to an existing file which is not a directory.
+        // false : symbolic link (linux) which points to a non-existing file or to an existing directory.
+        // false : existing directory
         if (!igrfFile.isFile()) {
             throw new IOException("Can not find IGRF data file \"" + igrfFile + "\".");
         }
@@ -315,11 +319,10 @@ public class IgrfModel extends AbstractMagModel {
         char ghMarker = '\0';
         // NOTE: Will throw exception if dataFile does not refer to an existing file.
         // Therefore good to check for this first.
+        // NOTE: File#getCanonicalPath() will resolve symbolic links whereas File#getAbsolutePath() will not. 
         final String INVALID_FILE_FORMAT_EXCEPTION_MSG
-                //                = "Invalid format of IGRF data file, \"" + igrfFile.getCanonicalPath() + "\".";
-                = "The IGRF data file has an invalid format, \"" + igrfFile.getCanonicalPath() + "\".";
+                = "The IGRF data file has an invalid format, \"" + igrfFile.getAbsolutePath() + "\".";
         final BufferedReader inData;
-        ;
         final GandHcoefs ghCoefs = new GandHcoefs(Nmax);  // for Hashtable
 
         try {
@@ -666,8 +669,7 @@ public class IgrfModel extends AbstractMagModel {
             // it will/should lead to all coefficients being zero. ==> Dipole direction and GSM undefined.
             //
             // NOTE: Error should preferably lead to erronoues g & h values not being stored in the cache at least(?).
-            e.printStackTrace();
-            System.out.println(e);
+            Log.printStackTraceOnOut(e);
             this.magProps.getCore().sendErrorMessage("I/O error when reading IGRF data", e);
         }
 

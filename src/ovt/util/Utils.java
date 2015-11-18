@@ -55,6 +55,9 @@ import ovt.datatype.*;
  */
 public class Utils extends Object {
 
+    private static final int findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL = 2;
+
+
     /**
      * Private constructor to prevent instantiation.
      */
@@ -725,63 +728,159 @@ public class Utils extends Object {
 
 
     /**
-     * Modified version of older (until 2015-11-16) findFile method. This
-     * version throws an exception for non-existing files which makes it
-     * possible to display proper error messages with the path(s) that were
-     * tried.
+     * Looks for existing (non-directory) file at a path relative to, in
+     * order,<BR>
+     * (1) the current directory,<BR>
+     * (2) OVTCore#getUserDir()) (home directory),<BR>
+     * (3) some "resource" (probably the applications directory) (?).<BR>
+     * Returns the first existing non-directory file that is found.
      *
-     * Looks for existing file at path relative to, in order, (1) the current
-     * directory, (2) OVTCore#getUserDir()) (home directory), (3) some
-     * "resource".
-     *
-     * NOTE: Uses System.getProperty("user.dir") which neither findSysDir or
+     * NOTE: Uses System.getProperty("user.dir") which neither findSysDir nor
      * findUserDir does.
      *
+     * NOTE: Rewritten version of older (until 2015-11-16) Utils#findFile
+     * method. This version throws an exception (rather than return null) for
+     * non-existing files which makes it possible to display proper error
+     * messages with the path(s) that were tried.
+     *
      * @param fileName Relative path to an existing file. Must not be null.
+     *
+     * @returns Always a (non-null) File object for which File#isFile() returns
+     * true, i.e. a non-directory file. If it is a symbolic link (Linux), then
+     * the symbolic link refers to an existing (non-directory) file.
+     * @throws FileNotFoundException when no file was found at any of the
+     * locations tried.
      */
     public static File findExistingFile(String fileName) throws FileNotFoundException {
-        {
-            // DEBUG
-            /*Log.log("Utils#findFile(fileName="+fileName+")");
-             Log.log("   First suggestion (file path): "+OVTCore.getUserDir() + fileName, 2);
-             final java.net.URL tempURL = OVTCore.class.getClassLoader().getResource(fileName);
-             final String tempStr = String.valueOf(tempURL);
-             Log.log("   Second suggestion (resource): "+tempStr, 2);*/
-        }
+        /*
+         * NOTE: "File" class seems to represent a path (i.e. a _string_) regardless of
+         * whether it represents something on disk or not. Therefore the
+         * constructor accepts any non-null string. Exceptions due to
+         * non-sensical paths are trown first later when using the File object.
+         *
+         * NOTE: Do not confuse File#isFile and File#exists(). The latter does
+         * not distinguish file & directories.
+         *
+         * NOTE: From testing, File#isFile() returns:
+         * true : Symbolic link (Linux) which points to an existing file which is not a directory.
+         * false : Symbolic link (Linux) which points to a non-existing (non-directory) file or to an existing directory.
+         * false : Existing directory
+         *
+         * NOTE: Property "user.dir" = "User working directory" (current
+         * directory).
+         */
+        final String LOG_PREFIX_STR = "findExistingFile : ";
 
-        // Property "user.dir" = "User working directory".
-        // Appears to be the directory where the code is run(?).
+        /*==============================================
+         Determine which files there are to choose from.
+         ==============================================*/
         final String path1 = System.getProperty("user.dir") + File.separator + fileName;
-        Log.log("findExistingFile : path1 = "+path1, 2);
-        File file = new File(path1);
-        if (!file.exists() | file.isDirectory()) {
-
-            final String path2 = OVTCore.getUserDir() + fileName;
-            Log.log("findExistingFile : path2 = "+path2, 2);
-            file = new File(path2);
-
-            if (!file.exists() | file.isDirectory()) {
-                final ClassLoader classLoader = OVTCore.class.getClassLoader();
-                final java.net.URL fn = classLoader.getResource(fileName);
-                if (fn == null) {
-//                    return null;
-                    throw new FileNotFoundException("Could neither find file \""
-                            + path1 + "\" or \"" + path2 + "\", nor resource \"" + fileName + "\".");
+        final String path2 = OVTCore.getUserDir() + fileName;
+        final File file1 = new File(path1);
+        final File file2 = new File(path2);
+        // Derive path3 and file3.
+        // NOTE: (path3 != null) if-and-only-if there is a usable (existing non-directory file) file3.
+        // NOTE: Uncertain how and if it works. /Erik P G Johansson 2015-11-18
+        final String path3;
+        final File file3;
+        final String urlStr3;   // For debugging reasons.
+        {
+            final ClassLoader classLoader = OVTCore.class.getClassLoader();
+            final java.net.URL url = classLoader.getResource(fileName);
+            if (url != null) {
+                urlStr3 = url.toString();
+                path3 = url.getFile();
+                final File tempFile = new File(path3);
+                if (tempFile.isFile()) {
+                    file3 = tempFile;
+                } else {
+                    file3 = null;
                 }
-                final String path3 = fn.getFile();
-                Log.log("findExistingFile : path3 = "+path3, 2);
-                file = new File(path3);
-                if (!file.exists() | file.isDirectory()) {
-//                    file = null;
-                    throw new FileNotFoundException("Could neither find file \""
-                            + path1 + "\", \"" + path2 + "\", nor \"" + path3 + "\".");
-                }
+            } else {
+                urlStr3 = null;
+                path3 = null;
+                file3 = null;
             }
         }
-        return file;
+
+        Log.log(LOG_PREFIX_STR + "path1 = " + path1, findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);
+        Log.log(LOG_PREFIX_STR + "path2 = " + path2, findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);
+        Log.log(LOG_PREFIX_STR + "path3 = " + path3, findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);   // NOTE: No exception is thrown for null.
+        Log.log(LOG_PREFIX_STR + "urlStr3 = " + urlStr3, findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);   // NOTE: No exception is thrown for null.
+
+        /*======================================
+         Determine which file to return, if any.
+         ======================================*/
+        if (file1.isFile()) {
+//            boolean file13equal; // Whether or not file1 and file2 refer to the same existing (non-directory) file.
+//            try {
+//                // NOTE: Using File#getCanonicalFile() to resolve symbolic links for comparison.
+//                file13equal = (file3 != null) && (file3.getCanonicalFile().equals(file1.getCanonicalFile()));
+//            } catch (IOException e) {
+//                Log.log("Utils.findExistingFile : getCanonicalFile() IOException ==> Could not compare file1 and file3.", 0);
+//                Log.printStackTraceOnOut(e);
+//                file13equal = false;
+//            }
+
+            /**
+             * IMPLEMENTATION NOTE: Should maybe NOT choose file1 if it is
+             * equivalent to file3. I think I have observed on Mac OS X that if
+             * the application is launched from the GUI (Finder), then file1 and
+             * file3 can be equivalent which prevents OVT from reading an
+             * existing file2, which is probably what the user really wants. I
+             * have not been able to reproduce this. Therefore deactivated.<BR>
+             * /Erik P G Johansson 2015-11-18
+             */
+//            if (!file13equal) {
+            Log.log(LOG_PREFIX_STR + "Return file1", findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);
+            return file1;
+//            }
+        } else if (file2.isFile()) {
+            Log.log(LOG_PREFIX_STR + "Return file2", findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);
+            return file2;
+        } else if (file3 != null) {
+            Log.log(LOG_PREFIX_STR + "Return file3", findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL);
+            return file3;
+        }
+
+        throw new FileNotFoundException("Finds file neither at \""
+                + path1 + "\", \""
+                + path2 + "\", nor \""
+                + path3 + "\" (resource \"" + fileName + "\").");
     }
 
 
+    // Implementation retired 2015-11-18. Is modification of older version (before 2015-11-16).
+//    public static File findExistingFile_OLD_IMPLEMENTATION(String fileName) throws FileNotFoundException {
+//        // Property "user.dir" = "User working directory" (current directory).
+//        final String path1 = System.getProperty("user.dir") + File.separator + fileName;
+//        Log.log("findExistingFile : path1 = " + path1, 2);
+//        File file = new File(path1);
+//
+//        if (!file.exists() | file.isDirectory()) {
+//
+//            final String path2 = OVTCore.getUserDir() + fileName;
+//            Log.log("findExistingFile : path2 = " + path2, 2);
+//            file = new File(path2);
+//
+//            if (!file.exists() | file.isDirectory()) {
+//                final ClassLoader classLoader = OVTCore.class.getClassLoader();
+//                final java.net.URL fn = classLoader.getResource(fileName);
+//                if (fn == null) {
+//                    throw new FileNotFoundException("Could neither find file \""
+//                            + path1 + "\" or \"" + path2 + "\", nor resource \"" + fileName + "\".");
+//                }
+//                final String path3 = fn.getFile();
+//                Log.log("findExistingFile : path3 = " + path3, 2);
+//                file = new File(path3);
+//                if (!file.exists() | file.isDirectory()) {
+//                    throw new FileNotFoundException("Could neither find file \""
+//                            + path1 + "\", \"" + path2 + "\", nor \"" + path3 + "\".");
+//                }
+//            }
+//        }
+//        return file;
+//    }
     /**
      * Return instance of File based on argument.
      *
@@ -842,7 +941,6 @@ public class Utils extends Object {
         final URL url = new URL(urlStr);   // throws  MalformedURLException. Does not seem to throw for non-existing URL.
         int bytesReadTotal = 0;
 
-        //final OutputStream out;        
         try (InputStream in = url.openStream(); OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
 
             final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];

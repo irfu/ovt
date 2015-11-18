@@ -607,7 +607,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     /**
-     * Method to be used when informing user about the warning When in GUI
+     * Method to be used when informing user about the warning. When in GUI it
      * produces a popup window with <CODE>msghead</CODE> as window title and
      * <CODE>msg</CODE> as message.
      *
