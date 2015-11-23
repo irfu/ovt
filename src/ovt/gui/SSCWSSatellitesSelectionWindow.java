@@ -86,8 +86,8 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     private static final String INFO_TEXT = "Satellite orbit data offered online by NASA's Satellite Situation Center (SSC)"
             + " and available through OVT."
             + " Note that some of these \"satellites\" may be located at Lagrange points"
-            + " (e.g. ACE), or be balloons (e.g. BARREL-*), or be leaving for other celestial bodies (e.g. MAVEN)."
-            + " Note also that OVT does not permit setting the current time to earlier than " + Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME) + ".";
+            + " (e.g. ACE), some may be balloons (e.g. BARREL-*), and some may be leaving for other celestial bodies (e.g. MAVEN)."
+            + " Note also that OVT does not permit setting the current time to earlier than " + Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME_MJD) + ".";
     //+ " and hence may not be able to make use of all orbit data.";
     private static final String[] COLUMN_GUI_TITLES = {"Bookmarked", "Added", "Name", "Data begins", "Data ends"};
     private static final int COLUMN_INDEX_BOOKMARK = 0;

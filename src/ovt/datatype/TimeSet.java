@@ -113,8 +113,8 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       if (startMjd == oldStartMjd) {
           return;
       }
-      if (startMjd < Const.EARLIEST_PERMITTED_GUI_TIME) {
-          throw new IllegalArgumentException("Start time can not be earlier then "+Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME)+".");
+      if (startMjd < Const.EARLIEST_PERMITTED_GUI_TIME_MJD) {
+          throw new IllegalArgumentException("Start time can not be earlier then "+Time.toString(Const.EARLIEST_PERMITTED_GUI_TIME_MJD)+".");
       }
       this.startMjd = startMjd;
       firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));

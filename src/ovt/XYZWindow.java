@@ -51,8 +51,9 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
 
 /**
  * Represents OVT's main window. Contains OVT's global "main" method.
- * 
- * PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command line argument if there is one?
+ *
+ * PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command
+ * line argument if there is one?
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -115,6 +116,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_ORIGIN_X = "XYZWindow.originx";
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
     private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
+
+    /* Set the debugging level (which logging messages should actually be logged/saved).
+     * Refers to Log#setDebugLevel. */
+    private static final int GLOBAL_LOG_DEBUG_LEVEL = 0;
 
 
     public XYZWindow() {
@@ -399,9 +404,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     /**
      * Main method for entire OVT. This is where OVT is launched.
      *
-     * @param arg
+     * @param arg Command-line arguments
      */
     public static void main(String[] arg) {
+        Log.setDebugLevel(GLOBAL_LOG_DEBUG_LEVEL);
         try {
 
             final XYZWindow XYZwin = new XYZWindow();
@@ -416,9 +422,14 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             // into account like OVTCore#sendErrorMessage does.
             // Use ovt.gui.ErrorMessageWindow?
             //
-            // NOTE: Does NOT seem to capture crashing native code.
+            // NOTE: Does NOT seem to catch crashing native code (Mac OS) but it
+            // has been observed to catch erroneous versions of vtk.jar (Mac OS).
             if (!GraphicsEnvironment.isHeadless()) {
-                JOptionPane.showMessageDialog(null, "Fatal error: " + e.getMessage(), "Fatal error", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null,
+                        "Fatal error: " + e.getClass().getCanonicalName() + "; " + e.getMessage(),
+                        "Fatal error",
+                        JOptionPane.ERROR_MESSAGE);
+                e.printStackTrace();
             }
             throw e;
         }

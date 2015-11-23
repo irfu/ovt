@@ -206,8 +206,13 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     private final MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
+    
     private static final double KPINDEX_DEFAULT = 0;
-    private static final double[] IMF_DEFAULT = {0, 0, 0};
+    // One wants a non-zero IMF default value so that the "magnetic tangent" feature displays something by default.
+    // (It does not show anything for zero IMF.)
+    // The theoretical "ideal" IMF vector in GSM is proportional to approximately (-1,1,0).
+    // (The constant of proportionality can be negative.) Therefore something like that is a good default.
+    private static final double[] IMF_DEFAULT = {-4, 4, 0};
     private static final double SWP_DEFAULT = 1.8;
     private static final double DSTINDEX_DEFAULT = -40;
     private static final double MACHNUMBER_DEFAULT = 5.4;

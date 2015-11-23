@@ -1,7 +1,8 @@
-#############################################
- Instructions for setting up the environment
- for development and generating native files.
-#############################################
+#############################################################
+ Instructions for setting up the environment for development
+ and for generating native files to be used for producing
+ installer on different platforms.
+#############################################################
 
 ===================================================================
 General instructions (all platforms: Mac, Windows, Linux)
@@ -19,11 +20,11 @@ $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://
 Get OVT repository, e.g. "git clone <OVT>..." etc.
 
 $ cd ovt
-$ mkdir VTKBuild          // Not necessary to put the entire built VTK in OVT. May be referenced in ".gitignore".
+$ mkdir VTKBuild          // Not necessary to put the entire built VTK in the OVT directory. May be excluded from the git repo using ".gitignore".
 $ cd VTKBuild
 $ ccmake <path to VTK source code>
 
-Set parameters as ccmake/cmake as ccmake want you to set them, and then try again (and again) a few times.
+Set parameters as ccmake/cmake when ccmake asks you to set them, and then try again (and again) a few times.
 NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to check for should include the ones below but there may be others too.
     VTK_WRAP_JAVA:BOOL=ON  
     VTK_JAVA_INSTALL:BOOL=OFF         // "Use the Java rules to build the native libraries."
@@ -34,7 +35,7 @@ NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to
 NOTE: UPDATE JOGL PATHS PROPOSED BY CMake! Change 2.0.2 to 2.3.1   (not Windows?)
 
 
-Patch VTK for new JOGL by replacing some of its files with already modified (Java) source code files found in <ovt>/VTKPatch.
+Patch VTK for new JOGL by replacing some of its files with already slightly modified (Java) source code files found in <ovt>/VTKPatch.
 (This corrects errors one might get later when building.)
 $ cp -v   <OVT>/VTKpatch/*.java   <OVT>/VTKBuild/Java/vtk/rendering/jogl/
 
@@ -58,7 +59,7 @@ MacOS: Run "fix_macosx_nativelibs_fkjn.sh"
 
 
 
-#Note: Add version numbers on installations.    ?????!!!!
+# Note: Add version numbers on installations.    ?????!!!!
 
 
 
@@ -126,9 +127,9 @@ Before release:
 
 1. Sign ovt/dist/ovt.jar (from NetBeans build) with following command:
 
-jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkestore.jks> -storepass $PASS <path_to_ovt.jar> server
+jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkestore.jks> -storepass <password> <path_to_ovt.jar> server
 
-Replace local paths and $PASS with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
+Replace local paths and <password> with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
 
 
 

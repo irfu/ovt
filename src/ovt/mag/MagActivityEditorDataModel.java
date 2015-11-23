@@ -43,6 +43,7 @@ import ovt.OVTCore;
 
 import java.io.*;
 import java.util.*;
+import ovt.Const;
 import ovt.mag.MagProps.MagActivityDataSource;
 import ovt.util.Log;
 
@@ -118,7 +119,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         }
         this.columnNumber = this.columnNames.length;
         // set default values
-        this.defaultValues = new MagActivityDataRecord(Time.Y2000, defaultValues);
+        this.defaultValues = new MagActivityDataRecord(Const.EARLIEST_PERMITTED_GUI_TIME_MJD, defaultValues);
         this.file = new File(OVTCore.getGlobalSetting(name + ".File", OVTCore.getUserdataSubdir() + name + ".dat"));
 
         try {

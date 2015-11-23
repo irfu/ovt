@@ -151,7 +151,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      * Only one "canonical" singleton instance of SSCWSLibraryImpl is needed
      * (except maybe for some kind of testing). This is that one instance.
      */
-    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl(Const.EARLIEST_PERMITTED_GUI_TIME);
+    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl(Const.EARLIEST_PERMITTED_GUI_TIME_MJD);
     public static final SSCWSLibrary DEFAULT_INSTANCE = TYPED_INSTANCE;
 
     /**

@@ -108,8 +108,7 @@ public static final int LOG =   0;
      * 
      * NOTE: The value was previously set to Time.Y1970 for unknown reasons.
      */
-  public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1980;
-  //public static final double EARLIEST_PERMITTED_GUI_TIME = Time.Y1950;
+  public static final double EARLIEST_PERMITTED_GUI_TIME_MJD = Time.Y1980;
   
 
 // Indexes of coordinate systems

@@ -1,24 +1,31 @@
-/build/
+
+build/
+
+# By convention, the version of VTK used for development,
+# but not necessarily for constructing installation files.
+# (Different developers may have different exact versions.)
 VTKBuild/
-nbproject/private/private.properties
-nbproject/private/private.xml
-/dist/
 
-src/libovt/libovt-3.0.jnilib_temp
+# Contains among others dist/lib/vtk.jar
+# which changes upon compilation (of ovt) and is (probably)
+# linked to the local version of VTK (by convention in VTKBuild/) rather
+# than the native VTK files used for constructing installations files.
+dist/
 
-src/libovt/magpackbackup.c
 lib/jogl/Archive.zip
-
 lib/vtk copy.jar
 
-src/ovt/object/MainFieldlineModule.javabackup
+src/libovt/libovt-3.0.jnilib_temp
+src/libovt/magpackbackup.c
+src/libovt 2/
 
+src/ovt/object/MainFieldlineModule.javabackup
 src/ovt/util/ImageOperations.backupjava
 
-vtkError.txt
-
 nbproject/genfiles.properties
+nbproject/private/private.properties
+nbproject/private/private.xml
 nbproject/project.properties
 nbproject/project.xml
 
-src/libovt 2/
+vtkError.txt

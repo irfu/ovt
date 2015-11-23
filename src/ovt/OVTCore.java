@@ -148,18 +148,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         this.renderer = renPanel.getRenderer();
         // use renPanel.Render() instead of renderer.Render().
 
-        /* Setting the http user agent for the benefit of NASA SSC, so that they
-         * can see who/what (OVT) is using their service (over the internet).
-         *
-         * NASA SSC documentation:
-         * "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
-         * to a value that identifies your client application in each SSC Web Service request that it makes.
-         * This will allow us to measure the usefulness of these services and justify their continued
-         * support. It isn't too important what value you use but it's best if it uniquely identifies
-         * your application."
-         * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
-         */
-        System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
 
         setServer(true);
         Initialize();
@@ -320,9 +308,22 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public void Initialize() {
-        Log.setDebugLevel(3);
         Log.log("Initializing...", 3);
         setName("OVT");
+        
+        /* Setting the http user agent for the benefit of NASA SSC, so that they
+         * can see who/what (OVT) is using their service (over the internet).
+         *
+         * NASA SSC documentation:
+         * "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
+         * to a value that identifies your client application in each SSC Web Service request that it makes.
+         * This will allow us to measure the usefulness of these services and justify their continued
+         * support. It isn't too important what value you use but it's best if it uniquely identifies
+         * your application."
+         * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
+         */
+        System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
+        
         try {
             setIcon(new ImageIcon(Utils.findResource("images/ovt.gif")));
         } catch (FileNotFoundException e2) {

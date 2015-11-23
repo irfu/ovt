@@ -61,7 +61,7 @@ public class Trace extends Object {
      */
     public static final int SQRT_STEP_SIZE = 1;
 
-  // field-line tracing constants
+    // field-line tracing constants
     public static final double EPS = 0.001;
     public static final double HMIN = 0.001;
     public static final double FF = 1.01;
@@ -102,51 +102,60 @@ public class Trace extends Object {
 //------------------- field-line tracing  ---------------------------
 
     /**
-     * The native code implementation (magpack.c) appears to set an internal path
-     * variable that is then used by other (native code) functions in the same
-     * file. If this is not a valid path, or it is too long for the native variable
-     * that stores the path, then that can trigger immediate or later crashes in
-     * the native code.
-     * /Erik P G Johansson 2015-11-18.
+     * The native code implementation (magpack.c) appears to set an internal
+     * path variable that is then used by other (native code) functions in the
+     * same file. If this is not a valid path, or it is too long for the native
+     * variable that stores the path, then that can trigger immediate or later
+     * crashes in the native code. /Erik P G Johansson 2015-11-18.
      */
     protected static native void mdirectoryJNI(String Dir);
 
-    /** Greatest string length that should be permitted to be passed on to mdirectoryJNI.
-     * 
-     * Judging from the a quick look at the native code, this value should be 79 characters
-     * (80 char buffer minus null terminator). However, according to testing, the code crashes above
-     * 77 characters (Mac OS X).<BR>
+    /**
+     * Greatest string length that should be permitted to be passed on to
+     * mdirectoryJNI.
+     *
+     * Judging from the a quick look at the native code (magpack.c), this value
+     * should be 79 characters (80 char buffer minus null terminator). However,
+     * according to testing, the code crashes above 77 characters (Mac OS
+     * X).<BR>
      * /Erik P G Johansson 2015-11-18
      */
     private static final int MAX_IGRFD_PATH_LENGTH = 77;
-    
+
+
     static {
         Log.log(Trace.class.getCanonicalName() + "#<static init>", 2);
-        
+
         try {
             // throws FileNotFoundException
             final String igrfdPath = Utils.findExistingFile(OVTCore.getMdataSubdir() + "igrf.d").getAbsolutePath();
-            
-            final int igrfdPath_codePointLength = igrfdPath.length();            
+
+            final int igrfdPath_codePointLength = igrfdPath.length();
             Log.log(Trace.class.getCanonicalName() + "#<static init> : "
-                        + "mdirectoryJNI(igrfdPath = \"" + igrfdPath + "\")"
-                        + "; code point length = " + igrfdPath_codePointLength,
-                        2);
-            
+                    + "mdirectoryJNI(igrfdPath = \"" + igrfdPath + "\")"
+                    + "; code point length = " + igrfdPath_codePointLength,
+                    2);
+
             if (igrfdPath_codePointLength > MAX_IGRFD_PATH_LENGTH) {
                 // NOTE: Ideally one should use OVTCore#sendErrorMessage.
-                Log.log(Trace.class.getCanonicalName() 
-                        + "#<static init> : Path to igrf.d is too long for \"magpack.c\" : \""+igrfdPath+"\"", 0);
+                // but no instance of OVTCore is available from here.
+                final String msg
+                        = "The path to \"igrf.d\" (" + igrfdPath.length() + " char.)"
+                        + " is too long for \"magpack.c\" to handle (max " + MAX_IGRFD_PATH_LENGTH + " char.): "
+                        + "\n\"" + igrfdPath + "\"";
+                Log.log(Trace.class.getCanonicalName()
+                        + "#<static init> : " + msg, 0);
                 JOptionPane.showMessageDialog(null,
-                        "The path to igrf.d is too long for \"magpack.c\" : \""+igrfdPath+"\"",
+                        msg,
                         "Path too long", JOptionPane.ERROR_MESSAGE);
             } else {
                 mdirectoryJNI(igrfdPath);
             }
-            
+
         } catch (FileNotFoundException e) {
 
-            // NOTE: Ideally one should use OVTCore#sendErrorMessage.
+            // NOTE: Ideally one should use OVTCore#sendErrorMessage,
+            // but no instance of OVTCore is available from here.
             Log.log(Trace.class.getCanonicalName() + "#<static init> : Error: " + e.getMessage(), 0);
             JOptionPane.showMessageDialog(null, e.getMessage(), "Could not find file", JOptionPane.ERROR_MESSAGE);
         }
@@ -190,11 +199,11 @@ public class Trace extends Object {
      * rv(3) alt (km) altitude of required footprint foot(3) : footprint
      * position (re) idir= 1 north =-1 south epst = tolerance (re) for
      * determination of the origin of last closed rv(3)
-*****************************************************************
+     * ****************************************************************
      */
     public static void lastline(MagProps magProps, double mjd, double rv[], double dir[], double xlim,
             double alt, int idir, double epst) {
-  // Local variables 
+        // Local variables 
 
         int ExternalModel = magProps.getExternalModelType();
         int InternalModel = magProps.getInternalModelType();
@@ -230,7 +239,7 @@ public class Trace extends Object {
         }
 
         lastlineJNI(mjd, rv, dir, xlim, alt, idir, epst, InternalModel, ExternalModel, Factor, isMPClip, dataTsxx);
-  //         (env, cls, mjd, jrv, jdir, xlim, alt, idir, epst, IntMod, ExtMod, Factr, isMPClip, jdataTs)
+        //         (env, cls, mjd, jrv, jdir, xlim, alt, idir, epst, IntMod, ExtMod, Factr, isMPClip, jdataTs)
     }
 
 
@@ -282,7 +291,7 @@ public class Trace extends Object {
      */
     public static Fieldline traceline(MagProps magProps, double mjd, double[] rv,
             double alt, double step, int is, double xlim, int mx) {
-  // Local variables 
+        // Local variables 
 
         MagModel magModel = (MagModel) magProps;
 
@@ -364,7 +373,7 @@ public class Trace extends Object {
      */
     public static MagPoint foot_ns(MagProps magProps, double mjd, double[] rv, double xlim, double alt, int idir) {
 
-    // Function Body 
+        // Function Body 
         if (Vect.absv(rv) < 1) {
             System.err.println("foot_ns: Input vector below the surf");
             System.exit(-1);
