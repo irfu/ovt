@@ -125,9 +125,9 @@ Before release:
 
 (Be careful with version identifiers. They have to be the same in OVT & Install4J)
 
-1. Sign ovt/dist/ovt.jar (from NetBeans build) with following command:
+Sign ovt/dist/ovt.jar (from NetBeans build) with following command:
 
-jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkestore.jks> -storepass <password> <path_to_ovt.jar> server
+$ jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkeystore.jks> -storepass <password> <path_to_ovt.jar> server
 
 Replace local paths and <password> with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
 

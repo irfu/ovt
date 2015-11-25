@@ -57,7 +57,7 @@ import javax.swing.*;
  */
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
 
-    public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
+    public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool BETA";
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "November 2015";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
@@ -67,6 +67,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
     public static final Properties globalProperties = new Properties();
     public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
+    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
+    private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
+    /* Set the debugging level (which logging messages should actually be logged/saved).
+     * Refers to Log#setDebugLevel. */
+    private static final int GLOBAL_LOG_DEBUG_LEVEL = 30;
     public static int DEBUG = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
@@ -147,7 +152,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         this.renPanel = renPanel;
         this.renderer = renPanel.getRenderer();
         // use renPanel.Render() instead of renderer.Render().
-
 
         setServer(true);
         Initialize();
@@ -308,22 +312,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public void Initialize() {
+        Log.setDebugLevel(GLOBAL_LOG_DEBUG_LEVEL);
+
         Log.log("Initializing...", 3);
         setName("OVT");
-        
-        /* Setting the http user agent for the benefit of NASA SSC, so that they
-         * can see who/what (OVT) is using their service (over the internet).
-         *
-         * NASA SSC documentation:
-         * "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
-         * to a value that identifies your client application in each SSC Web Service request that it makes.
-         * This will allow us to measure the usefulness of these services and justify their continued
-         * support. It isn't too important what value you use but it's best if it uniquely identifies
-         * your application."
-         * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
-         */
-        System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
-        
+
         try {
             setIcon(new ImageIcon(Utils.findResource("images/ovt.gif")));
         } catch (FileNotFoundException e2) {
@@ -334,8 +327,9 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             /*==================================================================
              Derive and assign this.ovtUserDir (String, path) and make sure
              the corresponding actual directory exists.
+             --------------------------------------------------------------
+             PROPOSAL: Move into OVTCore#getUserDir() (with "caching")?
              ==================================================================*/
-            //System.out.println("Working Directory = " + System.getProperty("user.dir"));
 
             final String osName = System.getProperty("os.name").toLowerCase();
             final boolean isMacOs = osName.startsWith("mac os x");
@@ -367,6 +361,38 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 }
             }
         }
+
+        try {
+            // NOTE: It appears that on Windows, one will not get an explicit
+            // log file (for stdout) without explicitly rediricting System.out.
+            // NOTE: Should only put files in directory where the code has write
+            // permission (i.e. not the application directory).
+            // NOTE: Can only call OVTCore.getUserDir() after ovtUserDir has been initialized.
+            // ==> Not ideal since some log messages have already been created.
+            if (SYSTEM_ERR_FILE_NAME != null) {
+                System.setErr(new PrintStream(new FileOutputStream(OVTCore.getUserDir() + SYSTEM_ERR_FILE_NAME), true));
+            }
+            if (SYSTEM_OUT_FILE_NAME != null) {
+                System.setOut(new PrintStream(new FileOutputStream(OVTCore.getUserDir() + SYSTEM_OUT_FILE_NAME), true));
+            }
+        } catch (FileNotFoundException e) {
+            Log.printStackTraceOnOut(e);
+            Log.log("Failed to redirect System.err or System.out to file.");
+        }
+        Log.setOut(System.err);   // Has to be done explicitly rather than use the default value.
+
+        /* Setting the http user agent for the benefit of NASA SSC, so that they
+         * can see who/what (OVT) is using their service (over the internet).
+         *
+         * NASA SSC documentation:
+         * "You are strongly encouraged to have your client set the HTTP User-Agent header (RFC 2068)
+         * to a value that identifies your client application in each SSC Web Service request that it makes.
+         * This will allow us to measure the usefulness of these services and justify their continued
+         * support. It isn't too important what value you use but it's best if it uniquely identifies
+         * your application."
+         * http://sscweb.gsfc.nasa.gov/WebServices/SOAP/DevelopersKit.html
+         */
+        System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
 
         /* Load global settings
          --------------------
@@ -647,7 +673,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     // Could almost be made into an instance method.
-
     public static void setStatus(String statusMessage) {
         if (isGuiPresent()) {
             XYZWindow.setStatus(statusMessage);

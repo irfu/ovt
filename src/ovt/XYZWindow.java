@@ -117,10 +117,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
     private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
 
-    /* Set the debugging level (which logging messages should actually be logged/saved).
-     * Refers to Log#setDebugLevel. */
-    private static final int GLOBAL_LOG_DEBUG_LEVEL = 0;
-
 
     public XYZWindow() {
         super(OVTCore.SIMPLE_APPLICATION_NAME + " " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
@@ -407,7 +403,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * @param arg Command-line arguments
      */
     public static void main(String[] arg) {
-        Log.setDebugLevel(GLOBAL_LOG_DEBUG_LEVEL);
         try {
 
             final XYZWindow XYZwin = new XYZWindow();

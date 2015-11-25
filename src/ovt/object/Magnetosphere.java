@@ -62,17 +62,17 @@ public class Magnetosphere extends VisualObject implements
   //Hashtable mpause_edge;
  // Fieldline f_line[][] = new Fieldline[MAXE][4]; /* coordinates of f-lines */
 
-  /** Holds fieldslines starting on x = Xlim. Does not include lines
+  /** Holds field lines starting on x = Xlim. Does not include lines
    * lines starting from y = 0, x = 0
    */
   Fieldline tail_fl[][] = new Fieldline[N_OF_TAIL_FLS][4];
-  /** Holds fieldslines starting on x = [0, Xlim]  */
+  /** Holds field lines starting on x = [0, Xlim]  */
   Fieldline lim_fl[][] = new Fieldline[N_OF_LIM_FLS][4];
-  /** Holds fieldslines from the front of magnetosphere. Does not include lines
+  /** Holds field lines from the front of magnetosphere. Does not include lines
    * lines starting from y = 0, x = 0
    */
   Fieldline front_fl[][] = new Fieldline[N_OF_FRONT_FLS][4];
-  /** Holds fieldslines from y=0. The first two are from front, the second two
+  /** Holds field lines from y=0. The first two are from front, the second two
    * are from tail. Their locations:<BR>
    * 0,2 - north hemisphere
    * 1,3 - south hemisphere
@@ -81,7 +81,7 @@ public class Magnetosphere extends VisualObject implements
 
   /** 15 (6) number of angular sectors on x = Xlim, in one quadrant */
   public static final int N_OF_TAIL_AS = 3; //6
-  /** Number of fieldslines starting on x = Xlim. Does not include lines
+  /** Number of field lines starting on x = Xlim. Does not include lines
    * lines starting from y = 0, x = 0. In one quadrant.
    */
   public static final int N_OF_TAIL_FLS = N_OF_TAIL_AS - 1;
@@ -367,11 +367,13 @@ protected void prepareData() {
 
 	//Fieldline[] f_l = new Fieldline[MAXFL];
 
+        System.out.print("1");   // DEBUG
         // clean data
 	points  = new vtkPoints();
 	scalars = new vtkFloatArray();
 	lines   = new vtkCellArray();
 
+        System.out.print("2");   // DEBUG
 	// Fill vtkPoints & scalars
 	double b;
 	bmax = Double.MIN_VALUE; bmin = Double.MAX_VALUE;
@@ -394,7 +396,9 @@ protected void prepareData() {
 	     }
 	     count+=linesize;
         }
+        System.out.print("3");   // DEBUG
         Fieldline magn_parts[][][] = new Fieldline[][][]{ front_fl, lim_fl, tail_fl };
+        System.out.print("4");   // DEBUG
 
         for (int is=0; is<4; is++) {
           for (int part = 0; part<3; part++) {
