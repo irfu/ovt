@@ -57,14 +57,26 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
+    // NOTE: Not ideal (but understandable) to load libraries in static
+    // initializer since (1) can not throw exceptions and catch them outside,
+    // (2) can not assume that logs are initialized.
     static {
         // NOTE: vtkNativeLibrary.LoadAllNativeLibraries doc says:
         // "@return true if all library have been successfully loaded"
         // Detect failure without try-catch exceptions.
-        if (!vtkNativeLibrary.LoadAllNativeLibraries()) {
+        
+        Log.log("Loading VTK native libraries");
+        final boolean allNativeLibrariesLoaded = vtkNativeLibrary.LoadAllNativeLibraries();  // Separate variable only to make the meaning of the return value clear.
+        if (!allNativeLibrariesLoaded) {
             for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
-                if (!lib.IsLoaded()) {
-                    System.out.println(lib.GetLibraryName() + " not loaded");
+                if (lib.IsLoaded()) {
+                    final String msg = lib.GetLibraryName() + " loaded";
+                    Log.log(msg);
+                    System.out.println(msg);
+                } else {
+                    final String msg = lib.GetLibraryName() + " <----- NOT loaded";
+                    Log.err(msg);
+                    System.out.println(msg);
                 }
             }
             System.out.println("Make sure the search path is correct:");
@@ -72,7 +84,24 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         }
         vtkNativeLibrary.DisableOutputWindow(null);
-
+        
+        try {
+            Log.log("Loading native library "+"ovt-" + OVTCore.VERSION);
+            System.loadLibrary("ovt-" + OVTCore.VERSION);
+            Log.log("Loading native library "+"jawt");
+            System.loadLibrary("jawt");
+            
+        }  catch(SecurityException|UnsatisfiedLinkError|NullPointerException e) {
+            final String title = "Failed to load native library";
+            Log.err(title);
+            javax.swing.JOptionPane.showMessageDialog(null,
+                    "Error: " + title + "\n" + e.getMessage(), title,
+                    javax.swing.JOptionPane.ERROR_MESSAGE);
+            
+            throw e;   // Throw again to quit.
+        }
+        
+        
         /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
 
          dir == ('../directory/to/the/VTK/DLLs');
@@ -254,8 +283,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     public void start() {
+        
         //refreshGUI();
-
+        
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension windowSize = getSize();
 

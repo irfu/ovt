@@ -619,6 +619,59 @@ public class Utils extends Object {
 
 
     /**
+     * Log all system properties. Useful for
+     * diagnosing when OVT can not find native files.
+     *
+     * NOTE: Only intended for debugging purposes, for "filling the log". NOTE:
+     * Takes care of all its own exceptions. The caller should not need to think
+     * about that since a call to this function is supposed to be easy & safe to
+     * add to and remove from the code.
+     */
+    public static void logPrintSystemProperties(PrintStream out) {
+        /**
+         * https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+         *
+         * NOTE: There is Properties#list(System.out) which prints all
+         * properties but is also shortens long property value strings!!
+         * Therefore not suitable for debugging.
+         *
+         * NOTE: System properties can trigger SecurityException for indivudual
+         * properties. It may therefore be safer to only specify the properties
+         * one is really interested in.
+         */
+        final Properties properties;
+        try {
+            properties = System.getProperties();
+        } catch (SecurityException e) {
+            out.println("Error when trying to obtain all system properties : System.getProperties()");
+            e.printStackTrace(out);
+            return;
+        }
+        final Set<String> propertyKeys = properties.stringPropertyNames();
+
+        // Excplicitly specify subset of system properties to look at.
+//         user.dir - "User working directory" = Current working directory? Where application was initialized?
+//         java.library.path - Where to search for native files? Probably set with -D when calling "java" (executable) from Netbeans.
+//         vtk.lib.dir - Used by VTK (vtkNativeLibrary#LoadLibrary)
+//        final Set<String> propertyKeys = new HashSet();
+//        propertyKeys.add("java.library.path");
+//        propertyKeys.add("user.dir");
+//        propertyKeys.add("vtk.lib.dir");
+        for (String propertyKey : propertyKeys) {
+            try {
+                out.println(propertyKey + " = " + System.getProperty(propertyKey));
+            } catch (IllegalArgumentException e) {
+                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
+                e.printStackTrace(out);
+            } catch (SecurityException e) {
+                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
+                e.printStackTrace(out);
+            }
+        }
+    }
+
+
+    /**
      * Returns URL of the resource.
      */
     public static java.net.URL findResource(String file) throws FileNotFoundException {

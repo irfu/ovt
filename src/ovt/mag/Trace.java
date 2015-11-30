@@ -141,7 +141,7 @@ public class Trace extends Object {
                 // but no instance of OVTCore is available from here.
                 final String msg
                         = "The path to \"igrf.d\" (" + igrfdPath.length() + " char.)"
-                        + " is too long for \"magpack.c\" to handle (max " + MAX_IGRFD_PATH_LENGTH + " char.): "
+                        + " is too long for native code \"magpack.c\" to handle (max " + MAX_IGRFD_PATH_LENGTH + " char.): "
                         + "\n\"" + igrfdPath + "\"";
                 Log.log(Trace.class.getCanonicalName()
                         + "#<static init> : " + msg, 0);

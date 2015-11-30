@@ -361,19 +361,26 @@ private void makeFlsStartFromOnePoint(Fieldline north_hem_fl, Fieldline south_he
 // Has to be included when in update() method
 protected void prepareData() {
   System.out.print(" Creating visual representation ...");
+//  System.out.println(" Creating visual representation [4] ...");
 
 	int i, j, k, count, linesize;
 	double [] p;
 
 	//Fieldline[] f_l = new Fieldline[MAXFL];
 
-        System.out.print("1");   // DEBUG
+//        System.out.println("1");   // DEBUG
+//        Log.log("1");
         // clean data
 	points  = new vtkPoints();
+//        System.out.println("1b");   // DEBUG
+//        Log.log("1b");
 	scalars = new vtkFloatArray();
+//        System.out.println("1c");   // DEBUG
+//        Log.log("1c");
 	lines   = new vtkCellArray();
 
-        System.out.print("2");   // DEBUG
+//        System.out.println("2");   // DEBUG
+//        Log.log("2");
 	// Fill vtkPoints & scalars
 	double b;
 	bmax = Double.MIN_VALUE; bmin = Double.MAX_VALUE;
@@ -396,9 +403,11 @@ protected void prepareData() {
 	     }
 	     count+=linesize;
         }
-        System.out.print("3");   // DEBUG
+//        System.out.println("3");   // DEBUG
+//        Log.log("3");
         Fieldline magn_parts[][][] = new Fieldline[][][]{ front_fl, lim_fl, tail_fl };
-        System.out.print("4");   // DEBUG
+//        System.out.println("4");   // DEBUG
+//        Log.log("4");
 
         for (int is=0; is<4; is++) {
           for (int part = 0; part<3; part++) {

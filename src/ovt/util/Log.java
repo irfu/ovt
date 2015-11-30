@@ -1,100 +1,130 @@
 /*=========================================================================
 
-  Program:   Orbit Visualization Tool
-  Source:    $Source: /stor/devel/ovt2g/ovt/util/Log.java,v $
-  Date:      $Date: 2003/09/28 17:52:55 $
-  Version:   $Revision: 2.4 $
+ Program:   Orbit Visualization Tool
+ Source:    $Source: /stor/devel/ovt2g/ovt/util/Log.java,v $
+ Date:      $Date: 2003/09/28 17:52:55 $
+ Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team 
-(Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
-All rights reserved.
+ Copyright (c) 2000-2003 OVT Team 
+ (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
+ All rights reserved.
 
-Redistribution and use in source and binary forms, with or without
-modification is permitted provided that the following conditions are met:
+ Redistribution and use in source and binary forms, with or without
+ modification is permitted provided that the following conditions are met:
 
  * No part of the software can be included in any commercial package without
-written consent from the OVT team.
+ written consent from the OVT team.
 
  * Redistributions of the source or binary code must retain the above
-copyright notice, this list of conditions and the following disclaimer.
+ copyright notice, this list of conditions and the following disclaimer.
 
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
-IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
-IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
-INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
+ IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
+ INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
 
-OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
-Khotyaintsev
+ OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ Khotyaintsev
 
-=========================================================================*/
+ =========================================================================*/
 
 /*
  * Log.java
  *
  * Created on October 11, 2000, 1:24 PM
  */
-
 package ovt.util;
 
 import java.io.*;
 
 /**
- * Log class with only static methods.
- * Log and error messages are "registered" with a debug number.
- * Messages are only logged if the debug numer is lower or equal to the current
- * "debugLevel". Higher debugLevel means more detailed logs.
- * 
+ * Log class with only static methods. Log and error messages are "registered"
+ * with a debug number. Messages are only logged if the debug numer is lower or
+ * equal to the current "debugLevel". Higher debugLevel means more detailed
+ * logs.
  *
- * @author  ko
- * @version 
+ *
+ * @author ko
+ * @version
  */
 public class Log extends Object {
-    
+
+    /**
+     * There is an advantage in using System.err as the default for log messages
+     * since System.err seems to always(?) end up in a log file by default in
+     * actual installations (error.log) as opposed to System.out.
+     */
     protected static PrintStream out = System.err;
-    
+
     // 0 - no debug
     // 1 - some essential things
     protected static int debugLevel = 0;
 
+
     private Log() {
     }
-    
+
+
     public static void setOut(PrintStream output) {
         out = output;
     }
-    
+
+
+    /**
+     * Useful for printing to the same stream, e.g. with custom functions that
+     * accept it as an argument.
+     */
+    public static PrintStream getOut() {
+        return out;
+    }
+
+
     public static void setDebugLevel(int level) {
+        if (level < 0) {
+            throw new IllegalArgumentException("Debug level must be non-negative.");
+        }
         debugLevel = level;
     }
-    
+
+
     public static int getDebugLevel() {
         return debugLevel;
     }
-    
-    /** Log the string with the debug level */
+
+
+    /**
+     * Log the string with the debug level
+     */
     public static void log(String str, int debug) {
-        if (debug<=debugLevel) {
+        if (debug <= debugLevel) {
             out.println(" " + str);
         }
     }
 
+
     public static synchronized void log(String str) {
         log(str, 1);
     }
-    
+
+
     public static void err(String str) {
         err(str, 0);
     }
-    
-    /** Log the error string with the debug level */
+
+
+    /**
+     * Log the error string with the debug level
+     */
     public static void err(String str, int debug) {
-        if (debug<=debugLevel) {
+        if (debug <= debugLevel) {
             out.println(" " + str);
         }
     }
-    
+
+
+    // PROPOSAL: Remove and use e.printStackTrace(Log.getOut()) instead?
     public static void printStackTraceOnOut(Exception e) {
         // NOTE: Throwable#printStackTrace prints both the contents of
         // the exception (message, toString()) and the stack trace.

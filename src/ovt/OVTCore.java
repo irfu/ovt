@@ -71,7 +71,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
     /* Set the debugging level (which logging messages should actually be logged/saved).
      * Refers to Log#setDebugLevel. */
-    private static final int GLOBAL_LOG_DEBUG_LEVEL = 30;
+    private static final int GLOBAL_LOG_DEBUG_LEVEL = 0;
     public static int DEBUG = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
@@ -683,10 +683,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     // for JNI methods
-    static {
-        System.loadLibrary("ovt-" + VERSION);
-        System.loadLibrary("jawt");
-    }
+//    static {
+//        System.loadLibrary("ovt-" + VERSION);
+//        System.loadLibrary("jawt");
+//    }
 
 
     /**

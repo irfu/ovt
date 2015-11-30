@@ -1,7 +1,10 @@
 #############################################################
  Instructions for setting up the environment for development
  and for generating native files to be used for producing
- installer on different platforms.
+ installers on different platforms.
+#############################################################
+ NOTE: If you only want to use OVT as an application, then
+ you should use one of the pre-made installer applications.
 #############################################################
 
 ===================================================================
@@ -90,7 +93,9 @@ Compile VTK with Visual Studio Express
 --------------------------------------
 Open VTK.sln in Visual Studio Express.
 NOTE: It may take a long time for Visual Studio to merely LOAD the project/files. One might want to wait for this to finish before proceeding to avoid problems.
-Select "Win32" (32-bit!!), "Release" (can keep "Debug" but generates more files and in other directory).
+Select "Win32" (32-bit!!), "Release" (not "Debug")
+NOTE: If one uses "Debug" it will generate more files and in other directory and make the DLLs dependent on MSVCP120D.DLL and MSVCR120D.DLL which are NOT supposed to be redistributed (filenames end with D.DLL=DEBUG).
+      Using "Release" should make the DLLs dependent on MSVCP120.DLL and MSVCR120.DLL instead (no D at the end of filenames).
 "Build"  (E.g. "Solution Explorer" (tab in internal window) --> ALL_BUILD --> Right-click, "Build")
 NOTE: There is an "Error List" window where one can inspect errors and warnings directly rather than looking through the very long text output.
 Copy relevant files to OVT if VTK-build directory is not already in OVT.
