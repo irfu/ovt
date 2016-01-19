@@ -59,15 +59,29 @@ public class XYZMenuBar extends JMenuBar {
     private JMenuItem sscwsSatellitesSelectionWindowMenuItem;    // Rationalize away?
     private ovt.object.editor.SettingsEditor renPanelSizeEditor;
 
+    /**
+     * NOTE: Text should (probably) fit both importing and opening a TLE file.
+     */
+    private static final String TLE_WARNING_TITLE = "Using TLE file";
+    /**
+     * NOTE: Text should (probably) fit both importing and opening a TLE file.
+     *
+     * Error estimates come from comparing TLE file orbits and SSCWS orbits for
+     * somewhat random but "long" time intervals (60-300 days) for freja (5-35
+     * km), akebono (62-87 km), and de1 (DE-1) (7-164 km). NOTE: de1.tle is
+     * either partially corrupt or is partially (badly) misinterpreted by OVT.
+     * Visualizations show several jumps which I have not used in the
+     * comparison.<BR> /Erik P G Johansson 2016-01-18
+     */
+    private static final String TLE_WARNING_MSG = OVTCore.SIMPLE_APPLICATION_NAME
+            + " can open TLE files but with position errors of up to ca 200 km.";
+
 
     public XYZMenuBar(XYZWindow xyzwin) {
         super();
         this.core = xyzwin.getCore();
         xyzWin = xyzwin;
         JMenuItem menuItem;
-        JRadioButtonMenuItem rbMenuItem;
-        JCheckBoxMenuItem cbMenuItem;
-        String ItemName;
 
         //-----------
         // File menu
@@ -210,11 +224,11 @@ public class XYZMenuBar extends JMenuBar {
                 KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                    getCore().getXYZWin().setOMNI2SettingsWindowVisible(true);
+                getCore().getXYZWin().setOMNI2SettingsWindowVisible(true);
             }
         });
         menu.add(menuItem);
-        
+
         menu.addSeparator();
 
         // JMenuItems for the activity indexes (multiple menu items, one per index).
@@ -322,6 +336,11 @@ public class XYZMenuBar extends JMenuBar {
                 final ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
                 final Sat sat = wizard.start();
                 if (sat != null) {
+                    if (sat instanceof TLESat) {
+                        // Only show warning message if (1) the file was successfully
+                        // imported, and (2) the file was a TLE file.
+                        sendTLEWarningMessage();
+                    }
                     xyzWin.addSatAction(sat);
                 }
             }
@@ -501,7 +520,9 @@ public class XYZMenuBar extends JMenuBar {
 
     /**
      * Each JMenuItem is a JCheckBoxMenuItem with a satellite's name, is checked
-     * if sat is added to {@link ovt.object.Sats Sats}.
+     * (checkbox is checked) if sat is added to {@link ovt.object.Sats Sats}.
+     *
+     * NOTE: Special case when treating the Cluster[1-4].ltof files.
      *
      * @return Array with JMenuItem to put in JMenu.
      */
@@ -511,28 +532,28 @@ public class XYZMenuBar extends JMenuBar {
          =====================================*/
         File[] allFiles = new File[0];
         {
-            // Excludes files since "Cluster[1-4].ltof" are used by ClusterSats
-            // (or some code in the neighbourhood)
-            // and are therefore treated specially somewhere else.
-//            final FilenameFilter filter
-//                    = (File dir, String file)
-//                    -> file.endsWith(".tle") || (file.endsWith(".ltof") && !(file.startsWith("Cluster")));
-            final FilenameFilter filter
+            /**
+             * NOTE: Excludes files "Cluster[1-4].ltof" since they are
+             * automatically opened by ClusterSats (or some code in the
+             * neighbourhood) and are therefore treated specially somewhere
+             * else.
+             */
+            final FilenameFilter filenameFilter
                     = (File dir, String file)
                     -> file.endsWith(".tle") || (file.endsWith(".ltof") && !(file.matches("Cluster[1-4].ltof")));
 
             final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
             if (userOrbitDir != null) {
-                final File[] userFiles = userOrbitDir.listFiles(filter);
+                final File[] userFiles = userOrbitDir.listFiles(filenameFilter);
                 allFiles = Utils.concat(allFiles, userFiles);
             } else {
-                System.out.println("Can not find directory (Utils.findUserDir("+OVTCore.getOrbitDataSubdir()+")).");
+                System.out.println("Can not find directory (Utils.findUserDir(" + OVTCore.getOrbitDataSubdir() + ")).");
             }
 
             // Look for files in system level odata.
             final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataSubdir());
             if (sysOrbitDir != null) {
-                final File[] sysFiles = sysOrbitDir.listFiles(filter);
+                final File[] sysFiles = sysOrbitDir.listFiles(filenameFilter);
                 allFiles = Utils.concat(allFiles, sysFiles);
             } else {
                 //System.out.println("Can not find directory (Utils.findSysDir("+OVTCore.getOrbitDataSubdir()+")).");
@@ -540,8 +561,8 @@ public class XYZMenuBar extends JMenuBar {
         }
 
         /*if (allFiles == null) {
-            return null;
-        }*/
+         return null;
+         }*/
         final JMenuItem[] menuItems = new JMenuItem[allFiles.length];
 
         // ---------------------------------------------------
@@ -566,6 +587,7 @@ public class XYZMenuBar extends JMenuBar {
                         }
                         sat = new LTOFSat(getCore());
                     } else {
+                        sendTLEWarningMessage();
                         sat = new TLESat(getCore());
                     }
                     sat.setName(satname);
@@ -596,6 +618,19 @@ public class XYZMenuBar extends JMenuBar {
         sortMenuItemsByText(menuItems);
 
         return menuItems;
+    }
+
+
+    /**
+     * Called when needing to warn the user that OVT only handles TLE files
+     * approximately correctly. It is useful to have this as a separate method
+     * if one is uncertain of when to trigger the warning in the code (maybe
+     * even in multiple places?) and might move it.
+     */
+    private void sendTLEWarningMessage() {
+        core.sendWarningMessage(
+                TLE_WARNING_TITLE,
+                TLE_WARNING_MSG);
     }
 
 
