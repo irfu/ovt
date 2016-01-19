@@ -127,7 +127,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
         }
     }
     
-  /** Tell all sats about cs change. */
+    /** Tell all sats about cs change. */
     public void coordinateSystemChanged(CoordinateSystemEvent evt) {
         clusterSats.coordinateSystemChanged(evt);
         
@@ -213,11 +213,13 @@ public class Sats extends BasicObject implements TimeChangeListener,
     
     @Override
     public JMenuItem[] getMenuItems() {
-        JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createLTOF_TLESatsMenuItemList();
-        JMenuItem[] res = new JMenuItem[sats.length + 2];
+        final JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createLTOF_TLESatsMenuItemList();
+        final JMenuItem[] res = new JMenuItem[sats.length + 2];
         res[0] = getCore().getXYZWin().getXYZMenuBar().createImportSatelliteMenuItem();
         res[1] = null; // separator
-        System.arraycopy(sats, 0, res, 2, sats.length); // copy sats to res 
+        
+        // Copy "sats" to "res" but with indices shifted (incremented) by 2.
+        System.arraycopy(sats, 0, res, 2, sats.length);
         return res;
     }
 }

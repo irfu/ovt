@@ -61,7 +61,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "November 2015";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
-    // BUILD incremented to "6" (from "5") 2015-11-11 (for Yuri Khotyaintsev's demo version).
+    // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     public static final int BUILD = 6;
     public static final String globalSettingsFileName = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
@@ -71,7 +71,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
     /* Set the debugging level (which logging messages should actually be logged/saved).
      * Refers to Log#setDebugLevel. */
-    private static final int GLOBAL_LOG_DEBUG_LEVEL = 0;
+    private static final int GLOBAL_LOG_DEBUG_LEVEL = 3;
     public static int DEBUG = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
@@ -634,12 +634,21 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     /**
-     * Method to be used when informing user about the warning. When in GUI it
+     * Method to be used when warning the user something. When in GUI it
      * produces a popup window with <CODE>msghead</CODE> as window title and
      * <CODE>msg</CODE> as message.
      *
-     * Note that the word "Warning" is added to the output. Therefore, do not
-     * put this in the argument strings.
+     * NOTE: The word "Warning" is added to the output. Therefore, do not put
+     * this in the argument strings. NOTE: No automatic line breaks which makes
+     * long messages unwieldy.
+     *
+     * NOTE: javax.swing.JOptionPane.showMessageDialog can handle HTML which
+     * makes some formatting possible, incl. automatic line breaks but then with
+     * a fixed width (i.e. not a maximum width, i.e. one which can be greater
+     * than the length of the printed message). However, the method
+     * implementation concatenates the parameter string with other strings which
+     * (probably) makes it impossible to use HTML in the "msg" since the whole string
+     * has to be surrounded with {@code <HTML>...</HTML>}(?).
      *
      * @param title Message title
      * @param msg Warning message
@@ -683,12 +692,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     // for JNI methods
+    // Moved to XYZWindow
 //    static {
 //        System.loadLibrary("ovt-" + VERSION);
 //        System.loadLibrary("jawt");
 //    }
-
-
     /**
      * Detect OS type.
      *

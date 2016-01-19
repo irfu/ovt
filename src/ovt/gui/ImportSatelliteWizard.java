@@ -172,9 +172,13 @@ public class ImportSatelliteWizard extends JDialog {
                     int dataType = getOrbitDataType(file.getName());
                     
                     String ext="";
-                    if (dataType == TLE) ext = ".tle";
-                    else if (dataType ==  LTOF) ext = ".ltof";
-                    else throw new Exception("Orbit file should end with \".tle\" or \".ltof\".");                    
+                    if (dataType == TLE) {
+                        ext = ".tle";
+                    } else if (dataType ==  LTOF) { 
+                        ext = ".ltof";
+                    } else {
+                        throw new Exception("Orbit file should end with \".tle\" or \".ltof\".");                    
+                    }
 
                     // NOTE: The file should probably be copied to a location where
                     // XYZMenuBar#createLTOF_TLESatsMenuItemList can find it.
@@ -190,7 +194,8 @@ public class ImportSatelliteWizard extends JDialog {
                     }
                     
                     if (dataType == TLE)   {                  
-                        TLESorter.sort(file, outfile); // Check the tle file and COPY FILE to $USER_HOME/odata/ (or at least create new).
+                        // Check the TLE file and COPY FILE to $USER_HOME/odata/ (or at least create a new one).
+                        TLESorter.sort(file, outfile);                         
                         sat = new TLESat(sats.getCore());
                         
                     } else { // dataType == LTOF

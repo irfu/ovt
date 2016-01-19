@@ -160,7 +160,12 @@ public class OMNI2FileUtils_HourlyAvg {
 
     private static final int DEBUG = 2;
 
-    private static final String FILE_NAME_PATTERN = "omni2_%4d.dat";
+    /**
+     * Filenames used for files on the local storage device (in the cache). Does
+     * not necessarily have to be the same filename as implied by
+     * FTP_URL_PATTERN.
+     */
+    private static final String LOCAL_FILE_NAME_PATTERN = "omni2_%4d.dat";
     private static final String FTP_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
 
     // Choose buffer sizes based on expected number of data points (approximate, does not have to be exact).
@@ -215,8 +220,8 @@ public class OMNI2FileUtils_HourlyAvg {
     }
 
 
-    public static String getDefaultFilename(int year) {
-        return String.format(FILE_NAME_PATTERN, year);
+    public static String getLocalFilename(int year) {
+        return String.format(LOCAL_FILE_NAME_PATTERN, year);
     }
 
 

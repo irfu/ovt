@@ -283,7 +283,10 @@ public class OMNI2SettingsWindow extends JFrame {
             str = NO_DATA_DISPLAY_STR;
         } catch (IOException ex) {
             str = IO_ERROR_DISPLAY_STR;
-            magProps.getCore().sendErrorMessage("I/O error while trying to obtain OMNI2 value.", ex.getMessage());
+            // Restating the title since it is long and may not display entirely in
+            // the title bar if the window is small.
+            magProps.getCore().sendErrorMessage("I/O error while trying to obtain OMNI2 value.",
+                    "I/O error while trying to obtain OMNI2 value:\n"+ ex.getMessage());
         }
         activityValueTextFields.get(activityIndex).setText(str);
     }

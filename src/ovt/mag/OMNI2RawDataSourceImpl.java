@@ -38,6 +38,7 @@ import java.io.InputStream;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import ovt.datatype.Time;
+import ovt.util.Log;
 import static ovt.util.Utils.downloadURLToFile;
 
 /**
@@ -149,7 +150,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
         }
 
         final String urlStr = OMNI2FileUtils_HourlyAvg.getOnlineURL(year);
-        final String localFilenameStr = OMNI2FileUtils_HourlyAvg.getDefaultFilename(year);
+        final String localFilenameStr = OMNI2FileUtils_HourlyAvg.getLocalFilename(year);
 
         File file;
         try {
@@ -242,6 +243,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
                     try {
                         downloadFile(urlStr, file, "Redownloading old file in case the online source has been updated.");
                     } catch (IOException e) {
+                        Log.log("ERROR: Failed to redownload (possibly newer) OMNI2 file.");
                         System.out.println("ERROR: Failed to redownload (possibly newer) OMNI2 file.");
                     }
                 }
@@ -265,7 +267,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
             final int bytesDownloaded = downloadURLToFile(urlStr, mLocalFile);
 
             final double duration = (System.nanoTime() - t_start) / 1.0e9;     // Unit: seconds
-            System.out.printf("   Downloaded %d bytes, elapsed time %.1f s - Average speed: %.1f kiB/s\n",
+            System.out.printf("   Downloaded %d bytes, elapsed time %.1f s - Average speed: %.1f kiB/s"+System.lineSeparator(),
                     bytesDownloaded, duration, bytesDownloaded / duration / 1024.0);
         }
     }

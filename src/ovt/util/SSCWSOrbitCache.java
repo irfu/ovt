@@ -488,7 +488,7 @@ public class SSCWSOrbitCache {
             throw new IOException(e);    // NOTE: Reclassifying NoSuchSatelliteException as IOException. Should never occur in practise.
         }
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
-        System.out.printf("   Time used for downloading data: %.1f [s]\n", duration);
+        System.out.printf("   Time used for downloading data: %.1f [s]"+System.lineSeparator(), duration);
 
         /*===============
          Check assertion

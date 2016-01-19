@@ -101,7 +101,7 @@ public class SatInfoWindow extends JDialog implements Customizer {
         
         pack();  // "Causes this Window to be sized to fit the preferred size and layouts of its subcomponents."
         
-        // senter the window
+        // Center the window
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension windowSize = getSize();
         setLocation(scrnSize.width/2 - windowSize.width/2,

@@ -40,15 +40,15 @@ import java.util.List;
 /**
  * Cache for a function that<BR>
  * (1) orders/organizes/distributes some form of data on a continuous 1D axis,
- * called "t"<BR>
- * (2) returns data corresponding to an arbitrary (uninterrupted) segment on the
- * t axis,<BR>
- * (3) always returns equivalent data for a given segment.<BR>
+ * called "t",<BR>
+ * (2) returns data corresponding to an arbitrarily specified segment on the t
+ * axis, t_a-t_b ({@code t_a<t_b}; a "data segment"), <BR>
+ * (3) always returns equivalent data for a given interval on the t axis.<BR>
  * (4) that returns a segment t_a-t_c equal to merging the segments t_a-t_b and
- * t_b-t_c {@code (t_a <= t_b <= t_c)} (5) Every data segment has a positive
- * (non-zero) length.
+ * t_b-t_c {@code (t_a <= t_b <= t_c)}<BR>
  *
- * The cached function is accessed through an implementation of DataSource.
+ * The cached function, and the function for merging data segments is accessed
+ * through an implementation of DataSource.
  *
  * NOTE: The cached function determines whether upper/lower t boundaries are
  * inclusive/exclusive or not. This class does not care, but note that a
@@ -65,12 +65,12 @@ import java.util.List;
  * IndexedSegmentsCache has "index searching" (this class does not have a notion
  * of indices), load from/save to stream, ability to replace cached data with
  * newer data of higher "quality" (e.g. better resolution) (there may be more
- * differences). This class has the ability for data source to add more data to
- * the cache than asked for ("data source-initiated proactive caching").
+ * differences). This class has the ability for a data source to add more data
+ * to the cache than asked for ("data source-initiated proactive caching").
  *
  * IMPLEMENTATION NOTE: The class does not support zero-length data segments.
- * Implementing support for zero-length intervals is hard because of ambiguous
- * behaviour for set differences without distinguishing between
+ * Implementing support for zero-length intervals is hard because of the
+ * ambiguous behaviour for set differences without distinguishing between
  * open/closed/halfopen intervals which the class tries to avoid. Example: What
  * is the set difference between a zero-length interval and itself?
  *
@@ -84,8 +84,7 @@ import java.util.List;
 public class SegmentsCache {
 
     private final static int DEBUG = 4;
-    
-    
+
     /**
      * Class which models data for a finite t interval. Instances are stored
      * inside the cache.
@@ -278,7 +277,7 @@ public class SegmentsCache {
     public Object search(double t_start, SearchDirection dir, SearchFunction searchFunc) throws IOException {
         Log.log(
                 this.getClass().getSimpleName() + " # searchDataSegment"
-                + "(t_start="+t_start+", dir="+dir+", searchFunc=...)",
+                + "(t_start=" + t_start + ", dir=" + dir + ", searchFunc=...)",
                 DEBUG);
         //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
 
@@ -322,7 +321,7 @@ public class SegmentsCache {
             final DataSegment seg = findCachedSegmentSuperset(t1, t2);
             //Log.log("   Cached interval sum = " + getCachedTIntervalSum(), DEBUG);
             Log.log("Call searchFunc.searchDataSegment", DEBUG);
-            Log.log("   seg.getInterval()="+Arrays.toString(seg.getInterval())+", t_start="+t_start+", dir="+dir , DEBUG);
+            Log.log("   seg.getInterval()=" + Arrays.toString(seg.getInterval()) + ", t_start=" + t_start + ", dir=" + dir, DEBUG);
 
             final Object searchResults = searchFunc.searchDataSegment(seg, t_start, dir);
             if (searchResults != null) {

@@ -163,7 +163,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       pack();
       //setResizable(false);
       
-      // senter the window
+      // Center the window
       Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
       Dimension windowSize = getSize();
       setLocation(scrnSize.width/2 - windowSize.width/2,
