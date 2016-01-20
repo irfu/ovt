@@ -241,15 +241,15 @@ public class SSCWSSat extends Sat {
 
         final OrbitalState state = dataSource.getRepresentativeOrbitalState();
 
-        double period = Double.NaN;   // Default value.
+        double period_days = Double.NaN;   // Default value.
         if ((state != null) | (!state.isReasonableEllipticOrbit())) {
-            period = state.P_SI * Time.DAYS_IN_SECOND;
+            period_days = state.P_SI * Time.DAYS_IN_SECOND;
         }
 
         return new double[]{
             dataSource.satInfo.availableBeginTimeMjd,
             dataSource.satInfo.availableEndTimeMjd,
-            period, SATELLITE_NBR};
+            period_days, SATELLITE_NBR};
     }
 
 

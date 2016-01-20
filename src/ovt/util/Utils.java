@@ -55,7 +55,7 @@ import ovt.datatype.*;
  */
 public class Utils extends Object {
 
-    private static final int findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL = 2;
+    private static final int findExistingFile_PATH_PRINTOUTS_DEBUG_LEVEL = 99;
 
 
     /**
@@ -619,8 +619,8 @@ public class Utils extends Object {
 
 
     /**
-     * Log all system properties. Useful for
-     * diagnosing when OVT can not find native files.
+     * Log all system properties. Useful for diagnosing when OVT can not find
+     * native files.
      *
      * NOTE: Only intended for debugging purposes, for "filling the log". NOTE:
      * Takes care of all its own exceptions. The caller should not need to think
@@ -809,7 +809,7 @@ public class Utils extends Object {
          * NOTE: "File" class seems to represent a path (i.e. a _string_) regardless of
          * whether it represents something on disk or not. Therefore the
          * constructor accepts any non-null string. Exceptions due to
-         * non-sensical paths are trown first later when using the File object.
+         * non-sensical paths are thrown first later when using the File object.
          *
          * NOTE: Do not confuse File#isFile and File#exists(). The latter does
          * not distinguish file & directories.
@@ -1621,11 +1621,11 @@ public class Utils extends Object {
     /**
      * Calculate orbital period from a satellite's velocity and distance to
      * Earth at an arbitrarily chosen instant. This should always yield the same
-     * result for an idealized elliptical orbit. Only uses SI units.
+     * result for an idealized elliptical orbit. Method only uses SI units.
      *
-     * @param r_SI Distance from center of the Earth in meters.
-     * @param v_SI Velocity in m/s in non-accelerating frame.
-     * @return Orbital period in seconds.
+     * @param r_SI Distance from center of the Earth [meters].
+     * @param v_SI Velocity [m/s] in non-accelerating frame.
+     * @return Orbital period [seconds].
      */
     // PROPOSAL: Incorporate into OrbitalState. Partial result semimajor axis fits in there to.
     public static double orbitalPeriod(double r_SI, double v_SI) {
@@ -1647,28 +1647,25 @@ public class Utils extends Object {
     }
 
     /**
-     * Return various orbital state values given instantaneous position and
-     * velocity vectors and assuming an elliptical orbit.
+     * Represents an orbit assuming a perfect orbit (elliptic/bound, parabolic &
+     * hyperbolic/escape orbits) around a point gravity source.
      *
-     * NOTE: Only uses SI units without prefixes (meter, seconds etc). The
-     * suffix "_SI" refers to this.<BR>
+     * NOTE: The class only uses SI units without prefixes (meter, seconds etc).
+     * The variable suffix "_SI" refers to this.<BR>
      *
-     * NOTE: There are orbits which are far from approximately elliptical. SSC
-     * Web Services lists at least one satellite in a Lissajous orbit, "ACE" at
-     * Sun-Earth L1 (SSC Web Services ID: "ace"). Satellites could also
-     * conceivably temporarily (or instantanously) be be on non-sensical
-     * elliptical orbits such during launch, which might give not very useful
-     * results.<BR>
+     * NOTE: There are real trajectories which are far from approximately
+     * elliptical, or even ballistic. SSC Web Services lists at least one
+     * satellite in a Lissajous orbit at Sun-Earth L1 ("ACE"), and several
+     * ballons (BARREL-*), and at least one satellite that is departing the
+     * Earth (MAVEN). Satellites could also conceivably temporarily (or
+     * instantanously) be non-balistic during launch.<BR>
      *
-     * NOTE: r_perigee_SI and r_apogee_SI should be NaN for unbound
-     * orbits(?).<BR>
+     * NOTE: r_perigee_SI should be NaN for unbound orbits(?). r_apogee_SI
+     * should be NaN for hyperbolic orbits, and Inf for parabolic orbits.<BR>
      *
      * IMPLEMENTATION NOTE: These calculations are implemented as one single
      * calculation (and class) since the calculations of various quantities
      * overlap and several are partial results in calculating others anyway.<BR>
-     *
-     * @param r in m
-     * @param v in m/s
      */
     public static class OrbitalState {
 
@@ -1700,24 +1697,23 @@ public class Utils extends Object {
 
 
         /**
-         * Represents orbital state assuming an orbit (elliptic/bound, parabolic
-         * & hyperbolic/escape orbits) around a point gravity source.
+         * Initializes instance using a given instantaneous position and
+         * velocity vectors and assuming an elliptical orbit.
          *
          * @param r_SI Position vector relative the Earth's center of mass.
          * Unit: meter.
          * @param v_SI Velocity vector in a non-accelerating frame/coordinate
          * system, e.g. GEI. Unit: m/s
          */
-        // PROPOSAL: Separate bound from unbound (E>0) orbits explicitly?
+        // PROPOSAL: Separate bound from unbound (E>=0) orbits explicitly?
         public OrbitalState(double[] r_SI, double[] v_SI) {
-            final int DEBUG = 3;
+//            final int DEBUG = 3;
 
             final double v_abs_SI = Vect.absv(v_SI);
             final double r_abs_SI = Vect.absv(r_SI);
             E_orbital_norm_SI = 0.5 * v_abs_SI * v_abs_SI - Const.GRAV_CONST * Const.ME / r_abs_SI;
             {
-                final double[] rxv_SI = new double[3];
-                Vect.cross(r_SI, v_SI, rxv_SI);
+                final double[] rxv_SI = Vect.cross(r_SI, v_SI);
                 L_norm_SI = Vect.absv(rxv_SI);
             }
 
@@ -1762,6 +1758,7 @@ public class Utils extends Object {
             }
 
             // Check if orbit goes beyond the Hill sphere, e.g. to a Lagrange point or to Mars.
+            // NOTE: This does NOT take the Moon into account.
             if (r_apogee_SI > R_HILL_SPHERE_SI) {
                 return false;
             }

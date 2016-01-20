@@ -49,7 +49,6 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
     protected File orbitFile;
 
-    /*  orbital period hours = 2.7645e-6*A*sqrt(A) A(km)=semimajor axis   */
     /**
      * Satellite's trajectory
      */

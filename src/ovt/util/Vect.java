@@ -206,20 +206,16 @@ public static double  dot(double a[], double b[]) {
     return (ret_val);
 }
 
-  /** vector product c =  a x b */
+  /** Vector product c =  a x b. */
   public static double[] cross(double a[], double b[]) {
-    double c[] = new double[3];
-    c[0] = a[1] * b[2] - a[2] * b[1];
-    c[1] = a[2] * b[0] - a[0] * b[2];
-    c[2] = a[0] * b[1] - a[1] * b[0];
+    final double c[] = new double[3];
+    cross(a,b,c);
     return c;
   }
 
 
 /** Vector product c = a x b.
- * @deprecated since 0.0001
  */
-// Why deprecated?! Because there is another "cross" method? /Erik P G Johansson
 public static void cross(double a[], double b[], double c[]) {	
     c[0] = a[1] * b[2] - a[2] * b[1];
     c[1] = a[2] * b[0] - a[0] * b[2];
@@ -229,8 +225,7 @@ public static void cross(double a[], double b[], double c[]) {
 
 /** Normalized vector product. */
 public static double[] crossn(double a[], double b[]) {
-    final double c[] = new double[3];    
-    cross(a, b, c);
+    final double c[] = cross(a, b);
     final double x = absv(c);
 
     if (x >= 1e-30){
@@ -244,14 +239,15 @@ public static double[] crossn(double a[], double b[]) {
 
 /** Normalized vector product. c is the result. */
 public static void crossn(double a[], double b[], double c[]) {
-    double x;
-
     cross(a, b, c);
-    x = absv(c);
+    final double vectorLength = absv(c);
 
-    if (x >= 1e-30)
-	for (int i=0; i<3; i++) 
-            c[i] = c[i] / x;
+    // Normalize, but only if the vector appears to be non-zero.
+    if (vectorLength >= 1e-30) {
+	for (int i=0; i<3; i++) {
+            c[i] = c[i] / vectorLength;
+        }
+    }
 
   }
 
