@@ -49,6 +49,8 @@ import javax.swing.*;
 
 
 /**
+ * GUI component that represents what is needed to modify a TimeSet: three text
+ * fields (start time, interval length, step size), and two buttons (go back/forth in time).
  *
  * @author  ko
  * @version 
@@ -66,6 +68,7 @@ public class TimeSetCustomizer extends JPanel
   private MjdEditorPanel startTextField;
   private IntervalEditorPanel intervalTextField;
   private IntervalEditorPanel stepTextField;
+  
   
   /** Creates new TimeSettingsCustomizer */
 public TimeSetCustomizer() {
@@ -109,30 +112,37 @@ public TimeSetCustomizer() {
     JPanel panel = new JPanel();
     panel.setLayout(new FlowLayout());
     
-    JButton button = new JButton("<<");
-    button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-            timeSet.setStartMjd(timeSet.getStartMjd() - timeSet.getIntervalMjd());
-            setObject(timeSet);
-            firePropertyChange(prop[START], null, null);
-        }
-    });
-    button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
-    panel.add(button);
-    
+    {
+        JButton button = new JButton("<<");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                timeSet.setStartMjd(timeSet.getStartMjd() - timeSet.getIntervalMjd());
+                setObject(timeSet);
+                firePropertyChange(prop[START], null, null);
+            }
+        });
+        button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
+        // Enable shortcut modifier+left (non-numpad arrow; Modifier depends on look & feel)
+        button.setMnemonic(java.awt.event.KeyEvent.VK_LEFT);    
+        panel.add(button);
+    }    
     
     panel.add(mainPanel);
     
-    button = new JButton(">>");
-    button.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent evt) {
-            timeSet.setStartMjd(timeSet.getStartMjd() + timeSet.getIntervalMjd());
-            setObject(timeSet);
-            firePropertyChange(prop[START], null, null);
-        }
-    });
-    button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
-    panel.add(button);
+    {
+        JButton button = new JButton(">>");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                timeSet.setStartMjd(timeSet.getStartMjd() + timeSet.getIntervalMjd());
+                setObject(timeSet);
+                firePropertyChange(prop[START], null, null);
+            }
+        });
+        button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
+        // Enable shortcut modifier+right (non-numpad arrow; Modifier depends on look & feel)
+        button.setMnemonic(java.awt.event.KeyEvent.VK_RIGHT);
+        panel.add(button);
+    }
     
     add(panel);
     

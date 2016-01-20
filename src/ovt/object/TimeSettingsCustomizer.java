@@ -56,6 +56,7 @@ import javax.swing.*;
 
 
 /**
+ * Represents the window for customizing the displayed time interval.
  *
  * @author  ko
  * @version 
@@ -66,7 +67,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
   private TimeSettings timeSettings;
   private JButton applyButton, okButton;
   private TimeSet timeSet;
-  private TimeSetCustomizer customizer;
+  private TimeSetCustomizer timeSetCustomizer;
   
   /** Creates new TimeSettingsCustomizer */
   public TimeSettingsCustomizer(TimeSettings ts) {
@@ -85,8 +86,8 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       //cont.setBorder(BorderFactory.createEmptyBorder(5,10,0,10));
       cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
       
-      customizer = new TimeSetCustomizer();
-      customizer.setObject(timeSet);
+      timeSetCustomizer = new TimeSetCustomizer();
+      timeSetCustomizer.setObject(timeSet);
       
       // listen if customier changes any of the values
       // to enable apply button 
@@ -96,11 +97,11 @@ public class TimeSettingsCustomizer extends CustomizerDialog
         }
       };
       
-      customizer.addPropertyChangeListener("startMjd", applyButtonStateUpdater);
-      customizer.addPropertyChangeListener("intervalMjd", applyButtonStateUpdater);
-      customizer.addPropertyChangeListener("stepMjd", applyButtonStateUpdater);
+      timeSetCustomizer.addPropertyChangeListener("startMjd", applyButtonStateUpdater);
+      timeSetCustomizer.addPropertyChangeListener("intervalMjd", applyButtonStateUpdater);
+      timeSetCustomizer.addPropertyChangeListener("stepMjd", applyButtonStateUpdater);
       
-      cont.add(customizer);
+      cont.add(timeSetCustomizer);
       // ------------------- close, reset buttons ----------------
       
       JPanel panel = new JPanel();
@@ -145,7 +146,20 @@ public class TimeSettingsCustomizer extends CustomizerDialog
               }
           }
       });
-      applyButton.setEnabled(false);
+      applyButton.setEnabled(false);      
+      /** Make the button "default" so that pressing ENTER triggers the button.
+       * NOTE: ENTER usually (in Windows applications in general) triggers the "OK"
+       * button so it is not really intuitive. */
+      getRootPane().setDefaultButton(applyButton);
+      /** Add shortcut modifier+ENTER (modifier is determined by look&feel).
+       * TimeSetCustomizer uses mnemonics for left/right arrows (with modifier).
+       * This is a "hack" that makes it easier for the user to go backward/forward
+       * in time using only the keyboard by repeatedly press modifier left/right
+       * button and "Apply" button since the modifier key can be constantly held
+       * down.
+       */
+      
+      applyButton.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
       panel.add(applyButton);
       
       cont.add(panel);
@@ -153,7 +167,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       pack();
       //setResizable(false);
       
-      // center the window
+      // Center the window
       Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
       Dimension windowSize = getSize();
       setLocation(scrnSize.width/2 - windowSize.width/2,
@@ -198,13 +212,13 @@ public void windowDeactivated(WindowEvent evt) {
   /** Sets previous values */
 private void revert() { 
     timeSet = (TimeSet)timeSettings.getTimeSet().clone();
-    customizer.setObject(timeSet);
+    timeSetCustomizer.setObject(timeSet);
     applyButton.setEnabled(false);
 }
 
 private void applyAction() throws IllegalArgumentException, SyncException {
     
-    customizer.sync();
+    timeSetCustomizer.sync();
     //Log.log("valuesChanged()="+valuesChanged());
     if (valuesChanged()) {
         timeSettings.setTimeSet(timeSet);
