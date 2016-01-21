@@ -40,10 +40,12 @@ import ovt.util.SegmentsCache;
 import ovt.util.Utils;
 
 /**
- * Container for OMNI2 data over a certain period of time. Intended to be
- * TREATED AS IMMUTABLE after its construction (constructor plus
- * #setFieldArray), although it may return references to internal arrays which
- * the caller is then supposed to make sure are not altered.
+ * Container for OMNI2 data over a certain period of time.
+ *
+ * IMPORTANT NOTE: Intended to be TREATED AS IMMUTABLE after its construction
+ * (constructor plus #setFieldArray), although it may return references to
+ * internal arrays which the caller is then supposed to make sure are not
+ * altered. This is for efficiency reasons.
  *
  * NOTE: An instance covers an explicitly specific period in time, which has to
  * be CONSISTENT with the data points in it, but the specified time period can
@@ -76,11 +78,11 @@ public final class OMNI2Data implements SegmentsCache.DataSegment {
 
     /**
      * Identifiers for various fields in OMNI2 data. GSE, GSM refer to
-     * coordinate systems. nT, nP, kms (=km/s) refer to units. The range of
-     * possible values are similar but not the same as the "activity indices"
-     * defined by MagProps. These may include (1) data read from OMNI2 files
-     * that is (presently) not used, and (2) columns for (magnetic field) vector
-     * components.
+     * coordinate systems. nT, nP (nanoPascal), kms (=km/s) refer to units. The
+     * fields are similar but not the same as those referred to by the "activity
+     * indices" defined by MagProps. These fields defined here may include (1)
+     * data read from OMNI2 files that are (presently) not used, and (2) columns
+     * for (magnetic field) vector components.
      */
     public enum FieldID {
 

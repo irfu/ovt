@@ -64,6 +64,7 @@ import ovt.util.Log;
 //          and ovt.datatype.Interval for this.
 //
 // PROPOSAL: Change name to be more in agreement with the rest of OVT: OMNI2Customizer? OMNI2CustomizerWindow?
+// PROPOSAL: Add "Close" button, which is then fed to getRootPane().setDefaultButton(...).
 public class OMNI2SettingsWindow extends JFrame {
 
     private static final int DEBUG = 2;

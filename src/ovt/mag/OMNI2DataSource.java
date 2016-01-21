@@ -42,36 +42,158 @@ import ovt.util.SegmentsCache;
 import ovt.util.Utils;
 
 /**
- * Class from which all OMNI2 data can be retrieved and used by the application
- * and without knowledge of the underlying OMNI2 data files and their format.
- * All OMNI2 data used by the application should pass through this class.
+ * The code for retrieving NASA OMNI2 data is spread out on a number of classes.
+ * To make the organization, and the reasons for the organization more clear,
+ * all relevant class descriptions are collected here.
  *
+ * IMPLEMENTATION NOTE: OMNI2 offers data with different time averages but the
+ * current implementation (2016-01-21) only uses one such time average (hourly
+ * average). The implementation is however chosen such as to make certain things
+ * easy, like certain conceivable future changes reasonably easy:<BR>
+ * 1) ADD support for other OMNI2 file types (averages over other periods of
+ * time)<BR>
+ * 2) SWITCH between using different OMNI2 file types entirely,<BR>
+ * 3) implement usage of OMNI2 with different time resolution at the same time
+ * (possibly with different resolution for different time intervals).<BR>
+ * 4) make testing with fake OMNI2 data easy.
+ *
+ * Crudely speaking, this is the dependency/data flows between the
+ * classes/interfaces (2016-01-21) when using real OMNI2 data (not test
+ * data):<BR>
+ * (1) The-rest-of-OVT --uses-- OMNI2DataSource.<BR>
+ * (2) OMNI2DataSource --uses-- an implementation of OMNI2RawDataSource.<BR>
+ * (3) OMNI2RawDataSourceImpl (implements OMNI2RawDataSource) --uses--
+ * OMNI2FileUtils_HourlyAvg<BR>
+ *
+ * NOTE: To add support for other OMNI2 file types (time averages) one would
+ * create new classes, one equivalent to OMNI2FileUtils_HourlyAvg for every new
+ * OMNI2 file type to support (OMNI2FileUtils_DailyAvg, OMNI2FileUtils_5MinAvg
+ * etc). Then OMNI2RawDataSource, OMNI2RawDataSourceImpl (most of the work?),
+ * and OMNI2DataSource and would be modified accordingly.
+ *
+ * NOTE: The suffix "_hourlyAvg" refers to identifiers for hourly averaged data.
+ *
+ * NOTE: The exact file format is different for different OMNI2 data files with
+ * different time resolutions/averages.
+ *
+ *
+ * ==============================<BR>
+ * class OMNI2FileUtils_HourlyAvg<BR>
+ * ==============================<BR>
+ * PURPOSE: Class with code and settings specifically for handling OMNI2 files
+ * with 1-hour averages and nothing else: Code for understanding file format,
+ * default URL, default local file names.
+ *
+ * IMPLEMENTATION NOTE: The code reads all fields which are required to fill
+ * OMNI2Data, which may be more than what OVT really requires. See OMNI2Data.
+ *
+ * IMPLEMENTATION NOTE: The class (or any other class for a specific OMNI2 file
+ * type) should NOT have any form of caching (neither RAM nor disk) since a user
+ * might want to combine data of different time resolution or from different
+ * sources (before caching), or use the same cache for multiple types of data
+ * (other variables) etc. In short, a user/caller might want a policy for
+ * caching to disk that covers more than this OMNI2 data file type.
+ *
+ *
+ *
+ * ============================<BR>
+ * interface OMNI2RawDataSource<BR>
+ * ============================<BR>
+ * PURPOSE: Interface describing a "raw" OMNI2 data source that supplies all
+ * forms of OMNI2 data in separate methods (all averages that are implemented in
+ * the application). One canonical implementation, "OMNI2RawDataSourceImpl", is
+ * the actual source of all actual OMNI2 data. Other implementations can be
+ * sources of test data for testing purposes. The application should read all
+ * its OMNI2 data through one instance (on an implementation) of this interface.
+ * The interface exists to make it easy to switch from one "raw" OMNI2 data
+ * source to another.
+ *
+ * IMPLEMENTATION NOTE: Because of its purpose, this interface should in
+ * practice describe (be based upon) the "true" implementation,
+ * OMNI2RawDataSourceImpl, rather than the other way around which is the usual
+ * way of thinking about java interfaces.
+ *
+ * IMPLEMENTATION NOTE: The methods are PERMITTED to be DEPENDENT on the format
+ * of the underlying OMNI2 files: how data is distributed over time (time
+ * resolution), how data is distributed in chunks (one file worth's of data) but
+ * should of course still be as generic as possible.
+ *
+ *
+ *
+ * ============================<BR>
+ * class OMNI2RawDataSourceImpl<BR>
+ * ============================<BR>
+ * PURPOSE: The canonical implementation of the interface OMNI2RawDataSource
+ * supplying real OMNI2 data (not test data). The class should serve as a bridge
+ * between: (1) Classes that handle specific files types (e.g.
+ * OMNI2FileUtils_HourlyAvg), and (2) OMNI2DataSource. The class is intended to
+ * contain things that are common for different OMNI2 data file types (different
+ * averages), but not RAM caching (caching that is INdependent of different
+ * OMNI2 file types):<BR>
+ * 1) definitions of fill values (fill values used in java variables; not the
+ * fill values used in OMNI2 files and which may depend on file type), <BR>
+ * 2) how/if to cache downloaded OMNI2 files: filenaming conventions on disk,
+ * choice of cache directory on disk. <BR>
+ * 3) how to handle the data availability time interval (for all OMNI2 data, all
+ * time resolutions), and how to handle the moving upper time boundary as time
+ * progresses (may have to redownload files). <BR>
+ *
+ * NOTE: Different OMNI2 data files with different time resolutions have data
+ * available for different (global) time intervals (different starting years).
+ *
+ * NOTE: OMNI2 data files can have fill values for data points in the future.
+ *
+ * IMPLENTATION NOTE: The code only reads the current time (time of execution,
+ * walltime) once (twice really) to avoid a minor bug. If current time was read
+ * multiple times, a data file could go from "recent enough to use" to "old
+ * enough to be redownloaded" during the course of an OVT session. ==> Two
+ * different versions of the same file may be used during the course of an OVT
+ * session, something which MAY be undesirable since the code (.e.g. caching in
+ * RAM) is not made to handle changes in the underlying OMNI2 data.
+ *
+ *
+ *
+ * =====================<BR>
+ * class OMNI2DataSource<BR>
+ * =====================<BR>
+ * PURPOSE: Class from which all OMNI2 data can be retrieved as nice and simple
+ * time series ("non-raw") for arbitrary periods of time by the rest of the
+ * application. With the possible exception of initialization, the rest of the
+ * application should thus not need any knowledge of underlying OMNI2 data
+ * files, their internal format, caching (in RAM and/or on disk) etc. All OMNI2
+ * data used by the application's general code should pass through this class.
+ * 
  * This class serves as the bridge between<BR>
  * (1) (implementations of) OMNI2RawDataSource (where the interface is partly
  * dependent on the format of the underlying OMNI2 data files and may change if
  * implementing support for other OMNI2 files), and<BR>
  * (2) the rest of OVT (which should be ignorant of the format of the underlying
- * OMNI2 data files), minus the GUI (almost).
+ * OMNI2 data files).
  *
- * NOTE: Has no good way of finding the beginning and end time of available
+ * NOTE: It has no good way of finding the beginning and end time of available
  * data. Does throw proper exception when the code fails to obtain data though.
  *
- * IMPLEMENTATION NOTE: Implemented as an instantiated class to make automated
- * testing without the GUI and an arbitrary implementation of OMNI2RawDataSource
- * (and implicitly arbitrary cache directory) easier.
+ * IMPLEMENTATION NOTE: Implemented as an instantiated class (no static methods)
+ * to make automated testing without the GUI and an arbitrary implementation of
+ * OMNI2RawDataSource (and implicitly arbitrary cache directory) easier.
+ *
+ *
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-xx
  */
 public class OMNI2DataSource {
 
-    // Exact value not so important but should probably not be more than
-    // the length of time covered by a year or the underlying OMNI2 files (?).
+    /**
+     * The exact value is not so important but should probably not be more than
+     * the length of time covered by a year or the underlying OMNI2 files (?).
+     * Follow the usage of the variable for details.
+     */
     private static final double MIN_DATA_SOURCE_T_SCALE_DAYS = 1;
 
     /**
-     * Greatest tolerated time (days) between the time for which data is requested, and
-     * the time of the data point used.
+     * Greatest tolerated time (days) between the time for which data is
+     * requested, and the time of the data point used.
      */
     private final double maxTimeDifference_days;
 
@@ -79,7 +201,7 @@ public class OMNI2DataSource {
 
     //##########################################################################
     /**
-     * Class which the cache uses as a data source.
+     * Class which the cache uses as a data source for the cache.
      */
     private static class CacheDataSource implements SegmentsCache.DataSource {
 
@@ -135,7 +257,7 @@ public class OMNI2DataSource {
 
     public OMNI2DataSource(OMNI2RawDataSource rawDataSrc, double mMaxTimeDifference_days) {
         maxTimeDifference_days = mMaxTimeDifference_days;
-        
+
         /*=====================
          Setup cache.
          =====================*/

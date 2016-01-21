@@ -46,27 +46,8 @@ import ovt.util.FCBPTextTableFileReader.FileIntColumnReader;
 import ovt.util.Utils;
 
 /**
- * Class for handling (downloading, understanding file format) NASA OMNI2 files
- * with 1-hour averages as can be retrieved via FTP (2015-09-04).
  *
- * NOTE: The exact file format is different for different time
- * resolutions/averages.
- *
- * IMPLEMENTATION NOTE: Implemented as a separate class since reading the file
- * involves a lot of settings (column definitions). Keeping it as a separate
- * class makes it easier if one would need to use two or more similar file
- * formats (in particular OMNI-related file formats) simultaneously in the
- * future. The class name is also chosen with this in mind. One could also
- * create OMNI2FileUtils_DailyAvg, OMNI2FileUtils_5MinAvg and so on.
- *
- * IMPLEMENTATION NOTE: The class does NOT have any form of caching since a user
- * might want to combine data of different time resolution or from different
- * sources (before caching), or use the same cache for more types of data (other
- * variables) etc. A user/caller might want one policy for caching to disk that
- * covers more than this class.
- *
- * IMPLEMENTATION NOTE: The code reads all fields which are required for
- * OMNI2Data, which may be more than OVT really requires. See OMNI2Data.
+ * See OMNI2DataSource for documentation.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-0x-xx
@@ -164,8 +145,13 @@ public class OMNI2FileUtils_HourlyAvg {
      * Filenames used for files on the local storage device (in the cache). Does
      * not necessarily have to be the same filename as implied by
      * FTP_URL_PATTERN.
+     *
+     * NOTE: This class does not (and should not) actually download and store
+     * files on disk. Therefore, this code has to called by the code that does
+     * that.
      */
-    private static final String LOCAL_FILE_NAME_PATTERN = "omni2_%4d.dat";
+    private static final String LOCAL_FILE_NAME_PATTERN = "omni2_HourlyAvg_%4d.dat";
+    //private static final String FTP_URL_PATTERN = "ftp://BAD_URL";
     private static final String FTP_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
 
     // Choose buffer sizes based on expected number of data points (approximate, does not have to be exact).
@@ -213,7 +199,7 @@ public class OMNI2FileUtils_HourlyAvg {
     }
 
 
-    // QUESTION: How handle years before first available? Years for which there may be no data (incl. current year)?
+    // QUESTION: How handle years before the first available OMNI2 data? Years for which there may be no data (incl. current year)?
     //   PROPOSAL: Hardcoded first year.
     public static String getOnlineURL(int year) {
         return String.format(FTP_URL_PATTERN, year);
@@ -230,9 +216,9 @@ public class OMNI2FileUtils_HourlyAvg {
      * stream.
      *
      * IMPLEMENTATION NOTE: Takes data as an InputStream rather than a file
-     * since reading data from an URL comes as an InputStream (and a file is
-     * easily converted to a stream). Not using "Reader" in class name since
-     * this tecchnically can refer to another form of stream (stream of
+     * since reading data from a URL comes as an InputStream (and a file is
+     * easily converted to a stream). Does not use "Reader" in class name since
+     * this technically can refer to another form of stream (stream of
      * characters). Uses InputStream instead of Reader so that the class has
      * control over the byte-to-characters conversion.
      *
@@ -245,7 +231,10 @@ public class OMNI2FileUtils_HourlyAvg {
      */
     public OMNI2Data read(InputStream in, double beginIncl_mjd, double endExcl_mjd) throws IOException {
 
-        /* Define the columns we want to read, and how we want to read them. FCR = File column reader. */
+        /**
+         * Define the columns we want to read, and how we want to read them.<BR>
+         * FCR = File column reader.
+         */
         final FileIntColumnReader year_FCR = getFileIntColumnReader(1 - 1, null);
         final FileIntColumnReader doy_FCR = getFileIntColumnReader(2 - 1, null);   // doy = day of year
         final FileIntColumnReader hod_FCR = getFileIntColumnReader(3 - 1, null);   // hod = hour of day
@@ -323,7 +312,7 @@ public class OMNI2FileUtils_HourlyAvg {
              * rethrow the IllegalArgumentException as IOException so that
              * caller can handle it correctly.
              */
-            throw new IOException("Can not interpret OMNI2 file format.", e);
+            throw new IOException("Can not interpret OMNI2 file format (hourly averages).", e);
         }
 
         return data;
