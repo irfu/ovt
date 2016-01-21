@@ -43,6 +43,7 @@ import ovt.interfaces.*;
 
 import java.beans.*;
 import java.util.*;
+import ovt.util.Log;
 /** 
  *
  * @author  root
@@ -94,15 +95,16 @@ public class OVTPropertyChangeSupport {
     PropertyChangeListener propertyListener;
     while (e.hasMoreElements()) {
       propertyListener = ((PropertyChangeListener)e.nextElement());
-      if (OVTCore.DEBUG > 0) {
-        try {
-          
-          System.out.println( " PropertyChange->" + ((NamedObject)propertyListener).getName());
-        } catch (ClassCastException e2) {
-          Object source = (evt.getSource());
-          System.out.println(source.getClass().getName() + " PropertyChange->" + (propertyListener).getClass().getName());
-        }
-      }
+//      if (OVTCore.DEBUG > 0) {
+//        try {
+//          //System.out.println( " PropertyChange->" + ((NamedObject)propertyListener).getName());
+//          Log.log(" PropertyChange->" + ((NamedObject)propertyListener).getName(), 3);
+//        } catch (ClassCastException e2) {
+//          Object source = (evt.getSource());
+//          //System.out.println(source.getClass().getName() + " PropertyChange->" + (propertyListener).getClass().getName());
+//          Log.log(source.getClass().getName() + " PropertyChange->" + (propertyListener).getClass().getName(), 3);
+//        }
+//      }
       propertyListener.propertyChange(evt);
     }
   }

@@ -737,8 +737,7 @@ public double[] getValues(int[] records, double mjd) {
             res[n] = mult*Bowshock99Model.getDistanceToBowshock(
                     trp.gsm, getMagProps().getIMF(mjd), getMagProps().getSWP(mjd), getMagProps().getMachNumber(mjd), 0.01);
 //            } catch(IllegalArgumentException e) {
-//                e.printStackTrace();
-//                Log.log(e.getMessage(), 0);
+//                Log.logStackTrace(e);
 //                // (Almost) ignore this exception as it can be triggered by non-finite trp.gsm
 //                // values (in particular NaN for times when IGRF does not work).
 //                // res[n] gets the default value by default.

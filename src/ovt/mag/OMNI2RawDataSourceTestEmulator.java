@@ -67,7 +67,7 @@ public class OMNI2RawDataSourceTestEmulator implements OMNI2RawDataSource {
 
     @Override
     public OMNI2Data getData_hourlyAvg(int year) throws IOException {
-        Log.log(getClass().getSimpleName()+"#getData_hourlyAvg("+year+")", 0);
+        Log.log(getClass().getSimpleName()+"#getData_hourlyAvg("+year+")");
         callCounter++;
         if ((IO_ERROR_FREQUENCY > 0) && (callCounter >= IO_ERROR_FIRST) && (callCounter % IO_ERROR_FREQUENCY == 0)) {
             throw new IOException(getClass().getSimpleName()+"#getData_hourlyAvg : TEST IOException");

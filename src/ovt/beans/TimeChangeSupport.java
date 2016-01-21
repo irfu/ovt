@@ -78,11 +78,11 @@ public class TimeChangeSupport {
     while (e.hasMoreElements()) {
       try {
         timeListener = ((TimeChangeListener)(e.nextElement()));
-        if (OVTCore.DEBUG > 0) {
-          try {
-            System.out.println("TimeChangeEvent ->" + ((NamedObject)timeListener).getName());
-          } catch (ClassCastException e2) {}
-        }
+//        if (OVTCore.DEBUG > 0) {
+//          try {
+//            System.out.println("TimeChangeEvent ->" + ((NamedObject)timeListener).getName());
+//          } catch (ClassCastException e2) {}
+//        }
         timeListener.timeChanged(evt);
       } catch (ClassCastException e2) {}
     }

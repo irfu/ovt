@@ -59,7 +59,7 @@ import javax.swing.table.*;
  */
 public class FieldlineMapperCustomizerWindow extends JFrame implements Customizer {
     
-    private static final int DEBUG=9;
+    private static final int DEBUG = 9;
     /** Helps to create a name (ID) for the new point. It should be "new"+(newRowID++) */
     private int newRowID = 0;
     private FieldlineMapper fieldlineMapper;
@@ -271,7 +271,7 @@ private void applyButtonActionPerformed () {
 private void insertRow() {
   int rw = 0;
   int row = table.getSelectedRow();
-  //Log.log("Selected row is " + row, 0);
+  //Log.log("Selected row is " + row);
   if ( row >= 0 ){
     int l = table.getSelectedRowCount();
     rw = row + l - 1;

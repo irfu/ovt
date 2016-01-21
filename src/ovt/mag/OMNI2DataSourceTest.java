@@ -178,7 +178,7 @@ public class OMNI2DataSourceTest {
 
 
     public static void main(String[] args) throws OMNI2DataSource.ValueNotFoundException, IOException {
-        Log.setDebugLevel(2);
+        Log.setLogLevel(2);
         final int N_shufflings = 10;
 
         final List<Object[]> testList = new ArrayList();

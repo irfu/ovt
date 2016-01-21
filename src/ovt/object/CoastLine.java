@@ -199,7 +199,7 @@ class ContinentsReader {
 
 ContinentsReader(File file) throws IOException {
     this.file = file;
-    Log.log("Loading continents from " + file + " ...", 0);  
+    Log.log("Loading continents from " + file + " ...");  
     vtkCellArray lines = new vtkCellArray();
     vtkPoints points = new vtkPoints();
       

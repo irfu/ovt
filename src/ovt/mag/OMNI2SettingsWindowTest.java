@@ -155,7 +155,7 @@ public class OMNI2SettingsWindowTest {
      * Informal test code.
      */
     public static void main(String[] args) throws InterruptedException {
-        Log.setDebugLevel(2);
+        Log.setLogLevel(2);
         //JCheckBox cb = new MagProps.ActivityEditorOrOMNI2_CheckBox();
         TimeSettingsEmulator tse = new TimeSettingsEmulator();
         final OMNI2SettingsWindow win = new OMNI2SettingsWindow(new MagPropsEmulator(), tse);

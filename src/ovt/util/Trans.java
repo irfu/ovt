@@ -620,7 +620,7 @@ public class Trans {
         isIGRF = false;
     }
 
-    Log.log("ovt.util.Tans.corrgma is strange!!! It changes models!", 0);
+    Log.err("ovt.util.Tans.corrgma is strange!!! It changes models!");
     
     double[] gsmx=trans.geo2gsm(geo);
     Fieldline fieldLine =

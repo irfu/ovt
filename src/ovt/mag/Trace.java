@@ -156,7 +156,7 @@ public class Trace extends Object {
 
             // NOTE: Ideally one should use OVTCore#sendErrorMessage,
             // but no instance of OVTCore is available from here.
-            Log.log(Trace.class.getCanonicalName() + "#<static init> : Error: " + e.getMessage(), 0);
+            Log.err(Trace.class.getCanonicalName() + "#<static init> : Error: " + e.getMessage());
             JOptionPane.showMessageDialog(null, e.getMessage(), "Could not find file", JOptionPane.ERROR_MESSAGE);
         }
     }

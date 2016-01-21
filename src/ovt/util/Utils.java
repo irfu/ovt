@@ -870,7 +870,7 @@ public class Utils extends Object {
 //                // NOTE: Using File#getCanonicalFile() to resolve symbolic links for comparison.
 //                file13equal = (file3 != null) && (file3.getCanonicalFile().equals(file1.getCanonicalFile()));
 //            } catch (IOException e) {
-//                Log.log("Utils.findExistingFile : getCanonicalFile() IOException ==> Could not compare file1 and file3.", 0);
+//                Log.err("Utils.findExistingFile : getCanonicalFile() IOException ==> Could not compare file1 and file3.");
 //                Log.printStackTraceOnOut(e);
 //                file13equal = false;
 //            }

@@ -55,12 +55,12 @@ import java.util.*;
 public class MagPropsChangeSupport {
 
   private Vector listeners = new Vector();
-  private Object source = null;
+  //private Object source = null;
 
 
-  /** Creates new MagPropssChangeSupport */
+  /** Creates new MagPropsChangeSupport */
   public MagPropsChangeSupport(Object source) {
-    this.source = source;
+    //this.source = source;
   }
 
   public void addMagPropsChangeListener (MagPropsChangeListener listener) {
@@ -77,7 +77,7 @@ public class MagPropsChangeSupport {
       ((MagPropsChangeListener)(e.nextElement())).magPropsChanged(evt);
   }
 
-  /** Delivers event evt to all elements of enumeration e */
+  /** Delivers event evt to all elements of enumeration e. */
   public static void fireMagPropsChange(MagPropsEvent evt, Enumeration e) {
     while (e.hasMoreElements()) {
       try {
@@ -87,7 +87,7 @@ public class MagPropsChangeSupport {
   }
   
   public void fireMagPropsChange() {
-    Log.log("fireMagPropsChange is doing nothing :-))", 0);
+    //Log.log("<fireMagPropsChange: does nothing>");
     /*MagPropsEvent evt = new MagPropsEvent(source, );
     fireMagPropsChange(evt);*/
   }

@@ -69,10 +69,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
     private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
-    /* Set the debugging level (which logging messages should actually be logged/saved).
-     * Refers to Log#setDebugLevel. */
     private static final int GLOBAL_LOG_DEBUG_LEVEL = 3;
-    public static int DEBUG = 0;
+//    public static int DEBUG = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
     private static final String HTTP_AGENT_PROPERTY_STRING
@@ -312,7 +310,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public void Initialize() {
-        Log.setDebugLevel(GLOBAL_LOG_DEBUG_LEVEL);
+        Log.setLogLevel(GLOBAL_LOG_DEBUG_LEVEL);
 
         Log.log("Initializing...", 3);
         setName("OVT");
@@ -376,10 +374,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 System.setOut(new PrintStream(new FileOutputStream(OVTCore.getUserDir() + SYSTEM_OUT_FILE_NAME), true));
             }
         } catch (FileNotFoundException e) {
-            Log.printStackTraceOnOut(e);
+            Log.logStackTrace(e);
             Log.log("Failed to redirect System.err or System.out to file.");
         }
-        Log.setOut(System.err);   // Has to be done explicitly rather than use the default value.
+        Log.setPrintStream(System.err);   // Has to be done explicitly rather than use the default value.
 
         /* Setting the http user agent for the benefit of NASA SSC, so that they
          * can see who/what (OVT) is using their service (over the internet).

@@ -812,14 +812,14 @@ class MagnetosphereActorCollection extends Vector {
 
   public void put(vtkActor actor, Characteristics ch) {
     addElement(actor);
-    Log.log("MagnetosphereActorCollection.size="+size(), 0);
+    Log.log("MagnetosphereActorCollection.size="+size());
     characteristics.addElement(ch);
-    Log.log("characteristics.size="+characteristics.size(), 0);
+    Log.log("characteristics.size="+characteristics.size());
   }
 
   public vtkActor getActor(Characteristics ch) {
     int index = characteristics.indexOf(ch);
-    Log.log("index="+index, 0);
+    Log.log("index="+index);
     if (index == -1) return null;
     return (vtkActor)elementAt(index);
   }

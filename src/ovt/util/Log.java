@@ -41,34 +41,49 @@ import java.io.*;
 
 /**
  * Log class with only static methods. Log and error messages are "registered"
- * with a debug number. Messages are only logged if the debug numer is lower or
- * equal to the current "debugLevel". Higher debugLevel means more detailed
- * logs.
+ * with a log number. Messages are only logged (printed/saved) if the log number
+ * is lower or equal to the current "logLevel". Higher logLevel means more
+ * detailed logs.
  *
+ * NOTE: The policy (if there is any) for when to print to System.out.println
+ * and when to print to Log is very confused.
+ *
+ * NOTE: Not clear if one should use log messages for debugging when working
+ * with the code during development. Maybe one should use a separate Log object
+ * (if this one could be instantiated).
+ *
+ * Log levels:<BR>
+ * 0 - No (non-error) log messages<BR>
+ * 1 - Some essential log messages<BR>
+ * 2 or greater - More esoteric/detailed log messages<BR>
+ * NOTE: Permits (no IllegalArgumentException) log messages with level=0 since
+ * it is useful while debugging (?!). (Uncertain whether it is advisable to
+ * throw IllegalArgumentException in any commonly used log method.)
  *
  * @author ko
  * @version
  */
 public class Log extends Object {
 
-    /**
-     * There is an advantage in using System.err as the default for log messages
-     * since System.err seems to always(?) end up in a log file by default in
-     * actual installations (error.log) as opposed to System.out.
-     */
-    protected static PrintStream out = System.err;
+    private static final int DEFAULT_MSG_LEVEL = 1;
+    private static final int DEFAULT_ERROR_MSG_LEVEL = 0;
 
-    // 0 - no debug
-    // 1 - some essential things
-    protected static int debugLevel = 0;
+    /**
+     * NOTE: There is an advantage in using System.err as the default for log
+     * messages since System.err seems to always(?) end up in a log file by
+     * default in actual installations (error.log) as opposed to System.out.
+     */
+    private static PrintStream printStream = System.err;
+
+    private static int logLevel = 0;
 
 
     private Log() {
     }
 
 
-    public static void setOut(PrintStream output) {
-        out = output;
+    public static void setPrintStream(PrintStream output) {
+        printStream = output;
     }
 
 
@@ -76,58 +91,55 @@ public class Log extends Object {
      * Useful for printing to the same stream, e.g. with custom functions that
      * accept it as an argument.
      */
-    public static PrintStream getOut() {
-        return out;
-    }
-
-
-    public static void setDebugLevel(int level) {
+//    public static PrintStream getPrintStream() {
+//        return printStream;
+//    }
+    public static void setLogLevel(int level) {
         if (level < 0) {
             throw new IllegalArgumentException("Debug level must be non-negative.");
         }
-        debugLevel = level;
+        logLevel = level;
     }
 
 
-    public static int getDebugLevel() {
-        return debugLevel;
-    }
-
-
+//    public static int getDebugLevel() {
+//        return debugLevel;
+//    }
     /**
      * Log the string with the debug level
      */
-    public static void log(String str, int debug) {
-        if (debug <= debugLevel) {
-            out.println(" " + str);
+    public static void log(String msg, int msgLevel) {
+        if (msgLevel <= logLevel) {
+            printStream.println(" " + msg);
         }
     }
 
 
-    public static synchronized void log(String str) {
-        log(str, 1);
+    public static synchronized void log(String msg) {
+        log(msg, DEFAULT_MSG_LEVEL);
     }
 
 
-    public static void err(String str) {
-        err(str, 0);
+    public static void err(String msg) {
+        err("ERROR: " + msg, DEFAULT_ERROR_MSG_LEVEL);
     }
 
 
     /**
      * Log the error string with the debug level
      */
-    public static void err(String str, int debug) {
-        if (debug <= debugLevel) {
-            out.println(" " + str);
+    // Should stop using since there is another "err" method?
+    public static void err(String msg, int msgLevel) {
+        if (msgLevel <= logLevel) {
+            printStream.println("ERROR: " + msg);
         }
     }
 
 
-    // PROPOSAL: Remove and use e.printStackTrace(Log.getOut()) instead?
-    public static void printStackTraceOnOut(Exception e) {
-        // NOTE: Throwable#printStackTrace prints both the contents of
-        // the exception (message, toString()) and the stack trace.
-        e.printStackTrace(out);
+    // PROPOSAL: Remove and use e.printStackTrace(Log.getPrintStream()) instead?
+    public static void logStackTrace(Exception e) {
+        // NOTE: Throwable#printStackTrace prints both (1) the contents of
+        // the exception (message, toString()) and (2) the stack trace.
+        e.printStackTrace(printStream);
     }
 }

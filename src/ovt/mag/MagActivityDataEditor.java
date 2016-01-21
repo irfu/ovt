@@ -267,12 +267,12 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
     private void insertRow() {
         int rw = 0;
         int row = table.getSelectedRow();
-        //Log.log("Selected row is " + row, 0);
+        //Log.log("Selected row is " + row);
         if (row >= 0) {
             int l = table.getSelectedRowCount();
             rw = row + l - 1;
         }
-        //Log.log("Inserting row after " + rw, 0);
+        //Log.log("Inserting row after " + rw);
         dataModel.insertRows(rw);
         table.setRowSelectionInterval(rw + 1, rw + 1);
     }

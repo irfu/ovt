@@ -669,7 +669,7 @@ public class IgrfModel extends AbstractMagModel {
             // it will/should lead to all coefficients being zero. ==> Dipole direction and GSM undefined.
             //
             // NOTE: Error should preferably lead to erronoues g & h values not being stored in the cache at least(?).
-            Log.printStackTraceOnOut(e);
+            Log.logStackTrace(e);
             this.magProps.getCore().sendErrorMessage("I/O error when reading IGRF data", e);
         }
 

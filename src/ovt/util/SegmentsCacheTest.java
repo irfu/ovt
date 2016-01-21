@@ -49,7 +49,7 @@ import java.util.TreeSet;
 public class SegmentsCacheTest {
 
     public static void main(String[] args) throws IOException {
-        Log.setDebugLevel(2);
+        Log.setLogLevel(2);
         //test_removeInterval();
         //test_removeIntervals();
         test_cacheIntegrity();

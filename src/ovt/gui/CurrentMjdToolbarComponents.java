@@ -156,14 +156,16 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
   }
   
 private void updateComboBoxDataModel() {
-    if (OVTCore.DEBUG > 3) System.out.print("CurrentMjdVCRComponents.updateCombobox ");
+//    if (OVTCore.DEBUG > 3) {
+//        System.out.print("CurrentMjdVCRComponents.updateCombobox ");
+//    }
     timeBox.removeActionListener(this);
     
     double[] values = getTimeSet().getValues();
     Object[] tags = new Object[values.length];
     for (int i=0; i<tags.length; i++) {
       tags[i] = new Time(values[i]).toString();
-      if (OVTCore.DEBUG > 3) System.out.print(" "+i);
+//      if (OVTCore.DEBUG > 3) System.out.print(" "+i);
     }
     
     timeBox.setModel(new DefaultComboBoxModel(tags));
@@ -171,7 +173,7 @@ private void updateComboBoxDataModel() {
     
     timeBox.setMaximumSize(timeBox.getPreferredSize());
     timeBox.addActionListener(this);
-    if (OVTCore.DEBUG > 3) System.out.println("done.");
+//    if (OVTCore.DEBUG > 3) System.out.println("done.");
 }
 
 private void refresh() {
