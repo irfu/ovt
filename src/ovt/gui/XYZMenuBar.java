@@ -110,7 +110,7 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getConfSubdir());
+                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, core.getConfSubdir());
                 String file = Settings.showOpenDialog(xyzWin, new File(defaultFile));
                 if (file != null) {
                     try {
@@ -121,7 +121,7 @@ public class XYZMenuBar extends JMenuBar {
                         Settings.load(file, core);
 
                         xyzWin.getTreePanel().expandSatellitesNode();
-                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, file);
+                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, file);
                         core.Render();
                     } catch (IOException e2) {
                         core.sendErrorMessage("Error loading settings", e2);
@@ -136,12 +136,12 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, core.getUserDir());
+                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, core.getUserDir());
                 String file = Settings.showSaveDialog(xyzWin, new File(defaultFile));
                 if (file != null) {
                     try {
                         Settings.save(core, file);
-                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE, file);
+                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, file);
                     } catch (IOException e2) {
                         core.sendErrorMessage("Error saving settings", e2);
                     }

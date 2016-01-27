@@ -42,9 +42,12 @@ import ovt.util.SegmentsCache;
 import ovt.util.Utils;
 
 /**
- * The code for retrieving NASA OMNI2 data is spread out on a number of classes.
- * To make the organization, and the reasons for the organization more clear,
- * all relevant class descriptions are collected here.
+ * =========================================================================<BR>
+ * IMPORTANT NOTE: The code for retrieving NASA OMNI2 data is spread out on a
+ * number of classes. To make the organization, and the reasons for the
+ * organization more clear, all relevant class descriptions are collected
+ * here.<BR>
+ * =============================================================================
  *
  * IMPLEMENTATION NOTE: OMNI2 offers data with different time averages but the
  * current implementation (2016-01-21) only uses one such time average (hourly
@@ -75,6 +78,12 @@ import ovt.util.Utils;
  *
  * NOTE: The exact file format is different for different OMNI2 data files with
  * different time resolutions/averages.
+ *
+ * NOTE: Somethings should maybe/probably ideally be organized differently:
+ * OMNI2FileUtils_HourlyAvg (and any future counterparts) should (each) be split
+ * up into (1) one generic method for reading columns (byte positions) out of
+ * files, (2) one generic method for reading OMNI2 files (all file types), (3)
+ * data specifying file format be moved to OMNI2RawDataSourceImpl.
  *
  *
  * ==============================<BR>
@@ -109,9 +118,12 @@ import ovt.util.Utils;
  * source to another.
  *
  * IMPLEMENTATION NOTE: Because of its purpose, this interface should in
- * practice describe (be based upon) the "true" implementation,
- * OMNI2RawDataSourceImpl, rather than the other way around which is the usual
- * way of thinking about java interfaces.
+ * practice describe (be based upon) the methods for RETRIEVING THE DIFFERENT
+ * TYPES OF OMNI2 DATA, INCLUDING DIFFERENT AVERAGES, from the "true"
+ * implementation, OMNI2RawDataSourceImpl, rather than the other way around
+ * which is the usual way of thinking about java interfaces. The interface
+ * SHOULD NOT cover methods for setting up the underlying data sources
+ * (OMNI2FileUtils_HourlyAvg and analogous).
  *
  * IMPLEMENTATION NOTE: The methods are PERMITTED to be DEPENDENT on the format
  * of the underlying OMNI2 files: how data is distributed over time (time
@@ -162,7 +174,7 @@ import ovt.util.Utils;
  * application should thus not need any knowledge of underlying OMNI2 data
  * files, their internal format, caching (in RAM and/or on disk) etc. All OMNI2
  * data used by the application's general code should pass through this class.
- * 
+ *
  * This class serves as the bridge between<BR>
  * (1) (implementations of) OMNI2RawDataSource (where the interface is partly
  * dependent on the format of the underlying OMNI2 data files and may change if
@@ -406,7 +418,8 @@ public class OMNI2DataSource {
             result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
 
             if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
-                throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " at time_mjd=" + time_mjd + ".");
+                //throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " at time_mjd=" + time_mjd + ".");
+                throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " within " + maxTimeDifference_days + " days of time_mjd=" + time_mjd + ".");
             }
         }
 

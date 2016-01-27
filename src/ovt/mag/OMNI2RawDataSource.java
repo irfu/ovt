@@ -34,7 +34,7 @@ package ovt.mag;
 import java.io.IOException;
 
 /**
- * See OMNI2DataSource for documentation.
+ * See OMNI2DataSource for the class' documentation and purpose.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-xx

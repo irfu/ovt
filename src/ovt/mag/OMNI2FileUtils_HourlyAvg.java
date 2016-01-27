@@ -46,12 +46,15 @@ import ovt.util.FCBPTextTableFileReader.FileIntColumnReader;
 import ovt.util.Utils;
 
 /**
- *
- * See OMNI2DataSource for documentation.
+ * See OMNI2DataSource for the class' documentation and purpose.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-0x-xx
  */
+//
+// PROPOSAL: Move localFileNamePattern and urlPattern out of class?
+//    CON: Fits bad with testing code?
+//
 /*
  Excerpt from column descriptions: 
  Source, 2015-09-04: ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2.text
@@ -139,27 +142,25 @@ import ovt.util.Utils;
  */
 public class OMNI2FileUtils_HourlyAvg {
 
-    private static final int DEBUG = 2;
-
     /**
      * Filenames used for files on the local storage device (in the cache). Does
-     * not necessarily have to be the same filename as implied by
-     * FTP_URL_PATTERN.
+     * not necessarily have to be the same filenaming convention as implied by
+     * FTP_URL_PATTERN. It is however probably wise(?) to follow the same naming
+     * convention to not confuse the user, should the user ever have to manually
+     * download OMNI2 data files and put them in the corresponding caching
+     * directory.
      *
      * NOTE: This class does not (and should not) actually download and store
      * files on disk. Therefore, this code has to called by the code that does
      * that.
      */
-    private static final String LOCAL_FILE_NAME_PATTERN = "omni2_HourlyAvg_%4d.dat";
-    //private static final String FTP_URL_PATTERN = "ftp://BAD_URL";
-    private static final String FTP_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+    private final String localFileNamePattern;
+    private final String urlPattern;
+    
 
     // Choose buffer sizes based on expected number of data points (approximate, does not have to be exact).
-    // NOTE: One year = ...
-    // = 365*24 hours = 8'760 hours
-    // = 365*24*60 = 525'600 minutes
     // NOTE: Some years are leap years and are longer.
-    private final static int INITIAL_READ_BUFFER_SIZE = (366 * 24) + 1;
+    private final static int INITIAL_READ_BUFFER_SIZE = (366 * 24) + 1;   // Hours in leap year plus one.
     //private final int INITIAL_READ_BUFFER_SIZE = 1;   // DEBUG
 
     /**
@@ -170,9 +171,12 @@ public class OMNI2FileUtils_HourlyAvg {
     private static final String TEXT_FILE_CHARSET = "ISO-8859-1";
 
     /**
-     * Column widths for all columns from text table. Only used for deriving
-     * absolute positions for the columns of interest and the total length of
-     * lines/rows (for error checking).
+     * Column widths for all columns in the hourly averaged OMNI2 data text
+     * files. These are used for (1) easily deriving absolute positions and
+     * widths of those columns that are actually of interest (and implicitly to
+     * make it easy to use other columns), and (2) deriving the total length of
+     * each line/row in the text files (for error checking: both of file format
+     * and of the validity of this table).
      */
     private static final int[] TEXT_FILE_COLUMN_WIDTHS = {//
         4, 4, 3, 5, 3, 3, 4, 4, //
@@ -188,26 +192,29 @@ public class OMNI2FileUtils_HourlyAvg {
     private static final int[] COLUMNS_END = Utils.getCumulativeIntArray(TEXT_FILE_COLUMN_WIDTHS, true);      // Exclusive index.
     private static final int N_chars_per_line = COLUMNS_END[COLUMNS_END.length - 1];   // Excluding CR, LF.
 
+    private static final int INT_FILL_VALUE = Integer.MIN_VALUE;   // Only used internally in the present implementation.
     private final double doubleFillValue;
-    private final int INT_FILL_VALUE = Integer.MIN_VALUE;   // Only used internally in the present implementation.
 
 
     //##########################################################################
-    public OMNI2FileUtils_HourlyAvg(double mDoubleFillValue/*, int mIntFillValue*/) {
+    public OMNI2FileUtils_HourlyAvg(double mDoubleFillValue/*, int mIntFillValue*/, String mUrlPattern, String mLocalFileNamePattern) {
         doubleFillValue = mDoubleFillValue;
         //intFillValue = mIntFillValue;
+        
+        urlPattern = mUrlPattern;        
+        localFileNamePattern = mLocalFileNamePattern;
     }
 
 
     // QUESTION: How handle years before the first available OMNI2 data? Years for which there may be no data (incl. current year)?
     //   PROPOSAL: Hardcoded first year.
-    public static String getOnlineURL(int year) {
-        return String.format(FTP_URL_PATTERN, year);
+    public String getOnlineURL(int year) {
+        return String.format(urlPattern, year);
     }
 
 
-    public static String getLocalFilename(int year) {
-        return String.format(LOCAL_FILE_NAME_PATTERN, year);
+    public String getLocalFilename(int year) {
+        return String.format(localFileNamePattern, year);
     }
 
 
@@ -321,7 +328,8 @@ public class OMNI2FileUtils_HourlyAvg {
 
     //##########################################################################
     /**
-     * Used internally for reading columns which are converted to dates/times.
+     * Integer columns are used internally for reading columns which are
+     * converted to dates/times.
      */
     private FileIntColumnReader getFileIntColumnReader(int colIdx, String srcFillValue) {
         return new FileIntColumnReader(COLUMNS_BEGIN[colIdx], COLUMNS_END[colIdx], srcFillValue, INT_FILL_VALUE, INITIAL_READ_BUFFER_SIZE);

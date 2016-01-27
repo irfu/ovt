@@ -48,34 +48,58 @@ import java.io.*;
 import javax.swing.*;
 
 /**
- * This is the main class of the OVT. (This class does NOT contain the
+ * This is a very "central" class in OVT. (This class does NOT contain the
  * "main(...)" method of OVT though.)
+ *
+ * This object represents the root node in the "GUI tree" in the left panel.
+ * Practically however, it also serves as a central repository for a LOT of
+ * information for MANY classes.
+ *
+ * NOTE: The application creates one instance of this object which it then
+ * passes around to many, many other classes. This is unfortunate since this
+ * class is also dependent on many other OVT-specific classes and instances
+ * thereof (including of GUI classes) which makes it difficult to instantiate.
+ * This in turn makes it difficult to separately test (instantiate) classes that
+ * require having a reference to an instance of OVTCore. The class also has many
+ * static members which are used throughout the application. Future modification
+ * should be careful with adding more dependence on OVTCore.<BR>
+ * /Erik P G Johansson 2016-01-22
  *
  * @author Mykola Khotyaintsev
  * @version %I% %E%
  * @see ...
  */
+//
+// PROPOSAL: Split up class into two classes?!: One which is the root node in the GUI tree,
+//           and one which is GUI independent and only supplies information and easy to
+//           instantiate separately (for the purpose of testing other classes relying on
+//           what is now the single OVTCore class).
+//
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
 
+    private static final String ROOT_NODE_NAME = "OVT";
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool BETA";
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "November 2015";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
     // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     public static final int BUILD = 6;
-    public static final String globalSettingsFileName = "ovt.conf";
-    public static final String DEFAULT_SETTINGS_FILE = "OVTSavestate.xml";
-    public static final Properties globalProperties = new Properties();
     public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
+
+    private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
+    public static final String DEFAULT_SETTINGS_FILE_NAME = "OVTSavestate.xml";
+    private static final Properties globalProperties = new Properties();
     private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
-    private static final int GLOBAL_LOG_DEBUG_LEVEL = 3;
+    private static final int GLOBAL_LOG_LEVEL = 3;
 //    public static int DEBUG = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
-    private static final String HTTP_AGENT_PROPERTY_STRING
+    private static final String LONG_APPLICATION_DESCRIPTION
             = SIMPLE_APPLICATION_NAME + " (OVT), version " + VERSION
-            + ", build " + BUILD + " (" + ovt.OVTCore.OVT_HOMEPAGE + "); "
+            + ", build " + BUILD + " (" + ovt.OVTCore.OVT_HOMEPAGE + ")";
+
+    private static final String HTTP_AGENT_PROPERTY_STRING = LONG_APPLICATION_DESCRIPTION + "; "
             + System.getProperty("os.name") + ", "
             + System.getProperty("os.arch");
 
@@ -93,10 +117,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private RenPanel renPanel = null;
     private TimeSettings timeSettings;
 
-    /**
-     * @see #getProperties()
-     */
-    // protected Properties properties = new Properties();
     private final XYZWindow XYZwin;
 
     private MagProps magProps;
@@ -115,7 +135,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private BowShock bowShock;
     private MagTangent magTangent;
     private Camera camera;
-    private GroundStations groundStations;    // ground based stations
+    private GroundStations groundStations;    // Ground-based stations
     private ElectPot electPot;
     private OutputLabel outputLabel;
 
@@ -255,10 +275,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     /**
-     * Load properties from {@link #ovtPropertiesFile }
+     * Load properties from global settings file.
      */
     private static synchronized void loadGlobalSettings() throws IOException {
-        final File confFile = Utils.findFile(getConfSubdir() + globalSettingsFileName);     // NOTE: Will not throw Exception if file does not exist.
+        final File confFile = Utils.findFile(getConfSubdir() + GLOBAL_SETTINGS_FILE_NAME);     // NOTE: Will not throw Exception if file does not exist.
         if (confFile != null) {
 
             // NOTE: new FileInputStream(confFile)) will throw NullPointerException (not IOException) if confFile == null.
@@ -286,10 +306,22 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
          }*/
 
         /* Try saving to user directory, otherwise do not save at all. */
-        final File confFile = new File(OVTCore.getUserDir() + getConfSubdir() + globalSettingsFileName);
+        final File confFile = new File(OVTCore.getUserDir() + getConfSubdir() + GLOBAL_SETTINGS_FILE_NAME);
+
+        // Create temporary Properties object that is sorted alphabetically when
+        // being saved to file/stream.
+        // This makes the settings file easier to read and find changes in.
+        // NOTE: Sorts all upper case letter before all lower case letters.
+        final Properties sortedProperties = new Properties() {
+            @Override
+            public synchronized Enumeration<Object> keys() {
+                return Collections.enumeration(new TreeSet<Object>(super.keySet()));
+            }
+        };
+        sortedProperties.putAll(globalProperties);
 
         try (FileOutputStream out = new FileOutputStream(confFile)) {
-            globalProperties.save(out, "OVT properties file.");
+            sortedProperties.store(out, "Configuration file ; " + LONG_APPLICATION_DESCRIPTION);
         }
     }
 
@@ -310,10 +342,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public void Initialize() {
-        Log.setLogLevel(GLOBAL_LOG_DEBUG_LEVEL);
+        Log.setLogLevel(GLOBAL_LOG_LEVEL);
 
         Log.log("Initializing...", 3);
-        setName("OVT");
+        setName(ROOT_NODE_NAME);
 
         try {
             setIcon(new ImageIcon(Utils.findResource("images/ovt.gif")));
@@ -400,7 +432,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             try {
                 loadGlobalSettings();
             } catch (IOException e) {
-                sendErrorMessage("Error Loading Global Settings", e);
+                sendErrorMessage("Error when loading global settings", e);
             }
         }
 
@@ -414,7 +446,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         Log.log("TimeSettings created.", 3);
         // Set coordinate system
         coordinateSystem = new CoordinateSystem(this);
-        Log.log("CoordinateSystems created.", 3);
+        Log.log("CoordinateSystem created.", 3);
         // Add sunlight
         sunLight = new SunLight(this);
         Log.log("SunLight created.", 3);
@@ -473,7 +505,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         coordinateSystem.addCoordinateSystemChangeListener(magnetopause);
         coordinateSystem.addCoordinateSystemChangeListener(electPot);
 
-        //magProps.addMagPropsChangeListener(bowShock);
         magProps.addMagPropsChangeListener(sats);
         magProps.addMagPropsChangeListener(magnetosphere);
         magProps.addMagPropsChangeListener(magnetopause);
@@ -645,8 +676,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      * a fixed width (i.e. not a maximum width, i.e. one which can be greater
      * than the length of the printed message). However, the method
      * implementation concatenates the parameter string with other strings which
-     * (probably) makes it impossible to use HTML in the "msg" since the whole string
-     * has to be surrounded with {@code <HTML>...</HTML>}(?).
+     * (probably) makes it impossible to use HTML in the "msg" since the whole
+     * string has to be surrounded with {@code <HTML>...</HTML>}(?).
      *
      * @param title Message title
      * @param msg Warning message

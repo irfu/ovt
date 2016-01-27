@@ -66,16 +66,23 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     private static final int DEBUG = 2;
 
+    private final String SETTING_OMNI2_HOURLY_AVG_URL_PATTERN = "OMNI2.hourlyAveraged.urlPattern";
+    // Value used if the corresponding value can not be found in the properties/config file.
+    private final String DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+    private final String SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "OMNI2.hourlyAveraged.localCacheFileNamePattern";
+    // Value used if the corresponding value can not be found in the properties/config file.
+    private final String DEFAULT_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "omni2_%4d.dat";
+
     /**
-     * Minimum absolute value of magnetic field
+     * Minimum absolute value of magnetic field.
      */
     public static double BMIN = 3.6;
     /**
-     * Maximum absolute value of magnetic field
+     * Maximum absolute value of magnetic field.
      */
     public static double BMAX = 63500;
     /**
-     * Magnetic moment of the earth for igrf1985 model
+     * Magnetic moment of the earth for igrf1985 model.
      */
     public static final double DIPMOM = -30483.03;
 
@@ -206,7 +213,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     private final MagActivityDataEditor[] activityEditors = new MagActivityDataEditor[MAX_ACTIVITY_INDEX + 1];
 
-    
     private static final double KPINDEX_DEFAULT = 0;
     // One wants a non-zero IMF default value so that the "magnetic tangent" feature displays something by default.
     // (It does not show anything for zero IMF.)
@@ -271,21 +277,22 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * handles OMNI2 data. All OMNI2 data should pass through this class. Can
      * choose an emulator with made-up data for testing purposes.
      *
-     * See comments in OMNI2RawDataSource and OMNI2RawDataSourceImpl.
+     * See documentation in OMNI2RawDataSource.
      */
-    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(
-            new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()));
-//    private static final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceTestEmulator();
+    private final OMNI2RawDataSource OMNI2_RAW_DATA_SOURCE;
 
-    private static final double MAX_TIME_TO_VALUE_DAYS = 1.0 / 24.0;
+    /**
+     * Greatest tolerated time (days) between the time for which data is
+     * requested, and the time of the data point used.
+     */
+    private static final double OMNI2_MAX_TIME_TO_VALUE_DAYS = 1.0 / 24.0;
 
     /**
      * Select what to use as a (non-raw) data source for the functionality/code
      * that handles OMNI2 data. All OMNI2 data should pass through this class.
      * See comments in OMNI2DataSource.
      */
-    private static final OMNI2DataSource OMNI2_DATA_SOURCE = new OMNI2DataSource(
-            OMNI2_RAW_DATA_SOURCE, MAX_TIME_TO_VALUE_DAYS);
+    private final OMNI2DataSource OMNI2_DATA_SOURCE;
 
 
     /**
@@ -293,6 +300,38 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     public MagProps(OVTCore core) {
         super("MagModels");
+
+        //OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceTestEmulator();
+        {
+            // Read global settings (config file). Replace with hard-coded default
+            // values in case the entries are not there.
+            final String urlPattern = OVTCore.getGlobalSetting(
+                    SETTING_OMNI2_HOURLY_AVG_URL_PATTERN,
+                    DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN);
+            final String localFileNamePattern = OVTCore.getGlobalSetting(
+                    SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN,
+                    DEFAULT_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN);
+
+            // Should probably save the values actually used to the global
+            // settings to make sure that the corresponding entries are in
+            // the config file and implicitly show the user that they are
+            // permitted and can be modified.
+            OVTCore.setGlobalSetting(
+                    SETTING_OMNI2_HOURLY_AVG_URL_PATTERN,
+                    urlPattern);
+            OVTCore.setGlobalSetting(
+                    SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN,
+                    localFileNamePattern);
+
+            // Create data source.
+            OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(
+                    new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()),
+                    urlPattern, localFileNamePattern);
+        }
+
+        OMNI2_DATA_SOURCE = new OMNI2DataSource(
+                OMNI2_RAW_DATA_SOURCE, OMNI2_MAX_TIME_TO_VALUE_DAYS);
+
         setParent(core);
         //Log.log("MagProps :: init ...", 3);
         setIcon(new ImageIcon(OVTCore.getImagesSubdir() + "magnet.gif"));

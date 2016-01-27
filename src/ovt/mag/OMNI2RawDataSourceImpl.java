@@ -42,31 +42,23 @@ import ovt.util.Log;
 import static ovt.util.Utils.downloadURLToFile;
 
 /**
- * See OMNI2DataSource for documentation.
+ * See OMNI2DataSource for the class' documentation and purpose.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015-09-10
  */
+//
 // PROPOSAL: Move FIRST_YEAR___HOURLY_AVG to OMNI2FileUtils_HourlyAvg.
 // PROPOSAL: Make OMNI2FileCache into separate generic class (in Utils?).
 // PROPOSAL: Make downloadFile into separate generic method (in Utils).
 //
 public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
 
-    /**
-     * One single point in time to be used to represent the present. Has to be a
-     * constant over the lifetime of an instance to ensure consistent caching
-     * behaviour.
-     */
-    private static final ZonedDateTime REFERENCE_NOW_UTC;
-
-    private final OMNI2FileCache hourlyAvgFileCache;
-
-    private final static int FIRST_YEAR___HOURLY_AVG = 1963;
-
     /* The last year for which there is (expected) to be (hourly averaged) OMNI2
      * data. */
-    private final static int LAST_YEAR___HOURLY_AVG;
+    private final int LAST_YEAR___HOURLY_AVG;
+
+    private final static int FIRST_YEAR___HOURLY_AVG = 1963;
 
     /**
      * Determines the boundary between "older data" and "newer data". The age
@@ -81,18 +73,30 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
     /* How old a _FILE_ with "OLDER" data/measurements can get before it is being redownloaded. */
     private static final double OLDER_MEASUREMENTS_FILE_AGE_BEFORE_REDOWNLOAD_DAYS = 365;
 
-    private static final OMNI2FileUtils_HourlyAvg hourlyAvg = new OMNI2FileUtils_HourlyAvg(OMNI2RawDataSource.DOUBLE_FILL_VALUE);
+    private final OMNI2FileCache fileCache_hourlyAvg;
+    private final OMNI2FileUtils_HourlyAvg fileUtils_hourlyAvg;
 
+    /**
+     * One single point in time to be used to represent the present. Has to be a
+     * constant over the lifetime of an instance to ensure consistent caching
+     * behaviour.
+     */
+    private final ZonedDateTime REFERENCE_NOW_UTC;
 
-    static {
-        REFERENCE_NOW_UTC = ZonedDateTime.now(ZoneOffset.UTC);
-        LAST_YEAR___HOURLY_AVG = REFERENCE_NOW_UTC.getYear();
-    }
 
     //##########################################################################
+    public OMNI2RawDataSourceImpl(File mOMNI2FileDir, String urlPattern_hourlyAvg, String localFileNamePattern) {
+        
+        REFERENCE_NOW_UTC = ZonedDateTime.now(ZoneOffset.UTC);
+        LAST_YEAR___HOURLY_AVG = REFERENCE_NOW_UTC.getYear();
 
-    public OMNI2RawDataSourceImpl(File mOMNI2FileDir) {
-        hourlyAvgFileCache = new OMNI2FileCache(mOMNI2FileDir, REFERENCE_NOW_UTC);
+        fileCache_hourlyAvg = new OMNI2FileCache(mOMNI2FileDir, REFERENCE_NOW_UTC);
+
+        fileUtils_hourlyAvg = new OMNI2FileUtils_HourlyAvg(
+                OMNI2RawDataSource.DOUBLE_FILL_VALUE,
+                urlPattern_hourlyAvg,
+                localFileNamePattern
+        );
     }
 
 
@@ -115,14 +119,14 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
             maxFileAgeBeforeRedownload_days = OLDER_MEASUREMENTS_FILE_AGE_BEFORE_REDOWNLOAD_DAYS;
         }
 
-        final String urlStr = OMNI2FileUtils_HourlyAvg.getOnlineURL(year);
-        final String localFilenameStr = OMNI2FileUtils_HourlyAvg.getLocalFilename(year);
+        final String urlStr = fileUtils_hourlyAvg.getOnlineURL(year);
+        final String localFilenameStr = fileUtils_hourlyAvg.getLocalFilename(year);
 
         final File file;
         try {
-            file = hourlyAvgFileCache.ensureFileExists(urlStr, localFilenameStr, maxFileAgeBeforeRedownload_days);
+            file = fileCache_hourlyAvg.ensureFileExists(urlStr, localFilenameStr, maxFileAgeBeforeRedownload_days);
         } catch (java.io.FileNotFoundException e) {
-            Log.err("Failed to download OMNI2 file from "+urlStr);
+            Log.err("Failed to download OMNI2 file from " + urlStr);
             if (year == LAST_YEAR___HOURLY_AVG) {
                 // CASE: Tried to find file for the current year, but could not download it.
                 // ==> It might be that there is no data file for the current year yet, as during the very beginning of a year. Assume this.
@@ -139,7 +143,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
         }
 
         try (InputStream in = new FileInputStream(file)) {
-            return hourlyAvg.read(in, beginIncl_mjd, endExcl_mjd);
+            return fileUtils_hourlyAvg.read(in, beginIncl_mjd, endExcl_mjd);
         } catch (IOException e) {
             throw new IOException("Can either not read or interpret file \"" + file.getCanonicalPath() + "\": " + e.getMessage(), e);
         }
@@ -152,7 +156,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
     }
 
 
-    private static int getUTCYearDaysAgo(int days) {
+    private int getUTCYearDaysAgo(int days) {
         return REFERENCE_NOW_UTC.minusDays(days).getYear();
     }
 
@@ -263,7 +267,9 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
      * Informal test code.
      */
     public static void main(String[] args) throws IOException {
-        OMNI2RawDataSourceImpl ofu = new OMNI2RawDataSourceImpl(new File("/home/erjo/temp/cachedir/"));
+        final String URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+        final String LOCAL_FILE_NAME_PATTERN = "omni2_%4d.dat";
+        final OMNI2RawDataSourceImpl ofu = new OMNI2RawDataSourceImpl(new File("/home/erjo/temp/cachedir/"), URL_PATTERN, LOCAL_FILE_NAME_PATTERN);
         OMNI2Data data;
         //data = ofu.getData_hourlyAvg(1990);
         //data = ofu.getData_hourlyAvg(1960);
