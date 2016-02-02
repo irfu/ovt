@@ -7,19 +7,20 @@ public class MagPropsBeanInfo extends SimpleBeanInfo {
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_activityEditorOrOMNI2Choices = 0;
     private static final int PROPERTY_customizerVisible = 1;
-    private static final int PROPERTY_DSTIndexDataModel = 2;
-    private static final int PROPERTY_externalModelType = 3;
-    private static final int PROPERTY_IMFDataModel = 4;
-    private static final int PROPERTY_internalModelType = 5;
-    private static final int PROPERTY_KPIndexDataModel = 6;
-    private static final int PROPERTY_machNumberDataModel = 7;
-    private static final int PROPERTY_MPClipping = 8;
-    private static final int PROPERTY_OMNI2SettingsWindowVisible = 9;
-    private static final int PROPERTY_SWPDataModel = 10;
-    private static final int PROPERTY_SWVelocityDataModel = 11;
+    private static final int PROPERTY_displayOMNI2Values = 2;
+    private static final int PROPERTY_DSTIndexDataModel = 3;
+    private static final int PROPERTY_externalModelType = 4;
+    private static final int PROPERTY_IMFDataModel = 5;
+    private static final int PROPERTY_internalModelType = 6;
+    private static final int PROPERTY_KPIndexDataModel = 7;
+    private static final int PROPERTY_machNumberDataModel = 8;
+    private static final int PROPERTY_MPClipping = 9;
+    private static final int PROPERTY_OMNI2SettingsWindowVisible = 10;
+    private static final int PROPERTY_SWPDataModel = 11;
+    private static final int PROPERTY_SWVelocityDataModel = 12;
 
     // Property array 
-    private static PropertyDescriptor[] properties = new PropertyDescriptor[12];
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[13];
 
     private static PropertyDescriptor[] getPdescriptor(){
         return properties;
@@ -29,6 +30,7 @@ public class MagPropsBeanInfo extends SimpleBeanInfo {
         try {
             properties[PROPERTY_activityEditorOrOMNI2Choices] = new PropertyDescriptor ( "activityEditorOrOMNI2Choices", ovt.mag.MagProps.class, "getActivityEditorOrOMNI2Choices", "setActivityEditorOrOMNI2Choices" ); // NOI18N
             properties[PROPERTY_customizerVisible] = new PropertyDescriptor ( "customizerVisible", ovt.mag.MagProps.class, "isCustomizerVisible", "setCustomizerVisible" ); // NOI18N
+            properties[PROPERTY_displayOMNI2Values] = new PropertyDescriptor ( "displayOMNI2Values", ovt.mag.MagProps.class, "isDisplayOMNI2Values", "setDisplayOMNI2Values" ); // NOI18N
             properties[PROPERTY_DSTIndexDataModel] = new PropertyDescriptor ( "DSTIndexDataModel", ovt.mag.MagProps.class, "getDSTIndexDataModel", null ); // NOI18N
             properties[PROPERTY_externalModelType] = new PropertyDescriptor ( "externalModelType", ovt.mag.MagProps.class, "getExternalModelType", "setExternalModelType" ); // NOI18N
             properties[PROPERTY_externalModelType].setDisplayName ( "External Model" );

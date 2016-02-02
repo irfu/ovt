@@ -232,7 +232,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     // over and obtain value given an index.
     private static final Map<Integer, double[]> ACTIVITY_DEFAULTS = new HashMap();
     // Map with strings representing units for those activity indices which have a unit (others are not set).
-    // Not used everywhere yet since other hardcoded constants do exist (2015-10-23).
+    // Not used everywhere yet since other hardcoded constants do exist
+    // in the initialization of activityEditorDataModels (2015-10-23).
     private static final Map<Integer, String> UNIT_STRINGS = new HashMap();
 
 
@@ -247,6 +248,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         ACTIVITY_DEFAULTS.put(G2, new double[]{G2_DEFAULT});
         UNIT_STRINGS.put(IMF, "nT");
         UNIT_STRINGS.put(SWP, "nPa");
+        UNIT_STRINGS.put(DSTINDEX, "nT");
         UNIT_STRINGS.put(SW_VELOCITY, "km/s");
     }
 
@@ -340,7 +342,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         activityEditorDataModels[KPINDEX] = new MagActivityEditorDataModel(KPINDEX, 0, 9, KPINDEX_DEFAULT, "Kp Index");
         activityEditorDataModels[IMF] = new MagActivityEditorDataModel(IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
         activityEditorDataModels[SWP] = new MagActivityEditorDataModel(SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
-        activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel(DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
+        activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel(DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index [nT]");
         activityEditorDataModels[MACHNUMBER] = new MagActivityEditorDataModel(MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Magnetosonic Mach Number");
         activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel(SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
         activityEditorDataModels[G1] = new MagActivityEditorDataModel(G1, 0, 50, G1_DEFAULT, "G1");
@@ -811,6 +813,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     }
 
     /* Setter for "XML" property. */
+
     public boolean isOMNI2SettingsWindowVisible() {
         return omni2Win.isVisible();
     }
@@ -819,6 +822,16 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     /* Getter for "XML" property. */
     public void setOMNI2SettingsWindowVisible(boolean visible) {
         omni2Win.setVisible(visible);
+    }
+
+
+    public boolean isDisplayOMNI2Values() {
+        return omni2Win.isDisplayOMNI2Values();
+    }
+
+
+    public void setDisplayOMNI2Values(boolean mDisplayOMNI2Values) {
+        omni2Win.setDisplayOMNI2Values(mDisplayOMNI2Values);  // Does (fortunately) not trigger ActionEvent.
     }
 
 
