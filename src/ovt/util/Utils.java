@@ -994,18 +994,31 @@ public class Utils extends Object {
         final URL url = new URL(urlStr);   // throws  MalformedURLException. Does not seem to throw for non-existing URL.
         int bytesReadTotal = 0;
 
-        try (InputStream in = url.openStream(); OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
+        try (
+                InputStream in = url.openStream();
+                OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
 
             final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
             int bytesReadThisIteration;
 
+            // Read as much as possible from input stream (URL) to output stream (file).
             while ((bytesReadThisIteration = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesReadThisIteration);
                 bytesReadTotal += bytesReadThisIteration;
             }
-            //in.close();   // Should be unnecessary.
-            //out.close();  // Should be unnecessary.
+//            in.close();   // Should be unnecessary.
+//            out.close();  // Should be unnecessary.
 
+        } catch (FileNotFoundException e) {
+            /**
+             * NOTE: When URL#openStream() fails due to not finding the URL (or
+             * at least the path), then it throws an exception that does not
+             * contain the full URL string (omits the server and type of
+             * traffic, FTP). Therefore the code throws its own exception with
+             * the complete string, which is better used for displaying error
+             * messages.
+             */
+            throw new FileNotFoundException(urlStr);
         }
         return bytesReadTotal;
     }

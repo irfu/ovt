@@ -485,7 +485,7 @@ public class SSCWSOrbitCache {
         try {
             coords_axisPos = sscwsLibrary.getTrajectory_GEI(this.satInfo.ID, requestBeginMjd, requestEndMjd, resolutionFactor);
         } catch (SSCWSLibrary.NoSuchSatelliteException e) {
-            throw new IOException(e);    // NOTE: Reclassifying NoSuchSatelliteException as IOException. Should never occur in practise.
+            throw new IOException(e);    // NOTE: Reclassifying NoSuchSatelliteException as IOException. Should never occur in practice.
         }
         final double duration = (System.nanoTime() - t_start) / 1.0e9;  // Unit: seconds
         System.out.printf("   Time used for downloading data: %.1f [s]"+System.lineSeparator(), duration);

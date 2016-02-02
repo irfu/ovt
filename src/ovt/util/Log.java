@@ -46,7 +46,9 @@ import java.io.*;
  * detailed logs.
  *
  * NOTE: The policy (if there is any) for when to print to System.out.println
- * and when to print to Log is very confused.
+ * and when to print to Log is very confused. Never use System.out.println?!
+ * Always use log? What if log is saved to disk and not printed to stdout?
+ * Special log method for printing both to log and to stdout?
  *
  * NOTE: Not clear if one should use log messages for debugging when working
  * with the code during development. Maybe one should use a separate Log object
@@ -63,6 +65,7 @@ import java.io.*;
  * @author ko
  * @version
  */
+// PROPOSAL: Use PrintWriter instead? Supposed to be used for printing characters.
 public class Log extends Object {
 
     private static final int DEFAULT_MSG_LEVEL = 1;
@@ -96,7 +99,7 @@ public class Log extends Object {
 //    }
     public static void setLogLevel(int level) {
         if (level < 0) {
-            throw new IllegalArgumentException("Debug level must be non-negative.");
+            throw new IllegalArgumentException("Log level must be non-negative.");
         }
         logLevel = level;
     }
@@ -121,12 +124,12 @@ public class Log extends Object {
 
 
     public static void err(String msg) {
-        err("ERROR: " + msg, DEFAULT_ERROR_MSG_LEVEL);
+        err(msg, DEFAULT_ERROR_MSG_LEVEL);
     }
 
 
     /**
-     * Log the error string with the debug level
+     * Log the error string with the debug level.
      */
     // Should stop using since there is another "err" method?
     public static void err(String msg, int msgLevel) {

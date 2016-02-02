@@ -48,7 +48,10 @@ import java.util.*;
 import javax.swing.*;
 
 /**
- * The root object for all OVT objects
+ * The root class for all OVT objects. Many (but not all) instances of (subclasses of) this class
+ * represent nodes in the "GUI tree" in the left panel (e.g. MagProps is a subclass but does not
+ * represent a node in the "GUI tree").
+ * 
  * @author  Mykola Khotyaintsev
  * @version
  */

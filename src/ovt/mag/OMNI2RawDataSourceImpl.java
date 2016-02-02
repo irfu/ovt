@@ -232,8 +232,9 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
                     try {
                         downloadFile(urlStr, file, "Redownloading old file in case the online source has been updated.");
                     } catch (IOException e) {
-                        Log.log("ERROR: Failed to redownload (possibly newer) OMNI2 file.");
-                        System.out.println("ERROR: Failed to redownload (possibly newer) OMNI2 file.");
+                        final String msg = "Failed to redownload (possibly newer) OMNI2 file.";
+                        Log.err(msg);
+                        System.out.println("ERROR: "+msg);
                     }
                 }
             }

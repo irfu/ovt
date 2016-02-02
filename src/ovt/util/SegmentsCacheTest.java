@@ -278,20 +278,20 @@ public class SegmentsCacheTest {
         expResult.add(new double[]{1, 5});
         B.clear();
         B.add(new double[]{0, 1});
-        ok = ok && compareIntervalLists(SegmentsCache.removeIntervals(new double[]{1, 5}, B), expResult);
+        ok = ok && compareIntervalLists(SegmentsCache.subtractIntervals(new double[]{1, 5}, B), expResult);
 
         expResult.clear();
         expResult.add(new double[]{3, 5});
         B.clear();
         B.add(new double[]{1, 3});
-        ok = ok && compareIntervalLists(SegmentsCache.removeIntervals(new double[]{1, 5}, B), expResult);
+        ok = ok && compareIntervalLists(SegmentsCache.subtractIntervals(new double[]{1, 5}, B), expResult);
 
         expResult.clear();
         expResult.add(new double[]{1, 2});
         expResult.add(new double[]{3, 5});
         B.clear();
         B.add(new double[]{2, 3});
-        ok = ok && compareIntervalLists(SegmentsCache.removeIntervals(new double[]{1, 5}, B), expResult);
+        ok = ok && compareIntervalLists(SegmentsCache.subtractIntervals(new double[]{1, 5}, B), expResult);
 
         expResult.clear();
         expResult.add(new double[]{2, 4});
@@ -299,7 +299,7 @@ public class SegmentsCacheTest {
         B.add(new double[]{-2, -1});
         B.add(new double[]{0, 2});
         B.add(new double[]{4, 6});
-        ok = ok && compareIntervalLists(SegmentsCache.removeIntervals(new double[]{1, 5}, B), expResult);
+        ok = ok && compareIntervalLists(SegmentsCache.subtractIntervals(new double[]{1, 5}, B), expResult);
 
         expResult.clear();
         expResult.add(new double[]{1, 2});
@@ -311,7 +311,7 @@ public class SegmentsCacheTest {
         B.add(new double[]{3, 3.1});
         B.add(new double[]{4, 6});
         B.add(new double[]{9, 16});
-        ok = ok && compareIntervalLists(SegmentsCache.removeIntervals(new double[]{1, 5}, B), expResult);
+        ok = ok && compareIntervalLists(SegmentsCache.subtractIntervals(new double[]{1, 5}, B), expResult);
 
         if (!ok) {
             throw new AssertionError();

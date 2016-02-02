@@ -45,7 +45,7 @@ import java.util.List;
  * axis, t_a-t_b ({@code t_a<t_b}; a "data segment"), <BR>
  * (3) always returns equivalent data for a given interval on the t axis.<BR>
  * (4) that returns a segment t_a-t_c equal to merging the segments t_a-t_b and
- * t_b-t_c {@code (t_a <= t_b <= t_c)}<BR>
+ * t_b-t_c {@code (t_a < t_b < t_c)}<BR>
  *
  * The cached function, and the function for merging data segments is accessed
  * through an implementation of DataSource.
@@ -56,23 +56,30 @@ import java.util.List;
  * the requirements above. Note also that a DataSource may treat both boundaries
  * as inclusive and remove the overlap when merging data segments.
  *
- * NOTE: The cache is left intact if DataSegment, DataSource throw exceptions
- * which propagate through a call to the cache.
+ * NOTE: The cache is left intact if DataSegment or DataSource throw exceptions
+ * which propagate through the cache to the caller (the code that calls the
+ * cache).
  *
- * NOTE: This class is effectively a (mostly) better successor to
- * ovt.util.IndexedSegmentsCache but without some of its features, features
- * which probably should have been implemented some other way anyway.
- * IndexedSegmentsCache has "index searching" (this class does not have a notion
- * of indices), load from/save to stream, ability to replace cached data with
- * newer data of higher "quality" (e.g. better resolution) (there may be more
- * differences). This class has the ability for a data source to add more data
- * to the cache than asked for ("data source-initiated proactive caching").
+ * NOTE: In the current implementation (2016-02-02), no data in the cache is
+ * ever cleared. The size can only grow. The implementation also has no notion
+ * of age of data which could be used as a heuristic for clearing parts of the
+ * cache.
  *
  * IMPLEMENTATION NOTE: The class does not support zero-length data segments.
  * Implementing support for zero-length intervals is hard because of the
  * ambiguous behaviour for set differences without distinguishing between
  * open/closed/halfopen intervals which the class tries to avoid. Example: What
  * is the set difference between a zero-length interval and itself?
+ *
+ * NOTE: This class is effectively a (mostly) better successor to
+ * ovt.util.IndexedSegmentsCache (used for caching orbits) but without some of
+ * its features, features which probably should have been implemented some other
+ * way anyway. In comparison, IndexedSegmentsCache has "index searching" (this
+ * class does not have a notion of indices), load from/save to stream, ability
+ * to replace cached data with newer data of higher "quality" (e.g. better
+ * resolution) (there may be more differences). This class has the ability for a
+ * data source to add more data to the cache than asked for ("data
+ * source-initiated proactive caching").
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  * @since 2015
@@ -124,9 +131,9 @@ public class SegmentsCache {
          * nature has more data avilable anyway, e.g. because it has to parse a
          * large file just for finding a small interval.
          *
-         * NOTE: Must not throw exception merely because there is no data for
-         * the given t interval. Must instead return a DataSegment that
-         * represents the absence of data.
+         * NOTE: Must not throw exception merely because there is no data (a
+         * data gap) for the given t interval. Must instead return a DataSegment
+         * that represents the absence of data.
          */
         public DataSegment getSupersetSegment(double t_begin, double t_end) throws IOException;
 
@@ -348,7 +355,7 @@ public class SegmentsCache {
             // holes in the cache may be filled (entirely or partially) with data.
             // Therefore, one must call getCachedTIntervals() again in every loop
             // rather than call it once and iterate over the holes in the cache (intervalsToGet).
-            final List<double[]> intervalsToGet = removeIntervals(requestedInterval, getCachedTIntervals());
+            final List<double[]> intervalsToGet = subtractIntervals(requestedInterval, getCachedTIntervals());
 
             if (intervalsToGet.isEmpty()) {
                 break;
@@ -410,7 +417,7 @@ public class SegmentsCache {
      */
     private void addToCacheFromNewDataSegment(DataSegment seg) {
 
-        final List<double[]> intervalsToAdd = removeIntervals(seg.getInterval(), getCachedTIntervals());
+        final List<double[]> intervalsToAdd = subtractIntervals(seg.getInterval(), getCachedTIntervals());
 
         for (double[] intervalToAdd : intervalsToAdd) {
             DataSegment segToAdd = seg.selectSubset(intervalToAdd[0], intervalToAdd[1]);
@@ -523,7 +530,7 @@ public class SegmentsCache {
      * realistic cases.
      */
     // Move to Utils?
-    public static List<double[]> removeIntervals(double[] a, List<double[]> B) {
+    public static List<double[]> subtractIntervals(double[] a, List<double[]> B) {
         // NOTE: There is no need to adjacent intervals afterwards.
 
         List<double[]> difference = new ArrayList();

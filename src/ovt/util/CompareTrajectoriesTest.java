@@ -68,7 +68,7 @@ import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
  * 7) Difference in how handling data gaps (or special cases) somehow.<BR>
  *
  * NOTE: If one tries to download SSC in different coordinate systems, then one
- * MUST DEACTIVATE CACHING TO FILE ot avoid mixing of coordinate systems in the
+ * MUST DEACTIVATE CACHING TO FILE to avoid mixing of coordinate systems in the
  * disk cache over multiple sessions.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
@@ -86,7 +86,7 @@ public class CompareTrajectoriesTest {
     public static void main(String[] args) throws IOException, NoSuchSatelliteException {
         System.setProperty("http.agent", "Orbit Visualization Tool (OVT) - Test code");   // Not required but os out of politeness to NASA SSC.
 
-        Log.setDebugLevel(2);
+        Log.setLogLevel(2);
         //test_testCode();
         //test_printRawData();
 //        test_pointCalculation();
@@ -289,6 +289,11 @@ public class CompareTrajectoriesTest {
          SUPER_LTOF_C4.CR.ltof : 2000-08-09 - 2020-01-01 - predicted from 2015-08-23
          polar.tle   : 1996-10-02 - 2004-03-09
          akebono.tle : 1989-02-27 - 1994-10-26
+        
+        // The trajectory in "de1.tle" (or at least as OVT interprets it) is bad
+        // around 1990-05-25, 00:00-01:00 (jumps backward).
+        // Is then lagging behind the SSCWS orbit until ca 1990-06-01, 22:00.
+         de1         : 1989-10-05 - 1991-05-01   
          --------
          Double_Star_1.ltof : 2004-01-01 - 2007-10-10
          : Predicted:
@@ -319,20 +324,20 @@ public class CompareTrajectoriesTest {
 //        final double lengthMjd = 59 + 104;
         //final double startMjd = Time.getMjd(2004, 4, 1, 0, 19, 50);
         //final double lengthMjd = Time.getMjd(2004, 4, 1, 0, 19, 50.1) - startMjd;
-        final double startMjd = Time.getMjd(2000, 4, 30, 0, 0, 0);
-        final double lengthMjd = 50;
+        final double startMjd = Time.getMjd(1990, 03, 1, 0, 0, 0);
+        final double lengthMjd = 2*30;
         //
         final double timeDifferenceMjd2 = Time.DAYS_IN_SECOND * 0; // -21.7;
         final double[] rotationVec2 = {0, 0, 0};
         //final double[] rotationVec2 = {Math.PI/2, 0, 0};
         //final double[] rotationVec2 = {2*5.0/Const.RE, 0, 0};
         //--------------------------
-        /*compareTrajectories(
-         new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         //new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Cluster1.ltof"),
-         //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
-         Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
+//        compareTrajectories(
+//                new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+//                //new SSCWSDataSource("cluster1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+//                new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Cluster1.ltof"),
+//                //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
+//                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
          new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
@@ -347,14 +352,19 @@ public class CompareTrajectoriesTest {
          new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Double_Star_1.ltof"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
-        compareTrajectories(
-                new RawSSCWSDataSource("polar", CoordinateSystem.GEI_J_2000),
-                new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Polar.tle"),
-                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
+//        compareTrajectories(
+//                new RawSSCWSDataSource("freja", CoordinateSystem.GEI_J_2000),
+//                new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Freja.tle"),
+//                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
-        /*compareTrajectories(
-         new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/akebono.tle"),
+//        compareTrajectories(
+//         new SSCWSDataSource("akebono", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+//         new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/akebono.tle"),
+//         Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
+        //--------------------------
+        compareTrajectories(
+         new SSCWSDataSource("de1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+         new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/de1.tle"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
     }
@@ -496,17 +506,17 @@ public class CompareTrajectoriesTest {
         System.out.println("N = " + N);
         System.out.printf("Average time step: %.2f [s]\n", timeLengthMjd / (N - 1) * Time.SECONDS_IN_DAY);
         printStatistics("d_abs", new Statistics(d_abs_array, false));
-        System.out.println("========");
-        printStatistics("d_x", new Statistics(d_x_array, false));
-        printStatistics("d_y", new Statistics(d_y_array, false));
-        printStatistics("d_z", new Statistics(d_z_array, false));
-        System.out.println("========");
-        printStatistics("d_r", new Statistics(d_r_array, false));
-        printStatistics("d_v", new Statistics(d_v_array, false));
-        printStatistics("d_rxv (normal to orbital plane)", new Statistics(d_rxv_array, false));
-        printStatistics("d_vx(rxv) (perp. to both velocity and the normal to the orbital plane)", new Statistics(d_v_x_rxv_array, false));
-        System.out.println("========");
-        printStatistics("d_vp", new Statistics(d_vp_array, false));
+//        System.out.println("========");
+//        printStatistics("d_x", new Statistics(d_x_array, false));
+//        printStatistics("d_y", new Statistics(d_y_array, false));
+//        printStatistics("d_z", new Statistics(d_z_array, false));
+//        System.out.println("========");
+//        printStatistics("d_r", new Statistics(d_r_array, false));
+//        printStatistics("d_v", new Statistics(d_v_array, false));
+//        printStatistics("d_rxv (normal to orbital plane)", new Statistics(d_rxv_array, false));
+//        printStatistics("d_vx(rxv) (perp. to both velocity and the normal to the orbital plane)", new Statistics(d_v_x_rxv_array, false));
+//        System.out.println("========");
+//        printStatistics("d_vp", new Statistics(d_vp_array, false));
         //printStatistics("dPos2dt_dot_v2_norm_array", new Statistics(dPos2dt_dot_v2_norm2_array, true));
         //printStatistics("v_dPos2dt_array", new Statistics(v_dPos2dt_array, true));
         //printStatistics("d_dPos2dtp_array", new Statistics(d_dPos2dtp_array, true));

@@ -53,11 +53,13 @@ import ovt.OVTCore;
 public interface MagPropsInterface {
 
     //public String getActivityName(int index);
-    
     public OVTCore getCore();
 
+
+    // See MagProps#getActivityOMNI2.
     public double[] getActivityOMNI2(int activityIndex, double mjd)
             throws OMNI2DataSource.ValueNotFoundException, IOException;
+
 
     public MagProps.ActivityEditorOrOMNI2_DataModel getActivityEditorOrOMNI2_DataModel(int activityIndex);
 }

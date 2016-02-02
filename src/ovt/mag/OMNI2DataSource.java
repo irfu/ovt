@@ -213,7 +213,7 @@ public class OMNI2DataSource {
 
     //##########################################################################
     /**
-     * Class which the cache uses as a data source for the cache.
+     * Class which the cache uses as a data source.
      */
     private static class CacheDataSource implements SegmentsCache.DataSource {
 
@@ -226,12 +226,11 @@ public class OMNI2DataSource {
 
 
         /**
-         * @param t_begin Mjd.
-         * @param t_end Mjd.
+         * See interface definition.
          */
         @Override
         public OMNI2Data getSupersetSegment(double t_begin, double t_end) throws IOException {
-            if (t_end < t_begin) {
+            if (!(t_begin < t_end)) {
                 throw new IllegalArgumentException();
             }
             final int beginYear = new Time(t_begin).getYear();
@@ -250,6 +249,9 @@ public class OMNI2DataSource {
         }
 
 
+        /**
+         * See interface definition.
+         */
         @Override
         public OMNI2Data mergeAdjacent(List<SegmentsCache.DataSegment> segments) {
 
@@ -295,8 +297,9 @@ public class OMNI2DataSource {
      *
      * NOTE: Will NOT return the time for found value.
      *
-     * NOTE: Defines how time should be interpreted, i.e. which data point in
-     * time should be used.
+     * NOTE: Defines how time should be interpreted, i.e. which OMNI2 data point
+     * should actually be used for a specified time, e.g. nearest, nearest
+     * before/after. and so on.
      *
      * @param fieldID The scalar field for which the data should be returned, if
      * getIMFvector==false.
@@ -314,7 +317,7 @@ public class OMNI2DataSource {
     //    NOTE: Needs different value if searching for the boundaries of OMNI2 data.
     public double[] getValues(double time_mjd, FieldID fieldID, boolean getIMFVector) throws ValueNotFoundException, IOException {
 
-        //=====================================================================
+        //======== BEGINNING OF CLASS ==========================================
         class SearchFunction implements SegmentsCache.SearchFunction {
 
             /**
@@ -406,20 +409,25 @@ public class OMNI2DataSource {
                 }
                 return null;
             }
-        }//=====================================================================
+        }//======== END OF CLASS ===============================================
 
         Log.log(getClass().getSimpleName() + "#getValues("
                 + time_mjd + ", " + fieldID + ", " + getIMFVector + ")", DEBUG);
 
-        double[][] result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());
+        double[][] result = (double[][]) segmentsCache.search(
+                time_mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());
 
         if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
 
-            result = (double[][]) segmentsCache.search(time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
+            result = (double[][]) segmentsCache.search(
+                    time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
 
             if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
                 //throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " at time_mjd=" + time_mjd + ".");
-                throw new ValueNotFoundException("Can not find OMNI2 value for fieldID=" + fieldID + " within " + maxTimeDifference_days + " days of time_mjd=" + time_mjd + ".");
+                throw new ValueNotFoundException(
+                        "Can not find OMNI2 value for fieldID=" + fieldID
+                        + " within " + maxTimeDifference_days
+                        + " days of time_mjd=" + time_mjd + ".");
             }
         }
 
@@ -429,6 +437,14 @@ public class OMNI2DataSource {
     }
 
     //##########################################################################
+    /**
+     * Class for exceptions signifying that an OMNI2 value could not be found
+     * for a specified approximate point in time even though the
+     * available/accessible OMNI2 data series covers that point in time. In
+     * other words, no value could be found due to a data gap in the downloaded
+     * OMNI2 data. This should NOT be confused with a failure to download OMNI2
+     * data.
+     */
     public static class ValueNotFoundException extends Exception {
 
         public ValueNotFoundException(String msg) {

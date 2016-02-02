@@ -336,22 +336,20 @@ private static void addPropertyToNode(org.w3c.dom.Element root, PropertyDescript
 
 
 public static void save(OVTObject obj, String xml_file) throws IOException {
-    FileOutputStream out = new FileOutputStream(xml_file);
-    try {
+    try (final FileOutputStream out = new FileOutputStream(xml_file)) {
         // to set UTF-8 encoding :
         // buildDom(obj).write(out, "UTF-8");
         buildDom(obj).write(out);
     } catch (ParserConfigurationException pce) {
-        // Parser with specified options can't be built
+        // Parser with specified options can't be built.
         System.out.println("Parser Error!" + pce);
         //pce.printStackTrace();
     }
-    out.close();
 }
 
 
     
-/** Initializa <CODE>obj</CODE> using settings from file <CODE>xml_file</CODE>
+/** Initialize <CODE>obj</CODE> using settings from file <CODE>xml_file</CODE>.
  */
 public static void load(String xml_file, OVTObject obj) throws IOException {
     DocumentBuilderFactory factory = new com.sun.xml.parser.DocumentBuilderFactoryImpl();

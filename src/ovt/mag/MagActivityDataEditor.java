@@ -58,7 +58,7 @@ import ovt.interfaces.MagPropsChangeListener;
  * arbitrary number of columns with "index values".
  *
  * NOTE: The class does not expose this.dataModel (the reference) to outside the
- * class except to "table" (DataTable extends JTable) which in practises passes
+ * class except to "table" (DataTable extends JTable) which in practice passes
  * it on to JTable. The caller of the constructor might still expose the
  * reference though. /Erik P G Johansson 2015-10-07
  *

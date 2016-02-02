@@ -70,11 +70,14 @@ import ovt.util.Log;
 public class OMNI2SettingsWindow extends JFrame {
 
     //private static final int DEBUG = 2;
+    
     private static final String INITIAL_VALUE_STRING = "<INITIAL STRING>";   // Should never be visible in the GUI if everything works.
-    private static final String NO_DATA_DISPLAY_STR = "<DATA GAP>"; // Displayed when can not find any value (ValueNotFoundException).
+    private static final String NO_DATA_DISPLAY_STR = "<DATA GAP>";   // Displayed when can not find any value (ValueNotFoundException).
     private static final String IO_ERROR_DISPLAY_STR = "<I/O ERROR>";
     private static final String DISABLED_DISPLAY_STR = "(disabled)";
-    
+
+    private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT = "Display OMNI2 values (might slow down application in case of I/O errors)";
+
     private static final String WINDOW_TITLE = "OMNI2 Data Settings";
 
     // PROPOSAL: Say something about which values are used in case of (1) data gaps, or (2) I/O error?
@@ -97,13 +100,13 @@ public class OMNI2SettingsWindow extends JFrame {
     private final TimeSettingsInterface timeSettings;
 
     final JCheckBox displayOMNI2ValuesCheckBox;
-    private boolean displayOMNI2Values = false;   // Default value.
+//    private boolean displayOMNI2Values = false;   // Default value.
 
 
     public OMNI2SettingsWindow(
             MagPropsInterface mMagProps,
             TimeSettingsInterface mTimeSettings) {
-        
+
         // Class requires core.timeSettings to be supplied as parameter and hence be initialized first.
         // Therefore it is good to check if the parameter is in fact initialized.
         // (OVTCore initializing core.magProps before code.timeSettings could lead to this error.)
@@ -195,7 +198,7 @@ public class OMNI2SettingsWindow extends JFrame {
         rootGridY++;
 
         {
-            displayOMNI2ValuesCheckBox = new JCheckBox("Display OMNI2 values (might slow down application in case of I/O errors)");
+            displayOMNI2ValuesCheckBox = new JCheckBox(DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT);
             final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
             // c.weighty = 0;  // Important for fitting text initially. Do not know why.
             c.anchor = GridBagConstraints.NORTHWEST;   // Put component at upper-left.
@@ -217,14 +220,17 @@ public class OMNI2SettingsWindow extends JFrame {
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension frameSize = getSize();
         setLocation(scrnSize.width / 2 - frameSize.width / 2, scrnSize.height / 2 - frameSize.height / 2);
-        setDisplayOMNI2Values(displayOMNI2Values);
+        setDisplayOMNI2Values(false);
     }//*/
 
 
-    private void setDisplayOMNI2Values(boolean mDisplayOMNI2Values) {
-        displayOMNI2Values = mDisplayOMNI2Values;
-        displayOMNI2ValuesCheckBox.setSelected(displayOMNI2Values);  // Does (fortunately) not trigger ActionEvent.
+    public void setDisplayOMNI2Values(boolean mDisplayOMNI2Values) {
+        displayOMNI2ValuesCheckBox.setSelected(mDisplayOMNI2Values);  // Does (fortunately) not trigger ActionEvent.
         refresh();
+    }
+    
+    public boolean isDisplayOMNI2Values() {
+        return displayOMNI2ValuesCheckBox.isSelected();
     }
 
 
@@ -301,7 +307,7 @@ public class OMNI2SettingsWindow extends JFrame {
      */
     private void refresh(int activityIndex, double timeMjd) {
         String str = null;
-        if (displayOMNI2Values) {
+        if (isDisplayOMNI2Values()) {
             try {
 
                 final double[] values = magProps.getActivityOMNI2(
@@ -330,13 +336,13 @@ public class OMNI2SettingsWindow extends JFrame {
                  * fields even if the user disables the use of OMNI2 data in the
                  * visualization (2016-02-01).
                  */
-                String msg = "I/O error when trying to obtain OMNI2 value for display: "+ex.getMessage();
+                String msg = "I/O error when trying to obtain OMNI2 value for display: " + ex.getMessage();
                 Log.err(msg);
             }
         } else {
             str = DISABLED_DISPLAY_STR;
         }
-        
+
         activityValueTextFields.get(activityIndex).setText(str);
     }
 

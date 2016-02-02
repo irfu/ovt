@@ -40,16 +40,16 @@ Khotyaintsev
 
 package ovt.mag;
 
-import ovt.beans.*;
 import ovt.util.*;
 import ovt.event.*;
 import ovt.interfaces.*;
-
 
 import javax.swing.*;
 import javax.swing.event.*;
 
 /**
+ * Class representing window for settings for magnetic field and "magnetic
+ * activity indexes".
  *
  * @author  yuri
  * @version
@@ -58,7 +58,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     private final MagProps magProps;
 
   /** Creates new form MagPropsEditor */
-  public MagPropsCustomizer(MagProps magProps,JFrame owner) {
+  public MagPropsCustomizer(MagProps magProps, JFrame owner) {
     super("Magnetic Field");
     
     Log.log("MagPropsEditor :: init ...", 3);

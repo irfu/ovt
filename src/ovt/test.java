@@ -51,6 +51,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.SwingUtilities;
 
+/**
+ * Seems to be some kind of simple test code for VTK graphics.
+ */
 public class test {
 
     static {
