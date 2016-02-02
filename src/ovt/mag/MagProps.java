@@ -255,10 +255,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     private MagPropsCustomizer magPropsCustomizer = null;
     private OMNI2SettingsWindow omni2Win = null;
-    /**
-     * Holds value of property customizerVisible.
-     */
-    private boolean customizerVisible;
 
     /**
      * Magnetopause clipping.
@@ -394,7 +390,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
             omni2Win = new OMNI2SettingsWindow(this, core.getTimeSettings());
         }
-        customizerVisible = false;
     }
 
 
@@ -802,7 +797,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * @return Value of property customizerVisible.
      */
     public boolean isCustomizerVisible() {
-        return customizerVisible;
+        return magPropsCustomizer.isVisible();
     }
 
 
@@ -813,7 +808,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      */
     public void setCustomizerVisible(boolean customizerVisible) {
         magPropsCustomizer.setVisible(customizerVisible);
-        this.customizerVisible = customizerVisible;
     }
 
     /* Setter for "XML" property. */
