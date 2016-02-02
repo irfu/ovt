@@ -14,11 +14,12 @@ public class MagPropsBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_KPIndexDataModel = 6;
     private static final int PROPERTY_machNumberDataModel = 7;
     private static final int PROPERTY_MPClipping = 8;
-    private static final int PROPERTY_SWPDataModel = 9;
-    private static final int PROPERTY_SWVelocityDataModel = 10;
+    private static final int PROPERTY_OMNI2SettingsWindowVisible = 9;
+    private static final int PROPERTY_SWPDataModel = 10;
+    private static final int PROPERTY_SWVelocityDataModel = 11;
 
     // Property array 
-    private static PropertyDescriptor[] properties = new PropertyDescriptor[11];
+    private static PropertyDescriptor[] properties = new PropertyDescriptor[12];
 
     private static PropertyDescriptor[] getPdescriptor(){
         return properties;
@@ -40,6 +41,7 @@ public class MagPropsBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_MPClipping] = new PropertyDescriptor ( "MPClipping", ovt.mag.MagProps.class, "isMPClipping", "setMPClipping" ); // NOI18N
             properties[PROPERTY_MPClipping].setDisplayName ( "Clip on MP" );
             properties[PROPERTY_MPClipping].setShortDescription ( "Clip fieldlines on magnetopause" );
+            properties[PROPERTY_OMNI2SettingsWindowVisible] = new PropertyDescriptor ( "OMNI2SettingsWindowVisible", ovt.mag.MagProps.class, "isOMNI2SettingsWindowVisible", "setOMNI2SettingsWindowVisible" ); // NOI18N
             properties[PROPERTY_SWPDataModel] = new PropertyDescriptor ( "SWPDataModel", ovt.mag.MagProps.class, "getSWPDataModel", null ); // NOI18N
             properties[PROPERTY_SWVelocityDataModel] = new PropertyDescriptor ( "SWVelocityDataModel", ovt.mag.MagProps.class, "getSWVelocityDataModel", null ); // NOI18N
         }

@@ -89,7 +89,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE_NAME = "OVTSavestate.xml";
     private static final Properties globalProperties = new Properties();
-    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
+//    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
+    private static final String SYSTEM_OUT_FILE_NAME = null;   // TEMP
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
     private static final int GLOBAL_LOG_LEVEL = 3;
 //    public static int DEBUG = 0;
@@ -144,7 +145,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 //    protected boolean isInitialized = false;
 
     /* Absolute path to directory under the home directory. */
-    public static String ovtUserDir;
+    private static String ovtUserDir;
 
     /**
      * Holds value of property server.
@@ -392,6 +393,9 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             }
         }
 
+        // Set System.out and System.err (stdout and stderr).
+        // NOTE: Can only be set to files AFTER that internal paths have been
+        // obtained. Can therefore not be initialized earlier.
         try {
             // NOTE: It appears that on Windows, one will not get an explicit
             // log file (for stdout) without explicitly rediricting System.out.
@@ -405,11 +409,13 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             if (SYSTEM_OUT_FILE_NAME != null) {
                 System.setOut(new PrintStream(new FileOutputStream(OVTCore.getUserDir() + SYSTEM_OUT_FILE_NAME), true));
             }
+            Log.setPrintStream(System.out);
         } catch (FileNotFoundException e) {
+            Log.setPrintStream(System.err);   // Has to be done explicitly rather than use the default value.
             Log.logStackTrace(e);
-            Log.log("Failed to redirect System.err or System.out to file.");
+            Log.log("Failed to redirect System.err (stderr) or System.out (stdout) to file.");
         }
-        Log.setPrintStream(System.err);   // Has to be done explicitly rather than use the default value.
+        
 
         /* Setting the http user agent for the benefit of NASA SSC, so that they
          * can see who/what (OVT) is using their service (over the internet).
@@ -435,15 +441,18 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 sendErrorMessage("Error when loading global settings", e);
             }
         }
+        
+        // Set time
+        timeSettings = new TimeSettings(this);
+        Log.log("TimeSettings created.", 3);
 
         Log.log("Creating MagProps ...", 3);
         magProps = new MagProps(this);
         Log.log("MagProps created.", 3);
+        
         transCollection = new TransCollection(magProps.getIgrfModel());
         Log.log("TransCollection created.", 3);
-        // Set time
-        timeSettings = new TimeSettings(this);
-        Log.log("TimeSettings created.", 3);
+        
         // Set coordinate system
         coordinateSystem = new CoordinateSystem(this);
         Log.log("CoordinateSystem created.", 3);
@@ -462,7 +471,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         frames = new Frames(this);
 
         // Set frames
-        Log.log("Creating Ground-Based-Stations ...", 3);
+        Log.log("Creating Ground-Based Stations ...", 3);
         groundStations = new GroundStations(this);
 
         bowShock = new BowShock(this);

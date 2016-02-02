@@ -123,7 +123,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     public double xlim = xlim_default;
 
     /**
-     * Altitude (km) for footprint tracing. Make private?
+     * Altitude (km) for footprint tracing. Make private? Abolish?
      */
     public static final double alt = 100;
     /**
@@ -158,7 +158,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     protected AbstractMagModel externalModel = null;
 
 
-    /* Indices representing activity indexes (values that represent some form of quantity in some physical model). */
+    /* Indices representing activity indexes (values that represent some
+     * form of quantity in some physical model). */
     public static final int KPINDEX = 1;
     public static final int IMF = 2;
     public static final int SWP = 3;
@@ -174,7 +175,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     public static final int EXTERNAL_MODEL = 32;
     public static final int CLIP_ON_MP = 33;
 
-//public static final int DIPOLE_TILT_COS   = 50;
+    //public static final int DIPOLE_TILT_COS   = 50;
     public static final int IMF_X = IMF * 100 + 0;
     public static final int IMF_Y = IMF * 100 + 1;
     public static final int IMF_Z = IMF * 100 + 2;
@@ -198,6 +199,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     /**
      * List of data models for choosing between table/editors, and OMNI2 data.
+     * Key=Activity index.
      */
     private final Map<Integer, ActivityEditorOrOMNI2_DataModel> activityEditorOrOMNI2_dataModels = new HashMap();
 
@@ -248,10 +250,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         UNIT_STRINGS.put(SW_VELOCITY, "km/s");
     }
 
-    private static final int[] ACTIVITY_INDICES_OMNI2_AVAILABLE = {KPINDEX, IMF, SWP, DSTINDEX, MACHNUMBER, SW_VELOCITY};
+    private static final int[] ACTIVITY_INDICES_OMNI2_AVAILABLE
+            = {KPINDEX, IMF, SWP, DSTINDEX, MACHNUMBER, SW_VELOCITY};
 
     private MagPropsCustomizer magPropsCustomizer = null;
-
+    private OMNI2SettingsWindow omni2Win = null;
     /**
      * Holds value of property customizerVisible.
      */
@@ -388,6 +391,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             activityEditors[G2] = new MagActivityDataEditor(activityEditorDataModels[G2], this, null);
             magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
             addMagPropsChangeListener(magPropsCustomizer);
+
+            omni2Win = new OMNI2SettingsWindow(this, core.getTimeSettings());
         }
         customizerVisible = false;
     }
@@ -476,7 +481,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * @param externalModelType New value of property externalModelType.
      */
     public void setExternalModelType(int externalModelType) {
-        System.out.println("Setting external model to " + externalModelType);
+        Log.log("Setting external model to " + externalModelType, 3);
         if (externalModelType != NOMODEL && externalModelType != T87
                 && externalModelType != T89 && externalModelType != T96 && externalModelType != T2001) {
             throw new IllegalArgumentException("Invalid external field model type");
@@ -738,7 +743,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * @return footprint altitude (RE)
      */
     public double getFootprintAltitude() {
-        //System.out.println("getFootprintAlt is Broken.");
         return footprintAltitude;
     }
 
@@ -784,7 +788,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
                 descriptors.put(pd);
 
             } catch (IntrospectionException e2) {
-                System.out.println(getClass().getName() + " -> " + e2.toString());
+                Log.err(getClass().getName() + " -> " + e2.toString());
                 System.exit(0);
             }
         }
@@ -810,6 +814,17 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     public void setCustomizerVisible(boolean customizerVisible) {
         magPropsCustomizer.setVisible(customizerVisible);
         this.customizerVisible = customizerVisible;
+    }
+
+    /* Setter for "XML" property. */
+    public boolean isOMNI2SettingsWindowVisible() {
+        return omni2Win.isVisible();
+    }
+
+
+    /* Getter for "XML" property. */
+    public void setOMNI2SettingsWindowVisible(boolean visible) {
+        omni2Win.setVisible(visible);
     }
 
 
@@ -874,9 +889,10 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * Get either (1) all values (array) for specific activity index, or (2) one
      * specific value for a specific activity index.
      *
-     * NOTE: It appears that all reading of "activity" data by OVT goes through
-     * this method. Note that the method is still private though. /Erik P G
-     * Johansson 2015-10-07.
+     * NOTE: It appears that all reading of "activity" data used by
+     * visualizations in OVT goes through this method. Note that the method is
+     * still private though.<BR>
+     * /Erik P G Johansson 2015-10-07.
      *
      * NOTE: Uses an internal cache to speed up calls. Empirically, we know that
      * the same call is made many times in a row. This is a good place to have a
@@ -965,7 +981,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             returnValue = ACTIVITY_DEFAULTS.get(index);
 
             final String msg = "I/O error when trying to obtain OMNI2 value (" + getActivityName(index) + ").\n"
-                    + "Using a default value " + Arrays.toString(returnValue) + " instead. - "
+                    + "Using a default value " + Arrays.toString(returnValue) + " instead.\n "
                     + ex.getMessage();
             getCore().sendErrorMessage("Can not find activity value required for visualizations", msg);
             Log.log(msg, DEBUG);
@@ -999,6 +1015,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * exceptions (gives error/warning messages).
      */
     // Move to OMNI2DataSource?!
+    @Override
     public double[] getActivityOMNI2(int activityIndex, double mjd)
             throws OMNI2DataSource.ValueNotFoundException, IOException {
         boolean getIMFvector = false;
@@ -1063,7 +1080,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     /**
      * @Returns characteristics of magnetic field for mjd.
-     *
      */
     public Characteristics getMagFieldCharacteristics(double mjd) {
         int[] keys = null;
@@ -1184,11 +1200,13 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             String choiceStr;
 
             if (choice == DataSourceChoice.MAG_ACTIVITY_EDITOR) {
-                choiceStr = "Table_editor";   // E=Editor.
+                choiceStr = "Table_editor";
             } else if (choice == DataSourceChoice.OMNI2) {
-                choiceStr = "OMNI2";   // O=OMNI2
+                choiceStr = "OMNI2";
             } else {
-                throw new NoSuchElementException("activityEditorOrOMNI2_dataModels.get(index).getDataSourceChoice() returned \"" + choice + "\"."
+                throw new NoSuchElementException(
+                        "activityEditorOrOMNI2_dataModels.get(index).getDataSourceChoice()"
+                        + " returned \"" + choice + "\"."
                         + " This should never be able to happen and indicates a pure code bug.");
             }
 
@@ -1226,7 +1244,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             } else if (choiceStr.equals("OMNI2")) {
                 choice = DataSourceChoice.OMNI2;
             } else {
-                throw new NoSuchElementException("Found string choiceStr=\"" + choiceStr + "\" which can not be parsed.");
+                throw new NoSuchElementException(
+                        "Found string choiceStr=\"" + choiceStr + "\" which can not be parsed.");
             }
 
             final MagProps.ActivityEditorOrOMNI2_DataModel dataModel = activityEditorOrOMNI2_dataModels.get(activityIndex);
@@ -1246,8 +1265,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
         /**
          * Returns the relevant "activity" value(s) for an arbitrary point in
-         * time. Not that the implementation gets to choose which data point(s)
-         * (when in time) to use for the request time.
+         * time. Note that the implementation gets to choose which actual data
+         * point(s) (when in time) to use for the request time.
          */
         public double[] getValues(double mjd) throws OMNI2DataSource.ValueNotFoundException, IOException;
 
@@ -1325,10 +1344,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         }
 
 
+        @Override
         public void setDataSourceChoice(DataSourceChoice choice) {
             Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")"
                     + "   // activityIndex=" + activityIndex
-                    + " (" + magProps.getActivityName(activityIndex) + ")", 2);
+                    + " (" + MagProps.getActivityName(activityIndex) + ")", 2);
 
             // Avoid doing anything unnecessarily, in particular calling listeners.
             if (this.dataSourceChoice == choice) {
@@ -1341,11 +1361,13 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         }
 
 
+        @Override
         public DataSourceChoice getDataSourceChoice() {
             return dataSourceChoice;
         }
 
 
+        @Override
         public double[] getValues(double mjd) throws OMNI2DataSource.ValueNotFoundException, IOException {
             if (dataSourceChoice == DataSourceChoice.MAG_ACTIVITY_EDITOR) {
 
@@ -1356,6 +1378,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
                 return magProps.getActivityOMNI2(editorDataModel.getIndex(), mjd);
 
             } else {
+                // Should never be reached.
                 throw new RuntimeException("OVT code bug.");
             }
         }
@@ -1376,9 +1399,8 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
             //------------------------------------------------------------------
             // Make this checkbox react to changes in the data model.
-            //magProps.addMagPropsChangeListener(new MagPropsChangeListener() {
             dataModel.addMagPropsChangeListener(new MagPropsChangeListener() {
-                // NOTE: Important that this method does not trigger any call to "listeners" (in practise
+                // NOTE: Important that this method does not trigger any call to "listeners" (in practice
                 // MagProps) since that would trigger MagProps into calling its listeners, i.e. this instance.
                 public void magPropsChanged(MagPropsEvent evt) {
                     if (evt.getSource() == dataModel) {

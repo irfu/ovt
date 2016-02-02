@@ -43,7 +43,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
-import ovt.mag.OMNI2SettingsWindow;
 import ovt.object.Camera;
 import ovt.object.SSCWSSat;
 import ovt.object.Sat;
@@ -139,7 +138,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private final ToolBarContainer toolBarContainer;
     protected HTMLBrowser htmlBrowser;
     private SSCWSSatellitesSelectionWindow sscwsSatellitesSelectionWindow;
-    private final OMNI2SettingsWindow omni2Win;
 
     private final SSCWSSatellitesBookmarksModel sscwsBookmarks = new SSCWSSatellitesBookmarksModel();
 
@@ -150,7 +148,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     private static final String SETTING_XYZWINDOW_HEIGHT = "XYZWindow.height";
     private static final String SETTING_XYZWINDOW_ORIGIN_X = "XYZWindow.originx";
     private static final String SETTING_XYZWINDOW_ORIGIN_Y = "XYZWindow.originy";
-    private static final String SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
+    private static final String SETTING_BOOKMARKED_SSCWS_SATELLITE_IDS = "SSCWSSatellites.Bookmarks";
 
 
     public XYZWindow() {
@@ -166,7 +164,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             windowResizable = false;
         }
 
-        // show splashscreen
+        // Show splash screen
         splashWindow = new SplashWindow();
         splashWindow.setVisible(true);
 
@@ -212,8 +210,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 // ----------- Set window size ----------
         boolean pack = false;
         try {
-            /*setSize(Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
-             Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_HEIGHT))*/
             setSize(
                     new Dimension(
                             Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_WIDTH)),
@@ -266,11 +262,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         // create Help Window
         htmlBrowser = new HTMLBrowser(core);
 
-        // Create OMNI2 settings window.
-        omni2Win = new OMNI2SettingsWindow(core.getMagProps(), core.getTimeSettings());
-
         // Create data model (used by GUI) for SSC bookmarks.
-        sscwsBookmarks.loadFromGlobalSettingsValue(OVTCore.getGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS));
+        sscwsBookmarks.loadFromGlobalSettingsValue(OVTCore.getGlobalSetting(SETTING_BOOKMARKED_SSCWS_SATELLITE_IDS));
 
         addWindowListener(new WindowAdapter() {
             @Override
@@ -401,7 +394,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         OVTCore.setGlobalSetting("intervalMjd", "" + getCore().getTimeSettings().getTimeSet().getIntervalMjd());
         OVTCore.setGlobalSetting("stepMjd", "" + getCore().getTimeSettings().getTimeSet().getStepMjd());
         OVTCore.setGlobalSetting("currentMjd", "" + getCore().getTimeSettings().getTimeSet().getCurrentMjd());
-        OVTCore.setGlobalSetting(SETTINGS_BOOKMARKED_SSCWS_SATELLITE_IDS, sscwsBookmarks.getGlobalSettingsValue());
+        OVTCore.setGlobalSetting(SETTING_BOOKMARKED_SSCWS_SATELLITE_IDS, sscwsBookmarks.getGlobalSettingsValue());
 
         try {
             OVTCore.saveGlobalSettings();
@@ -468,12 +461,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     public HTMLBrowser getHTMLBrowser() {
         return htmlBrowser;
-    }
-
-
-    public void setOMNI2SettingsWindowVisible(boolean visible) {
-        this.omni2Win.setVisible(visible);
-
     }
 
 
