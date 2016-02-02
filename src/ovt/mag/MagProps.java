@@ -256,7 +256,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             = {KPINDEX, IMF, SWP, DSTINDEX, MACHNUMBER, SW_VELOCITY};
 
     private MagPropsCustomizer magPropsCustomizer = null;
-    private OMNI2SettingsWindow omni2Win = null;
+    private OMNI2Customizer omni2customizer = null;
 
     /**
      * Magnetopause clipping.
@@ -390,7 +390,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
             addMagPropsChangeListener(magPropsCustomizer);
 
-            omni2Win = new OMNI2SettingsWindow(this, core.getTimeSettings());
+            omni2customizer = new OMNI2Customizer(this, core.getTimeSettings());
         }
     }
 
@@ -814,24 +814,24 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     /* Setter for "XML" property. */
 
-    public boolean isOMNI2SettingsWindowVisible() {
-        return omni2Win.isVisible();
+    public boolean isOMNI2CustomizerVisible() {
+        return omni2customizer.isVisible();
     }
 
 
     /* Getter for "XML" property. */
-    public void setOMNI2SettingsWindowVisible(boolean visible) {
-        omni2Win.setVisible(visible);
+    public void setOMNI2CustomizerVisible(boolean visible) {
+        omni2customizer.setVisible(visible);
     }
 
 
-    public boolean isDisplayOMNI2Values() {
-        return omni2Win.isDisplayOMNI2Values();
+    public boolean isOMNI2ValuesDisplayed() {
+        return omni2customizer.isOMNI2ValuesDisplayed();
     }
 
 
-    public void setDisplayOMNI2Values(boolean mDisplayOMNI2Values) {
-        omni2Win.setDisplayOMNI2Values(mDisplayOMNI2Values);  // Does (fortunately) not trigger ActionEvent.
+    public void setOMNI2ValuesDisplayed(boolean mOMNI2ValuesDisplayed) {
+        omni2customizer.setOMNI2ValuesDisplayed(mOMNI2ValuesDisplayed);  // Does (fortunately) not trigger ActionEvent.
     }
 
 

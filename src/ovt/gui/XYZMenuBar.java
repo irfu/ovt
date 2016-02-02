@@ -224,7 +224,7 @@ public class XYZMenuBar extends JMenuBar {
                 KeyEvent.VK_O, ActionEvent.CTRL_MASK));
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                getCore().getMagProps().setOMNI2SettingsWindowVisible(true);
+                getCore().getMagProps().setOMNI2CustomizerVisible(true);
             }
         });
         menu.add(menuItem);

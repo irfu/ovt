@@ -1,7 +1,7 @@
 /*=========================================================================
 
  Program:   Orbit Visualization Tool
- Source:    $Source: /ovt/mag/OMNI2SettingsWindow.java,v $
+ Source:    $Source: /ovt/mag/OMNI2Customizer.java,v $
  Date:      $Date: 2015/10/19 20:14:00 $
  Version:   $Revision: 1.00 $
 
@@ -67,7 +67,7 @@ import ovt.util.Log;
 //
 // PROPOSAL: Change name to be more in agreement with the rest of OVT: OMNI2Customizer? OMNI2CustomizerWindow?
 // PROPOSAL: Add "Close" button, which is then fed to getRootPane().setDefaultButton(...).
-public class OMNI2SettingsWindow extends JFrame {
+public class OMNI2Customizer extends JFrame {
 
     //private static final int DEBUG = 2;
     
@@ -99,11 +99,10 @@ public class OMNI2SettingsWindow extends JFrame {
     private final MagPropsInterface magProps;
     private final TimeSettingsInterface timeSettings;
 
-    final JCheckBox displayOMNI2ValuesCheckBox;
-//    private boolean displayOMNI2Values = false;   // Default value.
+    final JCheckBox omni2ValuesDisplayedCheckBox;
 
 
-    public OMNI2SettingsWindow(
+    public OMNI2Customizer(
             MagPropsInterface mMagProps,
             TimeSettingsInterface mTimeSettings) {
 
@@ -180,7 +179,7 @@ public class OMNI2SettingsWindow extends JFrame {
                 @Override
                 public void timeChanged(TimeEvent evt) {
 //                    Log.log(this.getClass().getSimpleName() + "#timeChanged", DEBUG);
-                    if (OMNI2SettingsWindow.this.isVisible() && evt.currentMjdChanged()) {
+                    if (OMNI2Customizer.this.isVisible() && evt.currentMjdChanged()) {
 //                        final double currentMjd = evt.getTimeSet().getCurrentMjd();
 //                        Log.log("   timeChanged - Updating text field: "
 //                                + "currentMjd = " + currentMjd
@@ -198,16 +197,16 @@ public class OMNI2SettingsWindow extends JFrame {
         rootGridY++;
 
         {
-            displayOMNI2ValuesCheckBox = new JCheckBox(DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT);
+            omni2ValuesDisplayedCheckBox = new JCheckBox(DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT);
             final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
             // c.weighty = 0;  // Important for fitting text initially. Do not know why.
             c.anchor = GridBagConstraints.NORTHWEST;   // Put component at upper-left.
-            addComponentToPanel(this.getContentPane(), displayOMNI2ValuesCheckBox, c);
+            addComponentToPanel(this.getContentPane(), omni2ValuesDisplayedCheckBox, c);
 
-            displayOMNI2ValuesCheckBox.addActionListener(new ActionListener() {
+            omni2ValuesDisplayedCheckBox.addActionListener(new ActionListener() {
                 public void actionPerformed(ActionEvent e) {
-                    setDisplayOMNI2Values(displayOMNI2ValuesCheckBox.isSelected());
-//                    System.out.println("actionPerformed: newCheckBox.isSelected(); = " + displayOMNI2ValuesCheckBox.isSelected());
+                    setOMNI2ValuesDisplayed(omni2ValuesDisplayedCheckBox.isSelected());
+//                    System.out.println("actionPerformed: newCheckBox.isSelected(); = " + omni2ValuesDisplayedCheckBox.isSelected());
                 }
             });
         }
@@ -220,17 +219,17 @@ public class OMNI2SettingsWindow extends JFrame {
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension frameSize = getSize();
         setLocation(scrnSize.width / 2 - frameSize.width / 2, scrnSize.height / 2 - frameSize.height / 2);
-        setDisplayOMNI2Values(false);
+        setOMNI2ValuesDisplayed(false);
     }//*/
 
 
-    public void setDisplayOMNI2Values(boolean mDisplayOMNI2Values) {
-        displayOMNI2ValuesCheckBox.setSelected(mDisplayOMNI2Values);  // Does (fortunately) not trigger ActionEvent.
+    public void setOMNI2ValuesDisplayed(boolean mOMNI2ValuesDisplayed) {
+        omni2ValuesDisplayedCheckBox.setSelected(mOMNI2ValuesDisplayed);  // Does (fortunately) not trigger ActionEvent.
         refresh();
     }
     
-    public boolean isDisplayOMNI2Values() {
-        return displayOMNI2ValuesCheckBox.isSelected();
+    public boolean isOMNI2ValuesDisplayed() {
+        return omni2ValuesDisplayedCheckBox.isSelected();
     }
 
 
@@ -307,7 +306,7 @@ public class OMNI2SettingsWindow extends JFrame {
      */
     private void refresh(int activityIndex, double timeMjd) {
         String str = null;
-        if (isDisplayOMNI2Values()) {
+        if (isOMNI2ValuesDisplayed()) {
             try {
 
                 final double[] values = magProps.getActivityOMNI2(
@@ -352,7 +351,7 @@ public class OMNI2SettingsWindow extends JFrame {
      * Run test class. For convenience when modifying & testing code.
      */
     public static void main(String[] args) throws InterruptedException {
-        OMNI2SettingsWindowTest.main(args);
+        OMNI2CustomizerTest.main(args);
     }
 
 }

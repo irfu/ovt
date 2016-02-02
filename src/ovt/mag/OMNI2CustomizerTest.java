@@ -1,7 +1,7 @@
 /*=========================================================================
 
  Program:   Orbit Visualization Tool
- Source:    $Source: /ovt/src/mag/OMNI2SettingsWindowTest.java,v $
+ Source:    $Source: /ovt/src/mag/OMNI2CustomizerTest.java,v $
  Date:      $Date: 2015/10/21 17:05:00 $
  Version:   $Revision: 1.00 $
 
@@ -32,7 +32,6 @@
 package ovt.mag;
 
 import java.io.IOException;
-import java.util.Random;
 import javax.swing.JFrame;
 import ovt.OVTCore;
 import ovt.beans.TimeChangeSupport;
@@ -45,12 +44,12 @@ import ovt.object.TimeSettingsInterface;
 import ovt.util.Log;
 
 /**
- * Informal test code for OMNI2SettingsWindow. Instantiates and displays the
+ * Informal test code for OMNI2Customizer. Instantiates and displays the
  * window without launching all of OVT.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  */
-public class OMNI2SettingsWindowTest {
+public class OMNI2CustomizerTest {
 
     //##########################################################################
     private static class CheckBoxDataModel implements MagProps.ActivityEditorOrOMNI2_DataModel {
@@ -158,7 +157,7 @@ public class OMNI2SettingsWindowTest {
         Log.setLogLevel(2);
         //JCheckBox cb = new MagProps.ActivityEditorOrOMNI2_CheckBox();
         TimeSettingsEmulator tse = new TimeSettingsEmulator();
-        final OMNI2SettingsWindow win = new OMNI2SettingsWindow(new MagPropsEmulator(), tse);
+        final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse);
         win.setVisible(true);
 
         // Needed to prevent lingering processes when testing (launching & closing repeatedly).
@@ -166,7 +165,7 @@ public class OMNI2SettingsWindowTest {
 
         while (true) {
             Thread.sleep(2000);
-            System.out.println(OMNI2SettingsWindowTest.class.getSimpleName()+"#main: Ny TimeSet.");
+            System.out.println(OMNI2CustomizerTest.class.getSimpleName()+"#main: Ny TimeSet.");
             tse.changeTimeSet();
         }
     }
