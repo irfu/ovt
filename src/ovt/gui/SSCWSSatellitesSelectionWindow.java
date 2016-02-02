@@ -59,6 +59,7 @@ import ovt.object.SSCWSSat;
 import ovt.util.SSCWSLibrary;
 import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 import ovt.util.SSCWSLibraryTestEmulator;
+import ovt.util.Utils;
 
 /**
  * GUI window for listing and selecting satellite offered online using NASA's
@@ -201,9 +202,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
         //System.out.println("frame.size = " + getWidth() + ", " + getHeight());   // TEMP
         // Set location at center of screen.
-        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final Dimension frameSize = getSize();
-        setLocation(scrnSize.width / 2 - frameSize.width / 2, scrnSize.height / 2 - frameSize.height / 2);
+        Utils.centerWindow(this);
     }
 
 

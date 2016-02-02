@@ -163,6 +163,7 @@ public OrbitMonitorModule(Sat sat) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
     }
+  
     /*
     if (!OVTCore.isServer()) {
         customizer = new TimeSettingsCustomizer(this);
@@ -196,12 +197,13 @@ protected JFrame getOrbitMonitor() {
     
     orbitMonitor.pack();
     orbitMonitor.setResizable(false);
+    Utils.centerWindow(orbitMonitor);
   }
   return orbitMonitor;
 }
 
 public void setVisible(boolean visible) {
-  if (OVTCore.isServer()) return; // ignore "potugi" of seting orbitMonitor visible ;-)
+  if (OVTCore.isServer()) return; // ignore "potugi" of setting orbitMonitor visible ;-)
   getOrbitMonitor().setVisible(visible);
   super.setVisible(visible);
   if (isVisible()) refresh();
@@ -935,7 +937,7 @@ public void setDateFormat(int dateFormat) throws IllegalArgumentException {
 
 class OrbitMonitorSettingsWindow extends JDialog {
     
-    OrbitMonitorSettingsWindow(OrbitMonitorModule orbitMonitorModule) {
+    public OrbitMonitorSettingsWindow(OrbitMonitorModule orbitMonitorModule) {
         //super((JDialog)orbitMonitorModule.getOrbitMonitor(), "Orbit Monitor Settings", true);
         super(orbitMonitorModule.getCore().getXYZWin(), "Orbit Monitor Format", true);
         Container cont = getContentPane();
@@ -986,10 +988,7 @@ class OrbitMonitorSettingsWindow extends JDialog {
         //setResizable(false);
         
         // Center the window
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+        Utils.centerWindow(this);
     }
     
 }

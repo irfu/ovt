@@ -125,11 +125,8 @@ public class LoadDataWizard extends JDialog {
         setPage(filenamePage);
         pack();
         
-        // center the window
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+        // Center the window
+        Utils.centerWindow(this);
     }
 
     public DataModule start() {

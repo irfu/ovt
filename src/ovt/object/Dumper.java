@@ -311,7 +311,7 @@ public class Dumper {
         panel.add(button);
 
         button = new JButton("Settings");
-        button.setToolTipText("Dumper setings");
+        button.setToolTipText("Dumper settings");
         button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 new DumperSettingsWindow(om.getCore().getXYZWin()).setVisible(true);
@@ -440,10 +440,7 @@ public class Dumper {
             setResizable(false);
 
             // Center the window
-            Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-            Dimension windowSize = getSize();
-            setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+            Utils.centerWindow(this);
         }
 
         private void refresh() {

@@ -58,7 +58,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     private final MagProps magProps;
 
   /** Creates new form MagPropsEditor */
-  public MagPropsCustomizer(MagProps magProps, JFrame owner) {
+  public MagPropsCustomizer(MagProps magProps) {
     super("Magnetic Field");
     
     Log.log("MagPropsEditor :: init ...", 3);
@@ -69,9 +69,10 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
     initComponents ();
     refresh();
-    pack ();
+    pack();
     setResizable(false);
-    setLocation(owner.getLocation().x + owner.getSize().width, owner.getLocation().y);
+    
+    Utils.centerWindow(this);
   }
 
   /** This method is called from within the constructor to
@@ -192,7 +193,6 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
             //magProps.activityEditors[MagProps.G1].setVisible(true);
             magProps.setActivityEditorLocation(MagProps.G1, pp.x + 10, pp.y + 10);
             magProps.setActivityEditorVisible(MagProps.G1, true);
-            
         }
       } );
   

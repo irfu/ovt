@@ -42,6 +42,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -53,6 +54,7 @@ import ovt.gui.Style;
 import ovt.interfaces.TimeChangeListener;
 import ovt.object.TimeSettingsInterface;
 import ovt.util.Log;
+import ovt.util.Utils;
 
 /**
  * Window for OMNI2 settings.
@@ -65,14 +67,12 @@ import ovt.util.Log;
 //          ovt.beans.editor.IntervalEditor, ovt.beans.editor.IntervalEditorPanel,
 //          and ovt.datatype.Interval for this.
 //
-// PROPOSAL: Change name to be more in agreement with the rest of OVT: OMNI2Customizer? OMNI2CustomizerWindow?
 // PROPOSAL: Add "Close" button, which is then fed to getRootPane().setDefaultButton(...).
 public class OMNI2Customizer extends JFrame {
 
     //private static final int DEBUG = 2;
-    
     private static final String INITIAL_VALUE_STRING = "<INITIAL STRING>";   // Should never be visible in the GUI if everything works.
-    private static final String NO_DATA_DISPLAY_STR = "<DATA GAP>";   // Displayed when can not find any value (ValueNotFoundException).
+    private static final String NO_DATA_DISPLAY_STR = "<data gap>";   // Displayed when can not find any value (ValueNotFoundException).
     private static final String IO_ERROR_DISPLAY_STR = "<I/O ERROR>";
     private static final String DISABLED_DISPLAY_STR = "(disabled)";
 
@@ -83,8 +83,8 @@ public class OMNI2Customizer extends JFrame {
     // PROPOSAL: Say something about which values are used in case of (1) data gaps, or (2) I/O error?
     // PROPOSAL: Say something about usage of internet/FTP, in case there is none?
     private static final String INFO_TEXT
-            = "Settings for OMNI2 data (hourly averaged) offered online by NASA SPDF and available through OVT.";
-    //+ " OMNI2 data is downloaded in the form of OMNI2 text files which are stored in their original format in a cache directory from which they are read."
+            = "Settings for OMNI2 data (hourly averaged) offered online by NASA SPDF and available through OVT."
+            + " OMNI2 data is downloaded in the form of OMNI2 text files which are stored in their original format in a cache directory from which they are read.";
     //+ " In the event of network failure, the user can obtain and add these files him-/herself as a backup solution.";
     // Add ftp address, directory where files are stored, that files can be added manually?!
 
@@ -178,12 +178,7 @@ public class OMNI2Customizer extends JFrame {
             timeSettings.addTimeChangeListener(new TimeChangeListener() {
                 @Override
                 public void timeChanged(TimeEvent evt) {
-//                    Log.log(this.getClass().getSimpleName() + "#timeChanged", DEBUG);
                     if (OMNI2Customizer.this.isVisible() && evt.currentMjdChanged()) {
-//                        final double currentMjd = evt.getTimeSet().getCurrentMjd();
-//                        Log.log("   timeChanged - Updating text field: "
-//                                + "currentMjd = " + currentMjd
-//                                + "; activityIndex = " + activityIndex, DEBUG);
                         refresh();
                     }
                 }
@@ -193,6 +188,13 @@ public class OMNI2Customizer extends JFrame {
                 final GridBagConstraints c = createGBConstraints(0, rootGridY, 0.5, 0.5, GridBagConstraints.HORIZONTAL);
                 addComponentToPanel(this.getContentPane(), indicesPanel, c);
             }
+        }
+        rootGridY++;
+        
+        // Add empty space.
+        {
+            final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
+            addComponentToPanel(this.getContentPane(), new Box.Filler(new Dimension(1,10), new Dimension(1,10), new Dimension(1,200)), c);
         }
         rootGridY++;
 
@@ -209,17 +211,17 @@ public class OMNI2Customizer extends JFrame {
 //                    System.out.println("actionPerformed: newCheckBox.isSelected(); = " + omni2ValuesDisplayedCheckBox.isSelected());
                 }
             });
+            setOMNI2ValuesDisplayed(false);   // Default value.
         }
         rootGridY++;//*/
 
         refresh();
         pack();
+        setResizable(false);
+
 
         // Set location at center of screen.
-        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final Dimension frameSize = getSize();
-        setLocation(scrnSize.width / 2 - frameSize.width / 2, scrnSize.height / 2 - frameSize.height / 2);
-        setOMNI2ValuesDisplayed(false);
+        Utils.centerWindow(this);
     }//*/
 
 
@@ -227,7 +229,8 @@ public class OMNI2Customizer extends JFrame {
         omni2ValuesDisplayedCheckBox.setSelected(mOMNI2ValuesDisplayed);  // Does (fortunately) not trigger ActionEvent.
         refresh();
     }
-    
+
+
     public boolean isOMNI2ValuesDisplayed() {
         return omni2ValuesDisplayedCheckBox.isSelected();
     }

@@ -284,9 +284,9 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     /**
      * Greatest tolerated time (days) between the time for which data is
-     * requested, and the time of the data point used.
+     * requested, and the time of the data point actually used.
      */
-    private static final double OMNI2_MAX_TIME_TO_VALUE_DAYS = 1.0 / 24.0;
+    private static final double OMNI2_MAX_TIME_TO_VALUE_DAYS = 1.0 / 24.0 * 0.5001;
 
     /**
      * Select what to use as a (non-raw) data source for the functionality/code
@@ -387,7 +387,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             }
             activityEditors[G1] = new MagActivityDataEditor(activityEditorDataModels[G1], this, null);
             activityEditors[G2] = new MagActivityDataEditor(activityEditorDataModels[G2], this, null);
-            magPropsCustomizer = new MagPropsCustomizer(this, getCore().getXYZWin());
+            magPropsCustomizer = new MagPropsCustomizer(this);
             addMagPropsChangeListener(magPropsCustomizer);
 
             omni2customizer = new OMNI2Customizer(this, core.getTimeSettings());

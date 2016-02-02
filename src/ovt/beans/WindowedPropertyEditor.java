@@ -323,11 +323,9 @@ class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
             getContentPane().add(button, BorderLayout.SOUTH);
         }
         pack();
-        // set location in center of screen
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width /2 - windowSize.width /2,
-        scrnSize.height/2 - windowSize.height/2);
+        
+        // Set location in center of screen
+        Utils.centerWindow(this);
     }
     
     

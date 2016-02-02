@@ -49,6 +49,7 @@ import java.beans.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import ovt.util.Utils;
 
 /**
  *
@@ -102,10 +103,7 @@ public class SatInfoWindow extends JDialog implements Customizer {
         pack();  // "Causes this Window to be sized to fit the preferred size and layouts of its subcomponents."
         
         // Center the window
-        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final Dimension windowSize = getSize();
-        setLocation(scrnSize.width/2 - windowSize.width/2,
-            scrnSize.height/2 - windowSize.height/2);
+        Utils.centerWindow(this);
     }
     
     public void setObject(Object sat) {

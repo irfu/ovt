@@ -119,6 +119,8 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
 
         initComponents();
         pack();
+        
+        Utils.centerWindow(this);
     }
 
 

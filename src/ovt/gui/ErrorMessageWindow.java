@@ -129,7 +129,8 @@ public class ErrorMessageWindow extends JDialog  {
         pack();
         setResizable(false);
         
-        // center the window
+        // Center the window.
+        // NOTE: Not using Utils.centerWindow to minimize risk of triggering other exception.
         Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         Dimension windowSize = getSize();
         setLocation(scrnSize.width/2 - windowSize.width/2,

@@ -105,10 +105,7 @@ public class DataModuleCustomizer extends JDialog implements PropertyChangeListe
         getContentPane().add(cont);
         
         // Center the window
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width/2 - windowSize.width/2,
-            scrnSize.height/2 - windowSize.height/2);
+        Utils.centerWindow(this);   // Appears to be unnecessary for unknown reason.
     }
     
     public void propertyChange(PropertyChangeEvent evt) {

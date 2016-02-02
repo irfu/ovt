@@ -63,9 +63,9 @@ import ovt.util.Utils;
  * Crudely speaking, this is the dependency/data flows between the
  * classes/interfaces (2016-01-21) when using real OMNI2 data (not test
  * data):<BR>
- * (1) The-rest-of-OVT --uses-- OMNI2DataSource.<BR>
- * (2) OMNI2DataSource --uses-- an implementation of OMNI2RawDataSource.<BR>
- * (3) OMNI2RawDataSourceImpl (implements OMNI2RawDataSource) --uses--
+ * (1) The-rest-of-OVT --USES-- OMNI2DataSource.<BR>
+ * (2) OMNI2DataSource --USES-- an implementation of OMNI2RawDataSource.<BR>
+ * (3) OMNI2RawDataSourceImpl (which implements OMNI2RawDataSource) --USES--
  * OMNI2FileUtils_HourlyAvg<BR>
  *
  * NOTE: To add support for other OMNI2 file types (time averages) one would
@@ -414,11 +414,13 @@ public class OMNI2DataSource {
         Log.log(getClass().getSimpleName() + "#getValues("
                 + time_mjd + ", " + fieldID + ", " + getIMFVector + ")", DEBUG);
 
+        // Search for nearest PREVIOUS data point.
         double[][] result = (double[][]) segmentsCache.search(
                 time_mjd, SegmentsCache.SearchDirection.DOWN, new SearchFunction());
 
         if ((result == null) || (Math.abs(result[0][0] - time_mjd) > maxTimeDifference_days)) {
 
+            // Search for nearest data point AFTER.
             result = (double[][]) segmentsCache.search(
                     time_mjd, SegmentsCache.SearchDirection.UP, new SearchFunction());
 

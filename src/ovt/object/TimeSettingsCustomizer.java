@@ -47,7 +47,6 @@ import ovt.datatype.*;
 import ovt.interfaces.*;
 
 import java.io.*;
-import java.lang.*;
 import java.beans.*;
 
 import java.awt.*;
@@ -165,13 +164,10 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       cont.add(panel);
       
       pack();
-      //setResizable(false);
+      setResizable(false);
       
       // Center the window
-      Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension windowSize = getSize();
-      setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+      Utils.centerWindow(this);
     }
 
 

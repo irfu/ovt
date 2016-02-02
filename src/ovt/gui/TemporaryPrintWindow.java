@@ -35,11 +35,14 @@ package ovt.gui;
 import java.awt.*;
 
 
-public class TemproraryPrintWindow extends Frame {
+/** This class does not seem to be used. Delete?
+ * /Erik P G Johansson 2016-02-02.
+ */
+public class TemporaryPrintWindow extends Frame {
 
 protected Image im;
 
-public TemproraryPrintWindow(String imageFileName) {
+public TemporaryPrintWindow(String imageFileName) {
 
 	super("Print Preview");
 	

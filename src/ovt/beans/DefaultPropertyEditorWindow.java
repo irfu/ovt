@@ -42,10 +42,10 @@ package ovt.beans;
 import java.beans.*;
 import java.awt.*;
 import javax.swing.*;
+import ovt.util.Utils;
 
 
 /** 
- *
  * @author  root
  * @version 
  */
@@ -71,10 +71,7 @@ public class DefaultPropertyEditorWindow extends JDialog implements PropertyChan
     }
     else {
         // set location in center of screen
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width /2 - windowSize.width /2,
-                    scrnSize.height/2 - windowSize.height/2);
+        Utils.centerWindow(this);
     }
   }
  

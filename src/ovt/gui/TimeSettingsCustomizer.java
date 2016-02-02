@@ -35,10 +35,16 @@ Khotyaintsev
  *
  * Created on November 27, 2000, 7:29 PM
  * 
+ * #############################################################################
+ * #############################################################################
+ * #############################################################################
  * IMPORTANT NOTE: THIS CLASS DOES NOT SEEM TO BE USED. It seems to be an
  * alternate version of ovt.object.TimeSettingsManager which is used and is
  * labeled as an _earlier version, "Revision 1.2".
  * /Erik P G Johansson 2015-07-10
+ * #############################################################################
+ * #############################################################################
+ * #############################################################################
  */
 
 package ovt.gui;
@@ -161,13 +167,14 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       cont.add(panel);
       
       pack();
-      //setResizable(false);
+      setResizable(false);
       
       // Center the window
-      Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-      Dimension windowSize = getSize();
-      setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+//      Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+//      Dimension windowSize = getSize();
+//      setLocation(scrnSize.width/2 - windowSize.width/2,
+//                 scrnSize.height/2 - windowSize.height/2);
+      Utils.centerWindow(this);
     }
 
     

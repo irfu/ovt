@@ -52,7 +52,7 @@ public class VisualizationPanel extends vtkPanel implements RenPanel {
         } catch (java.io.IOException e) {
             System.err.println("Error loading image in BmpDecoder - " + e);
         }
-        new File(tempFile).delete();    // delete temprorary file
+        new File(tempFile).delete();    // Delete temporary file.
         return image;
     }
 

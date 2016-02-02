@@ -200,7 +200,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         //renPanel.setSize(width, height);             // NOTE: renPanel.setSize seems unnecessary.
         // set the renderer
         ren = renPanel.getRenderer();
-        float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
+        final float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
         ren.SetBackground(rgb[0], rgb[1], rgb[2]);
 
         JPopupMenu.setDefaultLightWeightPopupEnabled(false);
@@ -285,7 +285,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
         //refreshGUI();
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final Dimension windowSize = getSize();
 
         try {
             final int x = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_X));
@@ -295,7 +294,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             // inside the screen. Therefore one does not need to check for this.
             setLocation(x, y);
         } catch (NumberFormatException e2) {
-            setLocation(scrnSize.width / 2 - windowSize.width / 2, scrnSize.height / 2 - windowSize.height / 2);
+            Utils.centerWindow(this);
         }
 
         splashWindow.dispose();
@@ -673,7 +672,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 class SplashWindow extends JWindow {
 
-    JLabel imageLabel;
+    private final JLabel imageLabel;
 
 
     public SplashWindow() {
@@ -681,6 +680,7 @@ class SplashWindow extends JWindow {
         java.net.URL url = OVTCore.class.getClassLoader().getResource("images/splash.gif");
         if (url == null) {
             Log.err("FileNotFound: images/splash.gif");
+            imageLabel = null;
             return;
         }
 
@@ -713,11 +713,8 @@ class SplashWindow extends JWindow {
         getContentPane().add(layeredPane, BorderLayout.CENTER);
         pack();
 
-        // center splash window
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width / 2 - windowSize.width / 2,
-                scrnSize.height / 2 - windowSize.height / 2);
+        // Center splash window
+        Utils.centerWindow(this);
     }
 
 }

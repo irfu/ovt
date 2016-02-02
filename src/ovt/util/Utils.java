@@ -39,6 +39,9 @@
  */
 package ovt.util;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import java.awt.Window;
 import java.util.*;
 import java.io.*;
 import java.math.RoundingMode;
@@ -627,50 +630,48 @@ public class Utils extends Object {
      * about that since a call to this function is supposed to be easy & safe to
      * add to and remove from the code.
      */
-    public static void logPrintSystemProperties(PrintStream out) {
-        /**
-         * https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
-         *
-         * NOTE: There is Properties#list(System.out) which prints all
-         * properties but is also shortens long property value strings!!
-         * Therefore not suitable for debugging.
-         *
-         * NOTE: System properties can trigger SecurityException for indivudual
-         * properties. It may therefore be safer to only specify the properties
-         * one is really interested in.
-         */
-        final Properties properties;
-        try {
-            properties = System.getProperties();
-        } catch (SecurityException e) {
-            out.println("Error when trying to obtain all system properties : System.getProperties()");
-            e.printStackTrace(out);
-            return;
-        }
-        final Set<String> propertyKeys = properties.stringPropertyNames();
-
-        // Excplicitly specify subset of system properties to look at.
-//         user.dir - "User working directory" = Current working directory? Where application was initialized?
-//         java.library.path - Where to search for native files? Probably set with -D when calling "java" (executable) from Netbeans.
-//         vtk.lib.dir - Used by VTK (vtkNativeLibrary#LoadLibrary)
-//        final Set<String> propertyKeys = new HashSet();
-//        propertyKeys.add("java.library.path");
-//        propertyKeys.add("user.dir");
-//        propertyKeys.add("vtk.lib.dir");
-        for (String propertyKey : propertyKeys) {
-            try {
-                out.println(propertyKey + " = " + System.getProperty(propertyKey));
-            } catch (IllegalArgumentException e) {
-                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
-                e.printStackTrace(out);
-            } catch (SecurityException e) {
-                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
-                e.printStackTrace(out);
-            }
-        }
-    }
-
-
+//    public static void logPrintSystemProperties(PrintStream out) {
+//        /**
+//         * https://docs.oracle.com/javase/tutorial/essential/environment/sysprop.html
+//         *
+//         * NOTE: There is Properties#list(System.out) which prints all
+//         * properties but is also shortens long property value strings!!
+//         * Therefore not suitable for debugging.
+//         *
+//         * NOTE: System properties can trigger SecurityException for indivudual
+//         * properties. It may therefore be safer to only specify the properties
+//         * one is really interested in.
+//         */
+//        final Properties properties;
+//        try {
+//            properties = System.getProperties();
+//        } catch (SecurityException e) {
+//            out.println("Error when trying to obtain all system properties : System.getProperties()");
+//            e.printStackTrace(out);
+//            return;
+//        }
+//        final Set<String> propertyKeys = properties.stringPropertyNames();
+//
+//        // Excplicitly specify subset of system properties to look at.
+////         user.dir - "User working directory" = Current working directory? Where application was initialized?
+////         java.library.path - Where to search for native files? Probably set with -D when calling "java" (executable) from Netbeans.
+////         vtk.lib.dir - Used by VTK (vtkNativeLibrary#LoadLibrary)
+////        final Set<String> propertyKeys = new HashSet();
+////        propertyKeys.add("java.library.path");
+////        propertyKeys.add("user.dir");
+////        propertyKeys.add("vtk.lib.dir");
+//        for (String propertyKey : propertyKeys) {
+//            try {
+//                out.println(propertyKey + " = " + System.getProperty(propertyKey));
+//            } catch (IllegalArgumentException e) {
+//                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
+//                e.printStackTrace(out);
+//            } catch (SecurityException e) {
+//                out.println("Error when trying to obtain system property : System.getProperty(\"" + propertyKey + "\")");
+//                e.printStackTrace(out);
+//            }
+//        }
+//    }
     /**
      * Returns URL of the resource.
      */
@@ -1680,6 +1681,7 @@ public class Utils extends Object {
      * calculation (and class) since the calculations of various quantities
      * overlap and several are partial results in calculating others anyway.<BR>
      */
+    // PROPOSAL: Move into separate file.
     public static class OrbitalState {
 
         public final double r_perigee_SI;
@@ -1778,6 +1780,29 @@ public class Utils extends Object {
 
             return true;
         }
+    }
+
+
+    // NOTE: Centering the window tends to be done in constructors for
+    // the window/frame itself (in OVT) which means that
+    // a call to this function there leaks "this" which is "problematic", maybe.
+    // NOTE: Must (presumably) be called after any call to frame.pack().
+    // NOTE: Does not take multiple monitors into account.
+    //
+    /**
+     * IMPLEMENTATION NOTE: Reasons for having this function are (1) shorter
+     * code/reuse code (2) ability to take multiple monitors into account in
+     * future implementation; (3) ability to change policy for the initial
+     * position of windows (by changing implementation; by searching for the
+     * calls to this function and maybe replacing them with calls to other
+     * function).
+     */
+    public static void centerWindow(Window frame) {
+        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+        final Dimension frameSize = frame.getSize();
+        frame.setLocation(
+                scrnSize.width / 2 - frameSize.width / 2,
+                scrnSize.height / 2 - frameSize.height / 2);
     }
 
 }

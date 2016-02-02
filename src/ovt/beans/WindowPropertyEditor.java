@@ -93,7 +93,9 @@ public class WindowPropertyEditor extends ComponentPropertyEditor
       //prop_descr.setPropertyEditor(visibilityEditor);
       addPropertyChangeListener(visibilityEditor);
       
-    } catch (IntrospectionException e2) {System.out.println(""+e2);}
+    } catch (IntrospectionException e2) {
+        System.out.println(""+e2);
+    }
     addGUIPropertyEditorListener(this);
   }
   
