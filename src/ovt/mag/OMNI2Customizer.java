@@ -35,10 +35,10 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
@@ -73,7 +73,9 @@ public class OMNI2Customizer extends JFrame {
     //private static final int DEBUG = 2;
     private static final String INITIAL_VALUE_STRING = "<INITIAL STRING>";   // Should never be visible in the GUI if everything works.
     private static final String NO_DATA_DISPLAY_STR = "<data gap>";   // Displayed when can not find any value (ValueNotFoundException).
-    private static final String IO_ERROR_DISPLAY_STR = "<I/O ERROR>";
+    private static final String MALFORMED_URL_ERROR_DISPLAY_STR = "<MALFORMED URL>";
+    private static final String IO_ERROR_DISPLAY_STR_PREFIX = "<I/O ERROR: ";
+    private static final String IO_ERROR_DISPLAY_STR_SUFFIX = ">";
     private static final String DISABLED_DISPLAY_STR = "(disabled)";
 
     private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT = "Display OMNI2 values (might slow down application in case of I/O errors)";
@@ -84,7 +86,8 @@ public class OMNI2Customizer extends JFrame {
     // PROPOSAL: Say something about usage of internet/FTP, in case there is none?
     private static final String INFO_TEXT
             = "Settings for OMNI2 data (hourly averaged) offered online by NASA SPDF and available through OVT."
-            + " OMNI2 data is downloaded in the form of OMNI2 text files which are stored in their original format in a cache directory from which they are read.";
+            + " OMNI2 data text files are downloaded from a configurable URL and are stored"
+            + " in a cache directory from which they are read.";
     //+ " In the event of network failure, the user can obtain and add these files him-/herself as a backup solution.";
     // Add ftp address, directory where files are stored, that files can be added manually?!
 
@@ -104,7 +107,8 @@ public class OMNI2Customizer extends JFrame {
 
     public OMNI2Customizer(
             MagPropsInterface mMagProps,
-            TimeSettingsInterface mTimeSettings) {
+            TimeSettingsInterface mTimeSettings,
+            String urlPattern) {
 
         // Class requires core.timeSettings to be supplied as parameter and hence be initialized first.
         // Therefore it is good to check if the parameter is in fact initialized.
@@ -121,7 +125,17 @@ public class OMNI2Customizer extends JFrame {
 
         int rootGridY = 0;  // Value which is updated throughout the method.
         {
-            final JTextArea infoTextArea = createDefaultTextArea(INFO_TEXT);
+            /**
+             * IMPLEMENTATION NOTE: Print the URL download pattern directly as
+             * it is used by the code, rather than some derivative, e.g. insert
+             * specific year, or pseudocode representing the year. Reasons: (1)
+             * Useful also if the string is faulty and can not be parsed by OVT,
+             * (2) this code (class) does not need rely on the exact way OMNI2
+             * code parses the string, (3) more informative(?) to exactly quote
+             * the configuration file.
+             */
+            final JTextArea infoTextArea = createDefaultTextArea(INFO_TEXT
+                    + "\n\nCurrent download URL (year needs to be inserted):\n" + urlPattern);
             final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
             // c.weighty = 0;  // Important for fitting text initially. Do not know why.
             c.anchor = GridBagConstraints.NORTHWEST;   // Put component at upper-left.
@@ -137,16 +151,16 @@ public class OMNI2Customizer extends JFrame {
                         "Activity data taken from OMNI2:");
                 checkBoxesTitleTextArea.setColumns(20);
                 checkBoxesTitleTextArea.setRows(2);
-                final GridBagConstraints c = createGBConstraints(0, indexGridY, 0.5, 0.0, GridBagConstraints.HORIZONTAL);
+                final GridBagConstraints c = createGBConstraints(0, indexGridY, 0.5, 1.0, GridBagConstraints.HORIZONTAL);
                 c.anchor = GridBagConstraints.SOUTHWEST;
                 addComponentToPanel(indicesPanel, checkBoxesTitleTextArea, c);
             }
             {
                 final JTextArea checkBoxesTitleTextArea = createDefaultTextArea(
                         "OMNI2 values for the currently selected time:");
-                checkBoxesTitleTextArea.setColumns(20);
+                checkBoxesTitleTextArea.setColumns(30);
                 checkBoxesTitleTextArea.setRows(2);
-                final GridBagConstraints c = createGBConstraints(1, indexGridY, 0.5, 0, GridBagConstraints.HORIZONTAL);
+                final GridBagConstraints c = createGBConstraints(1, indexGridY, 0.5, 1.0, GridBagConstraints.HORIZONTAL);
                 c.anchor = GridBagConstraints.SOUTHWEST;
                 addComponentToPanel(indicesPanel, checkBoxesTitleTextArea, c);
             }
@@ -190,11 +204,11 @@ public class OMNI2Customizer extends JFrame {
             }
         }
         rootGridY++;
-        
+
         // Add empty space.
         {
             final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
-            addComponentToPanel(this.getContentPane(), new Box.Filler(new Dimension(1,10), new Dimension(1,10), new Dimension(1,200)), c);
+            addComponentToPanel(this.getContentPane(), new Box.Filler(new Dimension(1, 10), new Dimension(1, 10), new Dimension(1, 200)), c);
         }
         rootGridY++;
 
@@ -211,7 +225,16 @@ public class OMNI2Customizer extends JFrame {
 //                    System.out.println("actionPerformed: newCheckBox.isSelected(); = " + omni2ValuesDisplayedCheckBox.isSelected());
                 }
             });
-            setOMNI2ValuesDisplayed(false);   // Default value.
+
+            /**
+             * Set default value.<BR>
+             * IMPORTANT NOTE: Enabling loading displaying OMNI2 values combined
+             * with persistent I/O errors (e.g. no network, or FTP blocked)
+             * leads to LONG WAIT during launch(!) and during execution as
+             * multiple failed attempts to download OMNI2 files time out, one
+             * for each OMNI2 value.
+             */
+            setOMNI2ValuesDisplayed(false);
         }
         rootGridY++;//*/
 
@@ -219,18 +242,27 @@ public class OMNI2Customizer extends JFrame {
         pack();
         setResizable(false);
 
-
         // Set location at center of screen.
         Utils.centerWindow(this);
     }//*/
 
 
+    public void setVisible(boolean mVisible) {
+        super.setVisible(mVisible);
+        if (mVisible) {
+            refresh();
+        }
+    }
+
+
+    // NOTE: Refers to the checkbox.
     public void setOMNI2ValuesDisplayed(boolean mOMNI2ValuesDisplayed) {
         omni2ValuesDisplayedCheckBox.setSelected(mOMNI2ValuesDisplayed);  // Does (fortunately) not trigger ActionEvent.
         refresh();
     }
 
 
+    // NOTE: Refers to the checkbox.
     public boolean isOMNI2ValuesDisplayed() {
         return omni2ValuesDisplayedCheckBox.isSelected();
     }
@@ -314,8 +346,7 @@ public class OMNI2Customizer extends JFrame {
 
                 final double[] values = magProps.getActivityOMNI2(
                         activityIndex, timeMjd);
-                final String unitStr = MagProps.getUnitString(activityIndex);
-                final String unitSuffix = (unitStr != null) ? " [" + unitStr + "]" : "";  // String to append to string.
+                final String unitSuffix = MagProps.getUnitSuffix(activityIndex);
 
                 for (double value : values) {
                     final String componentValue = Double.toString(value) + unitSuffix;
@@ -328,8 +359,12 @@ public class OMNI2Customizer extends JFrame {
 
             } catch (OMNI2DataSource.ValueNotFoundException e) {
                 str = NO_DATA_DISPLAY_STR;
-            } catch (IOException ex) {
-                str = IO_ERROR_DISPLAY_STR;
+            } catch (IOException e) {
+                if (e instanceof MalformedURLException) {
+                    str = MALFORMED_URL_ERROR_DISPLAY_STR;
+                } else {
+                    str = IO_ERROR_DISPLAY_STR_PREFIX + e.getMessage() + IO_ERROR_DISPLAY_STR_SUFFIX;
+                }
                 /**
                  * NOTE: This is a bad place to generate an error message
                  * window/popup since (1) the text field says that there is an
@@ -337,8 +372,12 @@ public class OMNI2Customizer extends JFrame {
                  * disabled since OMNI2 data is requested to fill the text
                  * fields even if the user disables the use of OMNI2 data in the
                  * visualization (2016-02-01).
+                 *
+                 * NOTE: Print exception class name since the getMessage() is
+                 * not really useful for (at least) MalformedURLException.
                  */
-                String msg = "I/O error when trying to obtain OMNI2 value for display: " + ex.getMessage();
+                String msg = "I/O error when trying to obtain OMNI2 value for display: "
+                        + e.getClass().getCanonicalName() + ": " + e.getMessage();
                 Log.err(msg);
             }
         } else {
@@ -351,7 +390,7 @@ public class OMNI2Customizer extends JFrame {
 
     //##########################################################################
     /**
-     * Run test class. For convenience when modifying & testing code.
+     * Run separate test class. For convenience when modifying & testing code.
      */
     public static void main(String[] args) throws InterruptedException {
         OMNI2CustomizerTest.main(args);

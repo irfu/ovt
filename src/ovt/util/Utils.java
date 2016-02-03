@@ -992,23 +992,35 @@ public class Utils extends Object {
         final int OUTPUT_BUFFER_SIZE = 1024 * 1024;
         final int TRANSFER_BUFFER_SIZE = OUTPUT_BUFFER_SIZE;   // Makes sense?
 
-        final URL url = new URL(urlStr);   // throws  MalformedURLException. Does not seem to throw for non-existing URL.
-        int bytesReadTotal = 0;
+        final URL url;
+        try {
+            // Throws MalformedURLException (e.g. for empty string). Does not seem to throw for non-existing URL.
+            url = new URL(urlStr);
+        } catch (MalformedURLException e) {
+            // Rethrow MalformedURLException since experience tells that their
+            // getMessage() is not useful, at least not for empty URL strings ("no protocol:").
+            // Stop rethrowing? Rethrow with complemented message instead?
+            throw new MalformedURLException("Can not interpret as URL: \"" + urlStr + "\".");
+        }
 
         try (
-                InputStream in = url.openStream();
-                OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE)) {
+                // URL#openStream() also throws IllegalArgumentException for some bad URLs, e.g. "ftp:fesfsgr". UNDOCUMENTED!
+                final InputStream in = url.openStream();
+                final OutputStream out = new BufferedOutputStream(new FileOutputStream(file), OUTPUT_BUFFER_SIZE);) {
 
             final byte[] buffer = new byte[TRANSFER_BUFFER_SIZE];
             int bytesReadThisIteration;
+            int bytesReadTotal = 0;
 
             // Read as much as possible from input stream (URL) to output stream (file).
             while ((bytesReadThisIteration = in.read(buffer)) != -1) {
                 out.write(buffer, 0, bytesReadThisIteration);
                 bytesReadTotal += bytesReadThisIteration;
             }
+
 //            in.close();   // Should be unnecessary.
 //            out.close();  // Should be unnecessary.
+            return bytesReadTotal;
 
         } catch (FileNotFoundException e) {
             /**
@@ -1020,8 +1032,20 @@ public class Utils extends Object {
              * messages.
              */
             throw new FileNotFoundException(urlStr);
+        } catch (IllegalArgumentException e) {
+            /**
+             * NOTE: URL#openStream() also throws IllegalArgumentException for
+             * some bad URLs, e.g. "ftp:fesfsgr". This appears to be
+             * UNDOCUMENTED. We do not want to throw IllegalArgumentException
+             * (which extends RuntimeException, does not need to be declared,
+             * and is normally not really meant to be caught) but throw some
+             * form of IOException for bad URLs.
+             *
+             * Throw as MalformedURLException (which extends IOException)? Some
+             * way of testing if the URL object is "correct" before using it?
+             */
+            throw new IOException("Can not open URL: \"" + urlStr + "\".", e);
         }
-        return bytesReadTotal;
     }
 
 
@@ -1360,6 +1384,7 @@ public class Utils extends Object {
         }
 
         return x;
+
     }
 
     /**
@@ -1658,6 +1683,7 @@ public class Utils extends Object {
         final double P = Math.sqrt(C_K3 * a * a * a);
 
         return P;
+
     }
 
     /**
@@ -1782,13 +1808,13 @@ public class Utils extends Object {
         }
     }
 
+// NOTE: Centering the window tends to be done in constructors for
+// the window/frame itself (in OVT) which means that
+// a call to this function there leaks "this" which is "problematic", maybe.
+// NOTE: Must (presumably) be called after any call to frame.pack().
+// NOTE: Does not take multiple monitors into account.
+//
 
-    // NOTE: Centering the window tends to be done in constructors for
-    // the window/frame itself (in OVT) which means that
-    // a call to this function there leaks "this" which is "problematic", maybe.
-    // NOTE: Must (presumably) be called after any call to frame.pack().
-    // NOTE: Does not take multiple monitors into account.
-    //
     /**
      * IMPLEMENTATION NOTE: Reasons for having this function are (1) shorter
      * code/reuse code (2) ability to take multiple monitors into account in

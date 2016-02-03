@@ -45,7 +45,7 @@ import ovt.util.Log;
 
 /**
  * Informal test code for OMNI2Customizer. Instantiates and displays the
- * window without launching all of OVT.
+ * window directly without launching all of OVT.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  */
@@ -157,7 +157,7 @@ public class OMNI2CustomizerTest {
         Log.setLogLevel(2);
         //JCheckBox cb = new MagProps.ActivityEditorOrOMNI2_CheckBox();
         TimeSettingsEmulator tse = new TimeSettingsEmulator();
-        final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse);
+        final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse, "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat");
         win.setVisible(true);
 
         // Needed to prevent lingering processes when testing (launching & closing repeatedly).

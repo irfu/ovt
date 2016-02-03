@@ -115,7 +115,7 @@ public class MagActivityEditorDataModel extends javax.swing.table.AbstractTableM
         this.columnNames = new String[columnNames.length + 1];
         this.columnNames[0] = "Time";
         for (int i = 0; i < columnNames.length; i++) {
-            this.columnNames[i + 1] = columnNames[i];
+            this.columnNames[i + 1] = columnNames[i] + MagProps.getUnitSuffix(index);
         }
         this.columnNumber = this.columnNames.length;
         // set default values

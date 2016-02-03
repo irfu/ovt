@@ -67,10 +67,10 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     private static final int DEBUG = 2;
 
     private final String SETTING_OMNI2_HOURLY_AVG_URL_PATTERN = "OMNI2.hourlyAveraged.urlPattern";
-    // Value used if the corresponding value can not be found in the properties/config file.
+    // Default value used if the corresponding value can not be found in the properties/config file.
     private final String DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
     private final String SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "OMNI2.hourlyAveraged.localCacheFileNamePattern";
-    // Value used if the corresponding value can not be found in the properties/config file.
+    // Default value used if the corresponding value can not be found in the properties/config file.
     private final String DEFAULT_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "omni2_%4d.dat";
 
     /**
@@ -232,12 +232,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     // over and obtain value given an index.
     private static final Map<Integer, double[]> ACTIVITY_DEFAULTS = new HashMap();
     // Map with strings representing units for those activity indices which have a unit (others are not set).
-    // Not used everywhere yet since other hardcoded constants do exist
-    // in the initialization of activityEditorDataModels (2015-10-23).
+    // Not used everywhere in OVT (2016-02-03).
     private static final Map<Integer, String> UNIT_STRINGS = new HashMap();
 
 
-    {
+    static {
         ACTIVITY_DEFAULTS.put(KPINDEX, new double[]{KPINDEX_DEFAULT});
         ACTIVITY_DEFAULTS.put(IMF, IMF_DEFAULT);
         ACTIVITY_DEFAULTS.put(SWP, new double[]{SWP_DEFAULT});
@@ -303,10 +302,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         super("MagModels");
 
         //OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceTestEmulator();
+        final String OMNI2_URL_PATTERN;
         {
             // Read global settings (config file). Replace with hard-coded default
             // values in case the entries are not there.
-            final String urlPattern = OVTCore.getGlobalSetting(
+            OMNI2_URL_PATTERN = OVTCore.getGlobalSetting(
                     SETTING_OMNI2_HOURLY_AVG_URL_PATTERN,
                     DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN);
             final String localFileNamePattern = OVTCore.getGlobalSetting(
@@ -319,7 +319,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             // permitted and can be modified.
             OVTCore.setGlobalSetting(
                     SETTING_OMNI2_HOURLY_AVG_URL_PATTERN,
-                    urlPattern);
+                    OMNI2_URL_PATTERN);
             OVTCore.setGlobalSetting(
                     SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN,
                     localFileNamePattern);
@@ -327,7 +327,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             // Create data source.
             OMNI2_RAW_DATA_SOURCE = new OMNI2RawDataSourceImpl(
                     new File(OVTCore.getUserDir() + OVTCore.getOMNI2CacheSubdir()),
-                    urlPattern, localFileNamePattern);
+                    OMNI2_URL_PATTERN, localFileNamePattern);
         }
 
         OMNI2_DATA_SOURCE = new OMNI2DataSource(
@@ -340,11 +340,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         this.core = core;
 
         activityEditorDataModels[KPINDEX] = new MagActivityEditorDataModel(KPINDEX, 0, 9, KPINDEX_DEFAULT, "Kp Index");
-        activityEditorDataModels[IMF] = new MagActivityEditorDataModel(IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx [nT]", "By [nT]", "Bz [nT]"});
-        activityEditorDataModels[SWP] = new MagActivityEditorDataModel(SWP, 0, 50, SWP_DEFAULT, "SWP [nPa]");
-        activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel(DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index [nT]");
+        activityEditorDataModels[IMF] = new MagActivityEditorDataModel(IMF, -50, 50, IMF_DEFAULT, new String[]{"Bx", "By", "Bz"});
+        activityEditorDataModels[SWP] = new MagActivityEditorDataModel(SWP, 0, 50, SWP_DEFAULT, "SWP");
+        activityEditorDataModels[DSTINDEX] = new MagActivityEditorDataModel(DSTINDEX, -500, 50, DSTINDEX_DEFAULT, "DST Index");
         activityEditorDataModels[MACHNUMBER] = new MagActivityEditorDataModel(MACHNUMBER, 1, 15, MACHNUMBER_DEFAULT, "Magnetosonic Mach Number");
-        activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel(SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity [km/s]");
+        activityEditorDataModels[SW_VELOCITY] = new MagActivityEditorDataModel(SW_VELOCITY, 200, 1200, SW_VELOCITY_DEFAULT, "SW Velocity");
         activityEditorDataModels[G1] = new MagActivityEditorDataModel(G1, 0, 50, G1_DEFAULT, "G1");
         activityEditorDataModels[G2] = new MagActivityEditorDataModel(G2, 0, 50, G2_DEFAULT, "G2");
 
@@ -390,7 +390,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
             magPropsCustomizer = new MagPropsCustomizer(this);
             addMagPropsChangeListener(magPropsCustomizer);
 
-            omni2customizer = new OMNI2Customizer(this, core.getTimeSettings());
+            omni2customizer = new OMNI2Customizer(this, core.getTimeSettings(), OMNI2_URL_PATTERN);
         }
     }
 
@@ -877,11 +877,12 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
 
     /**
-     * @return For activity indices that have a unit, return a string. Otherwise
-     * null.
+     * @return Return string that can be directly added to (after) a number. For
+     * activity indices that do not have a unit, return an empty string.
      */
-    public static String getUnitString(int activityIndex) {
-        return UNIT_STRINGS.get(activityIndex);
+    public static String getUnitSuffix(int activityIndex) {
+        final String unitStr = UNIT_STRINGS.get(activityIndex);
+        return (unitStr != null) ? " [" + unitStr + "]" : "";
     }
 
     /**
