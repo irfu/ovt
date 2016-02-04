@@ -395,17 +395,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     }
 
 
-    /**
-     * IMPLEMENTATION NOTE: Only clears the getActivity cache for a specific
-     * activity index. Important to be able to only clear a specific activity
-     * index since the code uses the cache for deciding whether to display GUI
-     * error messages.
-     */
-    public void getActivity_clearCache(int activityIndex) {
-        MagProps.this.getActivity_cachedReturnValues.remove(activityIndex);
-    }
-
-
     public OVTCore getCore() {
         return core;
     }
@@ -885,12 +874,153 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         return (unitStr != null) ? " [" + unitStr + "]" : "";
     }
 
+
     /**
-     * Cache for the method "getActivity". Cached values are valid for the point
-     * in time getActivity_cachedMjd.
+     * IMPLEMENTATION NOTE: Only clears the getActivity cache for a specific
+     * activity index. Important to be able to only clear a specific activity
+     * index since the code uses the cache for deciding whether to display GUI
+     * error messages.
      */
-    private final Map<Integer, double[]> getActivity_cachedReturnValues = new HashMap();
-    private double getActivity_cachedMjd = Double.NaN;
+    public void getActivity_clearCache(int activityIndex) {
+        getActivityHelper.cachedReturnValues.remove(activityIndex);
+    }
+
+    private final GetActivityHelper getActivityHelper = new GetActivityHelper();
+
+    /**
+     * Helper class for MagProps#getActivity. Collects helper code and state
+     * that needs to be saved between calls. Cached values are valid for the
+     * point in time specified by getActivity_cachedMjd.
+     */
+    private static final class GetActivityHelper {
+
+        // Map key=activity index, including the special "higher ones" referring
+        // to specific components of an activity value (i.e. a component of IMF).
+        private final Map<Integer, double[]> cachedReturnValues = new HashMap();
+        private double cachedMjd = Double.NaN;
+        private TimeEvent lastTimeEvt = null;
+        private MagPropsEvent lastMagPropsEvt = null;
+        private Object lastLoadSessionID = null;
+
+        /**
+         * Set of objects that uniquely represent warnings/error messages that
+         * have already been handled.
+         */
+        private Set<Object> messagesAlreadyHandled = new HashSet();
+
+
+        /**
+         * Function used to determine whether a new "event" has occurred and
+         * implicitly whether a warning/error message should be displayed to the
+         * user.
+         *
+         * THE PROBLEM: Certain user events in OVT trigger multiple calls to
+         * MagProps#getActivity which can trigger the same exception multiple
+         * times which (without precautions) would trigger the same
+         * warning/error message to the user multiple times (annoyingly many
+         * times).
+         *
+         * EXAMPLES OF PROBLEM: This can for example happen if you<BR>
+         * (1) change current time or time interval, or<BR>
+         * (2) enable/disable OMNI2 variables so that there is still one (used)
+         * OMNI2 variable with data gaps in the current time interval<BR>
+         * (3) initialize a state using "Load Settings"
+         * (ovt.util.Settings#load).
+         *
+         * In particular, it can happen if you combine the above with enabling
+         * "Footprints" while using OMNI2 data for SWP and Mach Number for a
+         * time period for which there are data gaps. (Note that footprints uses
+         * OMNI2 data for the entire time current time interval, not just the
+         * current time.)
+         *
+         * THIS CODE SOLUTION USED HERE: This code uses an elegant hack to get
+         * around this, but it is still a hack... The basic solution used here
+         * is to let important functions "F" that indirectly trigger a lot of
+         * calls to MagProps#getActivity set (static) variables to point to
+         * unique objects while running and null otherwise. These variables can
+         * be read by code to determine whether subsequent calls to
+         * MagProps#getActivity are the result of the one and same call to the
+         * same "F". This has so far been applied to
+         * TimeChangeSupport#fireTimeChange,
+         * MagPropsChangeSupport#fireMagPropsChange, and Settings#load
+         * (2016-02-04). Note that a call to one of these functions can trigger
+         * a call to another of these functions.
+         *
+         * NOTE: It is implicit from the concept and implementation that the
+         * function should be called at most once per call to getActivity.
+         *
+         * /Erik P G Johansson 2016-02-04
+         *
+         * @return True means that the warning/error message that is uniquely
+         * represented by the argument should be displayed. Otherwise not.
+         */
+        private boolean shouldDisplayMessage(int activityIndex) {
+            if (isNewEventSession()) {
+                messagesAlreadyHandled.clear();
+            }
+
+            // Set#add: "true if this set did not already contain the specified element"
+            return messagesAlreadyHandled.add(activityIndex);
+        }
+
+
+        // PROPOSAL: Take activity index key and compare it to MagPropsEvent#whatChanged()?!!
+        private boolean isNewEventSession() {
+            final TimeEvent curTimeEvt = TimeChangeSupport.getCurrentEvent();
+            final MagPropsEvent curMagPropsEvt = MagPropsChangeSupport.getCurrentEvent();
+            final Object curLoadSessionID = Settings.getCurrentLoadSession();
+
+            // DEBUG
+            final String curTimeEvtStr = curTimeEvt == null ? "null" : "" + curTimeEvt.hashCode();
+            final String curMagPropsEvtStr = curMagPropsEvt == null ? "null" : "" + curMagPropsEvt.hashCode();
+            final String curLoadSessionIdStr = curLoadSessionID == null ? "null" : "" + curLoadSessionID.hashCode();
+            Log.log("(curTimeEvt, curMagPropsEvt, curLoadSessionID) ="
+                    + " (" + curTimeEvtStr + ", " + curMagPropsEvtStr + ", " + curLoadSessionIdStr + ")", DEBUG);
+//
+            /* NOTE: Calls to Settings#load can trigger calls to MagPropsChangeSupport#fireMagPropsChange
+             * Therefore has to count ANY non-null Event/sessionID value staying the same as being the
+             * same call. */
+            final boolean isSameTimeEvt = (curTimeEvt != null) && (curTimeEvt == lastTimeEvt);
+            final boolean isSameMagPropsEvt = (curMagPropsEvt != null) && (curMagPropsEvt == lastMagPropsEvt);
+            final boolean isSameLoadSessionID = (curLoadSessionID != null) && (curLoadSessionID == lastLoadSessionID);
+            final boolean isSomeSameEvt = isSameTimeEvt || isSameMagPropsEvt || isSameLoadSessionID;
+
+            lastTimeEvt = curTimeEvt;
+            lastMagPropsEvt = curMagPropsEvt;
+            lastLoadSessionID = curLoadSessionID;
+
+            return !isSomeSameEvt;
+        }
+
+
+        private double[] getCachedValue(int key, double mjd) {
+            if (mjd == cachedMjd) {
+                // CASE: The cache contains values for the same time (mjd).
+                // NOTE: Map#get returns null for non-existing entries.
+                final double[] returnValue = cachedReturnValues.get(key);
+                return returnValue;
+            } else {
+                // CASE: mjd has changed from what is in the cache.
+                // ==> Dismiss all cached values.
+                cachedMjd = mjd;
+                cachedReturnValues.clear();
+                return null;
+            }
+        }
+
+
+        /**
+         * NOTE: Assumes that the mjd value is the same as in last call to
+         * #getCachedValue.<BR>
+         * NOTE: Store deep copy of the values to make sure they are not altered
+         * after the fact. MagActivityEditorDataModel#getValues is known to have
+         * returned references to arrays which have later changed (2015-10-23)
+         * when the table was updated.
+         */
+        private void cacheValueAtSameTime(int key, double[] returnValue) {
+            cachedReturnValues.put(key, returnValue.clone());
+        }
+    }
 
 
     /**
@@ -902,60 +1032,40 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * still private though.<BR>
      * /Erik P G Johansson 2015-10-07.
      *
-     * NOTE: Uses an internal cache to speed up calls. Empirically, we know that
-     * the same call is made many times in a row. This is a good place to have a
-     * cache since it covers both sources of activity data,
-     * MagActivityEditorDataModel and OMNI2. Note that the cache has to be
-     * partially cleared when changing data source.
+     * NOTE: Uses a (rewritten) internal cache to (hopefully) speed up calls.
+     * Empirically, we know that the calls can be made many times in a row for
+     * the same mjd. This is a good place to have a cache for this since it
+     * covers both sources of activity data, MagActivityEditorDataModel and
+     * OMNI2. Note that the cache has to be partially cleared when changing data
+     * source (OMNI2, non-OMNI2).
      *
-     * NOTE: This method HANDLES ERRORS with error messages in the GUI. Note
-     * that it also uses the cache to decide whether to display error messages.
-     * Only triggers an error message once for every activity key before
-     * changing time/mjd (clearing the cache). The cache thus makes sure that
-     * multiple calls for the same activity key will still only trigger one
-     * error message. (Is this really appropriate?)
+     * NOTE: This method HANDLES ERRORS BY TRIGGERING ERROR MESSAGES IN THE UI.
+     * Note that it also partly uses the cache, partly uses a "hack" to decide
+     * whether to display warning/error messages repeatedly for the same user
+     * event.
      *
      * @param key Specify which activity variable that is sought, and optionally
      * which component of that variable. The rule for requesting some component
      * of activity, let's say you need Z component of IMF (IMF[2]).
      * <CODE>key = IMF*100 + 2</CODE>
+     *
      * @return Activity values.
      */
     private double[] getActivity(int key, double mjd) {
         //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
 
-        /**
-         * Try to use a cached value first.<BR>
-         * --------------------------------<BR>
-         * IMPLEMENTATION NOTE: Construct chosen to minimize the number of
-         * Integer objects created and the number of calls to Map#containsKey
-         * (none) and Map#get.
-         */
-        if (mjd == getActivity_cachedMjd) {
-            // CASE: The cache contains values for the same time (mjd).
-            final double[] returnValue = getActivity_cachedReturnValues.get(key);
-            if (returnValue != null) {
-                // CASE: There is a relevant value in the cache.
-//                Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
-//                        + Arrays.toString(returnValue) + "   // Cached value", DEBUG);
-
-                return returnValue;
-            }
-            // CASE: mjd is the same as for cache, but there was no cached value
-            // for this particular "key".
-            // ==> Keep cached values, and continue.
-        } else {
-            // CASE: mjd has changed from what is in the cache.
-            // ==> Dismiss all cached values.
-            getActivity_cachedMjd = mjd;
-            getActivity_cachedReturnValues.clear();
+        // Try to use a cached value first.
+        double[] returnValue = getActivityHelper.getCachedValue(key, mjd);
+        if (returnValue != null) {
+            // CASE: There is a relevant value in the cache.
+            return returnValue;
         }
 
         /*=======================================================================
          * CASE: Could not use the cache. ==> Retrieve value(s) from the source.
          ======================================================================*/
-        double[] returnValue;
-        int index = -1;
+//        double[] returnValue;
+        int index = -1;   // Default value that should yield no hit in the cache.
         try {
 
             if (key <= 100) {
@@ -963,29 +1073,35 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
                 returnValue = activityDataSources[index].getValues(mjd);
                 //final double[] values = activityDataSources[key].getValues(mjd);
                 //Log.log("   double[] values = "+Arrays.toString(values), 2);
-                //return values;
             } else {
                 index = key / 100;
                 final int component = key - index * 100;
-                //return new double[]{activityDataSources[index].getValues(mjd)[component]};
                 returnValue = new double[]{activityDataSources[index].getValues(mjd)[component]};
             }
 
-        } catch (OMNI2DataSource.ValueNotFoundException ex) {
+        } catch (OMNI2DataSource.ValueNotFoundException e) {
+
+            // CASE: Some visualization in OVT requires an activity value and OVT is
+            // configured to obtain it from OMNI2 where it can not be found.
+            Log.log("getActivity : ValueNotFoundException", DEBUG);
             returnValue = ACTIVITY_DEFAULTS.get(index);
 
-            /* CASE: Some visualization in OVT requires an activity value and OVT is
-             * configured to obtain it from OMNI2 where it can not be found.
-             */
-            final String msg = "Can not find value (" + getActivityName(index) + ")"
-                    + " for the specified time in the OMNI2 database.\n"
-                    + "Using a default value " + Arrays.toString(returnValue) + " instead.";
-            // NOTE: Excludes ex.getMessage() from the message to keep it short.            
-            // NOTE: The return value is an array, in particular IMF, and must be prepared to print several values.
-            getCore().sendWarningMessage("Can not find activity value required for visualizations", msg);
-            Log.log(msg, DEBUG);
+            // Set#add: "true if this set did not already contain the specified element"
+            if (getActivityHelper.shouldDisplayMessage(key)) {
+
+                // NOTE: Excludes e.getMessage() from the message to keep it short.
+                // NOTE: The return value is an array, in particular IMF, and must
+                //       be prepared to print several values.
+                final String title = "Can not find activity value required for visualizations";
+                final String msg = "Can not find value (" + getActivityName(index) + ")"
+                        + " for the specified time(s) in the OMNI2 database.\n"
+                        + "Using a default value " + Arrays.toString(returnValue) + " instead.";
+                getCore().sendWarningMessage(title, msg);
+                Log.log(title + "\n" + msg, DEBUG);
+            }
 
         } catch (IOException ex) {
+
             returnValue = ACTIVITY_DEFAULTS.get(index);
 
             final String msg = "I/O error when trying to obtain OMNI2 value (" + getActivityName(index) + ").\n"
@@ -993,18 +1109,15 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
                     + ex.getMessage();
             getCore().sendErrorMessage("Can not find activity value required for visualizations", msg);
             Log.log(msg, DEBUG);
+
         }
 
         /**
          * NOTE: Also caches default values! Partly to avoid multiple error
          * messages for the same index & time, but also since the underlying
          * data sources are not expected to change during a session anyway.<BR>
-         * NOTE: Store deep copy of the values to make sure they are not altered
-         * after the fact. MagActivityEditorDataModel#getValues is known to have
-         * returned references to arrays which have later changed (2015-10-23)
-         * when the table was updated.
          */
-        getActivity_cachedReturnValues.put(key, returnValue.clone());
+        getActivityHelper.cacheValueAtSameTime(key, returnValue);
 
         // NOTE: This log value comes AFTER any log value in MagActivityEditorDataModel#getValues.
 //        Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
@@ -1026,6 +1139,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     @Override
     public double[] getActivityOMNI2(int activityIndex, double mjd)
             throws OMNI2DataSource.ValueNotFoundException, IOException {
+
         boolean getIMFvector = false;
         final OMNI2Data.FieldID fieldID;
         switch (activityIndex) {
@@ -1354,9 +1468,9 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
         @Override
         public void setDataSourceChoice(DataSourceChoice choice) {
-            Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")"
-                    + "   // activityIndex=" + activityIndex
-                    + " (" + MagProps.getActivityName(activityIndex) + ")", 2);
+//            Log.log(getClass().getSimpleName() + "#setDataSourceChoice(" + choice + ")"
+//                    + "   // activityIndex=" + activityIndex
+//                    + " (" + MagProps.getActivityName(activityIndex) + ")", 2);
 
             // Avoid doing anything unnecessarily, in particular calling listeners.
             if (this.dataSourceChoice == choice) {
@@ -1445,15 +1559,16 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 }
 
 //##############################################################################
-/* Could probably be made private.
- * Do not confuse with ovt.beans.MagPropsChangeSupport which is almost identical.
- * If this class is made private and maybe static, make sure that the compiler does not
- * confusee it with ovt.beans.MagPropsChangeSupport.
+/**
+ * NOTE: Do not confuse this class with ovt.beans.MagPropsChangeSupport which is
+ * almost identical. If this class is moved into a separate file, make sure that
+ * the compiler does not confuse it with ovt.beans.MagPropsChangeSupport.
  */
 class MagPropsChangeSupport {
 
-    private Vector listeners = new Vector();
-    private Object source = null;
+    private final Vector listeners = new Vector();
+    private final Object source;
+    private static MagPropsEvent currentEvent = null;
 
 
     /**
@@ -1475,12 +1590,14 @@ class MagPropsChangeSupport {
 
 
     public void fireMagPropsChange(MagPropsEvent evt) {
-        Enumeration e = listeners.elements();
+        currentEvent = evt;
+        final Enumeration e = listeners.elements();
         while (e.hasMoreElements()) {
             // NOTE: A separate variable is useful for inspecting variables when debugging.
             final MagPropsChangeListener magPropsChangeListener = (MagPropsChangeListener) e.nextElement();
             magPropsChangeListener.magPropsChanged(evt);
         }
+        currentEvent = null;
     }
 
 
@@ -1494,4 +1611,17 @@ class MagPropsChangeSupport {
         return listeners.contains(listener);
     }
 
+
+    /**
+     * Get the TimeEvent that is being "fired" at the time this function is
+     * called. Otherwise return null.
+     *
+     * NOTE: This is used by other code to avoid triggering multiple identical
+     * error messages triggered by the same event. (Yes, it is a hack, but there
+     * seems to be no other option with a reasonable amount of code changes.)<BR
+     * /Erik P G Johansson 2016-02-03
+     */
+    public static MagPropsEvent getCurrentEvent() {
+        return currentEvent;
+    }
 }

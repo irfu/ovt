@@ -118,7 +118,7 @@ public class OMNI2CustomizerTest {
     //##########################################################################
     private static class TimeSettingsEmulator implements TimeSettingsInterface {
 
-        private TimeChangeSupport timeChangeSupport = new TimeChangeSupport(this);
+        private TimeChangeSupport timeChangeSupport = new TimeChangeSupport();
         private TimeSet timeSet;
 
 

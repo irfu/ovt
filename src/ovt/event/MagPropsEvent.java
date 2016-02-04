@@ -47,7 +47,7 @@ import java.beans.*;
  */
 public class MagPropsEvent extends javax.swing.event.ChangeEvent {
 
-  private int changed;
+  private final int changed;
   
   /** Creates new MagPropsEvent */
   public MagPropsEvent(Object source, int changed) {

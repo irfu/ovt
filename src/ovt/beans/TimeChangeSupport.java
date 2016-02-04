@@ -43,20 +43,20 @@ import ovt.event.*;
 import ovt.interfaces.*;
 
 import java.util.*;
+import ovt.util.Log;
 
 /** 
- *
  * @author  root
  * @version 
  */
 
 public class TimeChangeSupport {
 
-  private Vector timeChangeListeners = new Vector();
-  private Object source = null;
+  private final Vector timeChangeListeners = new Vector();
+  private static TimeEvent currentEvent = null;
   
-  public TimeChangeSupport(Object source) {
-    this.source = source;
+  public TimeChangeSupport() {
+//    this.source = source;
   }
 
   public void addTimeChangeListener (TimeChangeListener listener) {
@@ -72,12 +72,13 @@ public class TimeChangeSupport {
     fireTimeChange(evt, e);
   }
   
-  /** Deliver event evt to all elements of enumeration e */
+  /** Deliver eventd evt to all elements of enumeration e. */
   public static void fireTimeChange(TimeEvent evt, Enumeration e) {
-    TimeChangeListener timeListener;
+//    Log.log("fireTimeChange BEGIN : currentEvent = ...", 2);
+    currentEvent = evt;
     while (e.hasMoreElements()) {
       try {
-        timeListener = ((TimeChangeListener)(e.nextElement()));
+        final TimeChangeListener timeListener = (TimeChangeListener) e.nextElement();
 //        if (OVTCore.DEBUG > 0) {
 //          try {
 //            System.out.println("TimeChangeEvent ->" + ((NamedObject)timeListener).getName());
@@ -86,6 +87,8 @@ public class TimeChangeSupport {
         timeListener.timeChanged(evt);
       } catch (ClassCastException e2) {}
     }
+    currentEvent = null;
+//    Log.log("fireTimeChange END   : currentEvent = null", 2);
   }
   
   /*public void fireTimeChange(String property, Object oldValue, Object newValue) {
@@ -95,6 +98,18 @@ public class TimeChangeSupport {
   
   public boolean hasListener(TimeChangeListener listener) {
     return timeChangeListeners.contains(listener);
+  }
+  
+  /** Get the TimeEvent that is being "fired" at the time this function is called.
+   * Otherwise return null.
+   * 
+   * NOTE: This is used by other code to avoid triggering multiple identical error
+   * messages triggered by the same event. (Yes, it is a hack, but there seems
+   * to be no other option with a reasonable amount of code changes.)<BR
+   * /Erik P G Johansson 2016-02-03
+   */
+  public static TimeEvent getCurrentEvent() {
+      return currentEvent;
   }
     
 }

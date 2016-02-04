@@ -68,12 +68,12 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   private final double INITIAL_CURRENT_MJD = Time.getMjd("2012-12-30 00:00:00");  // Initial value used in constructor.
 
   /** Holds value of property customizerVisible. */
-  private boolean customizerVisible = false;
+//  private boolean customizerVisible = false;
     
 //  public static final String PROP_TIME = "time";
 //  public static final String PROP_CURRENT_MJD = "currentMjd";
 
-  private TimeChangeSupport timeChangeSupport = new TimeChangeSupport(this);
+  private final TimeChangeSupport timeChangeSupport = new TimeChangeSupport();
 
   private TimeSet timeSet;
   

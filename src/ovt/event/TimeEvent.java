@@ -52,8 +52,8 @@ public class TimeEvent extends java.util.EventObject {
   public final static int TIME_SET    = 0;
   public final static int CURRENT_MJD = 1;
   
-  private int whatChanged;
-  private TimeSet timeSet;
+  private final int whatChanged;
+  private final TimeSet timeSet;
   
   /** Creates new TimeEvent */
   public TimeEvent(Object source, int whatChanged, TimeSet newTimeSet) {
