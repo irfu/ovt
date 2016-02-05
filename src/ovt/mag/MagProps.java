@@ -245,6 +245,9 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         ACTIVITY_DEFAULTS.put(SW_VELOCITY, new double[]{SW_VELOCITY_DEFAULT});
         ACTIVITY_DEFAULTS.put(G1, new double[]{G1_DEFAULT});
         ACTIVITY_DEFAULTS.put(G2, new double[]{G2_DEFAULT});
+        ACTIVITY_DEFAULTS.put(IMF_X, new double[]{IMF_DEFAULT[0]});  // Needed?
+        ACTIVITY_DEFAULTS.put(IMF_Y, new double[]{IMF_DEFAULT[1]});  // Needed?
+        ACTIVITY_DEFAULTS.put(IMF_Z, new double[]{IMF_DEFAULT[2]});  // Needed?
         UNIT_STRINGS.put(IMF, "nT");
         UNIT_STRINGS.put(SWP, "nPa");
         UNIT_STRINGS.put(DSTINDEX, "nT");
@@ -842,6 +845,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      }*/
 
 
+    // NOTE: Can NOT handle index=IMF_X/Y/Z.
     public static String getActivityName(int index) {
         switch (index) {
             case KPINDEX:
@@ -954,13 +958,13 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
          * @return True means that the warning/error message that is uniquely
          * represented by the argument should be displayed. Otherwise not.
          */
-        private boolean shouldDisplayMessage(int activityIndex) {
+        private boolean shouldDisplayMessage(Object messageID) {
             if (isNewEventSession()) {
                 messagesAlreadyHandled.clear();
             }
 
             // Set#add: "true if this set did not already contain the specified element"
-            return messagesAlreadyHandled.add(activityIndex);
+            return messagesAlreadyHandled.add(messageID);
         }
 
 
@@ -1042,14 +1046,17 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
      * NOTE: This method HANDLES ERRORS BY TRIGGERING ERROR MESSAGES IN THE UI.
      * Note that it also partly uses the cache, partly uses a "hack" to decide
      * whether to display warning/error messages repeatedly for the same user
-     * event.
+     * event. Returns defaults values in case of error.
      *
-     * @param key Specify which activity variable that is sought, and optionally
+     * NOTE: Empirically, the function does not appear to be called for
+     * key=IMF_X/Y/Z but it is designed to handle those cases.
+     *
+     * @param key Specifies the activity variable that is sought, and optionally
      * which component of that variable. The rule for requesting some component
      * of activity, let's say you need Z component of IMF (IMF[2]).
      * <CODE>key = IMF*100 + 2</CODE>
      *
-     * @return Activity values.
+     * @return Activity value(s).
      */
     private double[] getActivity(int key, double mjd) {
         //Log.log(this.getClass().getSimpleName()+"#getActivity("+key+", "+mjd+"<=>"+new Time(mjd)+")", 2);
@@ -1064,51 +1071,62 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
         /*=======================================================================
          * CASE: Could not use the cache. ==> Retrieve value(s) from the source.
          ======================================================================*/
-//        double[] returnValue;
-        int index = -1;   // Default value that should yield no hit in the cache.
+        // NOTE: key   = KP_INDEX...G2, IMF_X/Y/Z
+        //       index = KP_INDEX...G2    (not IMF_X/Y/Z)
+        int index = -1;
         try {
 
             if (key <= 100) {
                 index = key;
                 returnValue = activityDataSources[index].getValues(mjd);
-                //final double[] values = activityDataSources[key].getValues(mjd);
-                //Log.log("   double[] values = "+Arrays.toString(values), 2);
             } else {
                 index = key / 100;
                 final int component = key - index * 100;
                 returnValue = new double[]{activityDataSources[index].getValues(mjd)[component]};
             }
 
-        } catch (OMNI2DataSource.ValueNotFoundException e) {
+        } catch (OMNI2DataSource.ValueNotFoundException | IOException e) {
 
-            // CASE: Some visualization in OVT requires an activity value and OVT is
-            // configured to obtain it from OMNI2 where it can not be found.
-            Log.log("getActivity : ValueNotFoundException", DEBUG);
-            returnValue = ACTIVITY_DEFAULTS.get(index);
-
-            // Set#add: "true if this set did not already contain the specified element"
-            if (getActivityHelper.shouldDisplayMessage(key)) {
-
-                // NOTE: Excludes e.getMessage() from the message to keep it short.
-                // NOTE: The return value is an array, in particular IMF, and must
-                //       be prepared to print several values.
-                final String title = "Can not find activity value required for visualizations";
-                final String msg = "Can not find value (" + getActivityName(index) + ")"
-                        + " for the specified time(s) in the OMNI2 database.\n"
-                        + "Using a default value " + Arrays.toString(returnValue) + " instead.";
-                getCore().sendWarningMessage(title, msg);
-                Log.log(title + "\n" + msg, DEBUG);
+            // CASE: Tried to obtain value from the data source but failed.            
+            // ==> Use default value(s) instead.
+            
+            returnValue = ACTIVITY_DEFAULTS.get(key);
+                    // NOTE: The return value is an array, in particular for IMF, and must
+                    //       be prepared to print several values.
+            final String displayDefaultValueStr = Arrays.toString(ACTIVITY_DEFAULTS.get(index));
+            
+            if (returnValue == null) {
+                Log.err(getClass().getName() + "#getActivity: Can not find default value (key=" + key + ").");
             }
 
-        } catch (IOException ex) {
+            if (e instanceof OMNI2DataSource.ValueNotFoundException) {
 
-            returnValue = ACTIVITY_DEFAULTS.get(index);
+                if (getActivityHelper.shouldDisplayMessage(index)) {
 
-            final String msg = "I/O error when trying to obtain OMNI2 value (" + getActivityName(index) + ").\n"
-                    + "Using a default value " + Arrays.toString(returnValue) + " instead.\n "
-                    + ex.getMessage();
-            getCore().sendErrorMessage("Can not find activity value required for visualizations", msg);
-            Log.log(msg, DEBUG);
+                    // NOTE: Excludes e.getMessage() from the message to keep it short (and unique).
+                    final String title = "Can not find activity value required for visualizations";
+                    final String msg = "Can not find the value of " + getActivityName(index)
+                            + " for the specified time(s) in the OMNI2 database.\n"
+                            + "Using a default value " + displayDefaultValueStr + " instead.";
+                    //+ "\n" + e.getMessage();
+                    getCore().sendWarningMessage(title, msg);
+                    Log.log(title + "\n" + msg, DEBUG);
+                }
+            } else if (e instanceof IOException) {
+                
+                // "index+1000" is quite arbitrary. The only thing that is important
+                // is to submit a value that is unique for every error/warning we
+                // want to be able to display (once).
+                if (getActivityHelper.shouldDisplayMessage(index + 1000)) {
+
+                    final String title = "Can not find activity value required for visualizations";
+                    final String msg = "I/O error when trying to obtain value of " + getActivityName(index) + ".\n"
+                            + "Using a default value " + displayDefaultValueStr + " instead."
+                            + "\n" + e.getMessage();
+                    getCore().sendErrorMessage(title, msg);
+                    Log.log(msg, DEBUG);
+                }
+            }
 
         }
 
@@ -1119,7 +1137,6 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
          */
         getActivityHelper.cacheValueAtSameTime(key, returnValue);
 
-        // NOTE: This log value comes AFTER any log value in MagActivityEditorDataModel#getValues.
 //        Log.log(getClass().getSimpleName() + "#getActivity(" + key + ", " + mjd + ") = "
 //                + Arrays.toString(returnValue) + "   // (Non-cached value)", DEBUG);
         return returnValue.clone();
