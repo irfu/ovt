@@ -51,35 +51,38 @@ import javax.swing.event.*;
  */
 public class HTMLBrowser extends javax.swing.JFrame {
 
-  private urlHistory history;
-  
-  private ovt.OVTCore core = null;
+  private final UrlHistory history;
   
   /** Creates new  HTMLBrowser
    * @param core {@link ovt.OVTCore}
    */
   public HTMLBrowser(ovt.OVTCore core) {
     initComponents ();
-    this.core = core;
-    history = new urlHistory();
+    history = new UrlHistory();
     browserPane.setEditable(false);
     browserPane.addHyperlinkListener(new HyperlinkListener() {
       public void hyperlinkUpdate(HyperlinkEvent e) {
-        if (e.getEventType().toString().compareTo("ACTIVATED")==0)
-        try {
-          String uurl = e.getURL().toString();
-          browserPane.setPage(uurl);
-          history.putUrl(uurl);
-          backBtn.setEnabled( !history.isAtStart());
-          forwardBtn.setEnabled( !history.isAtEnd());
-        }
-        catch(IOException ex) { ex.printStackTrace(); }
-        else {
+        if (e.getEventType().toString().compareTo("ACTIVATED")==0) {
+          try {
+            final String uurl = e.getURL().toString();
+            
+            /** The Java API documentaion leads one to believe that JEditorPane#setPage will throw
+             * IOException when encountering a bad URL. This does not happen in practice
+             * however so there is no way of giving an error message for bad links. */
+            browserPane.setPage(uurl);
+            history.putUrl(uurl);
+            backBtn.setEnabled( !history.isAtStart());
+            forwardBtn.setEnabled( !history.isAtEnd());
+          }
+          catch(IOException ex) {            
+            ex.printStackTrace();
+          }
+        } else {
           if (e.getEventType().toString().compareTo("ENTERED")==0)
           browserPane.setCursor(new Cursor(Cursor.HAND_CURSOR));
           else if (e.getEventType().toString().compareTo("EXITED")==0)
           browserPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-      }
+        }
       } 
       
     });
@@ -91,6 +94,8 @@ public class HTMLBrowser extends javax.swing.JFrame {
     }*/
     pack ();
     setSize(new Dimension(600, 600));
+    
+    Utils.centerWindow(this);
   }
   
   /** sets URL
@@ -127,13 +132,13 @@ public class HTMLBrowser extends javax.swing.JFrame {
       homeBtn = new javax.swing.JButton();
       try {
           setIconImage(Toolkit.getDefaultToolkit().getImage(Utils.findResource("images/ovt.gif")));
-      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); };
-      setTitle("OVT Browser");
-      addWindowListener(new java.awt.event.WindowAdapter() {
+      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
+        setTitle("OVT Browser");
+        addWindowListener(new java.awt.event.WindowAdapter() {
           public void windowClosing(java.awt.event.WindowEvent evt) {
               exitForm(evt);
           }
-      }
+        }
       );
       
       scrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
@@ -146,7 +151,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
       
       try {
           backBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/VCRBack.gif")));
-      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); };
+      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
       
         backBtn.setMaximumSize(new java.awt.Dimension(120, 50));
         backBtn.setMinimumSize(new java.awt.Dimension(120, 50));
@@ -163,7 +168,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
         
       try { 
           forwardBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/VCRForward.gif")));
-      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); };
+      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
         forwardBtn.setMaximumSize(new java.awt.Dimension(120, 50));
         forwardBtn.setMinimumSize(new java.awt.Dimension(120, 50));
         forwardBtn.setText("Forward");
@@ -179,12 +184,12 @@ public class HTMLBrowser extends javax.swing.JFrame {
         
       try {   
         homeBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/ovt.gif")));
-      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); };
+      } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
        
         homeBtn.setMaximumSize(new java.awt.Dimension(120, 50));
 	try {
           homeBtn.setPressedIcon(new javax.swing.ImageIcon(Utils.findResource("images/ovt.gif")));
-        } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); };
+        } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
 	homeBtn.setMinimumSize(new java.awt.Dimension(120, 50));
         homeBtn.setText("Home");
         homeBtn.setLabel("OVT Home");
@@ -256,14 +261,14 @@ public class HTMLBrowser extends javax.swing.JFrame {
   }
   /** Browser history tracking class
    */
-  public class urlHistory {
+  private class UrlHistory {
     private Vector history =null;
 
     private int position =0;
 
     /** Creates new urlHistory
      */
-    public urlHistory() {
+    public UrlHistory() {
       history = new Vector();
     }
 
