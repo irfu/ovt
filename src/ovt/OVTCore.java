@@ -53,7 +53,8 @@ import javax.swing.*;
  *
  * This object represents the root node in the "GUI tree" in the left panel.
  * Practically however, it also serves as a central repository for a LOT of
- * information for MANY classes.
+ * information for MANY classes. When loading/saving settings from/to XML files,
+ * then this class is the root in (presumably) a tree which is iterated over.
  *
  * NOTE: The application creates one instance of this object which it then
  * passes around to many, many other classes. This is unfortunate since this
@@ -62,7 +63,9 @@ import javax.swing.*;
  * This in turn makes it difficult to separately test (instantiate) classes that
  * require having a reference to an instance of OVTCore. The class also has many
  * static members which are used throughout the application. Future modification
- * should be careful with adding more dependence on OVTCore.<BR>
+ * should be careful with adding more dependence on OVTCore. Should more static
+ * members (non-final fields, methods that depend on class state) be turned into
+ * instance members?<BR>
  * /Erik P G Johansson 2016-01-22
  *
  * @author Mykola Khotyaintsev
@@ -78,9 +81,9 @@ import javax.swing.*;
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
 
     private static final String ROOT_NODE_NAME = "OVT";
-    public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool BETA";
+    public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
-    public static final String RELEASE_DAY = "November 2015";
+    public static final String RELEASE_DAY = "February 2016";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
     // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     public static final int BUILD = 6;
@@ -89,20 +92,20 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE_NAME = "OVTSavestate.xml";
     private static final Properties globalProperties = new Properties();
-//    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
-    private static final String SYSTEM_OUT_FILE_NAME = null;   // TEMP
+    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
+    //private static final String SYSTEM_OUT_FILE_NAME = null; // null=Print to screen instead of log file
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
-    private static final int GLOBAL_LOG_LEVEL = 3;
-//    public static int DEBUG = 0;
+    private static final int GLOBAL_LOG_LEVEL = 0;
 
     // Include RELEASE_DAY? (Might not be updated during development.)
     private static final String LONG_APPLICATION_DESCRIPTION
             = SIMPLE_APPLICATION_NAME + " (OVT), version " + VERSION
             + ", build " + BUILD + " (" + ovt.OVTCore.OVT_HOMEPAGE + ")";
 
-    private static final String HTTP_AGENT_PROPERTY_STRING = LONG_APPLICATION_DESCRIPTION + "; "
-            + System.getProperty("os.name") + ", "
-            + System.getProperty("os.arch");
+    private static final String HTTP_AGENT_PROPERTY_STRING = LONG_APPLICATION_DESCRIPTION;
+    /*+ "; "
+     + System.getProperty("os.name") + ", "
+     + System.getProperty("os.arch");*/
 
     /**
      * Select what to use as a data source for the functionality/code that
@@ -397,8 +400,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         // NOTE: Can only be set to files AFTER that internal paths have been
         // obtained. Can therefore not be initialized earlier.
         try {
-            // NOTE: It appears that on Windows, one will not get an explicit
-            // log file (for stdout) without explicitly rediricting System.out.
+            // NOTE: It appears that on MS Windows, one will not get an explicit
+            // log file (for stdout) without explicitly redirecting System.out.
             // NOTE: Should only put files in directory where the code has write
             // permission (i.e. not the application directory).
             // NOTE: Can only call OVTCore.getUserDir() after ovtUserDir has been initialized.
@@ -415,7 +418,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             Log.logStackTrace(e);
             Log.log("Failed to redirect System.err (stderr) or System.out (stdout) to file.");
         }
-        
+
 
         /* Setting the http user agent for the benefit of NASA SSC, so that they
          * can see who/what (OVT) is using their service (over the internet).
@@ -441,7 +444,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 sendErrorMessage("Error when loading global settings", e);
             }
         }
-        
+
         // Set time
         timeSettings = new TimeSettings(this);
         Log.log("TimeSettings created.", 3);
@@ -449,10 +452,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         Log.log("Creating MagProps ...", 3);
         magProps = new MagProps(this);
         Log.log("MagProps created.", 3);
-        
+
         transCollection = new TransCollection(magProps.getIgrfModel());
         Log.log("TransCollection created.", 3);
-        
+
         // Set coordinate system
         coordinateSystem = new CoordinateSystem(this);
         Log.log("CoordinateSystem created.", 3);
@@ -648,14 +651,14 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      *
      * @param title Message title. NOTE: Only used for the (alternative) log
      * message.
-     * @param e Exceprion
+     * @param e Exception
      */
     public void sendErrorMessage(String title, Exception e) {
 //        if (isGuiPresent()){
         if (canDisplayGuiMessages()) {
             new ErrorMessageWindow(XYZwin, e).setVisible(true);   // NOTE: Using internal class.
         } else {
-            Log.err(title + ":" + e);
+            Log.err(title + ": " + e);
         }
     }
 
@@ -666,7 +669,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             javax.swing.JOptionPane.showMessageDialog(null, msg, title,
                     javax.swing.JOptionPane.ERROR_MESSAGE);
         } else {
-            Log.err(title + ":" + msg);
+            Log.err(title + ": " + msg);
         }
     }
 
@@ -695,7 +698,9 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 //        if (isGuiPresent()){
         if (canDisplayGuiMessages()) {
             javax.swing.JOptionPane.showMessageDialog(null,
-                    "Warning: " + title + "\n" + msg, title,
+                    //                    "Warning: " + title + "\n" + msg,   // Adds "title" to the message.
+                    "Warning: " + msg,
+                    title,
                     javax.swing.JOptionPane.WARNING_MESSAGE);
         } else {
             System.out.println(title + ": " + msg);
