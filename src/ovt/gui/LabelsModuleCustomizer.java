@@ -100,6 +100,8 @@ public class LabelsModuleCustomizer extends JFrame {
         
         pack();
         setResizable(false);
+        
+        Utils.centerWindow(this);
     }
     
     private void addPropertyEditor(Container cont, String propertyName) {
