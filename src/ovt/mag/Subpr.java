@@ -32,6 +32,9 @@ Khotyaintsev
 
 package ovt.mag;
 
+/**
+ * IMPORTANT NOTE: THIS CLASS APPEARS TO BE UNUSED. /Erik P G Johansson 2016-02-04
+ */
 public class Subpr {
 
 /* bsh subsolar distance 

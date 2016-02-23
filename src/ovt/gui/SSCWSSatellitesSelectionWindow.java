@@ -35,7 +35,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Toolkit;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -49,9 +48,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
+
 import ovt.Const;
 import ovt.OVTCore;
-
 import ovt.datatype.Time;
 import ovt.event.ChildrenEvent;
 import ovt.interfaces.ChildrenListener;
@@ -79,7 +78,6 @@ import ovt.util.Utils;
 // --
 // PROPOSAL: Rename to xxxCustomizer in analogy with other window classes.
 // PROPOSAL: Save window location to Settings/properties (config file).
-// PROPOSAL: Initial window location at center of screen.
 public class SSCWSSatellitesSelectionWindow extends JFrame {
 
     //private static final int DEBUG = 2;
@@ -97,6 +95,8 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     private static final int COLUMN_INDEX_DATA_AVAILABLE_BEGIN = 3;
     private static final int COLUMN_INDEX_DATA_AVAILABLE_END = 4;
 
+    private static final int PREFERRED_WIDTH_EXTRA_MARGIN = 10 + 50;
+
     private final SSCWSLibrary sscwsLib;
     private final JTable table;
     private final LocalTableModel tableModel;
@@ -112,6 +112,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
     public SSCWSSatellitesSelectionWindow(
             SSCWSLibrary mSSCWSLib, OVTCore core, SSCWSSatellitesBookmarksModel bookmarks)
             throws IOException {
+        
         sscwsLib = mSSCWSLib;
         setTitle(WINDOW_TITLE);
 
@@ -191,16 +192,17 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
          * to make it do so.
          */
         this.getContentPane().setPreferredSize(
-                new Dimension(table.getPreferredSize().width + 10 + 50,
+                new Dimension(table.getPreferredSize().width + PREFERRED_WIDTH_EXTRA_MARGIN,
                         this.getPreferredSize().height));
 
         pack();
 
+        // Only use "core" if non-null. It is useful for testing to be able to
+        // instantiate the window without an OVTCore object.
         if (core != null) {
             core.getSats().getChildren().addChildrenListener(tableModel);
         }
 
-        //System.out.println("frame.size = " + getWidth() + ", " + getHeight());   // TEMP
         // Set location at center of screen.
         Utils.centerWindow(this);
     }
@@ -217,7 +219,9 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
 
         int totColumnWidth = 0;
         final TableCellRenderer headerRenderer = table.getTableHeader().getDefaultRenderer();
+
         for (int col = 0; col < COLUMN_GUI_TITLES.length; col++) {
+
             final TableColumn column = table.getColumnModel().getColumn(col);
 
             final Component headerComp = headerRenderer.getTableCellRendererComponent(
@@ -238,6 +242,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
             column.setPreferredWidth(newColumnWidth);
             //column.setPreferredWidth(30);   // TEST
             totColumnWidth = totColumnWidth + newColumnWidth;
+
         }
         //System.out.println("totColumnWidth = " + totColumnWidth);
 
@@ -419,8 +424,16 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
         }
 
 
+        /**
+         * For a given column, get an array of values which should contain that
+         * value which is the widest when displayed.
+         */
+        // PROPOSAL: Refactor code to directly return the width of the widest
+        //           representation of data in a given column.
+        //    NOTE: Only called once. Look at that code.
+        // BUG: Can not always handle zero rows.
+        // 
         private Object[] getWidestValues(int col) {
-            // IMPLEMENTATION NOTE: Should be able to handle zero rows. ==> No call to getValueAt(...).
             if (col == COLUMN_INDEX_BOOKMARK) {
                 return new Object[]{Boolean.FALSE};
             } else if (col == COLUMN_INDEX_GUI_TREE_ADDED) {
@@ -433,9 +446,10 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
                 return values;
             } else if ((col == COLUMN_INDEX_DATA_AVAILABLE_BEGIN)
                     || (col == COLUMN_INDEX_DATA_AVAILABLE_END)) {
-                return new Object[]{Time.toString(0)};   // TEMP
+                return new Object[]{Time.toString(0.0)};
             }
-            throw new RuntimeException("Method not able to handle this column. This indicates a pure code bug.");
+
+            throw new IllegalArgumentException("Method is not able to handle this column. This indicates a pure code bug.");
         }
 
     }

@@ -39,16 +39,14 @@ Khotyaintsev
 package ovt.beans;
 
 import ovt.datatype.*;
-
 import java.beans.*;
 
-import java.util.*;
-
 /**
- * NOTE 1: Seems unused. Delete?!
- * NOTE 2: Not to be confused with ovt.beans.editor.IntervalEditor.
- * /Erik P G Johansson 2015-10-21
- * 
+ * IMPORTANT NOTE: THIS CLASS SEEMS TO BE UNUSED. DELETE?
+ * It is very similar to ovt.beans.editor.IntervalEditor (note different
+ * superclass; missing two trivial methods; setAsText slightly different,
+ * including the throws declaration).
+ * /Erik P G Johansson 2016-02-04
  *
  * @author  ko
  * @version 
@@ -68,7 +66,7 @@ public IntervalEditor(BasicPropertyDescriptor pd) {
   }
   
   // may be it is better to throw IllegalArgumentException ?
-  // I'm not shure, that Mjd will path PropertyVetoException to setValue.
+  // I'm not sure, that Mjd will pass on PropertyVetoException to setValue.
   public void setAsText(String s) throws PropertyVetoException {
     try {
       Interval interval = new Interval(s);

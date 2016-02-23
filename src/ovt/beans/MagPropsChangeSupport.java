@@ -45,7 +45,8 @@ import ovt.interfaces.*;
 import java.util.*;
 
 /** 
- * Appears to be unused (or possible used by Java Beans for save/load settings).
+ * IMPORTANT NOTE: This class appears to be unused (or possible used by Java
+ * Beans for save/load settings).
  * MagProps#MagPropsChangeSupport is almost identical.
  * /Erik P G Johansson 2015-10-09
  *

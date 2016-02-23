@@ -108,8 +108,7 @@ public class Time {
     }
 
 
-    public Time(double mjd)
-            throws IllegalArgumentException {
+    public Time(double mjd) throws IllegalArgumentException {
         setTime(mjd);
     }
 

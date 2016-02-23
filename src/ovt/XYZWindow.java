@@ -53,6 +53,10 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
  *
  * PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command
  * line argument if there is one?
+ *
+ * PROPOSAL: Move add/removeSatAction, add/removeSSCWSSatAction,
+ * sscwsSatAlreadyAdded, getSSCWSSats to OVTCore? They do use a lot of calls to
+ * getCore().
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -541,7 +545,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
      * user event in the GUI.
      */
-    // PROPOSAL: Move to Sats?!! (Not getCore().Render().)
+    // PROPOSAL: Move to Sats?!! Move to OVTCore? (Not getCore().Render().)
     // PROPOSAL: Check for satellite with the same name.
     public void addSatAction(Sat sat) {
         final String satName = sat.getName();

@@ -36,12 +36,9 @@ package ovt.util;
 import ovt.datatype.*;
 import ovt.beans.*;
 import ovt.object.*;
-import ovt.interfaces.*;
 
 import java.beans.*;
 import java.text.*;
-import java.lang.*;
-import java.util.*;
 import java.util.regex.*;
 
 /**

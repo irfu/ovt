@@ -56,6 +56,8 @@ import javax.swing.*;
 
 /**
  * Represents the window for customizing the displayed time interval.
+ * 
+ * NOTE: ovt.gui.TimeSettingsCustomizer seems to be an unused, alternate version of this class.
  *
  * @author  ko
  * @version 

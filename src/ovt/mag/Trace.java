@@ -124,17 +124,17 @@ public class Trace extends Object {
 
 
     static {
-        Log.log(Trace.class.getCanonicalName() + "#<static init>", 2);
+//        Log.log(Trace.class.getCanonicalName() + "#<static init>", 2);
 
         try {
             // throws FileNotFoundException
             final String igrfdPath = Utils.findExistingFile(OVTCore.getMdataSubdir() + "igrf.d").getAbsolutePath();
 
             final int igrfdPath_codePointLength = igrfdPath.length();
-            Log.log(Trace.class.getCanonicalName() + "#<static init> : "
-                    + "mdirectoryJNI(igrfdPath = \"" + igrfdPath + "\")"
-                    + "; code point length = " + igrfdPath_codePointLength,
-                    2);
+//            Log.log(Trace.class.getCanonicalName() + "#<static init> : "
+//                    + "mdirectoryJNI(igrfdPath = \"" + igrfdPath + "\")"
+//                    + "; code point length = " + igrfdPath_codePointLength,
+//                    2);
 
             if (igrfdPath_codePointLength > MAX_IGRFD_PATH_LENGTH) {
                 // NOTE: Ideally one should use OVTCore#sendErrorMessage.
@@ -143,7 +143,7 @@ public class Trace extends Object {
                         = "The path to \"igrf.d\" (" + igrfdPath.length() + " char.)"
                         + " is too long for native code \"magpack.c\" to handle (max " + MAX_IGRFD_PATH_LENGTH + " char.): "
                         + "\n\"" + igrfdPath + "\"";
-                Log.log(Trace.class.getCanonicalName()
+                Log.err(Trace.class.getCanonicalName()
                         + "#<static init> : " + msg, 0);
                 JOptionPane.showMessageDialog(null,
                         msg,
@@ -156,7 +156,7 @@ public class Trace extends Object {
 
             // NOTE: Ideally one should use OVTCore#sendErrorMessage,
             // but no instance of OVTCore is available from here.
-            Log.err(Trace.class.getCanonicalName() + "#<static init> : Error: " + e.getMessage());
+            Log.err(Trace.class.getCanonicalName() + "#<static init> : " + e.getMessage());
             JOptionPane.showMessageDialog(null, e.getMessage(), "Could not find file", JOptionPane.ERROR_MESSAGE);
         }
     }

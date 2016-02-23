@@ -215,7 +215,7 @@ private static Element createNode(String nodeName, Object obj, Class propertyEdi
         
         // if this method will throw NullPointerException
         // check the BeanInfo for that class - some PropertyDescriptors may be invalid! 
-        //Log.log("obj.getClass() = "+obj.getClass());   // TEMP DEBUG
+        //Log.log("obj.getClass() = "+obj.getClass());
         BeanInfo beanInfo = Introspector.getBeanInfo(obj.getClass()); 
         
         // To avoid strange ordering of p.d. bug

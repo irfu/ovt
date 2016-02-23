@@ -38,7 +38,7 @@ Khotyaintsev
  * #############################################################################
  * #############################################################################
  * #############################################################################
- * IMPORTANT NOTE: THIS CLASS DOES NOT SEEM TO BE USED. It seems to be an
+ * IMPORTANT NOTE: THIS CLASS SEEMS TO BE UNUSED. It seems to be an
  * alternate version of ovt.object.TimeSettingsManager which is used and is
  * labeled as an _earlier version, "Revision 1.2".
  * /Erik P G Johansson 2015-07-10

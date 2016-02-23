@@ -62,7 +62,7 @@ public class MjdEditor extends TextFieldEditor {
   }
   
   // may be it is better to throw IllegalArgumentException ?
-  // I'm not shure, that Mjd will path PropertyVetoException to setValue.
+  // I'm not sure, that Mjd will path PropertyVetoException to setValue.
   public void setAsText(String s) throws PropertyVetoException {
     try {
       if (s.equals(getAsText())) return; 

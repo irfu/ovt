@@ -135,7 +135,7 @@ public class OMNI2Customizer extends JFrame {
              * the configuration file.
              */
             final JTextArea infoTextArea = createDefaultTextArea(INFO_TEXT
-                    + "\n\nCurrent download URL (year needs to be inserted):\n" + urlPattern);
+                    + "\n\nCurrent download URL (before year is inserted):\n" + urlPattern);
             final GridBagConstraints c = createGBConstraints(0, rootGridY, 1, 0, GridBagConstraints.BOTH);
             // c.weighty = 0;  // Important for fitting text initially. Do not know why.
             c.anchor = GridBagConstraints.NORTHWEST;   // Put component at upper-left.

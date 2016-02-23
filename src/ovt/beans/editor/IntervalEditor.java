@@ -33,22 +33,19 @@ Khotyaintsev
 /*
  * IntervalEditor.java
  * 
- * NOTE: Not to be confused with ovt.beans.IntervalEditor.
- * /Erik P G Johansson 2015-10-21
- *
  * Created on June 21, 2002, 4:13 PM
  */
 
 package ovt.beans.editor;
 
 import ovt.datatype.Interval;
-
 import java.beans.*;
-
 import java.awt.Component;
 import ovt.util.Log;
 
 /**
+ * NOTE: Not to be confused with ovt.beans.IntervalEditor which seems unused.
+ * /Erik P G Johansson 2016-02-04
  *
  * @author  ko
  * @version 

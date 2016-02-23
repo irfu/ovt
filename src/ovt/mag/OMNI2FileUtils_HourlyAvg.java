@@ -315,7 +315,7 @@ public class OMNI2FileUtils_HourlyAvg {
             data = new OMNI2Data(beginIncl_mjd, endExcl_mjd, fieldArrays);
         } catch (IllegalArgumentException e) {
             /**
-             * Can be triggered if time is outside of time interval. Needs to
+             * NOTE: Can be triggered if time is outside of time interval. Needs to
              * rethrow the IllegalArgumentException as IOException so that
              * caller can handle it correctly.
              */

@@ -32,11 +32,13 @@ import java.io.*;
 import java.util.*;
 import java.lang.*;
 
-/*
+/**
 * JpegEncoder - The JPEG main program which performs a jpeg compression of
 * an image.
+*
+* NOTE: THIS CLASS APPEARS TO BE UNUSED. DELETE?
+* /Erik P G Johansson 2016-02-22
 */
-
 public class JpegEncoder extends Frame
 {
     Thread runner;
@@ -1302,10 +1304,10 @@ class JpegInfo
     		    {
     		        throw new AWTException("Grabber returned false: " + grabber.status());
     		    }
-    		    catch (Exception e) {};
+    		    catch (Exception e) {}
             }
     	}
-    	catch (InterruptedException e) {};
+    	catch (InterruptedException e) {}
         float Y[][] = new float[compHeight[0]][compWidth[0]];
         float Cr1[][] = new float[compHeight[0]][compWidth[0]];
         float Cb1[][] = new float[compHeight[0]][compWidth[0]];

@@ -30,9 +30,6 @@
  
  =========================================================================*/
 /**
- * Miscellaneous utility functions. Test code can be found in
- * ovt.util.UtilsTests.java
- *
  * Utils.java
  *
  * Created on March 23, 2000, 2:11 PM
@@ -52,6 +49,8 @@ import ovt.*;
 import ovt.datatype.*;
 
 /**
+ * Miscellaneous utility functions. Test code can be found in
+ * ovt.util.UtilsTests.java
  *
  * @author root
  * @version
@@ -1808,12 +1807,6 @@ public class Utils extends Object {
         }
     }
 
-// NOTE: Centering the window tends to be done in constructors for
-// the window/frame itself (in OVT) which means that
-// a call to this function there leaks "this" which is "problematic", maybe.
-// NOTE: Must (presumably) be called after any call to frame.pack().
-// NOTE: Does not take multiple monitors into account.
-//
 
     /**
      * IMPLEMENTATION NOTE: Reasons for having this function are (1) shorter
@@ -1822,7 +1815,16 @@ public class Utils extends Object {
      * position of windows (by changing implementation; by searching for the
      * calls to this function and maybe replacing them with calls to other
      * function).
+     *
+     * NOTE: Centering the window tends to be done in constructors for the
+     * window/frame itself (in OVT) which means that a call to this function
+     * there leaks "this" which is considered bad practice.<BR>
+     * NOTE: Must (presumably) be called after any call to frame.pack().<BR>
+     * NOTE: Should be called after the window size has been set.<BR>
+     * NOTE: Does not yet take multiple monitors into account.<BR>
      */
+    // PROPOSAL: Reorg. function so that it can be used as frame.setLocation(Utils.centerWindow(frame.getSize())).
+    // PROPOSAL: Rename as something like "getDefaultInitialLocation".
     public static void centerWindow(Window frame) {
         final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
         final Dimension frameSize = frame.getSize();

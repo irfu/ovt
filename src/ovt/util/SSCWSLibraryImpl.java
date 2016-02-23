@@ -34,9 +34,23 @@ package ovt.util;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.XMLGregorianCalendar;
 import javax.xml.namespace.QName;
+import javax.xml.ws.WebServiceException;
+
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateComponent;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateData;
 import gov.nasa.gsfc.spdf.ssc.client.CoordinateSystem;
@@ -56,18 +70,7 @@ import gov.nasa.gsfc.spdf.ssc.client.SatelliteDescription;
 import gov.nasa.gsfc.spdf.ssc.client.SatelliteSituationCenterInterface;
 import gov.nasa.gsfc.spdf.ssc.client.SatelliteSituationCenterService;
 import gov.nasa.gsfc.spdf.ssc.client.SatelliteSpecification;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import javax.xml.ws.WebServiceException;
+
 import ovt.Const;
 import ovt.datatype.Time;
 

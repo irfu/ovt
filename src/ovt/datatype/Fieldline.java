@@ -237,7 +237,7 @@ public void symetrize(int i, int j, int k, MagProps magProps) {
 	
     Object[] newPoints = Vect.toArray(points);
     Object[] newLengthCollection = Vect.toArray(lengthCollection);
-    // just for shure
+    // just for sure
     int size = (newPoints.length > newLengthCollection.length) ? newLengthCollection.length : newPoints.length;
     
     MagPoint mp;

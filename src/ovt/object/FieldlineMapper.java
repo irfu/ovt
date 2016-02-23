@@ -194,7 +194,7 @@ public boolean updateStartPoints()   {
 
   if (startPoints.size() != numberOfDataModelPoints) {
       // there is no need to compare two vectors if they have different size ;-)
-      // They are NOT EQUAL in this case. For shure.!!!
+      // They are NOT EQUAL in this case. For sure.!!!
       data_differs = true;
   } else {
       // compare two vectors elementwise

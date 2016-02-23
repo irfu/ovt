@@ -345,21 +345,6 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             RenPanel vp =  getCore().getXYZWin().getVisualizationPanel();
             vp.addCameraChangeListener(this);
         }
-        
-        // DEBUG / TEMP        
-        /*{
-            final java.util.Timer t = new java.util.Timer();
-            t.scheduleAtFixedRate(new TimerTask() {
-                public void run() {
-                    System.out.println("Time#run : cam.GetClippingRange()="+Arrays.toString(cam.GetClippingRange())
-                            +"; view="+viewFrom);
-                }
-            },        
-            1000,//Set how long before to start calling the TimerTask (in milliseconds)        
-            2000);//Set the amount of time between each execution (in milliseconds)
-            
-            System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
-        }//*/
     }
     
     

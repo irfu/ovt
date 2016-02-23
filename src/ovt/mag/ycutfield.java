@@ -30,10 +30,11 @@ Khotyaintsev
 
 =========================================================================*/
 
-package ovt.datatype;
+//package ovt.datatype;
+package ovt.mag;
 
 /**
- * This class appears to be unused (and is in the wrong package). Delete?!
+ * IMPORTANT NOTE: This class appears to be unused (and is in the wrong package). Delete?!
  * /Erik P G Johansson 2015-10-14
  */
 public class ycutfield       //  ycut

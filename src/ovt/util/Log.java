@@ -45,10 +45,11 @@ import java.io.*;
  * is lower or equal to the current "logLevel". Higher logLevel means more
  * detailed logs.
  *
- * NOTE: The policy (if there is any) for when to print to System.out.println
- * and when to print to Log is very confused. Never use System.out.println?!
- * Always use log? What if log is saved to disk and not printed to stdout?
- * Special log method for printing both to log and to stdout?
+ * NOTE: The policy in OVT (if there is any) for when to print to
+ * System.out.println and when to print to Log is very confused. Never use
+ * System.out.println?! Always use log? What if the log is saved to disk and not
+ * printed to stdout? Special log method for printing both to log and to stdout?
+ * System.out can be redirected to a log file and Log.printStream can be set to System.out.
  *
  * NOTE: Not clear if one should use log messages for debugging when working
  * with the code during development. Maybe one should use a separate Log object
@@ -113,7 +114,7 @@ public class Log extends Object {
      */
     public static void log(String msg, int msgLevel) {
         if (msgLevel <= logLevel) {
-            printStream.println(" " + msg);
+            printStream.println(msg);
         }
     }
 

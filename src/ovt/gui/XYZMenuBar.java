@@ -312,7 +312,6 @@ public class XYZMenuBar extends JMenuBar {
                 final HTMLBrowser hw = getVW().getHTMLBrowser();
 
                 final String url = "file:" + getCore().getUserDir() + getCore().getDocsSubdir() + "about.html";
-                //final String url = "file:" + getCore().getDocsSubdir() + "about.html"; FKJN edit 15Sept 2015
                 try {
                     hw.setPage(url);
                 } catch (IOException e) {
