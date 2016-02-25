@@ -53,7 +53,7 @@ import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 public class XYZMenuBar extends JMenuBar {
 
     private final Font font = Style.getMenuFont();
-    private OVTCore core;
+    private final OVTCore core;
     private final XYZWindow xyzWin;
     private JMenuItem importSatelliteMenuItem;                   // Rationalize away?
     private JMenuItem sscwsSatellitesSelectionWindowMenuItem;    // Rationalize away?
@@ -154,16 +154,17 @@ public class XYZMenuBar extends JMenuBar {
         //menu.addSeparator();
         //menu.add(menuItem);
         //if ( xyzWin.windowResizable ){
-        menu.addSeparator();
-
-        menuItem = new JMenuItem("Print...");
-        menuItem.setFont(font);
-        menuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent evt) {
-                ImageOperations.print(getCore());
-            }
-        });
-        menu.add(menuItem);
+//        menu.addSeparator();
+//
+//        // Menu item isdisabled since it is not fully implemented.      
+//        menuItem = new JMenuItem("Print...");
+//        menuItem.setFont(font);
+//        menuItem.addActionListener(new ActionListener() {
+//            public void actionPerformed(ActionEvent evt) {
+//                ImageOperations.print(getCore());
+//            }
+//        });
+//        menu.add(menuItem);
         //}
 
         menu.addSeparator();
