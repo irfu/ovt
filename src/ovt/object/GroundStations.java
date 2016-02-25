@@ -58,10 +58,15 @@ import org.w3c.dom.*;
  * @version
  */
 public class GroundStations extends VisualObject implements MenuItemsSource {
+   
+   
 
-    /** if <CODE>true</CODE> it is not possible to rename, remove*/
+    /** If <CODE>true</CODE> it is not possible to rename, remove. */
     private boolean isRootNode = false;
-    private static final String xml_file = OVTCore.getUserdataSubdir()+"gb_stations.xml";
+    
+    /** File in which ground stations are found, including whether to display
+     * them or not (checked/unchecked). */
+    private static final String GROUND_STATIONS_XML_FILE = OVTCore.getUserdataSubdir()+"gb_stations.xml";
     private final File gbStationsFile;
     
     public GroundStations(OVTCore core) {
@@ -69,7 +74,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
                     // ^-> to OVTObject::setName();
         setParent(core);
         isRootNode = true;
-        gbStationsFile = Utils.findFile(xml_file);
+        gbStationsFile = Utils.findFile(GROUND_STATIONS_XML_FILE);
 
         try {
             load();
@@ -85,19 +90,19 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
     public GroundStations(GroundStations groundStations) {
         super(groundStations.getCore(), "Ground-based stations", "images/gb_stations.gif", true); // VisualObject constructor
         setParent(groundStations);
-        gbStationsFile = Utils.findFile(xml_file);
+        gbStationsFile = Utils.findFile(GROUND_STATIONS_XML_FILE);
     }
     
     public GroundStations(OVTCore core, String name) {
         super(core, name, "images/gb_stations.gif", true); // VisualObject constructor
         setParent(core);
-        gbStationsFile = Utils.findFile(xml_file);
+        gbStationsFile = Utils.findFile(GROUND_STATIONS_XML_FILE);
     }
 
     
 /** Source of menu items available in this object
  * @return array of <CODE>JMenuItem</CODE>
- */    
+ */
     public JMenuItem[] getMenuItems() {
         JMenuItem item = new JMenuItem("Add Station...");
         item.setFont(Style.getMenuFont());
@@ -105,6 +110,8 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
             public void actionPerformed(ActionEvent e) {
                 GroundStation gs = new GroundStation(GroundStations.this, "New Station");
                 addChild(gs);
+                getChildren().fireChildAdded(gs);
+
                 gs.addPropertyChangeListener("name", getCore().getCamera().getViewToObjectsNameChangeListener());  // add camera to listeners of new ground station name
                 gs.addPropertyChangeListener("visible", getCore().getCamera().getViewToObjectsVisibilityChangeListener());  // add camera to listeners of new ground station visibility
                 gs.setCustomizerVisible(true);
@@ -114,9 +121,12 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         item2.setFont(Style.getMenuFont());
         item2.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
+                // NOTE: Does not automatically open any dialog window to edit
+                // the name of the group. The user has to manually enter
+                // the menu and select to rename the group after it has been created.
                 GroundStations gs = new GroundStations(getCore(), "New Group");
                 addChild(gs);
-                //gs.setCustomizerVisible(true);
+                getChildren().fireChildAdded(gs);
             }
         });
         
@@ -212,11 +222,11 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
 }
 
 
-/** 
+/******************************************************************************
  *
  *                  class GroundbasedStationsDOM
  *
- */
+ ******************************************************************************/
 
 
 
