@@ -1,18 +1,14 @@
 #!bin/bash
-#remove *.so.1 files, replace with links.
+# Remove *.so.1 files and replace them with links.
+
 cd ~/OVT/ovt/dist_static/natives/Linux/
 
-shit=$(ls *.so.1 );
+filename_list=$(ls *.so.1 );
 
-for number in ${shit[@]}
-    do
-	echo "removing" $number
-	rm $number
-	#ln -s target link
-	ln -s ${number%.1} $number       
-	echo "creating link "${number%.1} to $number
-
-    done
-
-
-
+for filename in ${filename_list[@]}
+do
+	echo "Removing" $filename
+	rm $filename
+	ln -s ${filename%.1} $filename       
+	echo "Creating link "${filename%.1} to $filename
+done

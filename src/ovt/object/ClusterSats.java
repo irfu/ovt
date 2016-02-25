@@ -86,7 +86,7 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
       pd.setPropertyEditor(editor);
       addPropertyChangeListener(editor);
       getDescriptors().put(pd);
-    } catch (IntrospectionException e2) {}
+    } catch (IntrospectionException exc) {}
     
     System.out.println("Loading Cluster Satellites...");
     

@@ -145,8 +145,10 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
    * @throws PropertyVetoException
    */
   public void setVisible(boolean visible) {
-    boolean oldVisible = this.isVisible();
-    if (oldVisible == visible) return; // nothing to change
+    final boolean oldVisible = this.isVisible();
+    if (oldVisible == visible) {
+        return;    // Nothing to change
+    }
     
     //if (!isEnabled()) return; // object is not enabled - no motion. ;)
     if (visible && !isEnabled()) 
@@ -200,18 +202,18 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     firePropertyChange ("visible", new Boolean (oldVisible), new Boolean (visible));
   }
   
-  private boolean was_visible = true;
+  private boolean wasVisible = true;
   private boolean stored = false;
 
   public void storeVisible(boolean or_mask) {
-    was_visible = this.isVisible() | or_mask;
+    wasVisible = this.isVisible() | or_mask;
   }
 
   public boolean restoreVisible() {
-    if (was_visible == true) {
+    if (wasVisible == true) {
         this.setVisible(true);
     }
-    return was_visible;
+    return wasVisible;
   }
   
   /** hides the object if enabled=false and calls superclass method setEnabled */

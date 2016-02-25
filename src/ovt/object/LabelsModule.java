@@ -87,7 +87,7 @@ public class LabelsModule extends SingleActorSatModule implements MenuItemsSourc
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("scale", this);
                 pd.setDisplayName("Labels size");
                 pd.setMenuAccessible(false);
-                ExponentialSliderPropertyEditor scaleEditor = new ExponentialSliderPropertyEditor(pd,
+                final ExponentialSliderPropertyEditor scaleEditor = new ExponentialSliderPropertyEditor(pd,
                     1./8., 8., new double[]{1./8.,1./2., 1, 2, 8});
                 scaleEditor.setFrameOwner(getCore().getXYZWin());    // for better initial position
                 scaleEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {

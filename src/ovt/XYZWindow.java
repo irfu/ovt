@@ -63,7 +63,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     /**
      * NOTE: All loading of native libraries has been collected to this place so
      * that (1) loading is always executed at the launch of the application ==>
-     * can not use native code for unitialized libraries ==> Less risk of
+     * Can not use native code for unitialized libraries ==> Less risk of
      * errors, (2) debugging/understanding when loading native libraries becomes
      * easier.<BR>
      * NOTE: It is not ideal (but understandable) to load libraries in a static
@@ -71,18 +71,19 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * (2) can not assume that logs are initialized.
      */
     static {
-        // NOTE: vtkNativeLibrary.LoadAllNativeLibraries doc says:
-        // "@return true if all library have been successfully loaded"
-        // Detect failure without try-catch exceptions.
-
         try {
-            Log.log("Loading VTK native libraries");
+            Log.log("Loading VTK native libraries", 0);
+
+            // NOTE: vtkNativeLibrary.LoadAllNativeLibraries doc says:
+            // "@return true if all library have been successfully loaded"
+            // Detect failure without try-catch exceptions.
             final boolean allNativeLibrariesLoaded = vtkNativeLibrary.LoadAllNativeLibraries();  // Separate variable only to make the meaning of the return value clear.
             if (!allNativeLibrariesLoaded) {
+
                 for (vtkNativeLibrary lib : vtkNativeLibrary.values()) {
                     if (lib.IsLoaded()) {
                         final String msg = lib.GetLibraryName() + " loaded";
-                        Log.log(msg);
+                        Log.log(msg, 0);
                         System.out.println(msg);
                     } else {
                         final String msg = lib.GetLibraryName() + " <----- NOT loaded";
@@ -91,14 +92,33 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                     }
                 }
                 System.out.println("Make sure the search path is correct:");
-                System.out.println("java.library.path = " + System.getProperty("java.library.path"));
 
             }
+
+            // Log important paths
+            // Potentially very useful for debugging problems with loading native files.
+            // java.library.path : Paths to where Java will search for native libraries.
+            // vtk.lib.dir : Found inside the VTK code. Is added to
+            //               java.library.path by vtkNativeLibrary#LoadLibrary (if non-null).
+            final String s1 = "java.library.path = " + System.getProperty("java.library.path");
+            final String s2 = "vtk.lib.dir       = " + System.getProperty("vtk.lib.dir");
+            Log.log(s1, 0);
+            Log.log(s2, 0);
+            System.out.println(s1);
+            System.out.println(s2);
+
             vtkNativeLibrary.DisableOutputWindow(null);
 
-            Log.log("Loading native library " + "ovt-" + OVTCore.VERSION);
+            /* NOTE: On Linux, System#loadLibrary will prefix the library name
+             * with "lib" to find the filename (possibly plus library versioning).
+            
+             * NOTE: Uncertain what native library "jawt" is for. Is presumably
+             * the "Java AWT" library that comes with java. If it is for "Java AWT", 
+             * does not Java load it automatically then?!!
+            */
+            Log.log("Loading native library " + "ovt-" + OVTCore.VERSION, 0);
             System.loadLibrary("ovt-" + OVTCore.VERSION);
-            Log.log("Loading native library " + "jawt");
+            Log.log("Loading native library " + "jawt", 0);
             System.loadLibrary("jawt");
 
         } catch (SecurityException | UnsatisfiedLinkError | NullPointerException e) {
@@ -111,7 +131,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             throw e;   // Throw again to quit.
         }
 
-        /* //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
+        /*
+         //Solution of problem for linux dist? http://public.kitware.com/pipermail/vtkusers/2015-March/090424.html
 
          dir == ('../directory/to/the/VTK/DLLs');
          File[] files = dir.listFiles();
@@ -159,7 +180,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         super(OVTCore.SIMPLE_APPLICATION_NAME + " " + OVTCore.VERSION + " (Build " + OVTCore.BUILD + ")");
         try {
             setIconImage(Toolkit.getDefaultToolkit().getImage(OVTCore.class.getClassLoader().getResource("images/ovt.gif")));
-        } catch (NullPointerException npe) {
+        } catch (NullPointerException e) {
             Log.err("FileNotFound: images/ovt.gif");
         }
 
@@ -187,22 +208,15 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 //------- create the OVTCore ----------
         /* NOTE: This loads "GlobalSettings" (static in OVTCore class).
-         One must therefore call OVTCore.getGlobalSetting(..) AFTER this command.
-         NOTE: OVTCore(..) makes use of <XYZWindow.this>.renPanel. Therefore
-         renPanel has to have been set BEFORE this command.
-         (NOTE: This is why one should not leak "this" from within a constructor.) */
+         * One must therefore call OVTCore.getGlobalSetting(..) AFTER this command.
+         * NOTE: OVTCore(..) makes use of <XYZWindow.this>.renPanel. Therefore
+         * renPanel has to have been set BEFORE this command.
+         * (NOTE: This is why one should not leak "this" from within a constructor.)
+         * NOTE: OVTCore initializes the logs and log files.
+         */
         core = new OVTCore(this);
 
-        /*
-         int width = DEFAULT_VISUALIZATION_PANEL_WIDTH;
-         int height = DEFAULT_VISUALIZATION_PANEL_HEIGHT;
-         try {
-         width = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_WIDTH));
-         height = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_VISUALIZATION_PANEL_HEIGHT));
-         } catch (NumberFormatException ignore) {
-         }*/
-        //renPanel.setSize(width, height);             // NOTE: renPanel.setSize seems unnecessary.
-        // set the renderer
+        // Set the renderer
         ren = renPanel.getRenderer();
         final float[] rgb = ovt.util.Utils.getRGB(core.getBackgroundColor());
         ren.SetBackground(rgb[0], rgb[1], rgb[2]);
@@ -212,6 +226,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         setJMenuBar(menuBar);
 
 // ----------- Set window size ----------
+        // NOTE: The initial window position is set in XYZWindow#start.
         boolean pack = false;
         try {
             setSize(
@@ -257,7 +272,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         }
         contentPane.add(splitPane, BorderLayout.CENTER);
 
-// ------------- add toolbars -----------
+// ------------- Add toolbars -----------
         toolBarContainer = new ToolBarContainer(core, this);
         // sets width and computes and sets height for this width
         toolBarContainer.setPreferredWidth(splitPane.getPreferredSize().width);
@@ -287,9 +302,6 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
     public void start() {
 
-        //refreshGUI();
-        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-
         try {
             final int x = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_X));
             final int y = Integer.parseInt(OVTCore.getGlobalSetting(SETTING_XYZWINDOW_ORIGIN_Y));
@@ -297,8 +309,8 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             // On Linux/KDE: It appears that this method always sets the window
             // inside the screen. Therefore one does not need to check for this.
             setLocation(x, y);
-        } catch (NumberFormatException e2) {
-            Utils.centerWindow(this);
+        } catch (NumberFormatException e) {
+            Utils.setInitialWindowPosition(this, null);
         }
 
         splashWindow.dispose();
@@ -561,9 +573,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         getCore().getSats().getChildren().fireChildAdded(sat);
 
         /* Include here or let the caller call it?!
-         Having the caller call this might be more efficient.
-         Including here might also have implications if automatically calling this function during launch/initialization.
-         Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
+         * Having the caller call this might be more efficient.
+         * Including here might also have implications if automatically calling this function during launch/initialization.
+         * Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
          */
         getCore().Render();
     }
@@ -718,7 +730,7 @@ class SplashWindow extends JWindow {
         pack();
 
         // Center splash window
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, null);
     }
 
 }

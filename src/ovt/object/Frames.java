@@ -47,6 +47,9 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/** 
+  * Should represent a "frame" i.e. a graphic plane representing a coordinate plane (e.g. z=0).
+ */
 public class Frames extends VisualObject
 implements MenuItemsSource {
 

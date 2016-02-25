@@ -157,7 +157,8 @@ public class OMNI2CustomizerTest {
         Log.setLogLevel(2);
         //JCheckBox cb = new MagProps.ActivityEditorOrOMNI2_CheckBox();
         TimeSettingsEmulator tse = new TimeSettingsEmulator();
-        final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse, "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat");
+        final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse,
+                "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat");
         win.setVisible(true);
 
         // Needed to prevent lingering processes when testing (launching & closing repeatedly).

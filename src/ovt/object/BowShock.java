@@ -78,7 +78,7 @@ public class BowShock extends SingleActorObject implements
   private final boolean customizerVisible = false;
 
 public BowShock(OVTCore core) { 
-  super(core, "BowShock", "images/bowshock.gif");
+  super(core, "Bow Shock", "images/bowshock.gif");
   // set the color
   setColor(Color.green); 
   Log.log("BowShock :: init ...", DEBUG);
@@ -95,7 +95,7 @@ public BowShock(OVTCore core) {
 
   @Override
   protected void validate() {
-        Log.log("Recalculating BowShock ...", DEBUG);
+        Log.log("Recalculating Bow Shock ...", DEBUG);
 	// create actor
 	// Here we go!
 

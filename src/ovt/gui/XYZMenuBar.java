@@ -71,7 +71,8 @@ public class XYZMenuBar extends JMenuBar {
      * km), akebono (62-87 km), and de1 (DE-1) (7-164 km). NOTE: de1.tle is
      * either partially corrupt or is partially (badly) misinterpreted by OVT.
      * Visualizations show several jumps which I have not used in the
-     * comparison.<BR> /Erik P G Johansson 2016-01-18
+     * comparison.<BR>
+     * /Erik P G Johansson 2016-01-18
      */
     private static final String TLE_WARNING_MSG = OVTCore.SIMPLE_APPLICATION_NAME
             + " can open TLE files but with position errors of up to ca 200 km.";
@@ -156,7 +157,7 @@ public class XYZMenuBar extends JMenuBar {
         //if ( xyzWin.windowResizable ){
 //        menu.addSeparator();
 //
-//        // Menu item isdisabled since it is not fully implemented.      
+//        // NOTE: Menu item is disabled since it is not fully implemented.
 //        menuItem = new JMenuItem("Print...");
 //        menuItem.setFont(font);
 //        menuItem.addActionListener(new ActionListener() {
@@ -166,7 +167,6 @@ public class XYZMenuBar extends JMenuBar {
 //        });
 //        menu.add(menuItem);
         //}
-
         menu.addSeparator();
 
         menuItem = new JMenuItem("Exit");
@@ -335,6 +335,7 @@ public class XYZMenuBar extends JMenuBar {
             public void actionPerformed(ActionEvent evt) {
                 final ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
                 final Sat sat = wizard.start();
+                
                 if (sat != null) {
                     if (sat instanceof TLESat) {
                         // Only show warning message if (1) the file was successfully
@@ -405,7 +406,7 @@ public class XYZMenuBar extends JMenuBar {
 
                 // List of TLE/LTOF (file-based) satellites.
                 satsMenu.addSeparator();
-                JMenuItem[] items = createLTOF_TLESatsMenuItemList();
+                JMenuItem[] items = createSatsMenuItemList_LTOF_TLE();
                 for (JMenuItem item : items) {
                     satsMenu.add(item);
                 }
@@ -519,20 +520,24 @@ public class XYZMenuBar extends JMenuBar {
 
 
     /**
-     * Each JMenuItem is a JCheckBoxMenuItem with a satellite's name, is checked
-     * (checkbox is checked) if sat is added to {@link ovt.object.Sats Sats}.
+     * Return array of JMenuItems representing LTOF and TLE files in standard
+     * orbit data directories. Each JMenuItem is a
+     * JCheckBoxMenuItem with a satellite's name, and is checked (checkbox is
+     * checked) if sat is added to {@link ovt.object.Sats Sats}.
      *
      * NOTE: Special case when treating the Cluster[1-4].ltof files.
      *
      * @return Array with JMenuItem to put in JMenu.
      */
-    public JMenuItem[] createLTOF_TLESatsMenuItemList() {
+    public JMenuItem[] createSatsMenuItemList_LTOF_TLE() {
         /*=====================================
          Look for files in odata in user home.
          =====================================*/
         File[] allFiles = new File[0];
         {
             /**
+             * Filter files in directory based on file suffix.
+             * 
              * NOTE: Excludes files "Cluster[1-4].ltof" since they are
              * automatically opened by ClusterSats (or some code in the
              * neighbourhood) and are therefore treated specially somewhere
@@ -542,6 +547,7 @@ public class XYZMenuBar extends JMenuBar {
                     = (File dir, String file)
                     -> file.endsWith(".tle") || (file.endsWith(".ltof") && !(file.matches("Cluster[1-4].ltof")));
 
+            // Look for files in user account orbit data directory.
             final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
             if (userOrbitDir != null) {
                 final File[] userFiles = userOrbitDir.listFiles(filenameFilter);
@@ -550,7 +556,7 @@ public class XYZMenuBar extends JMenuBar {
                 System.out.println("Can not find directory (Utils.findUserDir(" + OVTCore.getOrbitDataSubdir() + ")).");
             }
 
-            // Look for files in system level odata.
+            // Look for files in system level orbit data directory.
             final File sysOrbitDir = Utils.findSysDir(OVTCore.getOrbitDataSubdir());
             if (sysOrbitDir != null) {
                 final File[] sysFiles = sysOrbitDir.listFiles(filenameFilter);
@@ -565,9 +571,9 @@ public class XYZMenuBar extends JMenuBar {
          }*/
         final JMenuItem[] menuItems = new JMenuItem[allFiles.length];
 
-        // ---------------------------------------------------
-        // Create one ActionListener used for all Sat in list.
-        // ---------------------------------------------------
+        //=========================================================================
+        // Create one instance of ActionListener that is used for ALL Sat in list.
+        //=========================================================================
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
             final String satname = item.getText();    // Figure out which Sat is referred to.
@@ -627,13 +633,14 @@ public class XYZMenuBar extends JMenuBar {
      * if one is uncertain of when to trigger the warning in the code (maybe
      * even in multiple places?) and might move it.
      */
-    private void sendTLEWarningMessage() {
+    public void sendTLEWarningMessage() {
         core.sendWarningMessage(
                 TLE_WARNING_TITLE,
                 TLE_WARNING_MSG);
     }
 
 
+    // VW = ? (Volkswagen?!)
     protected XYZWindow getVW() {
         return xyzWin;
     }

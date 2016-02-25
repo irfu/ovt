@@ -314,6 +314,9 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         //if (children == null) children = new Children();
         //child.setParent(this);
         children.addChild(child);
+        
+        // Presumably disabled because the caller should do this manually instead.
+        // Better if caller can do all its changes first (e.g. add many children), and then "fire" once.
         //children.fireChildAdded(child);
     }
     

@@ -50,8 +50,8 @@ import ovt.util.SSCWSLibrary.NoSuchSatelliteException;
 /**
  * Informal manual test code for experimenting with comparing trajectories and
  * coordinates to determine differences in coordinates or time. Used in
- * particular to verify that the SSCWS satellite data agrees with TLE and LTOF
- * files.
+ * particular to verify that the SSC Web Services satellite data agrees with TLE
+ * and LTOF files.
  *
  * Theories for why trajectories may differ:<BR>
  * 1) Interpolation<BR>
@@ -79,12 +79,13 @@ public class CompareTrajectoriesTest {
     /**
      * Useful when modifying OVT code obtaining/deriving SSCWS data.
      */
-    private static final boolean USE_SSCWS_DISK_CACHE = true;
-    //private static final boolean USE_SSCWS_DISK_CACHE = false;
+//    private static final boolean USE_SSCWS_DISK_CACHE = true;
+    private static final boolean USE_SSCWS_DISK_CACHE = false;
 
 
     public static void main(String[] args) throws IOException, NoSuchSatelliteException {
-        System.setProperty("http.agent", "Orbit Visualization Tool (OVT) - Test code");   // Not required but os out of politeness to NASA SSC.
+        // Not required but added out of politeness to NASA SSC.
+        System.setProperty("http.agent", OVTCore.HTTP_AGENT_PROPERTY_STRING + " - Test code");
 
         Log.setLogLevel(2);
         //test_testCode();
@@ -290,9 +291,9 @@ public class CompareTrajectoriesTest {
          polar.tle   : 1996-10-02 - 2004-03-09
          akebono.tle : 1989-02-27 - 1994-10-26
         
-        // The trajectory in "de1.tle" (or at least as OVT interprets it) is bad
-        // around 1990-05-25, 00:00-01:00 (jumps backward).
-        // Is then lagging behind the SSCWS orbit until ca 1990-06-01, 22:00.
+         // The trajectory in "de1.tle" (or at least as OVT interprets it) is bad
+         // around 1990-05-25, 00:00-01:00 (jumps backward).
+         // Is then lagging behind the SSCWS orbit until ca 1990-06-01, 22:00.
          de1         : 1989-10-05 - 1991-05-01   
          --------
          Double_Star_1.ltof : 2004-01-01 - 2007-10-10
@@ -321,11 +322,10 @@ public class CompareTrajectoriesTest {
         //final double lengthMjd = 120;
 
 //        final double startMjd = Time.getMjd(2004, 2, 1, 0, 0, 0);
-//        final double lengthMjd = 59 + 104;
-        //final double startMjd = Time.getMjd(2004, 4, 1, 0, 19, 50);
+        final double startMjd = Time.getMjd(2004, 4, 1, 0, 19, 50);
         //final double lengthMjd = Time.getMjd(2004, 4, 1, 0, 19, 50.1) - startMjd;
-        final double startMjd = Time.getMjd(1990, 03, 1, 0, 0, 0);
-        final double lengthMjd = 2*30;
+//        final double startMjd = Time.getMjd(1990, 03, 1, 0, 0, 0);
+        final double lengthMjd = 2 * 30;
         //
         final double timeDifferenceMjd2 = Time.DAYS_IN_SECOND * 0; // -21.7;
         final double[] rotationVec2 = {0, 0, 0};
@@ -339,10 +339,10 @@ public class CompareTrajectoriesTest {
 //                //new LTOFFileDataSource("/home/erjo/work_files/INBOX/SUPER_LTOF_C1.CR.ltof"),
 //                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
-        /*compareTrajectories(
-         new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
-         new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Double_Star_1.ltof"),
-         Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
+        compareTrajectories(
+                new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Double_Star_1.ltof"),
+                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         /*compareTrajectories(
          new RawSSCWSDataSource("doublestar1", CoordinateSystem.GEI_J_2000),
@@ -362,7 +362,7 @@ public class CompareTrajectoriesTest {
 //         new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/akebono.tle"),
 //         Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
-        compareTrajectories(
+        /*compareTrajectories(
          new SSCWSDataSource("de1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
          new TLEFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/de1.tle"),
          Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/

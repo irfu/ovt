@@ -56,12 +56,12 @@ public class TLESorter extends Object {
     
     /** 
      * Lines are treated as duplicated if time gap is less than 0.5 day.
+     * Uncertain how the code handles inFile==outFile.
      */
-    public static void sort(File infile, File outfile) throws IOException {
-        BufferedReader in = new BufferedReader( new FileReader(infile) );
+    public static void sort(File inFile, File outFile) throws IOException {
+        BufferedReader in = new BufferedReader( new FileReader(inFile) );
         long lineNumber = 0;
-        byte prev_line_type = 1;
-        Vector data = new Vector(200,50);
+        Vector data = new Vector(200, 50);
         String header = null;
         try {
             
@@ -122,19 +122,20 @@ public class TLESorter extends Object {
                   // assume that if the time > Y1960 it is 20'throws century
                   // if time < 1960 it is 21 century
                   // so if time1 and time 2 are in the different centuries - the result is opposite to normal
-                  if (time1 > Y1960 && time2 < Y1960) return -1;
-                  if (time1 < Y1960 && time2 > Y1960) return 1;
+                  if (time1 > Y1960 && time2 < Y1960) { return -1; }
+                  if (time1 < Y1960 && time2 > Y1960) { return 1;  }
                   
                   if (time1 > time2) return 1;
                   else return -1;
                 }
             });
             
-            BufferedWriter out = new BufferedWriter( new FileWriter(outfile) );
-            if (header != null) 
+            final BufferedWriter out = new BufferedWriter( new FileWriter(outFile) );
+            if (header != null) {
 	    	out.write(header+"\n");
-	    else // if no header is given we have to generate it, because OVT needs it 
-	        out.write(outfile+"\n");
+            } else {   // if no header is given we have to generate it, because OVT needs it 
+	        out.write(outFile+"\n");
+            }
 		
             Enumeration e = data.elements();
             TwoLines prev_tl = null;
@@ -158,7 +159,7 @@ public class TLESorter extends Object {
             out.close();
             if (dup_lines_count > 0) System.out.println("Removed "+(dup_lines_count*2)+" duplicated lines from "+lineNumber+" processed.");
         }
-        outfile.setLastModified(infile.lastModified()); // preserve last modified
+        outFile.setLastModified(inFile.lastModified()); // preserve last modified
     }
     
     public static void main(String[] args) {

@@ -213,7 +213,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
     
     @Override
     public JMenuItem[] getMenuItems() {
-        final JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createLTOF_TLESatsMenuItemList();
+        final JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createSatsMenuItemList_LTOF_TLE();
         final JMenuItem[] res = new JMenuItem[sats.length + 2];
         res[0] = getCore().getXYZWin().getXYZMenuBar().createImportSatelliteMenuItem();
         res[1] = null; // separator

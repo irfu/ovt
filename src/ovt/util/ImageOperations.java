@@ -602,24 +602,29 @@ public class ImageOperations {
         
     }
       
+   
     public static BufferedImage toBufferedImage(Image img)
-{
-    if (img instanceof BufferedImage)
     {
-        return (BufferedImage) img;
+        if (img instanceof BufferedImage)
+        {
+            return (BufferedImage) img;
+        }
+
+        // Create a buffered image with transparency
+        BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
+
+        // Draw the image on to the buffered image
+        Graphics2D bGr = bimage.createGraphics();
+        bGr.drawImage(img, 0, 0, null);
+        bGr.dispose();
+
+        // Return the buffered image
+        return bimage;
     }
-
-    // Create a buffered image with transparency
-    BufferedImage bimage = new BufferedImage(img.getWidth(null), img.getHeight(null), BufferedImage.TYPE_INT_ARGB);
-
-    // Draw the image on to the buffered image
-    Graphics2D bGr = bimage.createGraphics();
-    bGr.drawImage(img, 0, 0, null);
-    bGr.dispose();
-
-    // Return the buffered image
-    return bimage;
-}
+    
+  
+    // NOTE: Relies on unfinished code which throws UnsupportedOperationException.
+    // /Erik P G Johansson 2016-02-25
     public static void print(OVTCore core) {
         final OutputLabel outputLabel = core.getOutputLabel();
         final boolean oldVisible = outputLabel.isVisible();
@@ -637,7 +642,9 @@ public class ImageOperations {
         try {
             //if (true) throw new NoClassDefFoundError();
             PrinterJob printJob = PrinterJob.getPrinterJob();
-            Printable printable = new PrintableImage(visualPanel.getImage());
+            Printable printable = new PrintableImage(
+                    visualPanel.getImage()   // Throws UnsupportedOperationException. /Erik P G Johansson 2016-02-25
+            );
             printJob.setJobName(PRINT_JOB_NAME);
             printJob.setPrintable(printable);
             boolean pDialogState = printJob.printDialog();
@@ -648,8 +655,7 @@ public class ImageOperations {
             System.err.println("Can't access printer! " + ace);
         } catch (java.awt.print.PrinterException pe) {
             System.err.println("Printing error! " + pe);
-        }
-        catch (NoClassDefFoundError e) {
+        } catch (NoClassDefFoundError e) {
             System.out.println("Package awt.print.* not found. Using java 1.1 printing");
             /* old, printing invocation
             try {

@@ -6,27 +6,27 @@
  Version:   $Revision: 2.4 $
 
 
- Copyright (c) 2000-2003 OVT Team 
- (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
 
  =========================================================================*/
 
@@ -41,27 +41,29 @@ import java.io.*;
 
 /**
  * Log class with only static methods. Log and error messages are "registered"
- * with a log number. Messages are only logged (printed/saved) if the log number
- * is lower or equal to the current "logLevel". Higher logLevel means more
+ * with a message level. Messages are only logged (printed/saved) if the message
+ * level is lower or equal to the current "logLevel". Higher logLevel means more
  * detailed logs.
  *
  * NOTE: The policy in OVT (if there is any) for when to print to
- * System.out.println and when to print to Log is very confused. Never use
- * System.out.println?! Always use log? What if the log is saved to disk and not
- * printed to stdout? Special log method for printing both to log and to stdout?
- * System.out can be redirected to a log file and Log.printStream can be set to System.out.
+ * System.out.println and when to print to Log, and with what message level is
+ * very confused. Never use System.out.println?! Always use log? What if the log
+ * is saved to disk and not printed to stdout? Special log method for printing
+ * both to log and to stdout? System.out can be redirected to a log file and
+ * Log.printStream can be set to System.out.
  *
- * NOTE: Not clear if one should use log messages for debugging when working
- * with the code during development. Maybe one should use a separate Log object
- * (if this one could be instantiated).
+ * NOTE: It is not clear if one should use log messages for debugging when
+ * working with the code during development. Maybe one should use a separate Log
+ * object (if this one could be instantiated)?
  *
- * Log levels:<BR>
- * 0 - No (non-error) log messages<BR>
+ * Message and log levels:<BR>
+ * 0 - No (non-error) log messages (?!)<BR>
  * 1 - Some essential log messages<BR>
- * 2 or greater - More esoteric/detailed log messages<BR>
- * NOTE: Permits (no IllegalArgumentException) log messages with level=0 since
- * it is useful while debugging (?!). (Uncertain whether it is advisable to
- * throw IllegalArgumentException in any commonly used log method.)
+ * 2 or greater - More esoteric/detailed log messages the higher the level.<BR>
+ * 
+ * NOTE: The code permits (no IllegalArgumentException) log messages with
+ * level=0 since it is useful while debugging (?!). (Uncertain whether it is
+ * advisable to throw IllegalArgumentException in any commonly used log method.)
  *
  * @author ko
  * @version

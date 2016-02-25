@@ -76,9 +76,11 @@ public class Children {
   }
 
   
-  /** Adds the child and sets its parent to {@link #parent } */
+  /** Adds the child and sets its parent to {@link #parent }. */
   public void addChild(OVTObject obj) {
-    if (parent != null) obj.setParent(parent);
+    if (parent != null) {
+        obj.setParent(parent);
+    }
     put(obj.getName(), obj);
   }  
 
