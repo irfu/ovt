@@ -137,8 +137,10 @@ public class OutputLabelCustomizer extends JDialog implements CoreSource
 
         pack();
         setResizable(false);
-        Point xyz_loc = getCore().getXYZWin().getLocation();
-        setLocation(xyz_loc.x+16, xyz_loc.y+16);
+        
+//        Point xyz_loc = getCore().getXYZWin().getLocation();
+//        setLocation(xyz_loc.x+16, xyz_loc.y+16);
+        Utils.setInitialWindowPosition(this, owner);
     }
     
     private JComponent getComponent(String propertyName) {

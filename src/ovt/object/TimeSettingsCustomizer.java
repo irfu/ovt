@@ -169,7 +169,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       setResizable(false);
       
       // Center the window
-      Utils.centerWindow(this);
+      Utils.setInitialWindowPosition(this, null);
     }
 
 

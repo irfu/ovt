@@ -120,7 +120,8 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
         initComponents();
         pack();
         
-        Utils.centerWindow(this);
+        // Can not use XYZWindow as reference since this window is initialized during launch.
+        Utils.setInitialWindowPosition(this, null);
     }
 
 
@@ -158,8 +159,7 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
                     return;
                 }
 
-                ListSelectionModel lsm
-                        = (ListSelectionModel) e.getSource();
+                ListSelectionModel lsm = (ListSelectionModel) e.getSource();
                 if (lsm.isSelectionEmpty()) {
                     //no rows are selected
                     deleteButton.setEnabled(false);

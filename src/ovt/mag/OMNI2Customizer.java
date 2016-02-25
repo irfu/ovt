@@ -249,8 +249,8 @@ public class OMNI2Customizer extends JFrame {
         pack();
         setResizable(false);
 
-        // Set location at center of screen.
-        Utils.centerWindow(this);
+        // Can not use a reference frame since XYZWindow size&position have not been initialized yet.
+        Utils.setInitialWindowPosition(this, null);
     }//*/
 
 

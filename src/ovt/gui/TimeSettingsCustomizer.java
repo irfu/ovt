@@ -169,12 +169,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       pack();
       setResizable(false);
       
-      // Center the window
-//      Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-//      Dimension windowSize = getSize();
-//      setLocation(scrnSize.width/2 - windowSize.width/2,
-//                 scrnSize.height/2 - windowSize.height/2);
-      Utils.centerWindow(this);
+      Utils.setInitialWindowPosition(this, null);
     }
 
     

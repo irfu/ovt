@@ -76,6 +76,7 @@ public class CameraCustomizer extends JFrame implements PropertyChangeListener {
     protected JComboBox projectionComboBox;
     
     
+// PROPOSAL: Remove "parent"
 public CameraCustomizer(Camera acam, Window parent) {
     super();
     setTitle("View Control");
@@ -186,6 +187,8 @@ public CameraCustomizer(Camera acam, Window parent) {
     
     pack();
     //setResizable(false);
+    // Can not use XYZWindow as reference since it has not been initialized yet.
+    Utils.setInitialWindowPosition(this, null);
 }
 
 private JPanel createViewsPanel() {

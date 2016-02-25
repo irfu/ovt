@@ -439,8 +439,7 @@ public class Dumper {
             pack();
             setResizable(false);
 
-            // Center the window
-            Utils.centerWindow(this);
+            Utils.setInitialWindowPosition(this, null);
         }
 
         private void refresh() {

@@ -95,7 +95,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
     pack ();
     setSize(new Dimension(600, 600));
     
-    Utils.centerWindow(this);
+    Utils.setInitialWindowPosition(this, null);
   }
   
   /** sets URL

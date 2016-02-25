@@ -197,7 +197,8 @@ protected JFrame getOrbitMonitor() {
     
     orbitMonitor.pack();
     orbitMonitor.setResizable(false);
-    Utils.centerWindow(orbitMonitor);
+    
+    Utils.setInitialWindowPosition(orbitMonitor, null);
   }
   return orbitMonitor;
 }
@@ -987,8 +988,7 @@ class OrbitMonitorSettingsWindow extends JDialog {
         pack();
         //setResizable(false);
         
-        // Center the window
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, null);
     }
     
 }

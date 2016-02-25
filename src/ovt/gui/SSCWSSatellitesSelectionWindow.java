@@ -203,8 +203,7 @@ public class SSCWSSatellitesSelectionWindow extends JFrame {
             core.getSats().getChildren().addChildrenListener(tableModel);
         }
 
-        // Set location at center of screen.
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, core.getXYZWin());
     }
 
 

@@ -104,8 +104,9 @@ public class DataModuleCustomizer extends JDialog implements PropertyChangeListe
         
         getContentPane().add(cont);
         
-        // Center the window
-        Utils.centerWindow(this);   // Appears to be unnecessary for unknown reason.
+        // Appears to be unnecessary for unknown reason.
+        Utils.setInitialWindowPosition(this, null);
+
     }
     
     public void propertyChange(PropertyChangeEvent evt) {

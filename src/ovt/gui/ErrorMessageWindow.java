@@ -113,8 +113,7 @@ public class ErrorMessageWindow extends JDialog  {
         cont.add(messageLabel, BorderLayout.NORTH);
         cont.add(panel, BorderLayout.CENTER); // buttonsPanel 
         
-        setException(e);
-        
+        setException(e);        
     }
         
         
@@ -130,11 +129,12 @@ public class ErrorMessageWindow extends JDialog  {
         setResizable(false);
         
         // Center the window.
-        // NOTE: Not using Utils.centerWindow to minimize risk of triggering other exception.
-        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        Dimension windowSize = getSize();
-        setLocation(scrnSize.width/2 - windowSize.width/2,
-                 scrnSize.height/2 - windowSize.height/2);
+        // NOTE: Not using Utils.setInitialWindowPosition to minimize risk of triggering other exception.
+//        Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        Dimension windowSize = getSize();
+//        setLocation(scrnSize.width/2 - windowSize.width/2,
+//                 scrnSize.height/2 - windowSize.height/2);
+        this.setLocationRelativeTo(null);
     }
     
     public void showHideDetailsPanel() {

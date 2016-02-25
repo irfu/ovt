@@ -58,9 +58,9 @@ import javax.swing.*;
  */
 public class ImportSatelliteWizard extends JDialog {
     
-    private final static String RECENT_ORBIT_FILE = "ImportSatelliteWizard.RecentOrbitFile";
-    private final static int TLE      = 1;
-    private final static int LTOF   = 2;
+    private final static String SETTING_RECENT_ORBIT_FILE = "ImportSatelliteWizard.RecentOrbitFile";
+    private final static int TLE = 1;
+    private final static int LTOF = 2;
     
     private Sats sats;
     private Sat sat = null;
@@ -79,7 +79,7 @@ public class ImportSatelliteWizard extends JDialog {
         
         okButton.setText("Import");
         getRootPane().setDefaultButton(okButton);
-        filePanel.setFile(new File(OVTCore.getGlobalSetting(RECENT_ORBIT_FILE, OVTCore.getUserDir())));
+        filePanel.setFile(new File(OVTCore.getGlobalSetting(SETTING_RECENT_ORBIT_FILE, OVTCore.getUserDir())));
         filePanel.setAcceptAllFileFilterUsed(false);
         OvtExtensionFileFilter filter = new OvtExtensionFileFilter("Long Term Orbit Files (*.ltof)");
         filter.addExtension(".ltof");
@@ -107,7 +107,7 @@ public class ImportSatelliteWizard extends JDialog {
                     int index = fname.lastIndexOf('.');
                     if (index != -1) satNameTF.setText(Utils.replaceUnderlines(fname.substring(0,index)));
                 //}
-                OVTCore.setGlobalSetting(RECENT_ORBIT_FILE, filePanel.getFile().getAbsolutePath());
+                OVTCore.setGlobalSetting(SETTING_RECENT_ORBIT_FILE, filePanel.getFile().getAbsolutePath());
             }
         
         });
@@ -156,41 +156,43 @@ public class ImportSatelliteWizard extends JDialog {
         
         panel.add( Box.createHorizontalGlue() );    
         
+        
+        
         okButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 // set
                 try {
                     final String satName = satNameTF.getText();
                     final File file = filePanel.getFile();
-                    OVTCore.setGlobalSetting(RECENT_ORBIT_FILE, file.getAbsolutePath());
+                    OVTCore.setGlobalSetting(SETTING_RECENT_ORBIT_FILE, file.getAbsolutePath());
                     
                     // check the sat name
-                    if ("".equals(satName)) 
-                        throw new Exception("Please specify satellite name.");
+                    if (satName.isEmpty()) {
+                        throw new Exception("No satellite name specified");
+                    }
                     
-                    
-                    int dataType = getOrbitDataType(file.getName());
-                    
-                    String ext="";
+                    final int dataType = getOrbitDataType(file.getName());
+                    final String ext;
                     if (dataType == TLE) {
                         ext = ".tle";
                     } else if (dataType ==  LTOF) { 
                         ext = ".ltof";
                     } else {
-                        throw new Exception("Orbit file should end with \".tle\" or \".ltof\".");                    
+                        throw new Exception("Orbit file must have file suffix \".tle\" or \".ltof\".");
                     }
 
                     // NOTE: The file should probably be copied to a location where
                     // XYZMenuBar#createLTOF_TLESatsMenuItemList can find it.
                     final File userOrbitDir = Utils.findUserDir(OVTCore.getOrbitDataSubdir());
                     final File outfile = new File(userOrbitDir, Utils.replaceSpaces(satName)+ext);
-                    //final File outfile = new File(OVTCore.getOrbitDataSubdir()+Utils.replaceSpaces(satName)+ext);
                     if (outfile.exists()) {
-                        int res = JOptionPane.showConfirmDialog(sats.getCore().getXYZWin(),
-                                "Satellite already exists. Replace?",
-                                "Replace?",
+                        int res = JOptionPane.showConfirmDialog(/*sats.getCore().getXYZWin()*/ owner,
+                                "Orbit file already exists. Replace?",
+                                "Replace file?",
                                 JOptionPane.YES_NO_OPTION);
-                        if ( res == JOptionPane.NO_OPTION) return;
+                        if ( res == JOptionPane.NO_OPTION) {
+                            return;
+                        }
                     }
                     
                     if (dataType == TLE)   {                  
@@ -203,11 +205,12 @@ public class ImportSatelliteWizard extends JDialog {
                         sat = new LTOFSat(sats.getCore());
                     }
                     sat.setName(satName);
-                    sat.setOrbitFile(outfile); // Also checks if the file is valid
+                    sat.setOrbitFile(outfile);   // Also checks if the file is valid.
                     
-                    
-                    sats.getCore().sendMessage("Success!", satName+" was successfuly validated and imported to \n"+
-                                            OVTCore.getOrbitDataSubdir());
+                    sats.getCore().sendMessage(
+                            "Success!",
+                            satName+" was successfully validated and imported (copied) to \n"+outfile,
+                            owner);
                     
                 } catch (IOException e2) {
                     sats.getCore().sendErrorMessage("Error", e2.getMessage());
@@ -221,12 +224,16 @@ public class ImportSatelliteWizard extends JDialog {
             }
         });
             
+        
+        
         cancelButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {
                 sat = null;
                 setVisible(false);
             }
         });
+        
+        
         
         /*Dimension size = okButton.getPreferredSize();
         //cancelButton.setPreferredSize(size);
@@ -241,8 +248,7 @@ public class ImportSatelliteWizard extends JDialog {
         
         pack();
         
-        // center the window
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, owner);
     }
     
     public Sat start() {

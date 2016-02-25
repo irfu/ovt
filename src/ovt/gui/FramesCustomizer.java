@@ -40,8 +40,10 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.beans.*;
+import ovt.util.Utils;
 
 /**
+ * Handles "frames", i.e. the graphical planes representing coordinate planes (z=0 and so on).
  *
  * @author  oleg
  * @version
@@ -84,8 +86,10 @@ public class FramesCustomizer extends JFrame implements PropertyChangeListener {
 
         pack();
         setResizable(false);
-        Point xyz_loc = getCore().getXYZWin().getLocation();
-        setLocation(xyz_loc.x+16, xyz_loc.y+16);
+
+//        Point xyz_loc = getCore().getXYZWin().getLocation();
+//        setLocation(xyz_loc.x+16, xyz_loc.y+16);
+        Utils.setInitialWindowPosition(this, getCore().getXYZWin());
     }
     
     private void updateYozPosLabel() {

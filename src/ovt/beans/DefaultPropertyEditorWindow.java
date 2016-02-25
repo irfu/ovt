@@ -70,8 +70,8 @@ public class DefaultPropertyEditorWindow extends JDialog implements PropertyChan
         setLocation(loc);
     }
     else {
-        // set location in center of screen
-        Utils.centerWindow(this);
+        // (Can not use a reference window, since none exists for this case.)
+        Utils.setInitialWindowPosition(this, null);
     }
   }
  

@@ -36,6 +36,7 @@
  */
 package ovt.util;
 
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.Window;
@@ -44,6 +45,7 @@ import java.io.*;
 import java.math.RoundingMode;
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.swing.JFrame;
 
 import ovt.*;
 import ovt.datatype.*;
@@ -709,12 +711,14 @@ public class Utils extends Object {
      * time of <code>destFile</code> file should be made equal to the last
      * modified time of <code>sourceFile</code>.
      *
+     * Uncertain how the code handles sourceFile==destFile.
+     *
      * @throws IOException
      */
-    public static void copyFile(File sourceFile, File destFile, boolean overwrite, boolean preserveLastModified)
+    public static void copyFile(File sourceFile, File destFile, boolean alwaysCopy, boolean preserveLastModified)
             throws IOException {
 
-        if (overwrite || !destFile.exists() || destFile.lastModified() < sourceFile.lastModified()) {
+        if (alwaysCopy || !destFile.exists() || destFile.lastModified() < sourceFile.lastModified()) {
 
             if (destFile.exists() && destFile.isFile()) {
                 destFile.delete();
@@ -722,15 +726,15 @@ public class Utils extends Object {
 
             // Ensure that parent dir of dest file exists!
             // not using getParentFile method to stay 1.1 compatible.
-            File parent = new File(destFile.getParent());
+            final File parent = new File(destFile.getParent());
             if (!parent.exists()) {
                 parent.mkdirs();
             }
 
-            FileInputStream in = new FileInputStream(sourceFile);
-            FileOutputStream out = new FileOutputStream(destFile);
+            final FileInputStream in = new FileInputStream(sourceFile);
+            final FileOutputStream out = new FileOutputStream(destFile);
 
-            byte[] buffer = new byte[8 * 1024];
+            final byte[] buffer = new byte[8 * 1024];
             int count = 0;
             do {
                 out.write(buffer, 0, count);
@@ -1809,12 +1813,27 @@ public class Utils extends Object {
 
 
     /**
-     * IMPLEMENTATION NOTE: Reasons for having this function are (1) shorter
-     * code/reuse code (2) ability to take multiple monitors into account in
-     * future implementation; (3) ability to change policy for the initial
-     * position of windows (by changing implementation; by searching for the
-     * calls to this function and maybe replacing them with calls to other
-     * function).
+     * Function for setting the initial position of a window. (The size of the
+     * window is assumed to have already been set and will remain unchanged.)
+     *
+     * This function is an attempt at code for setting an application-wide
+     * policy for the initial positions (not sizes) of windows.
+     *
+     * NOTE: Using another frame as reference works best for windows which are
+     * created and displayed immediately (since the reference window may
+     * otherwise move in the mean time). It is less suited for windows which are
+     * initialized during launched and not displayed until the proper GUI item
+     * is "activated". Also using another frame as a reference (e.g. XYZWindow)
+     * can be problematic for windows that are initialized during launch since
+     * that reference frame may not have been initialized yet (e.g.
+     * position=size=(0,0)).
+     *
+     * IMPLEMENTATION NOTE: Reasons for having this function are (1)
+     * (potentially) shorter code/reuse code (2) ability to take multiple
+     * monitors into account in future implementation; (3) ability to change
+     * policy for the initial position of windows (by changing implementation;
+     * by searching for the calls to this function and maybe replacing them with
+     * calls to some other function).
      *
      * NOTE: Centering the window tends to be done in constructors for the
      * window/frame itself (in OVT) which means that a call to this function
@@ -1822,15 +1841,30 @@ public class Utils extends Object {
      * NOTE: Must (presumably) be called after any call to frame.pack().<BR>
      * NOTE: Should be called after the window size has been set.<BR>
      * NOTE: Does not yet take multiple monitors into account.<BR>
+     *
+     * @param frame Frame whose position will be set.
+     * @param referenceFrame Frame relative to which the position of "frame"
+     * will be set. Can be null.
      */
-    // PROPOSAL: Reorg. function so that it can be used as frame.setLocation(Utils.centerWindow(frame.getSize())).
-    // PROPOSAL: Rename as something like "getDefaultInitialLocation".
-    public static void centerWindow(Window frame) {
-        final Dimension scrnSize = Toolkit.getDefaultToolkit().getScreenSize();
-        final Dimension frameSize = frame.getSize();
-        frame.setLocation(
-                scrnSize.width / 2 - frameSize.width / 2,
-                scrnSize.height / 2 - frameSize.height / 2);
+    // PROPOSAL: Reorg. function so that it can be used as frame.setLocation(Utils.setInitialWindowPosition(frame.getSize())).
+    // PROPOSAL: Rename as something like "set/getDefaultInitialLocation".
+    // PROPOSAL: Replace with calls to Window#setLocationRelativeTo.
+    public static void setInitialWindowPosition(Window frame, Window referenceFrame) {
+        if (frame == referenceFrame) {
+            throw new IllegalArgumentException("Trying to position window relative to itself.");
+        }
+
+        /**
+         * Window#setLocation: "Moves this component to a new location. The
+         * top-left corner of the new location is specified by the x and y
+         * parameters in the coordinate space of this component's parent."
+         */
+//        final Dimension ownerSize = Toolkit.getDefaultToolkit().getScreenSize();
+//        final Dimension frameSize = frame.getSize();
+//        frame.setLocation(
+//                ownerSize.width / 2 - frameSize.width / 2,
+//                ownerSize.height / 2 - frameSize.height / 2);
+        frame.setLocationRelativeTo(referenceFrame);
     }
 
 }

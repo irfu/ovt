@@ -72,7 +72,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     pack();
     setResizable(false);
     
-    Utils.centerWindow(this);
+    Utils.setInitialWindowPosition(this, null);
   }
 
   /** This method is called from within the constructor to

@@ -125,8 +125,7 @@ public class LoadDataWizard extends JDialog {
         setPage(filenamePage);
         pack();
         
-        // Center the window
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, null);
     }
 
     public DataModule start() {

@@ -56,6 +56,7 @@ import java.lang.Cloneable;
 import java.lang.reflect.*;
 
 /**
+ * Appears to represent (contain) the window for editing one "property", e.g. color, opacity.
  *
  * @author  ko
  * @version
@@ -324,8 +325,7 @@ class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
         }
         pack();
         
-        // Set location in center of screen
-        Utils.centerWindow(this);
+        Utils.setInitialWindowPosition(this, owner);
     }
     
     

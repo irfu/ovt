@@ -123,7 +123,8 @@ public FieldlineMapperCustomizerWindow() {
 
     initComponents();
     pack();
-    Utils.centerWindow(this);
+    
+    Utils.setInitialWindowPosition(this, null);
 }
 
 public void setObject(Object bean) {

@@ -92,8 +92,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
     public static final String DEFAULT_SETTINGS_FILE_NAME = "OVTSavestate.xml";
     private static final Properties globalProperties = new Properties();
-    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
     //private static final String SYSTEM_OUT_FILE_NAME = null; // null=Print to screen instead of log file
+    private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
     private static final int GLOBAL_LOG_LEVEL = 0;
 
@@ -102,7 +102,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             = SIMPLE_APPLICATION_NAME + " (OVT), version " + VERSION
             + ", build " + BUILD + " (" + ovt.OVTCore.OVT_HOMEPAGE + ")";
 
-    private static final String HTTP_AGENT_PROPERTY_STRING = LONG_APPLICATION_DESCRIPTION;
+    public static final String HTTP_AGENT_PROPERTY_STRING = LONG_APPLICATION_DESCRIPTION;
     /*+ "; "
      + System.getProperty("os.name") + ", "
      + System.getProperty("os.arch");*/
@@ -330,11 +330,20 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     }
 
 
+    // PROPOSAL: Throw exception (custom-made class?) if property can not be found.
     public static String getGlobalSetting(String key) {
         return globalProperties.getProperty(key);
     }
 
 
+    /**
+     * Get global setting.
+     *
+     * @param defaultValue String value to be returned if there is not property
+     * for "key". Note that this must be a string, even if the returned value is
+     * converted to e.g. a number.
+     *
+     */
     public static String getGlobalSetting(String key, String defaultValue) {
         return globalProperties.getProperty(key, defaultValue);
     }
@@ -396,9 +405,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             }
         }
 
+        //====================================================================
         // Set System.out and System.err (stdout and stderr).
         // NOTE: Can only be set to files AFTER that internal paths have been
         // obtained. Can therefore not be initialized earlier.
+        //====================================================================
         try {
             // NOTE: It appears that on MS Windows, one will not get an explicit
             // log file (for stdout) without explicitly redirecting System.out.
@@ -416,7 +427,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         } catch (FileNotFoundException e) {
             Log.setPrintStream(System.err);   // Has to be done explicitly rather than use the default value.
             Log.logStackTrace(e);
-            Log.log("Failed to redirect System.err (stderr) or System.out (stdout) to file.");
+            Log.err("Failed to redirect System.err (stderr) or System.out (stdout) to file.");
         }
 
 
@@ -433,10 +444,12 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
          */
         System.setProperty("http.agent", HTTP_AGENT_PROPERTY_STRING);
 
-        /* Load global settings
+        /*======================================================================
+         Load global settings
          --------------------
          NOTE: This code indirectly uses this.ovtUserDir which therefore has to
-         have been previously initialized. */
+         have been previously initialized.
+        ======================================================================*/
         if (globalProperties.size() == 0) {
             try {
                 loadGlobalSettings();
@@ -691,13 +704,17 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      * (probably) makes it impossible to use HTML in the "msg" since the whole
      * string has to be surrounded with {@code <HTML>...</HTML>}(?).
      *
+     * NOTE: Not entirely obvious whether the message dialog window should be
+     * centered on the screen or on a parent/owner window.
+     *
      * @param title Message title
      * @param msg Warning message
      */
     public void sendWarningMessage(String title, String msg) {
 //        if (isGuiPresent()){
         if (canDisplayGuiMessages()) {
-            javax.swing.JOptionPane.showMessageDialog(null,
+            javax.swing.JOptionPane.showMessageDialog(
+                    XYZwin,
                     //                    "Warning: " + title + "\n" + msg,   // Adds "title" to the message.
                     "Warning: " + msg,
                     title,
@@ -713,10 +730,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     }
 
 
-    public void sendMessage(String msghead, String msg) {
+    public void sendMessage(String msghead, String msg, JFrame parentComponent) {
 //        if (isGuiPresent()){
         if (canDisplayGuiMessages()) {
-            javax.swing.JOptionPane.showMessageDialog(null, msg, msghead,
+            javax.swing.JOptionPane.showMessageDialog(parentComponent, msg, msghead,
                     javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
             System.out.println(msghead + ":" + msg);
