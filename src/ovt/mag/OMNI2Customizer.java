@@ -78,8 +78,6 @@ public class OMNI2Customizer extends JFrame {
     private static final String IO_ERROR_DISPLAY_STR_SUFFIX = ">";
     private static final String DISABLED_DISPLAY_STR = "(disabled)";
 
-    private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT = "Display OMNI2 values (might slow down application in case of I/O errors)";
-
     private static final String WINDOW_TITLE = "OMNI2 Data Settings";
 
     // PROPOSAL: Say something about which values are used in case of (1) data gaps, or (2) I/O error?
@@ -90,6 +88,12 @@ public class OMNI2Customizer extends JFrame {
             + " in a cache directory from which they are read.";
     //+ " In the event of network failure, the user can obtain and add these files him-/herself as a backup solution.";
     // Add ftp address, directory where files are stored, that files can be added manually?!
+
+    /**
+     * Display text at checkbox. Check how it influences, or reacts to, the size
+     * of the window when changing.
+     */
+    private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT = "Display OMNI2 values even if not used (might slow down application in case of I/O errors)";
 
     /**
      * List of activity indices to use. The order defines the order in which
@@ -110,9 +114,12 @@ public class OMNI2Customizer extends JFrame {
             TimeSettingsInterface mTimeSettings,
             String urlPattern) {
 
-        // Class requires core.timeSettings to be supplied as parameter and hence be initialized first.
-        // Therefore it is good to check if the parameter is in fact initialized.
-        // (OVTCore initializing core.magProps before code.timeSettings could lead to this error.)
+        /**
+         * IMPLEMENTATION NOTE: Class requires core.timeSettings to be supplied
+         * as parameter and hence be initialized first. Therefore it is good to
+         * check if the parameter is in fact initialized. (OVTCore initializing
+         * core.magProps before code.timeSettings could lead to this error.)
+         */
         if (mTimeSettings == null) {
             throw new IllegalArgumentException("mTimeSettings == null");
         }
