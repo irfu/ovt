@@ -1,11 +1,9 @@
 /*=========================================================================
 
   Program:   Orbit Visualization Tool
-  Source:    $Source: /stor/devel/ovt2g/docs/license.txt,v $
-  Date:      $Date: 2003/09/28 17:45:43 $
-  Version:   $Revision: 1.5 $
 
-
+Copyright (c) 2016 OVT Team 
+(Erik Johansson, Fredrik Johansson, Yuri Khotyaintsev)
 Copyright (c) 2000-2003 OVT Team 
 (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
 All rights reserved.
@@ -25,7 +23,7 @@ THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
 
-OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+OVT Team (http://ovt.irfu.se)   Erik Johansson, Fredrik Johansson, Yuri
 Khotyaintsev
 
 =========================================================================*/
