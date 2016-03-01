@@ -67,8 +67,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     private static final int DEBUG = 2;
 
     private final String SETTING_OMNI2_HOURLY_AVG_URL_PATTERN = "OMNI2.hourlyAveraged.urlPattern";
+    
     // Default value used if the corresponding value can not be found in the properties/config file.
-    private final String DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+    // Appears that there are OMNI2 URLs for both "http" and "ftp".
+    private final String DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN = "http://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+    
     private final String SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "OMNI2.hourlyAveraged.localCacheFileNamePattern";
     // Default value used if the corresponding value can not be found in the properties/config file.
     private final String DEFAULT_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "omni2_%4d.dat";
