@@ -69,8 +69,11 @@ public class OVTPropertyChangeSupport {
   }
   
   public void removePropertyChangeListener (String propertyName, PropertyChangeListener listener) {
-    Vector listeners = (Vector)specificPropertyListeners.get(propertyName);
-    if (listeners == null) listeners.remove(listener);
+    Vector listeners = (Vector)specificPropertyListeners.get(propertyName);  // Returns null for non-existing propertyName.
+    //if (listeners == null) {
+    if (listeners != null) {
+        listeners.remove(listener);
+    }
   }
   
   public void addPropertyChangeListener (String propertyName, PropertyChangeListener listener) {
