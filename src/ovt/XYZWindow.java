@@ -50,13 +50,14 @@ import vtk.rendering.jogl.vtkAbstractJoglComponent;
 
 /**
  * Represents OVT's main window. Contains OVT's global "main" method.
- *
- * PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command
- * line argument if there is one?
- *
- * PROPOSAL: Move add/removeSatAction, add/removeSSCWSSatAction,
- * sscwsSatAlreadyAdded, getSSCWSSats to OVTCore? They do use a lot of calls to
- * getCore().
+ */
+/*
+ PROPOSAL: Optionally set the debug level (Log#setDebugLevel) using a command
+ line argument if there is one?
+
+ PROPOSAL: Move add/removeSatByNameAction, add/removeSSCWSSatAction,
+ sscwsSatAlreadyAdded, getSSCWSSats to OVTCore? They do use a lot of calls to
+ getCore().
  */
 public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
@@ -115,7 +116,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
              * NOTE: Uncertain what native library "jawt" is for. Is presumably
              * the "Java AWT" library that comes with java. If it is for "Java AWT", 
              * does not Java load it automatically then?!!
-            */
+             */
             Log.log("Loading native library " + "ovt-" + OVTCore.VERSION, 0);
             System.loadLibrary("ovt-" + OVTCore.VERSION);
             Log.log("Loading native library " + "jawt", 0);
@@ -553,56 +554,22 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
-     * Method representing the action of adding a satellite (of any type: LTOF,
-     * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
-     * user event in the GUI.
-     */
-    // PROPOSAL: Move to Sats?!! Move to OVTCore? (Not getCore().Render().)
-    // PROPOSAL: Check for satellite with the same name.
-    public void addSatAction(Sat sat) {
-        final String satName = sat.getName();
-        final Sat preExistingSat = (Sat) getCore().getSats().getChildren().getChild(satName);  // null if there is no such satellite.
-        if (preExistingSat != null) {
-            // NOTE: Important to specify that we are speaking of adding a
-            // satellite to the "GUI tree", not importing a file or any other form "adding".
-            //getCore().sendErrorMessage("Error", "Can not add satellite in the GUI since there already is a satellite with the same name (\"" + satName + "\").");
-            return;
-        }
-
-        getCore().getSats().addSat(sat);
-        getCore().getSats().getChildren().fireChildAdded(sat);
-
-        /* Include here or let the caller call it?!
-         * Having the caller call this might be more efficient.
-         * Including here might also have implications if automatically calling this function during launch/initialization.
-         * Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
-         */
-        getCore().Render();
-    }
-
-
-    /**
      * Method representing the action of removing a satellite (of any type:
      * LTOF, TLE, SSCWS) to the GUI tree panel, as if this action was triggered
      * by a user event in the GUI.
      *
      * @param satName The satellite's name (in the GUI), i.e. Sat.getName().
      */
-    public void removeSatAction(String satName) {
+    // PROPOSAL: Move to Sats?!! Move to OVTCore? (Not getCore().Render().)
+    // ~BUG: The satellite appears to not remove itself as a listener at all.
+    public void removeSatByNameAction(String satName) {
         final Sat sat = (Sat) core.getSats().getChildren().getChild(satName);  // null if there is no such satellite.
         if (sat == null) {
             //getCore().sendErrorMessage("Error", "Can not find satellite to remove from GUI (\"" + satName + "\").");
             return;
         }
-        getCore().getSats().removeSat(sat);
-        getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe..
 
-        /* Include here or let the caller call it?!
-         Having the caller call this might be more efficient.
-         (Including here might also have implications if automatically calling this function during launch/initialization.)
-         Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
-         */
-        getCore().Render();
+        getCore().getSats().removeSatAction(sat);
     }
 
 
@@ -631,7 +598,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             getCore().sendErrorMessage(e);
             return;
         }
-        addSatAction(sat);
+        getCore().getSats().addSatAction(sat);
     }
 
 
@@ -649,7 +616,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                 // NOTE: This check will also capture the case of sat==null.
                 //getCore().sendErrorMessage("Error", "Can not find (SSC-based) satellite to remove (SCWS_satID=\""+SSCWS_satID+").");
             } else {
-                removeSatAction(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+                removeSatByNameAction(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
             }
             /*getCore().getSats().removeSat(sat);
              getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.*/
@@ -660,13 +627,16 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
 
     /**
+     * NOTE: Uses strings to identify the satellite in the menu.
+     *
      * @param True if-and-only-if there is a SSCWSSat object corresponding to
      * the argument in the GUI tree.
      */
+    // PROPOSAL: Use getSSCWSSats().
     public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
         // NOTE: Implementation assumes there is only one Sat by that exact name.
         final Sat sat = (Sat) getCore().getSats().getChildren().getChild(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
-        return (sat instanceof SSCWSSat);
+        return (sat instanceof SSCWSSat);    // NOTE: Should work also for sat==null.
     }
 
 

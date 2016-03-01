@@ -44,16 +44,16 @@ import java.util.*;
 import javax.swing.*;
 
 /**
- * Class which somehow represents the instances of "Sat" (without "s) which are
- * in the GUI tree.
+ * Class which somehow represents the instances of "Sat" (without the final "s")
+ * which are in the GUI tree.
  */
 public class Sats extends BasicObject implements TimeChangeListener, 
     CoordinateSystemChangeListener, MagPropsChangeListener, MenuItemsSource {
     
-    private ClusterSats clusterSats;
+    private final ClusterSats clusterSats;
     
-    private double minLaunchMjd = Double.MAX_VALUE;
-    public static String satsConfigFile;
+//    private double minLaunchMjd = Double.MAX_VALUE;
+//    public static String satsConfigFile;
     
     /** Holds value of property sat. */
     private Vector sats = new Vector();
@@ -72,8 +72,10 @@ public class Sats extends BasicObject implements TimeChangeListener,
         Log.log("Sats :: init ...", 3);
         try {
           setIcon(new ImageIcon(Utils.findResource("images/satellites.gif")));
-        } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-        satsConfigFile = getCore().getConfSubdir() + "sats.conf";
+        } catch (java.io.FileNotFoundException exc) {
+            exc.printStackTrace(System.err);
+        }
+//        satsConfigFile = getCore().getConfSubdir() + "sats.conf";
         
         clusterSats = new ClusterSats(this);
         addChild(clusterSats);
@@ -202,6 +204,62 @@ public class Sats extends BasicObject implements TimeChangeListener,
         //Log.log("Tot mem. after garb. col = "+Runtime.getRuntime().totalMemory());
         //children.fireChildRemoved(sat);
     }
+    
+    
+    /**
+     * Method representing the action of adding a satellite (of any type: LTOF,
+     * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
+     * user event in the GUI.
+     */
+    // PROPOSAL: Check for satellite with the same name.
+    public void addSatAction(Sat sat) {
+        final String satName = sat.getName();
+        final Sat preExistingSat = (Sat) getCore().getSats().getChildren().getChild(satName);   // null if there is no such satellite.
+        if (preExistingSat != null) {
+            // NOTE: Important to specify that we are speaking of adding a
+            // satellite to the "GUI tree", not importing a file or any other form "adding".
+            //getCore().sendErrorMessage("Error", "Can not add satellite in the GUI since there already is a satellite with the same name (\"" + satName + "\").");
+            return;
+        }
+
+        getCore().getSats().addSat(sat);
+        getCore().getSats().getChildren().fireChildAdded(sat);
+
+        // TENTATIVE BUGFIX 2016-03-01: View Control (Camera.java) --> To (viewTo) should
+        // contain this satellite if it is visible.
+        sat.addPropertyChangeListener("visible", getCore().getCamera().getViewToObjectsVisibilityChangeListener());  // Add camera to listeners of new satellite visibility
+
+        /* Include here or let the caller call it?!
+         * Having the caller call this might be more efficient.
+         * Including here might also have implications if automatically calling this function during launch/initialization.
+         * Excluding here implies that it is not equivalent to an entire user-triggered "action" and thus the method name is slightly wrong.
+         */
+        //getCore().Render();
+    }
+
+
+    /**
+     * Method representing the action of removing a satellite (of any type:
+     * LTOF, TLE, SSCWS) to the GUI tree panel, as if this action was triggered
+     * by a user event in the GUI.
+     */
+    public void removeSatAction(Sat sat) {
+        getCore().getSats().removeSat(sat);
+        getCore().getSats().getChildren().fireChildRemoved(sat); // for TreePanel
+        
+        // Remove camera from listeners of new satellite visibility. Needed?
+        //sat.removePropertyChangeListener("visible", getCore().getCamera().getViewToObjectsVisibilityChangeListener());
+
+        /**
+         * Include here or let the caller call it?! Having the caller call this
+         * might be more efficient. (Including here might also have implications
+         * if automatically calling this function during launch/initialization.)
+         * Excluding here implies that it is not equivalent to an entire
+         * user-triggered "action" and thus the method name is slightly wrong.
+         */
+//        getCore().Render();
+    }
+    
     
     /** Is run by XML parser to tell treePanel to update Satellites node */
     public void fireSatsChanged() {

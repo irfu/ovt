@@ -1,33 +1,31 @@
 /*=========================================================================
-
+ 
  Program:   Orbit Visualization Tool
- Source:    $Source: /stor/devel/ovt2g/ovt/gui/XYZMenuBar.java,v $
- Date:      $Date: 2005/12/13 16:32:52 $
- Version:   $Revision: 2.14 $
-
-
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
- Yuri Khotyaintsev)
+ 
+ Copyright (c) 2016 OVT Team 
+ (Erik Johansson, Fredrik Johansson, Yuri Khotyaintsev)
+ Copyright (c) 2000-2003 OVT Team 
+ (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
- Khotyaintsev
-
+ Khotyaintsev, E. P. G. Johansson, F. Johansson
+ 
  =========================================================================*/
 package ovt.gui;
 
@@ -342,7 +340,7 @@ public class XYZMenuBar extends JMenuBar {
                         // imported, and (2) the file was a TLE file.
                         sendTLEWarningMessage();
                     }
-                    xyzWin.addSatAction(sat);
+                    core.getSats().addSatAction(sat);
                 }
             }
         });
@@ -433,23 +431,25 @@ public class XYZMenuBar extends JMenuBar {
      */
     // Throw exceptions on failure and let the caller decide what to do?
     private JMenuItem createSSCWSSatMenuItem(String SSCWS_satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
-        final String satName;
 
         /* NOTE: Exceptions are likely to be thrown here rather than later,
          * inside addSSCWSSatAction and removeSSCWSSatAction. */
-        satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException, NoSuchSatelliteException
+        final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException, NoSuchSatelliteException
 
+        // Create -------- ActionListener --------
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) evt.getSource();
 
-            if (menuItem.isSelected()) { // create Sat and add it to OVTCore.Sats
+            if (menuItem.isSelected()) {
+                // Create Sat and add it to OVTCore.Sats.
                 xyzWin.addSSCWSSatAction(SSCWS_satID);
             } else {
-                // remove Sat from OVTCore.Sats 
+                // Remove Sat from OVTCore.Sats .
                 xyzWin.removeSSCWSSatAction(SSCWS_satID);
             }
             core.Render();
         };
+        // --------   --------
 
         final JMenuItem newMenuItem = new JCheckBoxMenuItem(satName);
         newMenuItem.setFont(Style.getMenuFont());
@@ -458,7 +458,6 @@ public class XYZMenuBar extends JMenuBar {
         // Select if sat is already added to OVT.
         newMenuItem.setSelected(xyzWin.sscwsSatAlreadyAdded(SSCWS_satID));   // throws IOException if can not get satellites list.
         return newMenuItem;
-
     }
 
 
@@ -576,14 +575,14 @@ public class XYZMenuBar extends JMenuBar {
         //=========================================================================
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
-            final String satname = item.getText();    // Figure out which Sat is referred to.
+            final String satName = item.getText();    // Figure out which Sat is referred to.
             if (item.isSelected()) {
                 // Create Sat and ADD it to OVTCore.Sats.
 
                 try {
                     final Sat sat;
                     // Check if TLE file exists.
-                    final String satFilePathPrefix = OVTCore.getOrbitDataSubdir() + Utils.replaceSpaces(satname);
+                    final String satFilePathPrefix = OVTCore.getOrbitDataSubdir() + Utils.replaceSpaces(satName);
                     File file = Utils.findFile(satFilePathPrefix + ".tle");
                     if (file == null) {
                         // Check if LTOF file exists
@@ -596,18 +595,19 @@ public class XYZMenuBar extends JMenuBar {
                         sendTLEWarningMessage();
                         sat = new TLESat(getCore());
                     }
-                    sat.setName(satname);
+                    sat.setName(satName);
                     sat.setOrbitFile(file);
 
-                    xyzWin.addSatAction(sat);
+                    core.getSats().addSatAction(sat);
                 } catch (IOException e2) {
                     core.sendErrorMessage(e2);
                 }
             } else {
                 // REMOVE Sat from OVTCore.Sats.
-                xyzWin.removeSatAction(satname);
+                xyzWin.removeSatByNameAction(satName);
             }
         };
+        //=========================================================================
 
         // Iterate over all files found and add one JCheckBoxMenuItem for each
         // one using the ActionListener created above.

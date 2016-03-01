@@ -44,6 +44,9 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+/**
+ * Represents a satellite node in the GUI tree.
+ */
 public abstract class Sat extends VisualObject implements CoordinateSystemChangeListener,
         TimeChangeListener, MagPropsChangeListener, PositionSource, MenuItemsSource {
 
@@ -721,8 +724,9 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         item3.setFont(Style.getMenuFont());
         item3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                getCore().getSats().removeSat(Sat.this);
-                getCore().getSats().getChildren().fireChildRemoved(Sat.this); // for TreePanel
+                getCore().getSats().removeSatAction(Sat.this);
+//                getCore().getSats().removeSat(Sat.this);
+//                getCore().getSats().getChildren().fireChildRemoved(Sat.this); // for TreePanel
             }
         });
         return new JMenuItem[]{item0, null, item1, null, item2, null, item3};
