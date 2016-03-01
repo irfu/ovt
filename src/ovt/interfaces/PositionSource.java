@@ -41,6 +41,7 @@ package ovt.interfaces;
 /** 
  * Used by {@link ovt.object.Camera ovt.object.Camera} to determine different
  * objects location.
+ * 
  * @author  oleg
  * @version 
  */

@@ -177,7 +177,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         // Should be specified after viewTo = core.getEarth()
         viewToObjects = new ViewToObjects(this);
         
-        Descriptors propertyDescriptors = new Descriptors();
+        final Descriptors propertyDescriptors = new Descriptors();
         try {
         /* r property descriptor */
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("r", this);
@@ -1061,21 +1061,30 @@ class ViewToObjects {
         //updateViewToComboBoxEditorList();
     }
     
-    /** obj is a start object form the tree */
+    /**
+     * Starts listening to some property changes for all "visual children"
+     * (recursively) of "root".
+     * @param root An object from the tree.
+     */
     private void watchVisibilityOnAllPositionSourceObjectsIn(OVTObject root) {
         //Log.log("watchVisibilityOnAllPositionSourceObjectsIn("+root.getName()+")");
+        
         // register myself as a listener to "visible" property of each
         // visualobject which implements PositionSource interface
-        Enumeration e = root.getVisualChildren().elements();
+        
+        final Enumeration e = root.getVisualChildren().elements();
+        
         while (e.hasMoreElements()) {
-            VisualObject obj = (VisualObject) e.nextElement();
+            final VisualObject obj = (VisualObject) e.nextElement();
+            
             if (obj instanceof PositionSource) {
                 // listen to all visual objects "visibility" state
                 obj.addPropertyChangeListener("visible", objectVisibilityChangeListener);
                 // listen to objects "name" change
                 obj.addPropertyChangeListener("name", objectNameChangeListener);
-                if (obj.isVisible() && !visibleObjects.contains(obj)) 
+                if (obj.isVisible() && !visibleObjects.contains(obj)) {
                     visibleObjects.addElement(obj);
+                }
             }
         }
     }
@@ -1098,13 +1107,13 @@ class ViewToObjects {
         cam.viewToEditor.setValues(visibleObjects.toArray());
         cam.viewToEditor.setTags(getList());
     }
-    
+
     /*public Sat getSat(String name) {
         return (Sat)visibleObjects.get(name);
     }*/
     
     public String[] getList() {
-        int n = visibleObjects.size();
+        //int n = visibleObjects.size();
         String[] list = new String[visibleObjects.size()];
         Enumeration e = visibleObjects.elements();
         e.nextElement(); // skip cam.focalPoint - "Custom"
@@ -1116,8 +1125,7 @@ class ViewToObjects {
     }
     
     
-    public PropertyChangeListener objectNameChangeListener  = new PropertyChangeListener() {
-        
+    public PropertyChangeListener objectNameChangeListener = new PropertyChangeListener() {
     /** If the object's name changes - update it in the list.
     */
         public void propertyChange(PropertyChangeEvent evt) {
@@ -1125,19 +1133,21 @@ class ViewToObjects {
         }
     };
     
-    public PropertyChangeListener objectVisibilityChangeListener  = new PropertyChangeListener() {
+    public final PropertyChangeListener objectVisibilityChangeListener = new PropertyChangeListener() {
         
         /** If the object becomes visible - add it to the list of visible visual objects,
          * else - remove.
          */
         public void propertyChange(PropertyChangeEvent evt) {
-            VisualObject obj = (VisualObject)evt.getSource();
-            boolean visible = ((Boolean)evt.getNewValue()).booleanValue();
+            final VisualObject obj = (VisualObject) evt.getSource();
+            final boolean visible = (Boolean) evt.getNewValue();
             
             // if some sat comes visible - add it.
             if (visible) {
                 //System.out.println("Adding item -" + obj.getName());
-                if (!visibleObjects.contains(obj)) visibleObjects.addElement(obj);
+                if (!visibleObjects.contains(obj)) {
+                    visibleObjects.addElement(obj);
+                }
             } else {
                 // if we remove sat from list we set watched object to earth
                 if (ViewToObjects.this.cam.getViewTo().equals(obj)) {
@@ -1148,14 +1158,16 @@ class ViewToObjects {
                 visibleObjects.removeElement(obj);
                 
                 // if no sats left, and user was watching the sat
-                if (visibleObjects.size() == 0  &&  ViewToObjects.this.cam.getViewFrom() == ViewToObjects.this.cam.VIEW_PERPENDICULAR_TO_ORBIT) {
-                        ViewToObjects.this.cam.setViewFrom(ViewToObjects.this.cam.VIEW_CUSTOM);
+                if (visibleObjects.size() == 0
+                        &&  ViewToObjects.this.cam.getViewFrom() == ViewToObjects.this.cam.VIEW_PERPENDICULAR_TO_ORBIT) {
+                    ViewToObjects.this.cam.setViewFrom(ViewToObjects.this.cam.VIEW_CUSTOM);
                 }
             }
             updateViewToComboBoxEditorList();
         }
-};
+    };
 
+    
     private ChildrenListener satsChildrenListener = new ChildrenListener() {
             /** fired when child was added */
             public void childAdded(ChildrenEvent evt) {
@@ -1165,7 +1177,7 @@ class ViewToObjects {
 
             /** fired when child was removed */
             public void childRemoved(ChildrenEvent evt) {
-                // do nothing here. The object will remove us from listeners by itself
+                // Do nothing here. The object will remove us from listeners by itself
             }
 
             /** fired when children/children number was changed */
@@ -1174,6 +1186,7 @@ class ViewToObjects {
                 updateViewToComboBoxEditorList();
             }
         };
+    
     private ChildrenListener groundbasedChildrenListener = new ChildrenListener() {
             /** fired when child was added */
             public void childAdded(ChildrenEvent evt) {

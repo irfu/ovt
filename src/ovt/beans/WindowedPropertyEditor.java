@@ -224,7 +224,7 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
     public void propertyChange(PropertyChangeEvent evt) {
         //System.out.println(getClass().getName()+".prpropertyChange event : "+ evt.getPropertyName());
         if (evt.getPropertyName().equals("enabled")) {
-            //System.out.println("Recieved event enabled!!!!!!!!");
+            //System.out.println("Received event enabled!!!!!!!!");
             boolean enabled = ((Boolean)evt.getNewValue()).booleanValue();
             editor.setEnabled(enabled);
         } else

@@ -111,8 +111,11 @@ public class SingleActorSatModule extends AbstractVisualSatModule {
     public void setVisible(boolean visible) {
         if (isVisible() != visible) {
             super.setVisible(visible);
-            if (visible) show();
-            else hide();
+            if (visible) {
+                show();
+            } else {
+                hide();
+            }
         }
     }
     

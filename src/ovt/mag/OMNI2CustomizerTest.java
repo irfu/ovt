@@ -32,6 +32,7 @@
 package ovt.mag;
 
 import java.io.IOException;
+import java.util.Arrays;
 import javax.swing.JFrame;
 import ovt.OVTCore;
 import ovt.beans.TimeChangeSupport;
@@ -101,17 +102,22 @@ public class OMNI2CustomizerTest {
 
         @Override
         public double[] getActivityOMNI2(int activityIndex, double mjd) throws OMNI2DataSource.ValueNotFoundException, IOException {
-            if (mjd > 0.8e4) {
-                throw new OMNI2DataSource.ValueNotFoundException("mjd="+mjd);
+            if (mjd > 0.5e4) {
+//                throw new OMNI2DataSource.ValueNotFoundException("mjd="+mjd);
+                throw new IOException("Exception message, zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
             }
             
             final double x = activityIndex + mjd/1e3;
             final double xr = Math.round(x*10)/10.0;
+            double[] result;
             if (activityIndex == MagProps.IMF) {
-                return new double[]{xr, xr * 2, -xr};
+                result = new double[]{xr, xr * 2, -xr};
             } else {
-                return new double[]{xr};
+                result = new double[]{xr};
             }
+            
+            System.out.println("getActivityOMNI2("+activityIndex+", "+mjd+") = "+Arrays.toString(result));
+            return result;
         }
     }
 
@@ -134,9 +140,11 @@ public class OMNI2CustomizerTest {
 
 
         public void changeTimeSet() {
+            final double intervalStart = Math.random() * 1e4;
             final double intervalMjd = Math.random() * 10;
+            System.out.println("intervalStart = "+intervalStart);
             timeSet = new TimeSet(
-                    Math.random() * 1e4,
+                    intervalStart,
                     intervalMjd,
                     intervalMjd * 0.1);
             timeChangeSupport.fireTimeChange(new TimeEvent(this, TimeEvent.CURRENT_MJD, timeSet));
@@ -158,7 +166,7 @@ public class OMNI2CustomizerTest {
         //JCheckBox cb = new MagProps.ActivityEditorOrOMNI2_CheckBox();
         TimeSettingsEmulator tse = new TimeSettingsEmulator();
         final OMNI2Customizer win = new OMNI2Customizer(new MagPropsEmulator(), tse,
-                "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat");
+                "http://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat");
         win.setVisible(true);
 
         // Needed to prevent lingering processes when testing (launching & closing repeatedly).

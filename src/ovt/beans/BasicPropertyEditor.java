@@ -201,7 +201,7 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
       } catch (InvocationTargetException e3) {
         Throwable targetException = e3.getTargetException();
         //if (targetException instanceof PropertyVetoException) throw (PropertyVetoException)targetException;
-        System.out.println("The recieved exception is not a propertyVetoException!!!\n");
+        System.out.println("The received exception is not a propertyVetoException!!!\n");
         e3.getTargetException().printStackTrace();
       }
     }
@@ -234,7 +234,7 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
         Throwable targetException = e3.getTargetException();
         if (targetException instanceof PropertyVetoException) throw (PropertyVetoException)targetException;
         if (targetException instanceof IllegalArgumentException) throw new PropertyVetoException(((IllegalArgumentException)targetException).getMessage(), null);
-        System.out.println("The recieved exception is not a propertyVetoException!\n");
+        System.out.println("The received exception is not a propertyVetoException!\n");
         e3.getTargetException().printStackTrace();
       }
   }
@@ -336,10 +336,10 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
   }
   
     
-  public void setTags(String[] newtags) {
-    String[] oldtags = tags;
-    tags = newtags;
-    propertySupport.firePropertyChange("tags", oldtags, tags);
+  public void setTags(String[] newTags) {
+    String[] oldTags = tags;
+    tags = newTags;
+    propertySupport.firePropertyChange("tags", oldTags, tags);
   }
   
   
@@ -361,16 +361,16 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
     setValues(dValues);
   }
 
-  public void setValues(Object[] values) {
-    Object[] oldvalues = this.values;
-    this.values = values;
-    propertySupport.firePropertyChange("values", oldvalues, values);
+  public void setValues(Object[] newValues) {
+    Object[] oldValues = this.values;
+    this.values = newValues;
+    propertySupport.firePropertyChange("values", oldValues, newValues);
   }
   
   public void propertyChange(PropertyChangeEvent evt) {
     //System.out.println(getClass().getName()+".prpropertyChange event : "+ evt.getPropertyName());
     if (evt.getPropertyName().equals("enabled")) {
-      //System.out.println("Recieved event enabled!!!!!!!!");
+      //System.out.println("Received event enabled!!!!!!!!");
       boolean enabled = ((Boolean)evt.getNewValue()).booleanValue();
       setEnabled(enabled); 
     } else

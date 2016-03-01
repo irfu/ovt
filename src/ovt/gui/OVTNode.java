@@ -133,7 +133,7 @@ public class OVTNode extends DefaultMutableTreeNode
   
   
   public void propertyChange(PropertyChangeEvent evt) {
-    //System.out.println("OVTNode recieved event - " + evt.getPropertyName());
+    //System.out.println("OVTNode received event - " + evt.getPropertyName());
 
     if (evt.getPropertyName().equals("visible")) {
       treePanel.nodeChanged(this);

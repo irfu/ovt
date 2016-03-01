@@ -67,8 +67,6 @@ import ovt.interfaces.MagPropsChangeListener;
  */
 public class MagActivityDataEditor extends javax.swing.JFrame {
 
-    private static final int DEBUG = 20;
-
     // Variables declaration 
     private javax.swing.JScrollPane jScrollPane1;
     private DataTable table;
@@ -120,7 +118,8 @@ public class MagActivityDataEditor extends javax.swing.JFrame {
         initComponents();
         pack();
         
-        // Can not use XYZWindow as reference since this window is initialized during launch.
+        // Can not use XYZWindow as reference since this window is initialized during launch,
+        // before XYZWindow sets its size.
         Utils.setInitialWindowPosition(this, null);
     }
 

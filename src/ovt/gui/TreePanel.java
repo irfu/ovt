@@ -237,8 +237,8 @@ public class TreePanel extends JScrollPane implements ActionListener {
                 
                 try {
                     menu = addMenuItemsFromSource(menu, (MenuItemsSource) pd.getPropertyEditor(), false);
-                    // One should render after user changes any paramiter by means of editor
-                    // core will render, when recieves event from property editor.
+                    // One should render after user changes any parameter by means of editor
+                    // core will render, when receives event from property editor.
                     try {
                         GUIPropertyEditor guiEd = (GUIPropertyEditor) pd.getPropertyEditor();
                         if (!guiEd.hasListener((GUIPropertyEditorListener)getCore()))

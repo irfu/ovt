@@ -130,7 +130,9 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
             }
         });
         
-        if (isRootNode) return new JMenuItem[] {item, item2};
+        if (isRootNode) {
+            return new JMenuItem[] {item, item2};
+        }
         // if not - continue
         JMenuItem item3 = new JMenuItem("Remove");
         item3.setFont(Style.getMenuFont());

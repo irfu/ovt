@@ -55,7 +55,7 @@ MagActivity() { }
 
 /** Create MagActivity up to mjd. */
 public MagActivity(double anmjd) {
-	// To be corrected! All data should be recieved from internet/files
+	// To be corrected! All data should be received from internet/files.
 	mjd = anmjd;
 	KPindex = 0;
 	imf = new double[3];

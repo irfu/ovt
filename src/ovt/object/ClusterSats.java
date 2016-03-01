@@ -60,11 +60,13 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
 
   private ClusterSat sats[] = new ClusterSat[4];
   
+  
 /** Holds value of property configurationWindowVisible. */
   private boolean configurationWindowVisible = false;
   protected ClusterConfigurationPanel configurationPanel;
   public String clusterConfOutFileName;
 
+  
   /** Creates new ClusterSats */
   public ClusterSats(Sats sats) {
     super(sats.getCore(), "Cluster", "images/cluster.gif", true);
@@ -113,26 +115,35 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     }
   }
   
-  /** Legacy constructor*/
+  
+  /** Legacy constructor */
   public void add(ClusterSat sat) {
     addPropertyChangeListener(sat);
     sat.addPropertyChangeListener(this);
     sat.setParent(this);
-    if (!sat.isEnabled()) setEnabled(sat.isEnabled());
+    if (!sat.isEnabled()) {
+        setEnabled(sat.isEnabled());
+    }
     sats[sat.getSatNumber()-1] = sat;
     addChild(sat);
   }
-  /** Returns ClusterSat by it's number 1..4 . legacy method*/
+  
+  
+  /** Returns ClusterSat by it's number 1..4 . Legacy method */
   public ClusterSat get(int number) {
-    if (number>4 || number<1) throw new IllegalArgumentException("Invalid number of Cluster Satellites - "+number);
+    if (number>4 || number<1) {
+        throw new IllegalArgumentException("Invalid number of Cluster Satellites - "+number);
+    }
     return sats[number-1];
   }
+  
   
   /** Returns ClusterSat by it's number 0..3 ;-) */
   public ClusterSat getClusterSat(int number) {
     if (number>3 || number<0) throw new ArrayIndexOutOfBoundsException("Invalid number of Cluster Satellites ("+number+"). Use numbers 0..3");
     return sats[number];
   }
+  
   
   public void timeChanged(TimeEvent evt) {
     for (int i=0; i<4; i++) sats[i].timeChanged(evt);
@@ -144,6 +155,7 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
   public void magPropsChanged(MagPropsEvent evt) {
     for (int i=0; i<4; i++) sats[i].magPropsChanged(evt);
   }
+  
   
   /** Getter for property configurationWindowVisible.
    * @return Value of property configurationWindowVisible.
@@ -157,13 +169,13 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
   public void setConfigurationWindowVisible(boolean configurationWindowVisible) {
     boolean oldConfigurationWindowVisible = this.configurationWindowVisible;
     this.configurationWindowVisible = configurationWindowVisible;
-    propertyChangeSupport.firePropertyChange ("configurationWindowVisible", new Boolean (oldConfigurationWindowVisible), new Boolean (configurationWindowVisible));
+    propertyChangeSupport.firePropertyChange ("configurationWindowVisible", oldConfigurationWindowVisible, configurationWindowVisible);
   }
   
   
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getPropertyName().equals("enabled")) {
-      boolean enabled = ((Boolean)evt.getNewValue()).booleanValue();
+      boolean enabled = (Boolean)evt.getNewValue();
       setEnabled(enabled);
     }
   }

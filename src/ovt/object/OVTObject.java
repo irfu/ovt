@@ -66,16 +66,18 @@ public class OVTObject implements NamedObject, OVTTreeNode,
   /** Holds value of property children. */
     protected Children children = new Children(this);
   /** Utility field used by bound properties. */
-    protected final OVTPropertyChangeSupport propertyChangeSupport = new OVTPropertyChangeSupport (this);
+    protected final OVTPropertyChangeSupport propertyChangeSupport = new OVTPropertyChangeSupport(this);
   /** Utility field used by constrained properties. */
-    protected java.beans.VetoableChangeSupport vetoableChangeSupport = new java.beans.VetoableChangeSupport (this);
+    protected java.beans.VetoableChangeSupport vetoableChangeSupport = new java.beans.VetoableChangeSupport(this);
   /** Holds value of property descriptors. */
     protected Descriptors descriptors = null;
   /** Holds value of property beans. */
     protected BeansCollection beans = null;
   /** Holds value of property valid. */
     protected boolean valid = false;
-  /** Holds value of property enabled. */
+  /** Holds value of property enabled. Presumably represents whether
+   * the corresponding object(s) can currently be displayed (made visible) if
+   * asked for, i.e. whether the checkbox can be checked at all. */
     private boolean enabled = true;
   /** Holds value of property icon. */
     private ImageIcon icon = null;
@@ -140,7 +142,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     }*/
         propertyChangeSupport.addPropertyChangeListener (property, l);
     }
-    
+
   /** Removes a PropertyChangeListener from the listener list.
    * @param l The listener to remove.
    */
@@ -360,7 +362,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
             // dispose WindowedPropertyEditors
             Enumeration e = descriptors.elements();
             while (e.hasMoreElements()) {
-                BasicPropertyDescriptor  pd = (BasicPropertyDescriptor)e.nextElement();
+                BasicPropertyDescriptor pd = (BasicPropertyDescriptor)e.nextElement();
                 OVTPropertyEditor editor = pd.getPropertyEditor();
                 if (editor instanceof WindowedPropertyEditor) {
                     ((WindowedPropertyEditor)editor).dispose();
@@ -446,9 +448,13 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         PropertyPath pp = new PropertyPath(propPath);
         OVTObject obj = getObject(pp.getObjectPath());
         Descriptors desc =  obj.getDescriptors();
-        if (desc == null) throw new IllegalArgumentException("Object " + pp.getObjectPath() + " has no properies");
+        if (desc == null) {
+            throw new IllegalArgumentException("Object " + pp.getObjectPath() + " has no properies");
+        }
         BasicPropertyDescriptor pd = desc.getDescriptor(pp.getPropName());
-        if (pd == null) throw new IllegalArgumentException("Object " + pp.getObjectPath() + " has no property " + pp.getPropName());
+        if (pd == null) {
+            throw new IllegalArgumentException("Object " + pp.getObjectPath() + " has no property " + pp.getPropName());
+        }
         return pd;
     }
     
@@ -520,31 +526,43 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     
     
 /* *********************************
- *  Foloving metods needed for advansed show/hide (c) oleg
+ *  Following methods needed for advanced show/hide (c) oleg
  */
     
     /**
-     * @return 0 - has no visual child,
-     * 1 - has visual child, but no one visible
-     * 2 - has visible visual child
+     * Visual child = child that is VisibleObject; Visible = isVisible.
+     * "Children" here also refers to children of children (recursively).
+     * 
+     * @return 0 - has no visual child;
+     * 1 - has at least one visual child, but none is visible;
+     * 2 - has at least one visible visual child.
      */
     public int hasVisualChildEx() {
         
-        Children children = getChildren();
-        if (children == null) return 0;     // has no visual child
+        final Children children = getChildren();
+        if (children == null) {
+            return 0;     // Has no visual child.
+        }
         
+        // CASE: Has children.
         int rc = 0;
-        Enumeration e = children.elements();
-        while(e.hasMoreElements() && rc < 2) {
-            OVTObject obj = (OVTObject) e.nextElement();
-            
+        final Enumeration e = children.elements();
+        while (e.hasMoreElements() && rc < 2) {
+            final OVTObject child = (OVTObject) e.nextElement();
+
+            // try-catch probably necessary for children which can not be
+            // typecast to VisualObject.
             try {
-                if (((VisualObject)obj).isVisible()) return 2;  // has visible child
+                if (((VisualObject)child).isVisible()) {
+                    return 2;  // has visible child
+                }
                 rc = 1; // no exception - has visual child
             } catch (ClassCastException e2) {}
             
-            int rec_ret = obj.hasVisualChildEx();
-            if (rc < rec_ret) rc = rec_ret;
+            final int rec_ret = child.hasVisualChildEx();  // NOTE: Recursive call.
+            if (rc < rec_ret) {
+                rc = rec_ret;
+            }
         }
         
         //System.out.println("HasVisualChildEx returned " + rc);
@@ -608,12 +626,17 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     
     private void addVisualChildren(Vector v) {
         Children children = getChildren();
-        if (children == null) return;
+        if (children == null) {
+            return;
+        }
+        
         Enumeration e = children.elements();
         while(e.hasMoreElements()) {
             OVTObject obj = (OVTObject) e.nextElement();
-            if (obj instanceof VisualObject) v.addElement(obj);
-            obj.addVisualChildren(v);
+            if (obj instanceof VisualObject) {
+                v.addElement(obj);
+            }
+            obj.addVisualChildren(v);    // NOTE: Recursive call.
         }
     }
     

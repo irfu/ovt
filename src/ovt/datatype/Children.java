@@ -124,7 +124,6 @@ public class Children {
   /** Child getter by name.
    * 
    * @param Return null if there is no such child.
-   
    */
   public OVTObject getChild(String name) { 
     Log.log("Children ::  get(" + name + ")", 7);

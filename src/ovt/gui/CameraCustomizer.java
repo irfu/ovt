@@ -51,6 +51,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+
 /**
  * Presumably represents/implements the configuration window "View Control" for configuring
  * the camera view (camera position, focal point, projection etc.).
@@ -58,8 +59,6 @@ import javax.swing.*;
  * @author  ko
  * @version 
  */
-
-
 public class CameraCustomizer extends JFrame implements PropertyChangeListener {
     
     /* first element corresponds to Camera.PARALLEL_PROJECTION, 

@@ -39,6 +39,8 @@ import ovt.datatype.*;
 import java.io.*;
 
 /**
+ * Represents a satellite (node in GUI tree) which is based on orbit data in an
+ * LTOF file.
  *
  * @author ko
  */

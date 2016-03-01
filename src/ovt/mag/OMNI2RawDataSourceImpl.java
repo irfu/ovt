@@ -268,7 +268,7 @@ public final class OMNI2RawDataSourceImpl implements OMNI2RawDataSource {
      * Informal test code.
      */
     public static void main(String[] args) throws IOException {
-        final String URL_PATTERN = "ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
+        final String URL_PATTERN = "http://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
         final String LOCAL_FILE_NAME_PATTERN = "omni2_%4d.dat";
         final OMNI2RawDataSourceImpl ofu = new OMNI2RawDataSourceImpl(new File("/home/erjo/temp/cachedir/"), URL_PATTERN, LOCAL_FILE_NAME_PATTERN);
         OMNI2Data data;

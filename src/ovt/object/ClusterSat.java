@@ -46,11 +46,13 @@ public class ClusterSat extends LTOFSat {
     super(core);
     try {
         setIcon(new javax.swing.ImageIcon(Utils.findResource("images/cluster_sat.gif")));
-    } catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
+    } catch (FileNotFoundException e2) {
+        e2.printStackTrace(System.err);
+    }
  }
  
  public void setOrbitFile(File orbitFile) throws IOException {
-     super.setOrbitFile(orbitFile);
+    super.setOrbitFile(orbitFile);
     // color cluster satellites according to the convension
     Color color = null;
     switch (getSatNumber()) {

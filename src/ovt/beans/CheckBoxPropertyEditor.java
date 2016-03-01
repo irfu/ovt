@@ -106,7 +106,7 @@ class CheckBoxEditorPanel extends JCheckBox
   
   public void propertyChange(PropertyChangeEvent evt) {
     String prName = evt.getPropertyName();
-    //System.out.println("Recieved change of : " + prName);
+    //System.out.println("Received change of : " + prName);
     //System.out.println("My prName is " + editor.getPropertyName());
     if (prName.equals(editor.getPropertyName())) 
         refresh();

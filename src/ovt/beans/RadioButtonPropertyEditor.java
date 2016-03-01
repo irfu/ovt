@@ -93,7 +93,7 @@ public class RadioButtonPropertyEditor extends GUIPropertyEditor
   
   //public JRadioButton getButton(Object value) {  }
   public void propertyChange(PropertyChangeEvent evt) {
-      //System.out.println("Recieved change of : " + evt.getPropertyName());
+      //System.out.println("Received change of : " + evt.getPropertyName());
       super.propertySupport.firePropertyChange(evt);
       if (evt.getPropertyName().equals(getPropertyName()) && buttons != null) {
         // refresh

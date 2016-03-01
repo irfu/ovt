@@ -45,7 +45,7 @@ public class ComboBoxPropertyEditor extends ComponentPropertyEditor {
 class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
   ComboBoxPropertyEditor editor;
   
-  /** Creates new CoordinateSystemEditorPanel */
+  /** Creates new ComboBoxEditorPanel */
   ComboBoxEditorPanel(ComboBoxPropertyEditor editor) {
     super(editor.getTags());
     setMinimumSize(getPreferredSize());
@@ -61,6 +61,7 @@ class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
     addActionListener(this);
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() instanceof JComboBox) {
       JComboBox cb = (JComboBox)e.getSource();
@@ -75,17 +76,21 @@ class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
     }
   }
   
+  @Override
   public void propertyChange(PropertyChangeEvent evt) {
     String prName = evt.getPropertyName();
-    //System.out.println("Recieved change of : " + prName);
+    //System.out.println("Received change of : " + prName);
     //System.out.println("My prName is " + editor.getPropertyName());
     if (prName.equals("tags")) {
         
+        // Remove all "tags" (menu alternatives) in ComboBox and replace them
+        // with the tags in "editor".
         removeActionListener(this);
         removeAllItems();
         String[] tags = editor.getTags();
-        for (int i=0; i<tags.length; i++)
+        for (int i=0; i<tags.length; i++) {
             addItem(tags[i]);
+        }
         setSelectedItem(editor.getAsText());
         addActionListener(this);
     } else if (prName.equals(editor.getPropertyName())) 

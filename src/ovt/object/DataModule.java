@@ -457,7 +457,7 @@ public JMenuItem[] getMenuItems() {
 
 /** Method overriden to unregister this as a propertyChange listener and to dispose customizer */
 public void dispose() {
-    sat.removePropertyChangeListener("enabled",this);
+    sat.removePropertyChangeListener("enabled", this);
     sat.getCore().getTimeSettings().removeTimeChangeListener(this);
     sat.getCore().getCoordinateSystem().removeCoordinateSystemChangeListener(this);
     setVisible(false);

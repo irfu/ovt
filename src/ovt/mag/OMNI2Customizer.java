@@ -93,7 +93,8 @@ public class OMNI2Customizer extends JFrame {
      * Display text at checkbox. Check how it influences, or reacts to, the size
      * of the window when changing.
      */
-    private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT = "Display OMNI2 values even if not used (might slow down application in case of I/O errors)";
+    private static final String DISPLAY_OMNI2_VALUES_CHECKBOX_TEXT
+            = "Display OMNI2 values even if not used (might slow down application in case of I/O errors)";
 
     /**
      * List of activity indices to use. The order defines the order in which
@@ -186,10 +187,19 @@ public class OMNI2Customizer extends JFrame {
                 }
                 {
                     final JTextField newTextField = new JTextField(INITIAL_VALUE_STRING + rootGridY);
+
                     activityValueTextFields.put(activityIndex, newTextField);
 //                    newTextField.setMinimumSize(newTextField.getPreferredSize());  // Does not seem to work.
                     newTextField.setEditable(false);
 
+                    /**
+                     * NOTE: It would be nice to align the text so that its left
+                     * edge always lines up with the left boundary of the text
+                     * field. This would be good for I/O errors with long error
+                     * messages that do not fit in the text field. Not sure how
+                     * to achieve that though.
+                     */
+                    //newTextField.setHorizontalAlignment(JTextField.LEFT);   // Does not seem to make any difference.
                     final GridBagConstraints c = createGBConstraints(1, indexGridY, 0.5, 1, GridBagConstraints.HORIZONTAL);
                     addComponentToPanel(indicesPanel, newTextField, c);
                 }

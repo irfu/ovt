@@ -126,20 +126,32 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
   /** Getter for property visible.
    * @return Value of property visible.
    */
+  /* QUESTION: Why does the method change the property "visible" and call
+   * "firePropertyChange("visible", oldVisible, visible);" when the method
+   * should ostensibly just return a value (ostensibly without changing anything)?!!
+   * Should this not be done somewhere like "setVisible"?
+   */
   public boolean isVisible() {
-    int type = hasVisualChildEx();
-    if (type == 0) return visible;
-    boolean real_visible = (type == 2);     // if type = 2 -> has visible leafs
-    if (visible != real_visible) {
-        boolean oldVisible = visible;
-        visible = real_visible;
-        firePropertyChange("visible", new Boolean (oldVisible), new Boolean (visible));
+    final int type = hasVisualChildEx();
+    
+    if (type == 0) {
+        return visible;
     }
-    return real_visible;
+    
+    final boolean realVisible = (type == 2);   // if type = 2 -> has visible leafs (children, also indirect)
+    if (visible != realVisible) {
+        boolean oldVisible = visible;
+        visible = realVisible;        // NOTE: CHANGES the property "visible"!!
+        firePropertyChange("visible", oldVisible, visible);
+    }
+    return realVisible;
   }
 
 
   /** Setter for property visible.
+   * Note that method influences the "visible" property of its children and uses
+   * previous visibility if set to true.
+   * 
    * @param visible New value of property visible.
    *
    * @throws PropertyVetoException
@@ -151,16 +163,18 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     }
     
     //if (!isEnabled()) return; // object is not enabled - no motion. ;)
-    if (visible && !isEnabled()) 
-        throw new IllegalArgumentException("Attempt to show the object while it is not enabled! ");
-    
+    if (visible && !isEnabled()) {
+        throw new IllegalArgumentException("Attempt to show the object while it is not enabled!");
+    }    
 
-    Vector vVisual = getVisualLeafs();
+    final Vector vVisual = getVisualLeafs();
     Enumeration eVisual;
 
     if (vVisual.size() > 0) {
 
         if (visible) { // show event
+            
+            // Restore the previous visibility of the children ("visual leafs").
             boolean some_restored = false;
             if (stored) {
                 stored = false; // only once can restore once stored values
@@ -170,21 +184,26 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
                     some_restored |= obj.restoreVisible();
                 }
             }
-            if (!some_restored) { // all children where hidden. Now - show them!
+            
+            // If none of the children ("visual leafs") was made visible, then show all of them.
+            if (!some_restored) {
                 eVisual = vVisual.elements();
                 while(eVisual.hasMoreElements()) {
                     VisualObject obj = (VisualObject) eVisual.nextElement();
                     obj.setVisible(true);
                 }
             }
-        }
-        else { // hide event
+            
+        } else { // hide event
+            
             Enumeration eVisible = getVisibleLeafs().elements();
 
             boolean or_mask = false;
-            if (!eVisible.hasMoreElements()) or_mask = true; // if no leafs are visible
+            if (!eVisible.hasMoreElements()) {
+                or_mask = true; // if no leafs are visible
+            }
         
-            // store old visible propery values
+            // Store old visible propery values
             eVisual = vVisual.elements();
             while(eVisual.hasMoreElements()) {
                 VisualObject obj = (VisualObject) eVisual.nextElement();
@@ -196,10 +215,11 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
                 VisualObject obj = (VisualObject) eVisible.nextElement();
                 obj.setVisible(false);
             }
+            
         }
     }
     this.visible = visible;
-    firePropertyChange ("visible", new Boolean (oldVisible), new Boolean (visible));
+    firePropertyChange ("visible", oldVisible, visible);
   }
   
   private boolean wasVisible = true;
@@ -218,7 +238,9 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
   
   /** hides the object if enabled=false and calls superclass method setEnabled */
   public void setEnabled(boolean enabled) {
-    if (!enabled && isVisible()) setVisible(false);
+    if (!enabled && isVisible()) {
+        setVisible(false);
+    }
     super.setEnabled(enabled);
   }
   
