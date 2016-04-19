@@ -7,6 +7,8 @@
  you should use one of the pre-made installer applications.
 #############################################################
 
+
+
 ===================================================================
 General instructions (all platforms: Mac, Windows, Linux)
 ===================================================================
@@ -59,10 +61,6 @@ Copy native *.dll/.so/.dylib/.jnilib files (VTK+libovt) files to the distributio
 Linux, MacOS: Run scripts to slightly correct native files.
 Linux: Run "fix_linux_nativelibs_fkjn.sh"
 MacOS: Run "fix_macosx_nativelibs_fkjn.sh"
-
-
-
-# Note: Add version numbers on installations.    ?????!!!!
 
 
 
