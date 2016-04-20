@@ -1,0 +1,657 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+      "http://www.w3.org/TR/REC-html40/strict.dtd"> 
+<html>
+<head>
+	<meta name="Author" content="erik.johansson@irfu.se">
+	<meta name="Keywords" content="OVT, ovt, orbit, orbits, visualization, vtk, visualization toolkit, orbit visualization tool, satellite, satellites">
+	<meta name="description" content="Orbit Visualization Tool (OVT) User Guide">
+	<link rel="StyleSheet" href="/ovt_web.css" type="text/css" media="screen">
+	<title>Orbit Visualization Tool 3.0 User Guide</title>
+</head>
+<body>
+
+<h1><a href="http://ovt.irfu.se"><img border="0" src="img/ovt80.gif" width="80" height="66"><br>
+</a>Orbit Visualization Tool User Guide
+</h1>
+<h2>version 3.0</h2>
+
+
+<hr>
+
+<h5><a name="Contents:">Contents:</a></h5>
+<ul>
+<li><a href="#what">What is OVT?</a>
+<li><a href="#Operating system and graphics.">Operating system and graphics</a>
+<li><a href="#Coordinate systems">Coordinate systems</a>
+<li><a href="#models">Models</a>
+<li><a href="#User Interface">User interface</a></ul>
+<blockquote>
+      <ul type="circle">
+      <li><a href="#Actors">Actors and scene</a></li>
+      <li><a href="#Satellite orbits">Satellite orbits and attitude</a>
+      <li><a href="#The bow shock">The bow shock and the
+  magnetopause</a></li>
+      <li><a href="#UImodels">Magnetic Models</a></li>
+      <li><a href="#Magnetospheric structure">Magnetospheric Structure</a></li>
+      <li><a href="#fl_mapper">Fieldline mapping</a></li>
+      <li><a href="#elpot">Ionospheric Electric Potential</a></li>
+      <li><a href="#data">Data Visualization</a></li>
+
+      <li><a href="#Time Control">Time Control</a></li>
+      <li><a href="#Orbit Monitor">Orbit Monitor</a></li>
+      <li><a href="#Dumping of orbit data">Dumping of orbit data</a></li>
+      <li><a href="#Footprints">Footprints</a></li>
+      <li><a href="#CLUSTER configuration">CLUSTER configuration</a></li>
+      <li><a href="#view control">View Control</a></li>
+      <li><a href="#printing">Printing</a></li>
+      <li><a href="#Miscellaneous">Miscellaneous&nbsp;</a></li>
+    </ul>
+</blockquote>
+
+
+<hr>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="what">What is OVT?</a>
+</td></tr></table></td></tr></table>
+
+
+<p>
+The Orbit Visualization Tool is a software for visualization of  
+satellite orbits in the Earth's magnetic field. The program can
+display satellite orbits in five <a href="#Coordinate systems">coordinate systems</a> 
+ (GEI, GEO, GSM, SMC, GSE), satellite
+footprints projected on the Earth's surface and shown in either geographic
+(GEO) or geomagnetic (SMC) coordinates. The software can load orbits on file as well as use online orbit data via NASA's
+<a href="http://sscweb.gsfc.nasa.gov/WebServices/">Satellite Situation Center's (SSC) Web Services</a>.
+
+In addition to satellite orbits the
+software computes and displays various models of magnetospheric
+structures, magnetopause, bow shock and electric potential, geomagnetic
+activity, and interplanetary field conditions. The models are time-dependent
+through either user-editable activity table files, or online magnetospheric data via NASA's <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility (SPDF)</a> OMNI2 data, which control the model's structure and properties. 
+
+The program can be used to plan operations or interpret measurements
+from scientific satellites, to prepare ground-based satellite
+coordination, or as an educational tool in astronomy and geophysics.
+</P>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Operating system and graphics.">Operating system and graphics</a>
+</td></tr></table></td></tr></table>
+
+<p>
+OVT can be installed on Linux, Mac OS X, and Windows (see release notes). The
+graphics used in this program is based on a Visualization Toolkit (<A HREF="http://www.vtk.org/">VTK</A>),
+which uses 3D accelerating hardware if present, but will still work
+with a simple 2D graphics card.</p>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Coordinate systems">Coordinate systems</a>
+</td></tr></table></td></tr></table>
+<p>
+The graphics window shows objects in one of five geocentric Cartesian coordinates described
+below. Let us denote the unit vector toward the Sun by <b>S</b> and the unit
+vector along the magnetic dipole axis by <b>D</b> (positive northward).<br>
+
+<UL>
+<LI><B>GEI</B>: Geocentric Equatorial Inertial<BR> 
+<UL>
+	<LI><b>X</b>-axis pointing toward the first point of Aries (the position of Sun at vernal equinox).
+	<LI><b>Z</b>-axis points toward geographic north.
+</UL>
+<BR>
+
+<LI><B>GEO</B>: Geographic
+<UL>
+	<LI><b>Z</b>-axis along the geographic north pole.
+	<LI><b>X</b>-axis in the equatorial plane at the Greenwich meridian (longitude=0).
+</UL>
+<BR>
+
+<LI><B>GSM</B>: Geocentric Solar Magnetospheric
+<UL>
+	<LI><b>X</b>-axis pointing toward the Sun.
+	<LI><b>Y</b>-axis perpendicularto the Earth magnetic dipole and the Sun direction
+	(<b>Y</b>=<b>D</b>x<b>X</b>).
+</UL>
+<BR>
+
+<LI><B>SMC</B>: Solar Magnetic Coordinates
+<UL>
+	<LI><b>Z</b>=<b>D</b> 
+	<LI><b>Y</b>=<b>Z</b>x<b>S</b>
+</UL>
+<P>The difference between GSM and SMC is rotation around the common Y
+axis by the dipole tilt angle.</P>
+<BR>
+
+<LI><B>GSE</B>: Geocentric Solar Ecliptic.
+<UL>
+	<LI><b>X</b>-axis points toward the Sun.
+	<LI><b>Z</b>-axis points toward the ecliptic north.
+</UL>
+<p>	
+In all coordinates the third axis, not mentioned above, completes the right-handed Cartesian triad (X,Y,Z).</p>
+</UL>
+</p>
+<p>
+The footprint projections on the Earth are shown at an altitude of 100 km above the average
+sphere of 6373.2 km in two
+coordinates system: geographic GEO (longitude and latitude), and magnetic SMC
+(magnetic local time and magnetic latitude). Field line tracing is done with the selected magnetospheric
+model (internal + external). Please note that in SMC
+coordinates&nbsp;footprints are shown as MLT
+(magnetic local time) and MLAT (magnetic latitude) that are equivalent to dipole geomagnetic coordinates.
+The corrected geomagnetic coordinates are not used for display purposes because they
+do not represent an orthogonal transformation and therefore cannot be included
+in the global coordinate transformation matrices.
+</p>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="models">Models</a>
+</td></tr></table></td></tr></table>
+<UL>
+<LI>The <i>magnetic field</i> models include standard internal field model IGRF 1950-2000 and
+Tsyganenko models of the external magnetospheric field: T87, T89, T96 and T2001.
+
+<LI>The <i>bow shock</i> model is according to Farris et al, GRL, v. 18, p.1821,
+1991, and Cairns et al., JGR, v.100, p.47,&nbsp;1995
+<center>
+<img src="img/eq_bs_model.png" width="397 height="173" alt="bow shock formulae" border="0"/>
+</center>
+
+<LI>The <i>magnetopause</i> model is according to Shue et al., JGR, v. 103, p. 17691, 1998. 
+
+<LI>The <i>electric potential</i> model is according to D. Weimer, GRL,&nbsp;<u>23</u>,&nbsp;2549,&nbsp;1996.
+<!--  -->
+</UL>
+
+<p>
+All these model implementations have user-editable time-dependent parameter data.
+</P>
+<BR>
+
+
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="User Interface">User Interface</a>
+</td></tr></table></td></tr></table>
+
+<p>
+The user interface consists of one visualization window integrated with a tree-like 
+control panel. Objects in the visualization window are mouse manoeuvrable:
+The graphics is mouse manoeuverable: primary mouse button to rotate the
+visualization in 3D, CTRL+primary mouse button to rotate the visualization in 2D, secondary mouse button to zoom in and out, and SHIFT+primary mouse button to
+move the focus.
+</p>
+<BR><BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Actors"></a>Actors and Scene
+</td></tr></table></td></tr></table>
+<p>
+<img border="0" src="img/overview.gif" width="947" height="703">
+<br>
+<br>
+The picture above shows the main window displaying the orbit of the Cluster1 satellite in GSM coordinates, current
+satellite position at time 2001-03-02T21:00:00Z and the magnetic field line
+passing through the satellite at this position. The footprints are shown in GEO
+coordinates. The position and size of the labels can be controlled by the user.
+<br>
+</p>
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/popup_menu.gif" width="306" height="107"></td>
+    <td class=bodytext>The left-side panel shows list of actors
+      that can be displayed on the right-hand side scene. Each actor has some
+      editable properties and can be shown/hidden on the scene. This popup menu is
+      activated with the right (secondary) mouse button, after a selection click with
+      the left (primary) button.</td>
+  </tr>
+</table>
+<BR><BR>
+
+
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Satellite orbits">Satellite Orbits and Attitude</a>
+</td></tr></table></td></tr></table>
+<p>
+The orbital module includes a standard ESOC program for computing position
+and velocity of Cluster, Double Star or any other s/c with the orbital parameters 
+defined in the Long Term Orbit File (LTOF) format. For orbits defined by TLE (two-line elements) the SGP4/SDP4 orbit propagator is used. The location accuracy is however reduced for TLE files. The OVT distribution in itself includes orbit files for the Cluster, Double Star, and Freja satellites. To make a satellite orbit data file available from inside the GUI, click on the menu item
+<B>Satellites -&gt; Import Satellite File...</B> and select a <b>.tle</b> or <b>.ltof</b> orbit file. The latest Cluster orbit files can be downloaded from 
+<A HREF="http://jsoc1.bnsc.rl.ac.uk/pub/fd_files/">http://jsoc1.bnsc.rl.ac.uk/pub/fd_files/ltof/</A>. Orbital elements for civilian satellites can be obtained from e.g. <a href="http://celestrak.com">CelesTrak</a>.
+<!--or <a href="ftp://nssdca.gsfc.nasa.gov/active/norad/">NASA ftp</a>-->
+</P>
+
+It is also possible to add satellites using online orbit data from NASA's <a href="http://sscweb.gsfc.nasa.gov/WebServices/">Satellite Situation Center's (SSC) Web Services</a>. 
+These satellites can be recognized in the interface tree by their name being prefixed with &quot;(SSC)&quot;.
+Displaying orbit data using this feature may lead to slight delays when new orbit data is downloaded. Also, while this feature works most of the time, the remote online orbit database may on rare occasions be &quot;locked&quot; (usually briefly) or be offline. This is of course beyond the control of OVT but is ameliorated by OVT's internal caching of SSC orbit data. Selecting the menu item <B>Satellites -&gt Select SSC-based Satellites...</B> in the main window displays the SSC-based satellite selection window depicted below. Satellites checked in the &quot;Bookmarked&quot; column are also represented under the <B>Satellites</B> menu in the main window for easier access (select/deselect). Satellites checked in the &quot;Added&quot; column are added to the main interface tree directly. Note that all columns can be sorted for easier navigation.
+
+<p>
+<img border="0" src="img/SSCsatellites.gif" width="900" height="407"><BR>
+
+
+<P>
+Information about the start and stop time of the available orbit data as well as a spacecraft's automatically estimated approximate
+period of revolution is available in the satellite's <b>Info</b> window.
+
+<P>
+Note: A spacecraft for which there is not enough orbit data to cover the entire currently selected time period is automatically unchecked in the interface tree (and can not be manually re-checked) and thus automatically disappears from the visualization. Hence, every plotted orbit covers the entire currently selected time interval. A spacecraft for which there is no orbit data for the current time interval has its name written in <i>italics</i> in the interface tree.
+</P>
+
+
+<p>
+If a spin data file (e.g SatelliteName.spin) is present in the <B>.ovt/&lt;version number&gt;/odata</B> directory 
+under the user directory, then it is is used to compute the orientation of the spin axis with respect to the
+magnetic field, velocity vector, and the sun direction. The .spin files must be
+in the format required for CLUSTER project, i.e.<br>
+<blockquote>
+<font size="-2"> 1 P 1994-09-01T00:00:00Z 1994-09-07T12:30:00Z 341.00 77.00
+14.ffffff 333.800 776.1   0.0   0.0  0.00  0.00 1994-09-01T01:10:00Z</font></blockquote>
+</p>
+<BR>
+
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="The bow shock">
+The bow shock</a> and the magnetopause
+</td></tr></table></td></tr></table>
+
+</h4>
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/bow-mp.gif" width="397" height="394"></td>
+    <td align="left" class=bodytext>
+      The bow shock and the magnetopause have editable properties that
+      control their shape and positions. SWP is the solar wind pressure (nPa)
+      and IMF stands for Interplanetary Magnetic Field. </td>
+  </tr>
+</table>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="UImodels">Magnetic Field Models</a>
+</td></tr></table></td></tr></table>
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/magnetic_field.gif" width="284" height="434"></td>
+    <td class=bodytext>Magnetic field models are controlled by the
+      window shown in the left. Each model has an associated set of
+      parameters which values can be configured to come either from user-controlled tables,
+      or (for most of them) from online OMNI2 data, see below.&nbsp;At present we have four
+      versions of the Tsyganenko models, which can be combined with IGRF or
+      dipole internal field models.<BR>
+      <P><B>Tsyganenko 2001:</B> The two IMF-related indices G1 and G2 take into account
+      the IMF and solar wind conditions during the preceding 1-hour interval; their
+      exact definition is given in the paper by N.A.&nbsp;Tsyganenko "A&nbsp;new data-based model of the near
+      magnetosphere magnetic field. 2. Parameterization and fitting to observations".<BR>
+      <!--The paper is available online from anonymous ftp-area www-istp.gsfc.nasa.gov,
+      /pub/kolya/T01--></P>
+
+      <p>The checked MP clipping
+      means that the terrestrial magnetic field lines are not allowed to go
+      outside the model MP surface (more than 0.5 Re).</P>
+      </td>
+  </tr> 
+</table><p></p>
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/IMFwindow.gif" width="732" height="280"></td>
+    <td class=bodytext>For each type of activity data there is an associated user-controlled table
+      which can be manually edited using the data editor.
+      If the particular type of activity data can also be retrieved from OMNI2 data, then there is a checkbox signalling
+      whether or not the corresponding data are retrieved from OMNI2 data instead of the table.
+      
+      When data for a given point in time is requested from the table, then the data record with the time
+      earlier or equal to the requested time is taken from the data editor.
+      If the requested time is earlier then the time of the first record - the first record is used.
+    </td>
+  </tr>
+</table>
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/OMNI2window.gif" width="670" height="312"></td>
+    <td class=bodytext>
+      The picture to the left depicts the OMNI2 Data Settings window accessible from the menu item <b>Settings -&gt; OMNI2 Settings...</b>    
+      The activity checkboxes signal whether or not the corresponding activity data are retrieved from OMNI2 data instead of the corresponding user-controlled tables and are equivalent to the checkboxes in the data editors. For convenience and as a reality check, the current values as understood by OVT are displayed (unless the feature is disabled).
+      <p>
+      Note: The OMNI2 data are automatically downloaded as files (each covering a year) from
+      NASA's <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility (SPDF)</a>, a
+      public online source, and are then cached locally on disk. The exact URL used for downloading is configured in .ovt/&lt;version number&gt;/conf/ovt.conf (directory under the user directory) but is also displayed in the OMNI2 Data Settings window. It can be set to an http://, ftp://, or file:// URL. As with NASA SSC online orbit data, there may be delays when OVT downloads new data and the online source may be offline. Files can also as a last resort be downloaded manually and be placed in the caching directory (.ovt/&lt;version number&gt;/cache/OMNI2/; create it if it does not already exist). OVT will however always try to silently replace cached files when it thinks the current ones are too old.
+    </td>
+  </tr>
+</table>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a name="Magnetospheric structure">Magnetospheric structure</a>
+</td></tr></table></td></tr></table>
+
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><A HREF="img/mag_struct_large.gif"><img border="0" src="img/mag_struct.gif" width="293" height="367" ALT="Click on the image to enlarge it"></A></td>
+    <td class=bodytext>Magnetospheric structure represents a shell
+      of outermost field-lines which are determined from current 
+      magnetic field model. If magnetopause (MP) clipping is set,
+      the field lines are not permitted to extend outside the MP model. If
+      the MP clipping is off, then the field-lines derived from the
+      magnetospheric model can extend significantly beyond the MP model. However
+      in such a case their footprint is very narrow and corresponds to the
+      topological magnetic cusp (for models T87, T89).<BR><BR>
+      Fieldline thickness can be specified (<A HREF="img/mag_struct_thick_large.gif">view the image</A>).
+      </td>
+  </tr>
+</table>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a name="fl_mapper">Fieldline Mapping</a>
+</td></tr></table></td></tr></table>
+
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td align=center class=bodytext>
+    	<img border="0" src="img/fl_mapper/fl_mapper_view_from_minus_x_small.gif" width="416" height="356" ALT="">
+        <BR clear=all>
+	<A HREF="img/fl_mapper/fl_mapper_view_from_minus_y_small.gif">View from -Y</A> &nbsp;&nbsp;
+    	<A HREF="img/fl_mapper/fl_mapper_view_from_z_small.gif">View from Z</A>
+    </td>
+    <td class=bodytext>
+    	On this pictures you can see magnetopause, in a wireframe representation, and a 
+	surface created from two fieldlines, starting form 
+	the Earth.
+    </td>
+  </tr>
+</table>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a name="elpot">Ionospheric Electric Potential</a>
+</td></tr></table></td></tr></table>
+
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><A HREF="img/elpot.gif">
+    <img border="0" src="img/elpot.gif" width="366" height="367" ALT="Click on the image to enlarge it"></A></td>
+    <td class=bodytext align=left>
+      Electric potential.
+    </td>
+  </tr>
+</table>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a name="data">Data Visualization</a>
+</td></tr></table></td></tr></table>
+
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td class=bodytext align=left>
+    	To visualize data click on the satellite with the right (secondary) mouse button and choose <B>&quot;Load Data...&quot;</B><BR>
+	<B>Load Data Wizard</B> will apear.
+	<P>
+	The data file should contain two columns:<br>
+	<li> 1-st - Time
+	<li> 2-nd - Magnitude
+	<P>
+
+	Time can be specified as DATE-TIME pair or in days/hours/minutes/seconds.
+	In the last case you will be asked by OVT to specify the offset time.
+	</P>
+	DATE format: <TT>YYYY-MM-DD or YYYY/MM/DD or YYYY/DDD</TT>
+	<BR>
+	TIME format: <TT>hh:mm or hh:mm:ss or hh.hhhh or sssss.ss</TT><BR><BR>
+	
+	Data file example:</BR>
+	<HR>
+	<PRE>
+	# comment - this is a Polar current magnitude data
+	2001-12-30 12:00:00	4.5
+	2001-12-30 12:01:00	5.6
+	.........
+	</PRE>
+	<HR>
+	</P>
+    </td>
+  </tr>
+  <tr>
+    <td>
+    	<img border="0" src="img/data_viz/astrid_data_on_orbit.gif" width="694" height="638" ALT="Visualization of data on orbit example">
+    	<BR cleanr=all>
+	<img border="0" src="img/data_viz/polar_data_on_fieldlines.gif" width="694" height="638" ALT="Visualization of data on fieldlines example">
+    </td>
+    
+  </tr>
+</table>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;
+<a name="Time Control">Time Control</a>
+</td></tr></table></td></tr></table>
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/time_settings.gif" width="272" height="159"></td>
+    <td class=bodytext>The time settings window (left) can be display when clicking the time (clock) symbol in the tool bar at the bottom of the main window. The window displays the currently selected time interval in the form of the interval's start time (Start), it's duration (Interval), and in how small pieces of time it will be subdivided (Tracing Step) for various purposes: stepping, labels, spline interpolation (for graphic representation of orbit only).    
+      <P>
+      <B>&quot;<<&quot;</B> and <B>&quot;>>&quot;</B> buttons are used to shift the start time backward or forward in time by the length of interval. Keyboard shortcuts &lt;modifier&gt;+&lt;left/right arrow&gt; correspond to the graphical buttons, but the &lt;modifier&gt; key may differ between platforms (e.g. Alt on Linux). Similarily, &lt;modifier&gt;+&lt;ENTER&gt; corresponds to the "Apply" button for convenience.
+  </td>
+  </tr>
+</table>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Orbit Monitor">Orbit Monitor</a>
+</td></tr></table></td></tr></table>
+
+<table border="0" width="100%" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/orbit_monitor_with_dumper.gif" width="305" height="498"></td>
+    <td class=bodytext>Orbit Monitor can be accessed by Sat's
+      pop-up menu. Orbit Monitor shows the current satellite position, velocity,
+      distance from the center of the earth, magnetic field conditions (derived from 
+      the magnetic field model), and footprint coordinates. The footprints
+      are shown for both hemispheres, if they exist. In addition, the orbit monitor
+      shows the estimated radial distance to the current model of the
+      magnetopause and the angle of the satellite spin axes with respect to the
+      magnetic field vector, satellite velocity, and the sun direction. The
+      later data require presence of the spin axis attitude file in the <B>.ovt/&lt;version number&gt;/odata/</B>
+      directory. The spin attitude file has suffix .spin and must be in the
+      format required by the CLUSTER project. The .spin files included in the
+      distribution contain artificial data for demonstration purposes. They
+      should be removed or replaced by real data.<BR><BR>
+      <CENTER><B><a name="Dumping of orbit data">Dumping of orbit data</a></B></CENTER><BR>
+      
+      Dumper panel is expanded if &quot;<B>Dump >></B>&quot; is pressed;<BR>
+      &quot;<B>Log</B>&quot; will dump the data specified in the  <A HREF="img/dumper_settings_window.gif">Dumper Settings Window</A> to a selected file.<BR>
+      
+      &quot;<B>Log All</B>&quot; will dump the data for the whole orbit.<BR>
+      &quot;<B>Settings</B>&quot; button pops-up dumper settings window.<BR><BR>
+      <U>Data available for dumping</U>: data from the orbit monitor, Bx, By, Bz, Dipole Tilt angle.<BR>
+      
+      </td>
+  </tr>
+</table>
+
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Footprints">Footprints</a></h4>
+</td></tr></table></td></tr></table>
+
+<table BORDER=0 CELLPADDING=10>
+  <tr>
+    <td>
+    	<A HREF="img/cluster_footprints_large.gif">
+    	<img border="0" src="img/cluster_footprints.gif" width="333" height="344" ALT="Click on the image to enlarge it">
+	</A>
+    </td>
+    <td class=bodytext>The picture shows footprint of CLUSTER1<BR>
+     over northern polar regions with time lables.
+      The tic marks are every 5 minutes. <BR><BR>
+      Footprints can be
+      shown either in GEO or in SMC coordinates.</td>
+  </tr>
+</table>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="CLUSTER configuration">CLUSTER Configuration</a>
+</td></tr></table></td></tr></table>
+
+<table border="0" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/cluster4.gif" width="352" height="345" ALT="Cluster Satellites"></td>
+    <td class=bodytext>Zooming at the CLUSTER spacecraft shows the
+      spacecraft trajectories (red, black, green, magenta) and the threading field-lines (green). 
+      The satellite is depicted as a sphere or as cylinders with a small pyramid, depending on the
+      absence or presence of the spin attitude files. In the later case, the
+      pyramid shows the actual orientation of the spin axis. <BR><BR>
+      The color convention:
+      <UL>
+      <LI> Cluster 1 - <FONT color="red">red</FONT>
+      <LI> Cluster 2 - <FONT color="black">black</FONT>
+      <LI> Cluster 3 - <FONT color="green">green</FONT>
+      <LI> Cluster 4 - <FONT color="magenta">magenta</FONT>
+      </UL>
+      <!--The observed bending of the field lines is a graphical display step
+      problem. The actual field-line tracing is done with high accuracy.//-->
+      </td>
+  </tr>
+</table>
+<p>&nbsp;</p>
+<table border="0" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/ClusterConfiguration.gif" width="601" height="176" ALT="Cluster Configuration Window"> </td>
+    <td class=bodytext>The CLUSTER configuration window shows configuration
+      parameters of the four spacecraft.<br>
+      <i>XYZ box</i> shows the minimum box size in current coordinates that will
+      confine all four spacecraft.<br>
+      <i>Ellipsoid </i>shows three axes of an ellipsoid that will confine
+      all spacecraft.<br>
+      <i>FAC box</i> shows a box in local field-aligned coordinates (FAC) around the
+      gravity centre that will confine four spacecraft: dB-along the
+      field-lines, dA-in the azimuthal (LT) direction, and dR-in the <b>dB</b>x<b>dA</b>,
+      pseudo-radial direction.<br>
+      <i>Distances between satellites</i> shows the distances between every pair of spacecraft.
+      <!--"The configuration parameters are automatically
+      saved in file ovt/userdata/clusters.conf." ??!!! Removed 2016-04-20-->
+      </td>
+  </tr>
+</table>
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="view control">
+View Control</a>
+</td></tr></table></td></tr></table>
+
+<table border="0" CELLPADDING=10>
+  <tr>
+    <td><img border="0" src="img/view_controls.gif" width="301" height="279" ALT="View Control Window"> </td>
+    <td class=bodytext>Control of the viewer position
+      which can be selected as a top of any of the axes X, Y, Z, or the
+      direction perpendicular to the orbit. The focal point can be a particular
+      satellite, center of the Earth, or a given geographic point.
+      <BR><BR>
+      Projection method can be parallel or perspective.
+    </td>
+  </tr>
+</table>
+<p>
+&nbsp;
+</p>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="printing">Printing</a>
+</td></tr></table></td></tr></table>
+<p>
+When printing or saving image make sure that
+the graphics is not covered by other window. The resolution of the
+hard copy corresponds to the resolution of screen objects. 
+One can export image to a file and print or edit it with another program.<br>
+</p>
+
+<BR>
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Miscellaneous">Miscellaneous</a>
+</td></tr></table></td></tr></table>
+<P>
+In the tool bar at the bottom of the main window, the time advance arrows &lt; and &gt; change time by one step within the
+requested interval. Double arrows &lt;&lt; and &gt;&gt;
+move the start and end points of the currently selected time interval.<br><br>
+The Earth can be shown either as continents, or as
+geographic/polar grid.<br>
+The axis XYZ can be hidden/shown and refer to the
+current selection of <a href="#Coordinate systems">space coordinates</a>.<br>
+Frame grid in three space planes can be also shown in the
+picture. Frame properties are editable.<br>
+Caption text can be included in the graphics window. Font and size of the text
+can be changed by the user.
+</P>
+
+<P>
+Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) can be found in the directory .ovt/&lt;version number&gt;/ located under the user directory. A user does not normally need to modify or access it. It can be deleted after uninstalling OVT.
+
+<p><a href="#Contents:">Top of page</a></p>
+
+<hr>
+
+<div align="right">
+<font size=-2>
+http://<!--#echo var="SERVER_NAME" var="DOCUMENT_URI"-->
+<br>
+last modified on <!--#echo var="LAST_MODIFIED"-->
+</font>
+</div>
+
+<p align="right">Copyright &copy  
+<a href="http://ovt.irfu.se">OVT Team</a>, 2000-2002. 
+</p>
+
+</body>
+</html>
