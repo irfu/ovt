@@ -1,0 +1,1167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<install4j version="6.1.1" transformSequenceNumber="5">
+  <directoryPresets config="./ovt/dist_static/lib/vtk.jar" />
+  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="./Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+    <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
+      <principalLanguage id="en" customLocalizationFile="" />
+      <additionalLanguages />
+    </languages>
+    <searchSequence>
+      <registry />
+      <envVar name="JAVA_HOME" />
+      <envVar name="JDK_HOME" />
+    </searchSequence>
+    <variables />
+    <mergedProjects />
+    <codeSigning macEnabled="true" macPkcs12File="./ovt_irfu.pfx" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="./ovt_irfu.pfx" />
+  </application>
+  <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="*.DS_Store" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
+    <filesets>
+      <fileset name="Mac OS X file set" id="35" customizedId="" />
+      <fileset name="Linux file set" id="107" customizedId="" />
+      <fileset name="Windows file set" id="109" customizedId="" />
+    </filesets>
+    <roots>
+      <root id="36" fileset="35" location="" />
+      <root id="108" fileset="107" location="" />
+      <root id="110" fileset="109" location="" />
+    </roots>
+    <mountPoints>
+      <mountPoint id="188" root="36" location="lib" mode="755" />
+      <mountPoint id="37" root="36" location="" mode="755" />
+      <mountPoint id="245" root="108" location="lib" mode="755" />
+      <mountPoint id="111" root="108" location="" mode="755" />
+      <mountPoint id="246" root="110" location="lib" mode="755" />
+      <mountPoint id="112" root="110" location="" mode="755" />
+    </mountPoints>
+    <entries>
+      <fileEntry mountPoint="188" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="37" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="conf/ovt.conf" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="37" file="./ovt/dist_static/natives/MacOS" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.so,*.dll" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="libvtkhdf5.so.1.8.13" fileType="regular" />
+          <entry location="libvtkhdf5.so.8.0.2" fileType="regular" />
+          <entry location="libvtkhdf5_hl.so.1.8.13" fileType="regular" />
+          <entry location="libvtkhdf5_hl.so.8.0.2" fileType="regular" />
+          <entry location="vtk.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="37" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="atomic" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt.jar" fileType="regular" />
+          <entry location="gluegen-test-util.jar" fileType="regular" />
+          <entry location="gluegen.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-android.jar" fileType="regular" />
+          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-test-android.jar" fileType="regular" />
+          <entry location="joal-test.jar" fileType="regular" />
+          <entry location="joal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-android.jar" fileType="regular" />
+          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-test-android.jar" fileType="regular" />
+          <entry location="jocl-test.jar" fileType="regular" />
+          <entry location="jocl.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt.jar" fileType="regular" />
+          <entry location="jogl-all.jar" fileType="regular" />
+          <entry location="jogl-test-android.jar" fileType="regular" />
+          <entry location="jogl-test.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="37" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="lib/vtk.jar" fileType="regular" />
+          <entry location="README.TXT" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <fileEntry mountPoint="245" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="111" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="conf/ovt.conf" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./ovt/dist_static/natives/Linux" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.dll" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="atomic" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt.jar" fileType="regular" />
+          <entry location="gluegen-test-util.jar" fileType="regular" />
+          <entry location="gluegen.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-android.jar" fileType="regular" />
+          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-test-android.jar" fileType="regular" />
+          <entry location="joal-test.jar" fileType="regular" />
+          <entry location="joal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-android.jar" fileType="regular" />
+          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-test-android.jar" fileType="regular" />
+          <entry location="jocl-test.jar" fileType="regular" />
+          <entry location="jocl.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt.jar" fileType="regular" />
+          <entry location="jogl-all.jar" fileType="regular" />
+          <entry location="jogl-test-android.jar" fileType="regular" />
+          <entry location="jogl-test.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="lib/vtk.jar" fileType="regular" />
+          <entry location="README.TXT" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <fileEntry mountPoint="246" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="112" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="conf/ovt.conf" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="112" file="./ovt/dist_static/natives/Windows" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.so" dirMode="755" overrideDirMode="false">
+        <exclude />
+      </dirEntry>
+      <dirEntry mountPoint="112" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="atomic" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt.jar" fileType="regular" />
+          <entry location="gluegen-test-util.jar" fileType="regular" />
+          <entry location="gluegen.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-android.jar" fileType="regular" />
+          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-test-android.jar" fileType="regular" />
+          <entry location="joal-test.jar" fileType="regular" />
+          <entry location="joal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-android.jar" fileType="regular" />
+          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-test-android.jar" fileType="regular" />
+          <entry location="jocl-test.jar" fileType="regular" />
+          <entry location="jocl.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt.jar" fileType="regular" />
+          <entry location="jogl-all.jar" fileType="regular" />
+          <entry location="jogl-test-android.jar" fileType="regular" />
+          <entry location="jogl-test.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="112" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="lib/vtk.jar" fileType="regular" />
+          <entry location="README.TXT" fileType="regular" />
+        </exclude>
+      </dirEntry>
+    </entries>
+    <components />
+  </files>
+  <launchers>
+    <launcher name="ovt MacOSX" id="38" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="35" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+      <executable name="ovt" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
+      </executable>
+      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+        <text>
+          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
+        </text>
+      </splashScreen>
+      <java mainClass="ovt.XYZWindow" vmParameters="-Xmx512m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+        <classPath>
+          <scanDirectory location="." failOnError="true" />
+          <scanDirectory location="lib" failOnError="true" />
+        </classPath>
+        <nativeLibraryDirectories>
+          <directory name="natives" />
+        </nativeLibraryDirectories>
+        <vmOptions />
+      </java>
+      <includedFiles />
+      <unextractableFiles />
+      <vmOptionsFile mode="template" overwriteMode="0" fileMode="644">
+        <content />
+      </vmOptionsFile>
+      <customScript mode="1" file="">
+        <content />
+      </customScript>
+      <infoPlist mode="1" file="./ovt/dist/Infopliststub.txt">
+        <content />
+      </infoPlist>
+      <iconImageFiles />
+    </launcher>
+    <launcher name="Orbit Visualization Tool" id="105" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="107" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+      <executable name="ovt" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+        <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
+      </executable>
+      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+        <text>
+          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
+        </text>
+      </splashScreen>
+      <java mainClass="ovt.XYZWindow" vmParameters="-Xmx512m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+        <classPath>
+          <scanDirectory location="." failOnError="true" />
+          <scanDirectory location="lib" failOnError="true" />
+        </classPath>
+        <nativeLibraryDirectories>
+          <directory name="natives" />
+        </nativeLibraryDirectories>
+        <vmOptions />
+      </java>
+      <includedFiles />
+      <unextractableFiles />
+      <vmOptionsFile mode="template" overwriteMode="0" fileMode="644">
+        <content />
+      </vmOptionsFile>
+      <customScript mode="1" file="">
+        <content />
+      </customScript>
+      <infoPlist mode="1" file="./ovt/dist/Infopliststub.txt">
+        <content />
+      </infoPlist>
+      <iconImageFiles>
+        <file path="./ovt/16x16.png" />
+        <file path="./ovt/32x32.png" />
+        <file path="./ovt/48x48.png" />
+        <file path="./ovt/128x128.png" />
+      </iconImageFiles>
+    </launcher>
+    <launcher name="Orbit Visualization Tool for Windows" id="116" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="109" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+      <executable name="ovt" type="1" iconSet="true" iconFile="./ovt/ovt.ico" executableDir="." redirectStderr="true" stderrFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+        <versionInfo include="false" fileVersion="" fileDescription="Orbit visualization tool" legalCopyright="" internalName="ovt" productName="Orbit Visualization Tool" />
+      </executable>
+      <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
+        <text>
+          <statusLine x="20" y="20" text="" fontSize="8" fontColor="0,0,0" bold="false" />
+          <versionLine x="20" y="40" text="version ${compiler:sys.version}" fontSize="8" fontColor="0,0,0" bold="false" />
+        </text>
+      </splashScreen>
+      <java mainClass="ovt.XYZWindow" vmParameters="-Xmx512m" arguments="" allowVMPassthroughParameters="true" preferredVM="" bundleRuntime="true">
+        <classPath>
+          <scanDirectory location="." failOnError="true" />
+          <scanDirectory location="lib" failOnError="true" />
+        </classPath>
+        <nativeLibraryDirectories>
+          <directory name="natives" />
+          <directory name="jre/bin" />
+        </nativeLibraryDirectories>
+        <vmOptions />
+      </java>
+      <includedFiles />
+      <unextractableFiles />
+      <vmOptionsFile mode="template" overwriteMode="0" fileMode="644">
+        <content />
+      </vmOptionsFile>
+      <customScript mode="1" file="">
+        <content />
+      </customScript>
+      <infoPlist mode="1" file="./ovt/dist/Infopliststub.txt">
+        <content />
+      </infoPlist>
+      <iconImageFiles>
+        <file path="./ovt/16x16.png" />
+        <file path="./ovt/32x32.png" />
+        <file path="./ovt/48x48.png" />
+        <file path="./ovt/128x128.png" />
+      </iconImageFiles>
+    </launcher>
+  </launchers>
+  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="http://ovt.irfu.se/download/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
+    <staticMembers script="" />
+    <customCode />
+    <autoUpdate useMinUpdatableVersion="true" minUpdatableVersion="3.0" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+      <commentFiles />
+      <customAttributes />
+    </autoUpdate>
+    <applications>
+      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="./ovt/ovt.icns" customIcoFile="./ovt/ovt.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.applications.InstallerApplication" id="InstallerApplication0">
+              <void property="customHeaderImage">
+                <object class="com.install4j.api.beans.ExternalFile">
+                  <string>./ovt/48x48.png</string>
+                </object>
+              </void>
+              <void property="customIconImageFiles">
+                <void method="add">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>./ovt/16x16.png</string>
+                  </object>
+                </void>
+                <void method="add">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>./ovt/32x32.png</string>
+                  </object>
+                </void>
+                <void method="add">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>./ovt/48x48.png</string>
+                  </object>
+                </void>
+                <void method="add">
+                  <object class="com.install4j.api.beans.ExternalFile">
+                    <string>./ovt/128x128.png</string>
+                  </object>
+                </void>
+              </void>
+              <void property="headerIconOverlap">
+                <boolean>true</boolean>
+              </void>
+              <void property="rollback">
+                <boolean>false</boolean>
+              </void>
+              <void property="useCustomIcon">
+                <boolean>true</boolean>
+              </void>
+              <void property="vmParameters">
+                <string>-Xmx512m</string>
+              </void>
+              <void property="watermark">
+                <boolean>false</boolean>
+              </void>
+            </object>
+          </java>
+        </serializedBean>
+        <launcherIds />
+        <variables />
+        <startup>
+          <screen name="" id="1" customizedId="" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="13" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RequestPrivilegesAction">
+                      <void property="obtainIfNormalWin">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="2" customizedId="" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
+                  <void property="bannerImageFile">
+                    <object class="com.install4j.api.beans.ExternalFile">
+                      <string>./ovt/256x256.png</string>
+                    </object>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="3" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="true" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction">
+                      <void property="excludedVariables">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>sys.installationDir</string>
+                          </void>
+                        </array>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="4" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationDirectoryScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationDirectoryScreen">
+                  <void property="allowNewFolderCreation">
+                    <boolean>true</boolean>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="5" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="true" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction">
+                      <void property="excludedVariables">
+                        <array class="java.lang.String" length="1">
+                          <void index="0">
+                            <string>sys.installationDir</string>
+                          </void>
+                        </array>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>context.getVariable("sys.responseFile") == null</condition>
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="6" customizedId="" beanClass="com.install4j.runtime.beans.screens.ComponentsScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.ComponentsScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="7" customizedId="" beanClass="com.install4j.runtime.beans.screens.StandardProgramGroupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StandardProgramGroupScreen">
+                  <void property="programGroupName">
+                    <string>${compiler:sys.fullName}</string>
+                  </void>
+                  <void property="showWarningIfExists">
+                    <boolean>true</boolean>
+                  </void>
+                </object>
+              </java>
+            </serializedBean>
+            <condition>!context.getBooleanVariable("sys.confirmedUpdateInstallation")</condition>
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="8" customizedId="" beanClass="com.install4j.runtime.beans.screens.InstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="true" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.InstallationScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="9" customizedId="" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="2" errorMessage="${i18n:FileCorrupted}">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.InstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="343" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.CopyFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.CopyFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>.</string>
+                        </object>
+                      </void>
+                      <void property="files">
+                        <array class="java.io.File" length="2">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>resources/docs/vtk-license.txt</string>
+                            </object>
+                          </void>
+                          <void index="1">
+                            <object class="java.io.File">
+                              <string>resources/docs/license.txt</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="Win/Linux resource installation" id="101" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="true" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="4" errorMessage="Unable to install resource files to ${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}${compiler:sys.version}">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}${compiler:sys.version}</string>
+                        </object>
+                      </void>
+                      <void property="files">
+                        <array class="java.io.File" length="1">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>resources</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="showProgress">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="Mac OS X resource installation" id="55" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="4" errorMessage="Unable to install resource files to ${installer:sys.userHome}${installer:sys.fileSeparator}Library/ovt/3.0">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>${installer:sys.userHome}${installer:sys.fileSeparator}Library${installer:sys.fileSeparator}ovt${installer:sys.fileSeparator}${compiler:sys.version}</string>
+                        </object>
+                      </void>
+                      <void property="files">
+                        <array class="java.io.File" length="1">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>resources</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="showProgress">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="Windows natives installation" id="147" customizedId="" beanClass="com.install4j.runtime.beans.actions.files.MoveFileAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="4" errorMessage="Unable to install resource files to .${installer:sys.fileSeparator}jre${installer:sys.fileSeparator}bin.">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.files.MoveFileAction">
+                      <void property="destinationFile">
+                        <object class="java.io.File">
+                          <string>.${installer:sys.fileSeparator}jre${installer:sys.fileSeparator}bin</string>
+                        </object>
+                      </void>
+                      <void property="files">
+                        <array class="java.io.File" length="1">
+                          <void index="0">
+                            <object class="java.io.File">
+                              <string>natives</string>
+                            </object>
+                          </void>
+                        </array>
+                      </void>
+                      <void property="showProgress">
+                        <boolean>true</boolean>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="10" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction">
+                      <void property="uninstallerMenuName">
+                        <string>${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition>!context.getBooleanVariable("sys.programGroupDisabled")</condition>
+              </action>
+              <action name="" id="11" customizedId="" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction">
+                      <void property="itemName">
+                        <string>${compiler:sys.fullName} ${compiler:sys.version}</string>
+                      </void>
+                    </object>
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="12" customizedId="" beanClass="com.install4j.runtime.beans.screens.FinishedScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.FinishedScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </screens>
+      </application>
+      <application name="" id="uninstaller" customizedId="" beanClass="com.install4j.runtime.beans.applications.UninstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="" customIcoFile="" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+        <serializedBean>
+          <java class="java.beans.XMLDecoder">
+            <object class="com.install4j.runtime.beans.applications.UninstallerApplication">
+              <void property="customMacosExecutableName">
+                <string>${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</string>
+              </void>
+              <void property="useCustomMacosExecutableName">
+                <boolean>true</boolean>
+              </void>
+            </object>
+          </java>
+        </serializedBean>
+        <launcherIds />
+        <variables />
+        <startup>
+          <screen name="" id="14" customizedId="" beanClass="com.install4j.runtime.beans.screens.StartupScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.StartupScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="20" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+              <action name="" id="21" customizedId="" beanClass="com.install4j.runtime.beans.actions.misc.RequireInstallerPrivilegesAction" enabled="true" commentSet="false" comment="" actionElevationType="none" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.misc.RequireInstallerPrivilegesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+        </startup>
+        <screens>
+          <screen name="" id="15" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallWelcomeScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="16" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallationScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="false" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallationScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions>
+              <action name="" id="17" customizedId="" beanClass="com.install4j.runtime.beans.actions.UninstallFilesAction" enabled="true" commentSet="false" comment="" actionElevationType="elevated" rollbackBarrier="false" multiExec="false" failureStrategy="1" errorMessage="">
+                <serializedBean>
+                  <java class="java.beans.XMLDecoder">
+                    <object class="com.install4j.runtime.beans.actions.UninstallFilesAction" />
+                  </java>
+                </serializedBean>
+                <condition />
+              </action>
+            </actions>
+            <formComponents />
+          </screen>
+          <screen name="" id="19" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallFailureScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallFailureScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+          <screen name="" id="18" customizedId="" beanClass="com.install4j.runtime.beans.screens.UninstallSuccessScreen" enabled="true" commentSet="false" comment="" actionElevationType="inherit" rollbackBarrier="false" backButton="2" finishScreen="true" wizardIndexChangeType="unchanged" wizardIndexKey="">
+            <serializedBean>
+              <java class="java.beans.XMLDecoder">
+                <object class="com.install4j.runtime.beans.screens.UninstallSuccessScreen" />
+              </java>
+            </serializedBean>
+            <condition />
+            <validation />
+            <preActivation />
+            <postActivation />
+            <actions />
+            <formComponents />
+          </screen>
+        </screens>
+      </application>
+    </applications>
+  </installerGui>
+  <mediaSets>
+    <macos name="Mac OS X Single Bundle" id="28" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="macosx-amd64-1.8.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" appleJre="false" requiredVmIdPrefix="" customInstallBaseDir="" contentFilesType="1" installerName="${i18n:InstallerName(${compiler:sys.fullName})}" volumeName="${compiler:sys.shortName}" compressDmg="false" launcherId="38">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedBeans>
+        <bean refId="101" />
+        <bean refId="147" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_" fileType="regular" />
+        <entry location=".i4j_fileset_107" fileType="regular" />
+        <entry location=".i4j_fileset_109" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <topLevelFiles />
+    </macos>
+    <unixInstaller name="Unix Installer" id="98" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="all" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedLaunchers>
+        <launcher id="38" />
+        <launcher id="116" />
+      </excludedLaunchers>
+      <excludedBeans>
+        <bean refId="55" />
+        <bean refId="147" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_" fileType="regular" />
+        <entry location=".i4j_fileset_35" fileType="regular" />
+        <entry location=".i4j_fileset_109" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+      <installerScript mode="1" file="">
+        <content />
+      </installerScript>
+    </unixInstaller>
+    <windows name="Windows_32" id="99" customizedId="" mediaFileName="" installDir="${compiler:sys.shortName}" overridePrincipalLanguage="false" jreBitType="32" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-x86-1.8.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedLaunchers>
+        <launcher id="38" />
+        <launcher id="105" />
+      </excludedLaunchers>
+      <excludedBeans>
+        <bean refId="55" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_" fileType="regular" />
+        <entry location=".i4j_fileset_35" fileType="regular" />
+        <entry location=".i4j_fileset_107" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+    </windows>
+    <windows name="Windows_64" id="143" customizedId="" mediaFileName="" installDir="${compiler:sys.fullName}" overridePrincipalLanguage="false" jreBitType="64" runPostProcessor="false" postProcessor="" failOnPostProcessorError="false" useLegacyMediaFileIds="false" legacyMediaFileIds="" downloadURL="" includeAllDownloadableComponents="false" includedJRE="windows-amd64-1.8.0_60" manualJREEntry="false" bundleType="1" jreURL="" jreShared="false" directDownload="false" installOnlyIfNecessary="false" customInstallBaseDir="" contentFilesType="1" verifyIntegrity="true">
+      <excludedComponents />
+      <includedDownloadableComponents />
+      <excludedLaunchers>
+        <launcher id="38" />
+        <launcher id="105" />
+      </excludedLaunchers>
+      <excludedBeans>
+        <bean refId="55" />
+      </excludedBeans>
+      <overriddenPrincipalLanguage id="en" customLocalizationFile="" />
+      <exclude>
+        <entry location=".i4j_fileset_" fileType="regular" />
+        <entry location=".i4j_fileset_35" fileType="regular" />
+        <entry location=".i4j_fileset_107" fileType="regular" />
+      </exclude>
+      <variables />
+      <autoUpdate useMinUpdatableVersion="false" minUpdatableVersion="" useMaxUpdatableVersion="false" maxUpdatableVersion="">
+        <commentFiles />
+        <customAttributes />
+      </autoUpdate>
+    </windows>
+  </mediaSets>
+  <buildIds buildAll="false">
+    <mediaSet refId="98" />
+  </buildIds>
+  <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
+</install4j>
