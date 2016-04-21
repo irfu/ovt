@@ -90,7 +90,13 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
 
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
-    public static final String DEFAULT_SETTINGS_FILE_NAME = "OVTSavestate.xml";
+
+    /**
+     * NOTE: Name of KEY in the settings file. The corresponding VALUE (in the
+     * settings file) is a filename. The setting corresponds to the initial file
+     * (path) in the save/load state dialog.
+     */
+    public static final String SETTING_DEFAULT_SAVED_STATE_FILENAME = "StateFileDefault";
     private static final Properties globalProperties = new Properties();
     //private static final String SYSTEM_OUT_FILE_NAME = null; // null=Print to screen instead of log file
     private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";

@@ -109,18 +109,18 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, core.getConfSubdir());
-                String file = Settings.showOpenDialog(xyzWin, new File(defaultFile));
-                if (file != null) {
+                final String defaultFile = OVTCore.getGlobalSetting(OVTCore.SETTING_DEFAULT_SAVED_STATE_FILENAME, core.getUserDir());
+                final String filePath = Settings.showOpenDialog(xyzWin, new File(defaultFile));
+                if (filePath != null) {
                     try {
                         // hide all objects
                         //Settings.load(core.getConfSubdir() + "hideall.xml", core);
                         getCore().hideAllVisibleObjects();
                         // load new settings
-                        Settings.load(file, core);
+                        Settings.load(filePath, core);
 
                         xyzWin.getTreePanel().expandSatellitesNode();
-                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, file);
+                        OVTCore.setGlobalSetting(OVTCore.SETTING_DEFAULT_SAVED_STATE_FILENAME, filePath);
                         core.Render();
                     } catch (IOException e2) {
                         core.sendErrorMessage("Error loading settings", e2);
@@ -135,12 +135,12 @@ public class XYZMenuBar extends JMenuBar {
         menuItem.setFont(font);
         menuItem.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
-                String defaultFile = OVTCore.getGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, core.getUserDir());
-                String file = Settings.showSaveDialog(xyzWin, new File(defaultFile));
-                if (file != null) {
+                final String defaultFile = OVTCore.getGlobalSetting(OVTCore.SETTING_DEFAULT_SAVED_STATE_FILENAME, core.getUserDir());
+                final String filePath = Settings.showSaveDialog(xyzWin, new File(defaultFile));
+                if (filePath != null) {
                     try {
-                        Settings.save(core, file);
-                        OVTCore.setGlobalSetting(OVTCore.DEFAULT_SETTINGS_FILE_NAME, file);
+                        Settings.save(core, filePath);
+                        OVTCore.setGlobalSetting(OVTCore.SETTING_DEFAULT_SAVED_STATE_FILENAME, filePath);
                     } catch (IOException e2) {
                         core.sendErrorMessage("Error saving settings", e2);
                     }

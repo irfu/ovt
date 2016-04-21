@@ -588,15 +588,19 @@ private static void set(Element node, Object obj) throws SAXException {
 }
 
 
+/**
+ */
 public static String showSaveDialog(JFrame frameOwner, File defaultFile) {
     JFileChooser chooser = new JFileChooser(defaultFile); 
-        chooser.setDialogTitle("Save State");
-        chooser.setApproveButtonText("Save");
-        if (!defaultFile.isDirectory()) chooser.setSelectedFile(defaultFile);
+    chooser.setDialogTitle("Save State");
+    chooser.setApproveButtonText("Save");
+    if (!defaultFile.isDirectory()) {
+        chooser.setSelectedFile(defaultFile);
+    }
     	
     OvtExtensionFileFilter filter = new OvtExtensionFileFilter(); 
         filter.addExtension(".xml"); 
-        filter.setDescription("OVT Config File (*.xml)"); 
+        filter.setDescription("OVT State File (*.xml)"); 
         
     chooser.setFileFilter(filter);
     chooser.addChoosableFileFilter(filter);
@@ -618,16 +622,23 @@ public static String showSaveDialog(JFrame frameOwner, File defaultFile) {
 }
 
 
-/** Shows Open Dialog and returns selected filename or <CODE>null</CODE> */
+
+/**
+ * Shows Open Dialog and returns selected filename or <CODE>null</CODE>.
+ * 
+ * @param defaultFile If null, then the default directory will be shown.
+ */
 public static String showOpenDialog(JFrame frameOwner, File defaultFile) {
     JFileChooser chooser = new JFileChooser(defaultFile); 
-        chooser.setDialogTitle("Load State");
-        chooser.setApproveButtonText("Load");
-        if (!defaultFile.isDirectory()) chooser.setSelectedFile(defaultFile);
+    chooser.setDialogTitle("Load State");
+    chooser.setApproveButtonText("Load");
+    if (!defaultFile.isDirectory()) {
+        chooser.setSelectedFile(defaultFile);
+    }
 	
     OvtExtensionFileFilter filter = new OvtExtensionFileFilter(); 
-        filter.addExtension(".xml"); 
-        filter.setDescription("OVT Config File (*.xml)"); 
+        filter.addExtension(".xml");
+        filter.setDescription("OVT State File (*.xml)"); 
         chooser.setFileFilter(filter);
         chooser.addChoosableFileFilter(filter);
 	
