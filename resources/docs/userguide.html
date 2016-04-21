@@ -459,15 +459,18 @@ The bow shock</a> and the magnetopause
 <table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
 <tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
 &nbsp;&nbsp;&nbsp;&nbsp;
-<a name="Time Control">Time Control</a>
+<a name="Time Control">Time and Time Control</a>
 </td></tr></table></td></tr></table>
 
 <table border="0" width="100%" CELLPADDING=10>
   <tr>
     <td><img border="0" src="img/time_settings.gif" width="272" height="159"></td>
-    <td class=bodytext>The time settings window (left) can be display when clicking the time (clock) symbol in the tool bar at the bottom of the main window. The window displays the currently selected time interval in the form of the interval's start time (Start), it's duration (Interval), and in how small pieces of time it will be subdivided (Tracing Step) for various purposes: stepping, labels, spline interpolation (for graphic representation of orbit only).    
-      <P>
-      <B>&quot;<<&quot;</B> and <B>&quot;>>&quot;</B> buttons are used to shift the start time backward or forward in time by the length of interval. Keyboard shortcuts &lt;modifier&gt;+&lt;left/right arrow&gt; correspond to the graphical buttons, but the &lt;modifier&gt; key may differ between platforms (e.g. Alt on Linux). Similarily, &lt;modifier&gt;+&lt;ENTER&gt; corresponds to the "Apply" button for convenience.
+    <td class=bodytext>
+    OVT operates by always having a <i>currently selected time interval</i> (used for e.g. plotting segments of orbits) as well as a <i>currently selected point in time</i> within the currently selected time interval (used for e.g. drawing satellites, or the exact rotation of the Earth).
+    
+    The time settings window (left) can be display when clicking the time (clock) symbol in the tool bar at the bottom of the main window. The window displays the currently selected time interval in the form of the interval's start time (Start), it's length (Interval), and in how small pieces of time it will be subdivided (Tracing Step) for various purposes: stepping, labels, orbit spline interpolation (for graphic representation of orbit only). <B>&quot;<<&quot;</B> and <B>&quot;>>&quot;</B> buttons are used to shift the start time backward or forward in time by the length of interval. Keyboard shortcuts &lt;modifier&gt;+&lt;left/right arrow&gt; correspond to the graphical buttons, but the &lt;modifier&gt; key may differ between platforms (e.g. Alt on Linux). Similarily, &lt;modifier&gt;+&lt;ENTER&gt; corresponds to the "Apply" button for convenience.
+    <p>
+    In the tool bar at the bottom of the main window, the time advance arrows &lt; and &gt; step backward or forward in time by one step within the current time interval. Double arrows &lt;&lt; and &gt;&gt; change the current time to the beginning or end of the currently selected time interval.<br><br>
   </td>
   </tr>
 </table>
@@ -621,9 +624,6 @@ One can export image to a file and print or edit it with another program.<br>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="Miscellaneous">Miscellaneous</a>
 </td></tr></table></td></tr></table>
 <P>
-In the tool bar at the bottom of the main window, the time advance arrows &lt; and &gt; change time by one step within the
-requested interval. Double arrows &lt;&lt; and &gt;&gt;
-move the start and end points of the currently selected time interval.<br><br>
 The Earth can be shown either as continents, or as
 geographic/polar grid.<br>
 The axis XYZ can be hidden/shown and refer to the
@@ -635,7 +635,12 @@ can be changed by the user.
 </P>
 
 <P>
-Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) can be found in the directory .ovt/&lt;version number&gt;/ located under the user directory. A user does not normally need to modify or access it. It can be deleted after uninstalling OVT.
+Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) are installed to, written to (e.g. when importing satellite orbit files), and read from a directory .ovt/&lt;version number&gt;/ and its subdirectories (&quot;mdata&quot;, &quot;conf&quot;, &quot;docs&quot; etc. ), located somewhere under the user directory. Previous versions of OVT may have used the application directory and subdirectories under it for the same purpose. OVT should/might still be able to read files from the corresponding subdirectories under the application directory <i>if</i> the file(s) can not be found under &quot;.ovt&quot; under the user directory.
+The user is adviced to be aware of this to avoid confusion on which files are actually being read by the OVT. This can be an issue if installing OVT into the directory of an old OVT installation.
+<p>
+<b>Note:</b> The initial period in .ovt is omitted on Mac OS X.
+<p>
+A user does not normally need to modify or access the &quot;.ovt&quot; directory. It can be deleted after uninstalling OVT.
 
 <p><a href="#Contents:">Top of page</a></p>
 
@@ -650,7 +655,7 @@ last modified on <!--#echo var="LAST_MODIFIED"-->
 </div>
 
 <p align="right">Copyright &copy  
-<a href="http://ovt.irfu.se">OVT Team</a>, 2000-2002. 
+<a href="http://ovt.irfu.se">OVT Team</a>, 2000-2016. 
 </p>
 
 </body>
