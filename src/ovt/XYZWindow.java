@@ -680,7 +680,7 @@ class SplashWindow extends JWindow {
         labelSize = label.getPreferredSize();
         label.setBounds(imageLabel.getPreferredSize().width - labelSize.width - 80, 255, labelSize.width, labelSize.height);
 
-        JLabel copyrightLabel = new JLabel("Copyright (c) OVT Team, 2000-2015");
+        JLabel copyrightLabel = new JLabel("Copyright (c) OVT Team, 2000-2016");
         copyrightLabel.setFont(new Font("Arial", Font.PLAIN, 10));
         copyrightLabel.setForeground(Color.white);
         labelSize = copyrightLabel.getPreferredSize();
