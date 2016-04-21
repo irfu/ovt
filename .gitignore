@@ -1,24 +1,25 @@
 
 build/
 
-# By convention, the version of VTK used for development,
+# By convention, the directory used for the version of VTK that is used for development,
 # but not necessarily for constructing installation files.
 # (Different developers may have different exact versions.)
 VTKBuild/
 
-# Contains among others dist/lib/vtk.jar
-# which changes upon compilation (of ovt) and is (probably)
+# Appears to only contain files created by NetBeans during compilation
+# and which hence also change frequently.
+# Contains among others dist/lib/vtk.jar is (probably)
 # linked to the local version of VTK (by convention in VTKBuild/) rather
-# than the native VTK files used for constructing installations files.
+# than the native VTK files used for constructing installation files.
 dist/
 
 lib/jogl/Archive.zip
 lib/vtk copy.jar
 
+# Delete from .gitignore?
 src/libovt/libovt-3.0.jnilib_temp
 src/libovt/magpackbackup.c
 src/libovt 2/
-
 src/ovt/object/MainFieldlineModule.javabackup
 src/ovt/util/ImageOperations.backupjava
 
@@ -29,3 +30,6 @@ nbproject/project.properties
 nbproject/project.xml
 
 vtkError.txt
+
+# Java crash log files
+hs_err_pid*.log

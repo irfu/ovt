@@ -350,7 +350,7 @@ public class XYZMenuBar extends JMenuBar {
 
 
     public JMenuItem createSSCWSSatellitesSelectionWindowMenuItem() {
-        final JMenuItem menuItem = new JMenuItem("Select SSC-based Satellites ...");
+        final JMenuItem menuItem = new JMenuItem("Select SSC-based Satellites...");
         menuItem.setFont(Style.getMenuFont());
 
         menuItem.addActionListener(new ActionListener() {

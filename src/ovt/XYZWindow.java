@@ -97,10 +97,10 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
 
             // Log important paths
-            // Potentially very useful for debugging problems with loading native files.
+            // Potentially very useful for debugging problems relating to loading native files.
             // java.library.path : Paths to where Java will search for native libraries.
-            // vtk.lib.dir : Found inside the VTK code. Is added to
-            //               java.library.path by vtkNativeLibrary#LoadLibrary (if non-null).
+            // vtk.lib.dir       : Found inside the VTK code. Is added to
+            //                     java.library.path by vtkNativeLibrary#LoadLibrary (if non-null).
             final String s1 = "java.library.path = " + System.getProperty("java.library.path");
             final String s2 = "vtk.lib.dir       = " + System.getProperty("vtk.lib.dir");
             Log.log(s1, 0);
@@ -195,7 +195,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         splashWindow.setVisible(true);
 
 //------- create the vtkPanel ----------
-    /* Javadoc for <java.awt.Frame.this>.addNotify():
+        /* Javadoc for <java.awt.Frame.this>.addNotify():
          "Makes this Frame displayable by connecting it to a native screen
          resource. Making a frame displayable will cause any of its children
          to be made displayable. This method is called internally by the toolkit
@@ -448,10 +448,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      */
     public static void main(String[] arg) {
         try {
-
+ 
             final XYZWindow XYZwin = new XYZWindow();
             XYZwin.start();
-            //XYZwin.quit();   // DEBUG
 
         } catch (Throwable e) {
             // NOTE: NOT using OVTCore#sendErrorMessage since the code should not

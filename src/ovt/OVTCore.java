@@ -59,13 +59,13 @@ import javax.swing.*;
  * NOTE: The application creates one instance of this object which it then
  * passes around to many, many other classes. This is unfortunate since this
  * class is also dependent on many other OVT-specific classes and instances
- * thereof (including of GUI classes) which makes it difficult to instantiate.
- * This in turn makes it difficult to separately test (instantiate) classes that
- * require having a reference to an instance of OVTCore. The class also has many
- * static members which are used throughout the application. Future modification
- * should be careful with adding more dependence on OVTCore. Should more static
- * members (non-final fields, methods that depend on class state) be turned into
- * instance members?<BR>
+ * thereof (including of GUI classes) which makes it difficult to instantiate in
+ * isolation. This in turn makes it difficult to separately test (instantiate)
+ * classes that require having a reference to an instance of OVTCore. The class
+ * also has many static members which are used throughout the application.
+ * Future modification should be careful with adding more dependence on OVTCore.
+ * Should more static members (non-final fields, methods that depend on class
+ * state) be turned into instance members?<BR>
  * /Erik P G Johansson 2016-01-22
  *
  * @author Mykola Khotyaintsev
@@ -98,7 +98,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      */
     public static final String SETTING_DEFAULT_SAVED_STATE_FILENAME = "StateFileDefault";
     private static final Properties globalProperties = new Properties();
-    //private static final String SYSTEM_OUT_FILE_NAME = null; // null=Print to screen instead of log file
+    /**
+     * File to which stdout should be directed. null=Print to screen instead of
+     * log file.
+     */
     private static final String SYSTEM_OUT_FILE_NAME = "system_out.log";
     private static final String SYSTEM_ERR_FILE_NAME = "system_err.log";
     private static final int GLOBAL_LOG_LEVEL = 0;
@@ -348,7 +351,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      * @param defaultValue String value to be returned if there is not property
      * for "key". Note that this must be a string, even if the returned value is
      * converted to e.g. a number.
-     *
      */
     public static String getGlobalSetting(String key, String defaultValue) {
         return globalProperties.getProperty(key, defaultValue);
@@ -401,7 +403,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 }
             }
 
-            final File userConfDir = new File(ovtUserDir + getConfSubdir());   // Must create this directory in order to be able to save ovt.conf there.
+            // Must create this directory in order to be able to save ovt.conf there.
+            final File userConfDir = new File(ovtUserDir + getConfSubdir());
             if (!userConfDir.exists()) {
                 if (userConfDir.mkdirs()) {
                     Log.log("Created:" + userConfDir.getAbsolutePath(), 3);
@@ -417,10 +420,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         // obtained. Can therefore not be initialized earlier.
         //====================================================================
         try {
-            // NOTE: It appears that on MS Windows, one will not get an explicit
+            // NOTE: It appears that on MS Windows, one will NOT get an explicit
             // log file (for stdout) without explicitly redirecting System.out.
-            // NOTE: Should only put files in directory where the code has write
-            // permission (i.e. not the application directory).
+            // NOTE: OVT should only put files in a directory where it likely has
+            // write permission (i.e. not the application directory).
             // NOTE: Can only call OVTCore.getUserDir() after ovtUserDir has been initialized.
             // ==> Not ideal since some log messages have already been created.
             if (SYSTEM_ERR_FILE_NAME != null) {
@@ -436,6 +439,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
             Log.err("Failed to redirect System.err (stderr) or System.out (stdout) to file.");
         }
 
+        Log.log("Java version: " + System.getProperty("java.version"), 0);
 
         /* Setting the http user agent for the benefit of NASA SSC, so that they
          * can see who/what (OVT) is using their service (over the internet).
@@ -455,7 +459,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
          --------------------
          NOTE: This code indirectly uses this.ovtUserDir which therefore has to
          have been previously initialized.
-        ======================================================================*/
+         ======================================================================*/
         if (globalProperties.size() == 0) {
             try {
                 loadGlobalSettings();
