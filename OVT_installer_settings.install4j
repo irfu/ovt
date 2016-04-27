@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.1.1" transformSequenceNumber="5">
   <directoryPresets config="./ovt/dist_static/lib/vtk.jar" />
-  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="./Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="../Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -13,7 +13,7 @@
     </searchSequence>
     <variables />
     <mergedProjects />
-    <codeSigning macEnabled="true" macPkcs12File="./ovt_irfu.pfx" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="./ovt_irfu.pfx" />
+    <codeSigning macEnabled="true" macPkcs12File="../ovt_irfu.pfx" windowsEnabled="true" windowsKeySource="pkcs12" windowsPvkFile="" windowsSpcFile="" windowsPkcs12File="../ovt_irfu.pfx" />
   </application>
   <files keepModificationTimes="false" missingFilesStrategy="warn" globalExcludeSuffixes="*.DS_Store" defaultOverwriteMode="4" defaultUninstallMode="0" launcherOverwriteMode="3" defaultFileMode="644" defaultDirMode="755">
     <filesets>
@@ -35,318 +35,312 @@
       <mountPoint id="112" root="110" location="" mode="755" />
     </mountPoints>
     <entries>
-      <fileEntry mountPoint="188" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <dirEntry mountPoint="37" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+      <fileEntry mountPoint="188" file="./dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="37" file="./resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="conf/ovt.conf" fileType="regular" />
         </exclude>
       </dirEntry>
-      <dirEntry mountPoint="37" file="./ovt/dist_static/natives/MacOS" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.so,*.dll" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location="libvtkhdf5.so.1.8.13" fileType="regular" />
-          <entry location="libvtkhdf5.so.8.0.2" fileType="regular" />
-          <entry location="libvtkhdf5_hl.so.1.8.13" fileType="regular" />
-          <entry location="libvtkhdf5_hl.so.8.0.2" fileType="regular" />
-          <entry location="vtk.jar" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="37" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".DS_Store" fileType="regular" />
-          <entry location="atomic" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt.jar" fileType="regular" />
-          <entry location="gluegen-test-util.jar" fileType="regular" />
-          <entry location="gluegen.jar" fileType="regular" />
-          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="joal-android.jar" fileType="regular" />
-          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
-          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
-          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
-          <entry location="joal-test-android.jar" fileType="regular" />
-          <entry location="joal-test.jar" fileType="regular" />
-          <entry location="joal.jar" fileType="regular" />
-          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jocl-android.jar" fileType="regular" />
-          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jocl-test-android.jar" fileType="regular" />
-          <entry location="jocl-test.jar" fileType="regular" />
-          <entry location="jocl.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile.jar" fileType="regular" />
-          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt.jar" fileType="regular" />
-          <entry location="jogl-all.jar" fileType="regular" />
-          <entry location="jogl-test-android.jar" fileType="regular" />
-          <entry location="jogl-test.jar" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="37" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location="lib/vtk.jar" fileType="regular" />
-          <entry location="README.TXT" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <fileEntry mountPoint="245" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <dirEntry mountPoint="111" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".DS_Store" fileType="regular" />
-          <entry location="conf/ovt.conf" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="111" file="./ovt/dist_static/natives/Linux" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.dll" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".DS_Store" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="111" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".DS_Store" fileType="regular" />
-          <entry location="atomic" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-android.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
-          <entry location="gluegen-rt.jar" fileType="regular" />
-          <entry location="gluegen-test-util.jar" fileType="regular" />
-          <entry location="gluegen.jar" fileType="regular" />
-          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="joal-android.jar" fileType="regular" />
-          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
-          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
-          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
-          <entry location="joal-test-android.jar" fileType="regular" />
-          <entry location="joal-test.jar" fileType="regular" />
-          <entry location="joal.jar" fileType="regular" />
-          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jocl-android.jar" fileType="regular" />
-          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jocl-test-android.jar" fileType="regular" />
-          <entry location="jocl-test.jar" fileType="regular" />
-          <entry location="jocl.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-android.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-mobile.jar" fileType="regular" />
-          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
-          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
-          <entry location="jogl-all-noawt.jar" fileType="regular" />
-          <entry location="jogl-all.jar" fileType="regular" />
-          <entry location="jogl-test-android.jar" fileType="regular" />
-          <entry location="jogl-test.jar" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="111" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location="lib/vtk.jar" fileType="regular" />
-          <entry location="README.TXT" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <fileEntry mountPoint="246" file="./ovt/dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
-      <dirEntry mountPoint="112" file="./ovt/resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
-        <exclude>
-          <entry location=".DS_Store" fileType="regular" />
-          <entry location="conf/ovt.conf" fileType="regular" />
-        </exclude>
-      </dirEntry>
-      <dirEntry mountPoint="112" file="./ovt/dist_static/natives/Windows" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.so" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="37" file="./dist_static/natives/MacOS" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.so,*.dll" dirMode="755" overrideDirMode="false">
         <exclude />
       </dirEntry>
-      <dirEntry mountPoint="112" file="./ovt/lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="37" file="./lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="atomic" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt.jar" fileType="regular" />
+          <entry location="gluegen-test-util.jar" fileType="regular" />
+          <entry location="gluegen.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-android.jar" fileType="regular" />
+          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-test-android.jar" fileType="regular" />
+          <entry location="joal-test.jar" fileType="regular" />
+          <entry location="joal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-android.jar" fileType="regular" />
+          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-test-android.jar" fileType="regular" />
+          <entry location="jocl-test.jar" fileType="regular" />
+          <entry location="jocl.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt.jar" fileType="regular" />
+          <entry location="jogl-all.jar" fileType="regular" />
+          <entry location="jogl-test-android.jar" fileType="regular" />
+          <entry location="jogl-test.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="37" file="./dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="lib/vtk.jar" fileType="regular" />
+          <entry location="README.TXT" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <fileEntry mountPoint="245" file="./dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="111" file="./resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="conf/ovt.conf" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./dist_static/natives/Linux" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.dll" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="atomic" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-android.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="gluegen-rt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="gluegen-rt.jar" fileType="regular" />
+          <entry location="gluegen-test-util.jar" fileType="regular" />
+          <entry location="gluegen.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-android.jar" fileType="regular" />
+          <entry location="joal-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="joal-natives-android-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="joal-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="joal-natives-linux-i586.jar" fileType="regular" />
+          <entry location="joal-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="joal-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="joal-natives-windows-i586.jar" fileType="regular" />
+          <entry location="joal-test-android.jar" fileType="regular" />
+          <entry location="joal-test.jar" fileType="regular" />
+          <entry location="joal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-android.jar" fileType="regular" />
+          <entry location="jocl-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jocl-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jocl-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jocl-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jocl-test-android.jar" fileType="regular" />
+          <entry location="jocl-test.jar" fileType="regular" />
+          <entry location="jocl.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-android-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-android.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-mobile-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-mobile.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-aarch64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-android-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-armv6hf.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-linux-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-macosx-universal.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-solaris-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-amd64.jar" fileType="regular" />
+          <entry location="jogl-all-noawt-natives-windows-i586.jar" fileType="regular" />
+          <entry location="jogl-all-noawt.jar" fileType="regular" />
+          <entry location="jogl-all.jar" fileType="regular" />
+          <entry location="jogl-test-android.jar" fileType="regular" />
+          <entry location="jogl-test.jar" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="111" file="./dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location="lib/vtk.jar" fileType="regular" />
+          <entry location="README.TXT" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <fileEntry mountPoint="246" file="./dist_static/lib/vtk.jar" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" />
+      <dirEntry mountPoint="112" file="./resources" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="resources" excludeSuffixes="*.DS_Store" dirMode="755" overrideDirMode="false">
+        <exclude>
+          <entry location=".DS_Store" fileType="regular" />
+          <entry location="conf/ovt.conf" fileType="regular" />
+        </exclude>
+      </dirEntry>
+      <dirEntry mountPoint="112" file="./dist_static/natives/Windows" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="natives" excludeSuffixes="*.DS_Store,*.dylib,*.jnilib,*.so" dirMode="755" overrideDirMode="false">
+        <exclude />
+      </dirEntry>
+      <dirEntry mountPoint="112" file="./lib/jogl" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="subdir" subDirectory="lib" excludeSuffixes="*android*.jar,*mobile*.jar,*joal*.jar,*jocl*.jar,*android*.jar" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location=".DS_Store" fileType="regular" />
           <entry location="atomic" fileType="regular" />
@@ -476,7 +470,7 @@
           <entry location="jogl-test.jar" fileType="regular" />
         </exclude>
       </dirEntry>
-      <dirEntry mountPoint="112" file="./ovt/dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
+      <dirEntry mountPoint="112" file="./dist" overwriteMode="4" shared="false" fileMode="644" uninstallMode="0" overrideFileMode="false" overrideOverwriteMode="false" overrideUninstallMode="false" entryMode="direct" subDirectory="lib" excludeSuffixes="*DS_Store" dirMode="755" overrideDirMode="false">
         <exclude>
           <entry location="lib/vtk.jar" fileType="regular" />
           <entry location="README.TXT" fileType="regular" />
@@ -486,7 +480,7 @@
     <components />
   </files>
   <launchers>
-    <launcher name="ovt MacOSX" id="38" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="35" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+    <launcher name="ovt MacOSX" id="38" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="35" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
       <executable name="ovt" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
@@ -519,7 +513,7 @@
       </infoPlist>
       <iconImageFiles />
     </launcher>
-    <launcher name="Orbit Visualization Tool" id="105" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="107" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+    <launcher name="Orbit Visualization Tool" id="105" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="107" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
       <executable name="ovt" type="1" iconSet="true" iconFile="" executableDir="." redirectStderr="true" stderrFile="error.log" stderrMode="overwrite" redirectStdout="true" stdoutFile="output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="" legalCopyright="" internalName="" productName="" />
       </executable>
@@ -551,14 +545,14 @@
         <content />
       </infoPlist>
       <iconImageFiles>
-        <file path="./ovt/16x16.png" />
-        <file path="./ovt/32x32.png" />
-        <file path="./ovt/48x48.png" />
-        <file path="./ovt/128x128.png" />
+        <file path="./16x16.png" />
+        <file path="./32x32.png" />
+        <file path="./48x48.png" />
+        <file path="./128x128.png" />
       </iconImageFiles>
     </launcher>
-    <launcher name="Orbit Visualization Tool for Windows" id="116" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt/ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="109" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
-      <executable name="ovt" type="1" iconSet="true" iconFile="./ovt/ovt.ico" executableDir="." redirectStderr="true" stderrFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
+    <launcher name="Orbit Visualization Tool for Windows" id="116" customizedId="" external="false" excludeFromMenu="false" unixMode="755" menuName="" icnsFile="./ovt.icns" customMacBundleIdentifier="false" macBundleIdentifier="" swtApp="false" fileset="109" macBundleBinary="JavaApplicationStub" addMacEntitlements="false" macEntitlementsFile="" useCustomMacosExecutableName="false" customMacosExecutableName="">
+      <executable name="ovt" type="1" iconSet="true" iconFile="./ovt.ico" executableDir="." redirectStderr="true" stderrFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}error.log" stderrMode="overwrite" redirectStdout="false" stdoutFile="${installer:sys.userHome}${installer:sys.fileSeparator}.ovt${installer:sys.fileSeparator}output.log" stdoutMode="overwrite" failOnStderrOutput="true" executableMode="1" changeWorkingDirectory="true" workingDirectory="." singleInstance="false" serviceStartType="2" serviceDependencies="" serviceDescription="" jreLocation="" executionLevel="asInvoker" checkConsoleParameter="false" globalSingleInstance="false" singleInstanceActivate="true" dpiAware="false">
         <versionInfo include="false" fileVersion="" fileDescription="Orbit visualization tool" legalCopyright="" internalName="ovt" productName="Orbit Visualization Tool" />
       </executable>
       <splashScreen show="false" width="0" height="0" bitmapFile="" windowsNative="false" textOverlay="false">
@@ -590,10 +584,10 @@
         <content />
       </infoPlist>
       <iconImageFiles>
-        <file path="./ovt/16x16.png" />
-        <file path="./ovt/32x32.png" />
-        <file path="./ovt/48x48.png" />
-        <file path="./ovt/128x128.png" />
+        <file path="./16x16.png" />
+        <file path="./32x32.png" />
+        <file path="./48x48.png" />
+        <file path="./128x128.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -605,34 +599,34 @@
       <customAttributes />
     </autoUpdate>
     <applications>
-      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="./ovt/ovt.icns" customIcoFile="./ovt/ovt.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
+      <application name="" id="installer" customizedId="" beanClass="com.install4j.runtime.beans.applications.InstallerApplication" enabled="true" commentSet="false" comment="" actionElevationType="none" fileset="" customIcnsFile="./ovt.icns" customIcoFile="./ovt.ico" macEntitlementsFile="" automaticLauncherIntegration="false" launchMode="startupFirstWindow" launchInNewProcess="false" launchSchedule="updateSchedule" allLaunchers="true">
         <serializedBean>
           <java class="java.beans.XMLDecoder">
             <object class="com.install4j.runtime.beans.applications.InstallerApplication" id="InstallerApplication0">
               <void property="customHeaderImage">
                 <object class="com.install4j.api.beans.ExternalFile">
-                  <string>./ovt/48x48.png</string>
+                  <string>./48x48.png</string>
                 </object>
               </void>
               <void property="customIconImageFiles">
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>./ovt/16x16.png</string>
+                    <string>./16x16.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>./ovt/32x32.png</string>
+                    <string>./32x32.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>./ovt/48x48.png</string>
+                    <string>./48x48.png</string>
                   </object>
                 </void>
                 <void method="add">
                   <object class="com.install4j.api.beans.ExternalFile">
-                    <string>./ovt/128x128.png</string>
+                    <string>./128x128.png</string>
                   </object>
                 </void>
               </void>
@@ -691,7 +685,7 @@
                 <object class="com.install4j.runtime.beans.screens.WelcomeScreen">
                   <void property="bannerImageFile">
                     <object class="com.install4j.api.beans.ExternalFile">
-                      <string>./ovt/256x256.png</string>
+                      <string>./256x256.png</string>
                     </object>
                   </void>
                 </object>
@@ -1161,7 +1155,9 @@
     </windows>
   </mediaSets>
   <buildIds buildAll="false">
+    <mediaSet refId="28" />
     <mediaSet refId="98" />
+    <mediaSet refId="99" />
   </buildIds>
   <buildOptions verbose="true" faster="false" disableSigning="false" disableJreBundling="false" debug="false" />
 </install4j>
