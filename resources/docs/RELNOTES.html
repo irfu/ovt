@@ -4,7 +4,7 @@
 <head>
 <meta http-equiv=Content-Type content="text/html; charset=iso-8859-1">
 
-<title>Release notes and system requirements for OVT 3.0 (April 2016)</title>
+<title>Release Notes and System Requirements for OVT 3.0 (April 2016)</title>
 <meta name=Keywords content="OVT ovt orbit visualization">
 <meta name=description
 content="Release notes and system requirements for Orbit Visualization Tool (OVT) version 3.0">
@@ -12,9 +12,11 @@ content="Release notes and system requirements for Orbit Visualization Tool (OVT
 </head>
 
 <body>
-<h1>Release notes and system requirements for OVT version 3.0</h1>
+<h1>Release Notes and System Requirements for OVT version 3.0</h1>
 
+<!--
 <small>April 21, 2016</small>
+-->
 
 <hr size=2 width="100%" align=center>
 
@@ -22,28 +24,26 @@ content="Release notes and system requirements for Orbit Visualization Tool (OVT
 <h3>New Features</h3>
 <UL>
 <LI>Now works on Mac OS X, Windows, and Linux, with identical functionality.
-<LI>OVT is installed using an installer software. There is no need to separately install VTK or Java (except for Java which needs to be preinstalled on Linux). Root privileges are not required.
-<LI>Ability to use online orbit data from NASA SSC.
-<LI>Ability to use online/offline NASA OMNI2 solar wind and magnetospheric data.
+<LI>OVT is installed using an installer software. There is no need to separately install VTK or Java
+(except on Linux, where Java needs to be pre-installed). Root privileges should not be required on Mac OS X and Linux.
+<LI>Ability to use online orbit data via NASA's <A HREF="http://sscweb.gsfc.nasa.gov/">Satellite Situation Center's (SSC)</A> Web Services.
+<LI>Ability to use online/offline solar wind and magnetospheric data using NASA <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility's (SPDF)</a> OMNI2 data.
 </UL>
 
 
 <h3>Notes</h3>
 <UL>
-<LI>Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) are installed to, written to (e.g. when importing satellite orbit files), and read from a directory .ovt/&lt;version number&gt;/ and its subdirectories (&quot;mdata&quot;, &quot;conf&quot;, &quot;docs&quot; etc. ), located somewhere under the user directory. Previous versions of OVT may have used the application directory and subdirectories under it for the same purpose. OVT should/might still be able to read files from the corresponding subdirectories under the application directory <i>if</i> the file(s) can not be found under &quot;.ovt&quot; under the user directory.
-The user is adviced to be aware of this to avoid confusion on which files are actually being read by the OVT. This can be an issue if installing OVT into the directory of an old OVT installation.
-<p>
-<b>Note:</b> The initial period in .ovt is omitted on Mac OS X.
-
+<LI>Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) are installed to, written to (e.g. when importing satellite orbit files), and read from a directory .ovt/&lt;version number&gt;/ and its subdirectories (&quot;mdata&quot;, &quot;conf&quot;, &quot;docs&quot; etc. ), located somewhere under the user directory. Previous versions of OVT may have used the application directory and subdirectories under it for the same purpose. OVT should/might still be able to read the corresponding files from the corresponding subdirectories under the application directory <i>if</i> the file(s) can not be found under &quot;.ovt&quot; (and its subdirectories) under the user directory.
+The user is adviced to be aware of this to avoid confusion on which files are actually being read by the OVT. This can be an issue if installing OVT into the directory of an old OVT installation. Check the <A HREF="userguide.html#Data directories">Data directories in the User Guide</A>.
 </UL>
 
 
 <hr size=2 width="100%" align=center>
 
-<h3>System requirements</h3>
+<h3>System Requirements</h3>
 
 <h4>Linux: </h4>
-<p>Requires 64-bit Linux with OpenGL support. Requires an already installed version of Java Standard Edition 8. Successfully tested on openSUSE 13.1 and Ubuntu 14.04.
+<p>Requires 64-bit Linux with OpenGL support available and enabled. Requires a pre-installed version of Java Standard Edition 8. Successfully tested on openSUSE 13.1 and Ubuntu 14.04.
 </p>
 
 <h4>Mac</h4>
@@ -51,7 +51,7 @@ The user is adviced to be aware of this to avoid confusion on which files are ac
 </p>
 
 <h4>Windows: </h4>
-<p>Successfully tested on Windows 7 (64-bit).
+<p>Admin rights (via User Account Control) should be needed. Successfully tested on Windows 7 (64-bit) and Windows 8.1 (64-bit).
 </p>
 
 
@@ -67,7 +67,7 @@ OVT Team. All rights reserved.<br>
 <a href="http://ovt.irfu.se">http://ovt.irfu.se</a>
 <br>
 <!-- Previously: last modified on <!--#echo var="LAST_MODIFIED"- ->-->
-Last modified on 2016-04-21.
+Last modified on 2016-04-29.
 </small></p>
 
 </body>

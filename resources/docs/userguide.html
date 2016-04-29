@@ -44,7 +44,8 @@
       <li><a href="#CLUSTER configuration">CLUSTER configuration</a></li>
       <li><a href="#view control">View Control</a></li>
       <li><a href="#printing">Printing</a></li>
-      <li><a href="#Miscellaneous">Miscellaneous&nbsp;</a></li>
+      <li><a href="#Data directories">Data directories</a></li>
+      <li><a href="#Miscellaneous">Miscellaneous</a></li>
     </ul>
 </blockquote>
 
@@ -64,13 +65,15 @@ display satellite orbits in five <a href="#Coordinate systems">coordinate system
  (GEI, GEO, GSM, SMC, GSE), satellite
 footprints projected on the Earth's surface and shown in either geographic
 (GEO) or geomagnetic (SMC) coordinates. The software can load orbits on file as well as use online orbit data via NASA's
-<a href="http://sscweb.gsfc.nasa.gov/WebServices/">Satellite Situation Center's (SSC) Web Services</a>.
+<A HREF="http://sscweb.gsfc.nasa.gov/">Satellite Situation Center's (SSC)</A> Web Services.
 
 In addition to satellite orbits the
 software computes and displays various models of magnetospheric
 structures, magnetopause, bow shock and electric potential, geomagnetic
 activity, and interplanetary field conditions. The models are time-dependent
-through either user-editable activity table files, or online magnetospheric data via NASA's <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility (SPDF)</a> OMNI2 data, which control the model's structure and properties. 
+through either user-editable activity table files, or online magnetospheric data via
+NASA's <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility's (SPDF)</a> OMNI2 data,
+which control the model's structure and properties. 
 
 The program can be used to plan operations or interpret measurements
 from scientific satellites, to prepare ground-based satellite
@@ -238,7 +241,7 @@ defined in the Long Term Orbit File (LTOF) format. For orbits defined by TLE (tw
 
 It is also possible to add satellites using online orbit data from NASA's <a href="http://sscweb.gsfc.nasa.gov/WebServices/">Satellite Situation Center's (SSC) Web Services</a>. 
 These satellites can be recognized in the interface tree by their name being prefixed with &quot;(SSC)&quot;.
-Displaying orbit data using this feature may lead to slight delays when new orbit data is downloaded. Also, while this feature works most of the time, the remote online orbit database may on rare occasions be &quot;locked&quot; (usually briefly) or be offline. This is of course beyond the control of OVT but is ameliorated by OVT's internal caching of SSC orbit data. Selecting the menu item <B>Satellites -&gt Select SSC-based Satellites...</B> in the main window displays the SSC-based satellite selection window depicted below. Satellites checked in the &quot;Bookmarked&quot; column are also represented under the <B>Satellites</B> menu in the main window for easier access (select/deselect). Satellites checked in the &quot;Added&quot; column are added to the main interface tree directly. Note that all columns can be sorted for easier navigation.
+Displaying orbit data using this feature may lead to slight delays when new orbit data is downloaded. Also, while this feature works most of the time, the remote online orbit database may on rare occasions be &quot;locked&quot; (usually briefly) or be offline. This is of course beyond the control of OVT but is ameliorated by OVT's internal caching of SSC orbit data. Selecting the menu item <B>Satellites -&gt Select SSC-based Satellites...</B> in the main window displays the SSC-based satellite selection window depicted below. Satellites checked in the &quot;Bookmarked&quot; column are also represented under the <B>Satellites</B> menu in the main window for easier access (add/remove). Satellites checked in the &quot;Added&quot; column are added to the main interface tree directly. Note that all columns can be sorted for easier navigation.
 
 <p>
 <img border="0" src="img/SSCsatellites.gif" width="900" height="407"><BR>
@@ -254,8 +257,7 @@ Note: A spacecraft for which there is not enough orbit data to cover the entire 
 
 
 <p>
-If a spin data file (e.g SatelliteName.spin) is present in the <B>.ovt/&lt;version number&gt;/odata</B> directory 
-under the user directory, then it is is used to compute the orientation of the spin axis with respect to the
+If a spin data file (e.g SatelliteName.spin) is present in the <B>odata/</B> directory (see <A HREF="#Data directories">Data directories</A>), then it is is used to compute the orientation of the spin axis with respect to the
 magnetic field, velocity vector, and the sun direction. The .spin files must be
 in the format required for CLUSTER project, i.e.<br>
 <blockquote>
@@ -332,7 +334,7 @@ The bow shock</a> and the magnetopause
       <p>
       Note: The OMNI2 data are automatically downloaded as files (each covering a year) from
       NASA's <a href="http://spdf.gsfc.nasa.gov/">Space Physics Data Facility (SPDF)</a>, a
-      public online source, and are then cached locally on disk. The exact URL used for downloading is configured in .ovt/&lt;version number&gt;/conf/ovt.conf (directory under the user directory) but is also displayed in the OMNI2 Data Settings window. It can be set to an http://, ftp://, or file:// URL. As with NASA SSC online orbit data, there may be delays when OVT downloads new data and the online source may be offline. Files can also as a last resort be downloaded manually and be placed in the caching directory (.ovt/&lt;version number&gt;/cache/OMNI2/; create it if it does not already exist). OVT will however always try to silently replace cached files when it thinks the current ones are too old.
+      public online source, and are then cached locally on disk. The exact URL used for downloading is configured in conf/ovt.conf (see <A HREF="#Data directories">Data directories</A>) but is also displayed in the OMNI2 Data Settings window. It can be set to an http://, ftp://, or file:// URL. As with NASA SSC online orbit data, there may be delays when OVT downloads new data and the online source may be offline. Files can also as a last resort be downloaded manually and be placed in the caching directory (cache/OMNI2/; create the <A HREF="#Data directories">data directory</A> it if it does not already exist). OVT will however always try to silently replace cached files when it thinks the current ones are too old.
     </td>
   </tr>
 </table>
@@ -484,23 +486,31 @@ The bow shock</a> and the magnetopause
 
 <table border="0" width="100%" CELLPADDING=10>
   <tr>
-    <td><img border="0" src="img/orbit_monitor_with_dumper.gif" width="305" height="498"></td>
-    <td class=bodytext>Orbit Monitor can be accessed by Sat's
-      pop-up menu. Orbit Monitor shows the current satellite position, velocity,
+    <td><img border="0" src="img/orbit_monitor_with_dumper.png" width="344" height="367"></td>
+    <td class=bodytext>The orbit monitor can be accessed via any satellite's
+      pop-up menu. The orbit monitor shows among other variables the current satellite position, velocity,
       distance from the center of the earth, magnetic field conditions (derived from 
       the magnetic field model), and footprint coordinates. The footprints
-      are shown for both hemispheres, if they exist. In addition, the orbit monitor
+      are shown for both hemispheres, <I>when they exist</I>.
+
+      In addition, the orbit monitor
       shows the estimated radial distance to the current model of the
       magnetopause and the angle of the satellite spin axes with respect to the
-      magnetic field vector, satellite velocity, and the sun direction. The
-      later data require presence of the spin axis attitude file in the <B>.ovt/&lt;version number&gt;/odata/</B>
-      directory. The spin attitude file has suffix .spin and must be in the
+      magnetic field vector, satellite velocity, and the sun direction.
+      The later data require presence of the spin axis attitude file in
+      the <B>odata/</B> directory (see <A HREF="#Data directories">Data directories</A>).
+
+      The spin attitude file has suffix .spin and must be in the
       format required by the CLUSTER project. The .spin files included in the
       distribution contain artificial data for demonstration purposes. They
-      should be removed or replaced by real data.<BR><BR>
+      should be removed or replaced by real data.
+
+      Use the tooltips to find out the meaning of values.
+
+      <BR><BR>
       <CENTER><B><a name="Dumping of orbit data">Dumping of orbit data</a></B></CENTER><BR>
       
-      Dumper panel is expanded if &quot;<B>Dump >></B>&quot; is pressed;<BR>
+      The dumper panel is expanded if &quot;<B>Dump >></B>&quot; is pressed;<BR>
       &quot;<B>Log</B>&quot; will dump the data specified in the  <A HREF="img/dumper_settings_window.gif">Dumper Settings Window</A> to a selected file.<BR>
       
       &quot;<B>Log All</B>&quot; will dump the data for the whole orbit.<BR>
@@ -574,9 +584,9 @@ The bow shock</a> and the magnetopause
       gravity centre that will confine four spacecraft: dB-along the
       field-lines, dA-in the azimuthal (LT) direction, and dR-in the <b>dB</b>x<b>dA</b>,
       pseudo-radial direction.<br>
-      <i>Distances between satellites</i> shows the distances between every pair of spacecraft.
+      <i>Distances between satellites</i> shows the distances between every pair of CLUSTER spacecraft.
       <!--"The configuration parameters are automatically
-      saved in file ovt/userdata/clusters.conf." ??!!! Removed 2016-04-20-->
+      saved in file ovt/userdata/clusters.conf." ??!!! Removed 2016-04-20 due to doubt of veracity.-->
       </td>
   </tr>
 </table>
@@ -600,9 +610,6 @@ View Control</a>
     </td>
   </tr>
 </table>
-<p>
-&nbsp;
-</p>
 
 <BR>
 
@@ -619,6 +626,27 @@ One can export image to a file and print or edit it with another program.<br>
 
 <BR>
 
+
+
+<table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
+<tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
+&nbsp;&nbsp;&nbsp;&nbsp;<a name="Data directories">Data directories</a>
+</td></tr></table></td></tr></table>
+<P>
+Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) are installed to, written to (e.g. when importing satellite orbit files), and read from a directory .ovt/&lt;version number&gt;/ and its subdirectories (&quot;mdata&quot;, &quot;conf&quot;, &quot;docs&quot; etc. ), located somewhere under the user directory. Previous versions of OVT may have used the application directory and subdirectories under it for the same purpose. OVT should/might still be able to read files from the corresponding subdirectories under the application directory <i>if</i> the corresponding file(s) can not be found under &quot;.ovt&quot; under the user directory.
+The user is adviced to be aware of this to avoid confusion on which files are actually being read by the OVT. This can be an issue if installing OVT into the directory of an old OVT installation. The &quot;.ovt&quot; directory can be deleted after uninstalling OVT.
+
+<p>
+The exact OVT data directories relative to the home directory are:
+<UL>
+<LI><b>Mac OS X:</b> Library/ovt/&lt;OVT version number&gt;/
+<LI><B>Linux, Windows:</b> .ovt/&lt;OVT version number&gt;/
+</UL>
+<B>Note:</B> The initial period in .ovt is omitted on Mac OS X.
+</P>
+
+
+
 <table border="0" cellpadding="1" cellspacing="0" width="100%" bgcolor="#ffffff">
 <tr><td><table border="0" cellpadding="3" cellspacing="0" width="100%" bgcolor="#e8e8e8"><tr><td class=heading3>
 &nbsp;&nbsp;&nbsp;&nbsp;<a name="Miscellaneous">Miscellaneous</a>
@@ -634,14 +662,6 @@ Caption text can be included in the graphics window. Font and size of the text
 can be changed by the user.
 </P>
 
-<P>
-Miscellaneous data (settings, cache, imported orbit files, IGRF model constants etc.) are installed to, written to (e.g. when importing satellite orbit files), and read from a directory .ovt/&lt;version number&gt;/ and its subdirectories (&quot;mdata&quot;, &quot;conf&quot;, &quot;docs&quot; etc. ), located somewhere under the user directory. Previous versions of OVT may have used the application directory and subdirectories under it for the same purpose. OVT should/might still be able to read files from the corresponding subdirectories under the application directory <i>if</i> the file(s) can not be found under &quot;.ovt&quot; under the user directory.
-The user is adviced to be aware of this to avoid confusion on which files are actually being read by the OVT. This can be an issue if installing OVT into the directory of an old OVT installation.
-<p>
-<b>Note:</b> The initial period in .ovt is omitted on Mac OS X.
-<p>
-A user does not normally need to modify or access the &quot;.ovt&quot; directory. It can be deleted after uninstalling OVT.
-
 <p><a href="#Contents:">Top of page</a></p>
 
 <hr>
@@ -650,7 +670,8 @@ A user does not normally need to modify or access the &quot;.ovt&quot; directory
 <font size=-2>
 http://<!--#echo var="SERVER_NAME" var="DOCUMENT_URI"-->
 <br>
-last modified on <!--#echo var="LAST_MODIFIED"-->
+<!--Last modified on <!--#echo var="LAST_MODIFIED"-->
+Last modified on 2016-04-29.
 </font>
 </div>
 
