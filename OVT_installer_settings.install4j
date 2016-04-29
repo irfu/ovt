@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.1.1" transformSequenceNumber="5">
   <directoryPresets config="./ovt/dist_static/lib/vtk.jar" />
-  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="../Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="../Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_build7" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -771,6 +771,9 @@
                   </void>
                   <void property="showWarningIfExists">
                     <boolean>true</boolean>
+                  </void>
+                  <void property="unixSymlinks">
+                    <boolean>false</boolean>
                   </void>
                 </object>
               </java>
