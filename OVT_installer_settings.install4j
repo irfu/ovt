@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="6.1.1" transformSequenceNumber="5">
   <directoryPresets config="./ovt/dist_static/lib/vtk.jar" />
-  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="../Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_build7" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="http://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
+  <application name="Orbit Visualization Tool" distributionSourceDir="" applicationId="6294-8781-1719-7693" mediaDir="../Installer" mediaFilePattern="${compiler:sys.shortName}_${compiler:sys.platform}_${compiler:sys.version}_build7" compression="9" lzmaCompression="false" pack200Compression="true" excludeSignedFromPacking="true" commonExternalFiles="false" createMd5Sums="false" shrinkRuntime="true" shortName="ovt" publisher="IRF-U" publisherWeb="https://ovt.irfu.se" version="3.0" allPathsRelative="true" backupOnSave="false" autoSave="false" convertDotsToUnderscores="true" macSignature="????" macVolumeId="f55e53edde69dda5" javaMinVersion="1.8" javaMaxVersion="" allowBetaVM="false" jdkMode="runtimeJre" jdkName="">
     <languages skipLanguageSelection="false" languageSelectionInPrincipalLanguage="false">
       <principalLanguage id="en" customLocalizationFile="" />
       <additionalLanguages />
@@ -591,7 +591,7 @@
       </iconImageFiles>
     </launcher>
   </launchers>
-  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="http://ovt.irfu.se/download/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
+  <installerGui installerType="1" addOnAppId="" suggestPreviousLocations="true" autoUpdateDescriptorUrl="https://ovt.irfu.se/download/updates.xml" useAutoUpdateBaseUrl="false" autoUpdateBaseUrl="">
     <staticMembers script="" />
     <customCode />
     <autoUpdate useMinUpdatableVersion="true" minUpdatableVersion="3.0" useMaxUpdatableVersion="false" maxUpdatableVersion="">
