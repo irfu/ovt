@@ -24,7 +24,7 @@
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
  
- OVT Team (http://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
+ OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev
  
  =========================================================================*/
@@ -88,7 +88,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     // BUILD incremented to "7" (from "6") 2016-04-14. Intended for the final release version.
     public static final int BUILD = 7;
-    public static final String OVT_HOMEPAGE = "http://ovt.irfu.se/";
+    public static final String OVT_HOMEPAGE = "https://ovt.irfu.se/";
 
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
 
