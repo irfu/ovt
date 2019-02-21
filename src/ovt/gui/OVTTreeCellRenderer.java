@@ -79,7 +79,8 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         Dimension d = check.getPreferredSize();
         return (x > 0 && y > 0 && x < d.width && y < d.height);
     }
-    
+
+    // interface TreeCellRenderer
     public Component getTreeCellRendererComponent(JTree tree, Object value,
             boolean isSelected, boolean expanded,
             boolean leaf, int row, boolean hasFocus) {

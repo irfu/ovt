@@ -530,15 +530,15 @@ public class XYZMenuBar extends JMenuBar {
      */
     public JMenuItem[] createSatsMenuItemList_LTOF_TLE() {
         /*=====================================
-         Look for files in odata in user home.
+         Look for files in odata/ in user home.
          =====================================*/
-        File[] allFiles = new File[0];
+        File[] allFiles = new File[0];   // Default value: empty array, to which files are "added".
         {
             /**
              * Filter files in directory based on file suffix.
              * 
-             * NOTE: Excludes files "Cluster[1-4].ltof" since they are
-             * automatically opened by ClusterSats (or some code in the
+             * NOTE: Explicitly excludes files "Cluster[1-4].ltof" since they
+             * are automatically opened by ClusterSats (or some code in the
              * neighbourhood) and are therefore treated specially somewhere
              * else.
              */
@@ -576,7 +576,9 @@ public class XYZMenuBar extends JMenuBar {
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
             final String satName = item.getText();    // Figure out which Sat is referred to.
+            
             if (item.isSelected()) {
+                // CASE: Menu item has been selected.
                 // Create Sat and ADD it to OVTCore.Sats.
 
                 try {
@@ -585,7 +587,7 @@ public class XYZMenuBar extends JMenuBar {
                     final String satFilePathPrefix = OVTCore.getOrbitDataSubdir() + Utils.replaceSpaces(satName);
                     File file = Utils.findFile(satFilePathPrefix + ".tle");
                     if (file == null) {
-                        // Check if LTOF file exists
+                        // Check if LTOF file exists.
                         file = Utils.findFile(satFilePathPrefix + ".ltof");
                         if (file == null) {
                             throw new IOException("Orbit file " + satFilePathPrefix + ".tle/.ltof not found");
@@ -603,6 +605,7 @@ public class XYZMenuBar extends JMenuBar {
                     core.sendErrorMessage(e2);
                 }
             } else {
+                // CASE: Menu item has been DE-selected.
                 // REMOVE Sat from OVTCore.Sats.
                 xyzWin.removeSatByNameAction(satName);
             }
@@ -616,8 +619,10 @@ public class XYZMenuBar extends JMenuBar {
             final String satName = Utils.replaceUnderlines(filename.substring(0, filename.lastIndexOf('.')));
             final JCheckBoxMenuItem menuItem = new JCheckBoxMenuItem(satName);
             menuItem.setFont(font);
-            menuItem.setSelected(core.getSats().getChildren().containsChild(satName)); // Select if sat is already added to OVT
-            menuItem.addActionListener(actionListener);   // NOTE: Use previously constructed ActionListener.
+            menuItem.setSelected(core.getSats().getChildren().containsChild(satName));   // Select if sat is already added to OVT.
+            // NOTE: Use previously constructed ActionListener. Same ActionListener for ALL menu items.
+            menuItem.addActionListener(actionListener);
+            
             menuItems[i] = menuItem;
         }
 

@@ -126,6 +126,7 @@ public class Log extends Object {
     }
 
 
+    // NOTE: Method is called 35 times. /2017-10-04
     public static void err(String msg) {
         err(msg, DEFAULT_ERROR_MSG_LEVEL);
     }
@@ -134,7 +135,8 @@ public class Log extends Object {
     /**
      * Log the error string with the debug level.
      */
-    // Should stop using since there is another "err" method?
+    // QUESTION: Should stop using since there is another "err" method?
+    // NOTE: Method is called 6 times. /2017-10-04
     public static void err(String msg, int msgLevel) {
         if (msgLevel <= logLevel) {
             printStream.println("ERROR: " + msg);

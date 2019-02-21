@@ -50,7 +50,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
     protected OVTCore core;
     protected JTree tree = null;
     protected OVTNode rootNode = null;
-    protected DefaultTreeModel treeModel;
+    protected DefaultTreeModel treeModel;   // Refers to javax.swing.tree.DefaultTreeModel
     protected OVTTreeCellRenderer renderer;
     
         /** True if the tree consists only from one Root node */

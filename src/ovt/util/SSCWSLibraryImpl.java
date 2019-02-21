@@ -148,6 +148,11 @@ import ovt.datatype.Time;
 //    PROPOSAL: Exceptions which are hard to explain without understanding the insides of SSC Web Services.
 // QUESTION: How reuse catching and rethrowing of exceptions?
 //
+//==============================================================================
+// TODO/PROPOSAL: INFORMATION FOR CONNECTING TO WEB SERVICES SHOULD BE READ FROM
+//                THE CONFIG. SHOULD NOT BE HARD-CODED!!
+//==============================================================================
+//
 public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     /**

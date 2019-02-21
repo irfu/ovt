@@ -4,6 +4,9 @@
 # $Id: Makefile.in,v 2.17 2009/10/27 15:01:15 yuri Exp $
 #
 
+#============
+# Parameters
+#============
 SHELL = /bin/sh
 RM = rm
 
@@ -13,7 +16,6 @@ INSTALL = /usr/bin/install -c
 INSTALL_PROGRAM = ${INSTALL}
 
 CC = gcc
-
 SHLIB_CFLAGS = -fPIC
 SHLIB_BUILD_FLAGS = -dynamiclib
 
@@ -29,10 +31,14 @@ INSTALLDIR = ../lib
 OVTVERSION = 3.0
 
 OBJS = utils.o tsyg96.o tsyg2001.o magpack.o 
-
 USATOBJS = usat/cnstinit.o usat/deep.o usat/fmod2p_2.o usat/getsatpos.o usat/matan2.o usat/mjd.o usat/sdp4.o usat/sgp4.o usat/thetag.o
-
 WEIMEROBJ = weimer/cgmc2.o weimer/cgmc4.o
+
+
+
+#=======
+# Rules
+#=======
 
 all: libovt-${OVTVERSION}.jnilib
 

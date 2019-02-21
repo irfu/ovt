@@ -66,7 +66,7 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
 }
 
 /** 
- * Implementation of the parents abstract method. Reads the orbitFile, computes... returns...
+ * Implementation of the parent's abstract method. Reads the orbitFile, computes... returns...
  */
 protected  void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
     TLESat.getSatPosJNI(orbitFile.getAbsolutePath(), timeMjdMap, gei_arr, vei_arr, timeMjdMap.length);

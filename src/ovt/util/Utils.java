@@ -536,6 +536,7 @@ public class Utils extends Object {
     }
 
 
+    /** Create new array that is the concatenation of two existing arrays. */
     public static <T> T[] concat(T[] first, T[] second) {
         T[] result = Arrays.copyOf(first, first.length + second.length);
         System.arraycopy(second, 0, result, first.length, second.length);
@@ -941,8 +942,8 @@ public class Utils extends Object {
     /**
      * Return instance of File based on argument.
      *
-     * @param dirName Interpreted as a URL to a dir in the OVT installation
-     * directory.
+     * @param dirName Interpreted as a URL to a directory in the OVT
+     * installation directory.
      * @return A File object representing the directory. Null, if (1)
      * dirName==null, or (2) can not interpret dirName as a "resource", or (3)
      * the _directory_ (as represented by the argument) does NOT exist.
