@@ -76,7 +76,7 @@ public class OMNI2Customizer extends JFrame {
     private static final String MALFORMED_URL_ERROR_DISPLAY_STR = "<MALFORMED URL>";
     private static final String IO_ERROR_DISPLAY_STR_PREFIX = "<I/O ERROR: ";
     private static final String IO_ERROR_DISPLAY_STR_SUFFIX = ">";
-    private static final String DISABLED_DISPLAY_STR = "(disabled)";
+    private static final String DISABLED_DISPLAY_STR = "(display disabled)";
 
     private static final String WINDOW_TITLE = "OMNI2 Data Settings";
 
