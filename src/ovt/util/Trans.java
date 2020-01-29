@@ -477,8 +477,23 @@ public class Trans {
 
   public static Matrix3x3 gei_gse_trans_matrix(double mjd) {
     final double[][] gei_gse = new double[3][];
+    
+    /* Normal vector to the ecliptic (in GEI).
+     *
+     * ==> Earth's axial tilt: epsilon_OVT = arctan(0.398/0.917)) = 23.4620 degrees 
+     * Compare, Hapgood 1992 (complete reference above), eq (3) & eq between (4) and (5):
+     *     epsilon = 23.439 - 0.013*((MJD-51544.5/36525.0))
+     * J1950 : T_0 = -0.5 ==> epsilon = 23.4455 degrees
+     * J2000 : T_0 =  0   ==> epsilon = 23.4390 degrees
+     * epsilon = epsilon_OVT ==> T_0 = -1.7692 ==> ~J1823 (Earth axial tilt corresponding to year 1823).
+     * NOTE: The inference above does not make use of any movements in the first point of Aries
+     * and only assumes a 1-to-1 correspondence between Earth's axial tilt and time.
+     * Erik P G Johansson 2019-11-07
+     */
     final double eqlipt[] = {   0.0, -0.398, 0.917 };
-    gei_gse[0] = Utils.sunmjd(mjd);                    // NOTE: Time dependent.
+    
+    // Can be intrepreted as three (orthonormal) vectors expressed in GEI.
+    gei_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
     gei_gse[1] = Vect.crossn(eqlipt, gei_gse[0]);
     gei_gse[2] = Vect.crossn(gei_gse[0], gei_gse[1]);
     final Matrix3x3 m = new Matrix3x3(gei_gse);
