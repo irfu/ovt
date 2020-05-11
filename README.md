@@ -1,168 +1,169 @@
-#############################################################
- Instructions for setting up the environment for development
+# Instructions for setting up the environment for development
  and for generating native files to be used for producing
  installers on different platforms.
-#############################################################
- NOTE: If you only want to use OVT as an application, then
+
+* NOTE: If you only want to use OVT as an application, then
  you should use one of the pre-made installer applications.
-#############################################################
 
+[![CodeFactor](https://www.codefactor.io/repository/github/irfu/ovt/badge)](https://www.codefactor.io/repository/github/irfu/ovt)
 
+## General instructions (all platforms: Mac, Windows, Linux)
 
-===================================================================
-General instructions (all platforms: Mac, Windows, Linux)
-===================================================================
 
 Install Netbeans, JDK (Java), apache maven, cmake.
 
 Download VTK source code (VTK version 6.2). Maybe we switch to release version later.
 
 Fetch and install JOGL using mvn and these three commands. No longer use README.txt in VTK/Wrapping/Java.
+```sh
 $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.gluegen:gluegen-rt:2.3.1
 $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all-main:2.3.1
 $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all:2.3.1
+```
 
-Get OVT repository, e.g. "git clone <OVT>..." etc.
-
+Get OVT repository, e.g. `git clone <OVT>...` etc.
+```sh
 $ cd ovt
 $ mkdir VTKBuild          // Not necessary to put the entire built VTK in the OVT directory. May be excluded from the git repo using ".gitignore".
 $ cd VTKBuild
 $ ccmake <path to VTK source code>
+```
 
 Set parameters as ccmake/cmake when ccmake asks you to set them, and then try again (and again) a few times.
-NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to check for should include the ones below but there may be others too.
+* NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to check for should include the ones below but there may be others too.
+```
     VTK_WRAP_JAVA:BOOL=ON  
     VTK_JAVA_INSTALL:BOOL=OFF         // "Use the Java rules to build the native libraries."
     VTK_JAVA_JOGL_COMPONENT:BOOL=ON   // "Need JOGL jar files"
     VTK_JAVA_SWT_COMPONENT:BOOL=OFF   // "Should SWT component for Java be built (it requires Eclipse)?"
     JOGL_GLUE:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/gluegen/gluegen-rt/2.3.1/gluegen-rt-2.3.1.jar    // Example path 
     JOGL_LIB:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/jogl/jogl-all/2.3.1/jogl-all-2.3.1.jar            // Example path
-NOTE: UPDATE JOGL PATHS PROPOSED BY CMake! Change 2.0.2 to 2.3.1   (not Windows?)
+```
+* NOTE: UPDATE JOGL PATHS PROPOSED BY CMake! Change 2.0.2 to 2.3.1   (not Windows?)
 
 
 Patch VTK for new JOGL by replacing some of its files with already slightly modified (Java) source code files found in <ovt>/VTKPatch.
 (This corrects errors one might get later when building.)
-$ cp -v   <OVT>/VTKpatch/*.java   <OVT>/VTKBuild/Java/vtk/rendering/jogl/
+`$ cp -v   <OVT>/VTKpatch/*.java   <OVT>/VTKBuild/Java/vtk/rendering/jogl/`
 
 Compile VTK
-$ make
-NOTE: May take significant time to run (Ex: 40 minutes on Linux).
-NOTE: Requires internet connection.
+`$ make`
+* NOTE: May take significant time to run (Ex: 40 minutes on Linux).
+* NOTE: Requires internet connection.
 
 
 Compile libovt (C code):
-NOTE: The "configure" script can be generated from "configure.in" using "autoconf" (?). Do not edit manually if you want to keep the modifications.
+* NOTE: The "configure" script can be generated from "configure.in" using "autoconf" (?). Do not edit manually if you want to keep the modifications.
+```sh
 $ cd ../src/libovt
 $ ./configure --with-jdk=<PATH-TO-JDK>   // Generates "Makefile" and maybe more.
 $ make
+```
 
-
-Copy native *.dll/.so/.dylib/.jnilib files (VTK+libovt) files to the distribution, <OVT>/dist_static/natives/*/.
+Copy native `*.dll/.so/.dylib/.jnilib` files (VTK+libovt) files to the distribution, `<OVT>/dist_static/natives/*/`.
 Linux, MacOS: Run scripts to slightly correct native files.
-Linux: Run "fix_linux_nativelibs_fkjn.sh"
-MacOS: Run "fix_macosx_nativelibs_fkjn.sh"
+* Linux: Run `fix_linux_nativelibs_fkjn.sh`
+* MacOS: Run `fix_macosx_nativelibs_fkjn.sh`
 
 
+## Install OVT for development (& build if new VTK version) on Windows
+* NOTE: Mostly the same procedure as in the general instructions but with some modifications.
 
-===================================================================
-Install OVT for development (& build if new VTK version) on Windows
-===================================================================
-NOTE: Mostly the same procedure as in the general instructions but with some modifications.
 This section describes differences and complements the other description.
-NOTE: Produces a 32-bit version.
+* NOTE: Produces a 32-bit version.
 
 
 Install JDK 32-bit (Java, not 64-bit/x64!)
-    NOTE: It helps later to use an JDK installation path without whitespace.
+*NOTE: It helps later to use an JDK installation path without whitespace.
+
 Install "Visual Studio Express 2013 for Windows Desktop"
-    NOTE: Don't use 2015; There has been moderate success with VTK 6.3 & VS 2015, but why risk it.
+* NOTE: Don't use 2015; There has been moderate success with VTK 6.3 & VS 2015, but why risk it.
+
 Install something that can run Linux shell scripts, e.g. MSYS.
 Install something that can compile like on Linux, e.g. MinGW (which can incl. MSYS).   // Doubtful if needed since make.bat uses Visual Studio. /EJ 2015-09-30
 
 
 Download VTK 6.2 source code.
-Patch with VTKpatch/*.java.
+Patch with `VTKpatch/*.java`.
 Build with CMake. (Can use GUI.)
 (Can induce migraine. I’ll include a reference CMake Cache file to use later, because getting one thing wrong will produce not produce an error or a warning until much later.)
-NOTE: Some useful instructions: http://www.vtk.org/Wiki/VTK/Configure_and_Build#On_Windows_5
+* NOTE: Some useful instructions: http://www.vtk.org/Wiki/VTK/Configure_and_Build#On_Windows_5
 
 
-Compile VTK with Visual Studio Express
---------------------------------------
+### Compile VTK with Visual Studio Express
+
 Open VTK.sln in Visual Studio Express.
-NOTE: It may take a long time for Visual Studio to merely LOAD the project/files. One might want to wait for this to finish before proceeding to avoid problems.
+* NOTE: It may take a long time for Visual Studio to merely LOAD the project/files. One might want to wait for this to finish before proceeding to avoid problems.
+
 Select "Win32" (32-bit!!), "Release" (not "Debug")
-NOTE: If one uses "Debug" it will generate more files and in other directory and make the DLLs dependent on MSVCP120D.DLL and MSVCR120D.DLL which are NOT supposed to be redistributed (filenames end with D.DLL=DEBUG).
+* NOTE: If one uses "Debug" it will generate more files and in other directory and make the DLLs dependent on MSVCP120D.DLL and MSVCR120D.DLL which are NOT supposed to be redistributed (filenames end with D.DLL=DEBUG).
       Using "Release" should make the DLLs dependent on MSVCP120.DLL and MSVCR120.DLL instead (no D at the end of filenames).
 "Build"  (E.g. "Solution Explorer" (tab in internal window) --> ALL_BUILD --> Right-click, "Build")
-NOTE: There is an "Error List" window where one can inspect errors and warnings directly rather than looking through the very long text output.
+* NOTE: There is an "Error List" window where one can inspect errors and warnings directly rather than looking through the very long text output.
 Copy relevant files to OVT if VTK-build directory is not already in OVT.
+    ```
     <VTK-6.2.0-build>\bin\vtk.jar
     <VTK-6.2.0-build>\bin\Release\*.dll     // Or alternatively "...\Debug\*.dll"
+    ```
 
 
 
 
-Compile libovt
---------------
+### Compile libovt
+
 Use Linux-like shell prompt (e.g. msys)
+```msys
 $ mount C:/ /C                      // Get the harddrive in the directory tree.
 $ cd <OVT>/src/libovt
 $ ./configure --with-jdk=<PATH TO JDK>
-NOTE: The current version of "./configure --with-jdk=<PATH-TO-JDK>" does not seem to be able to handle paths with whitespace. Therefore choose JDK install path accordingly.
-NOTE: Is ./configure and hence MSYS/MinGW needed at all?!!!! The Windows procedure does not seem to use the Makefile which it produces.
---
+```
+* NOTE: The current version of `./configure --with-jdk=<PATH-TO-JDK>` does not seem to be able to handle paths with whitespace. Therefore choose JDK install path accordingly.
+* NOTE: Is `./configure` and hence MSYS/MinGW needed at all?!!!! The Windows procedure does not seem to use the Makefile which it produces.
+
 Windows command prompt.
-Run "vcvars32.bat"              // (Visual Studio) to set up environment variables.
-Run <ovt>/src/libovt/make.bat   // instead of Linux' "make". It uses Visual Studio compiler cl.exe.
-NOTE: Make sure make.bat's hardcoded paths are updated. May have to update Windows PATH. May need special care to handle whitespace in paths in .bat files.
+Run `vcvars32.bat`              // (Visual Studio) to set up environment variables.
+Run `<ovt>/src/libovt/make.bat`   // instead of Linux' "make". It uses Visual Studio compiler cl.exe.
+* NOTE: Make sure make.bat's hardcoded paths are updated. May have to update Windows PATH. May need special care to handle whitespace in paths in .bat files.
+
+Copy `.dll` files to the distribution.
 
 
-
-Copy .dll files to the distribution.
-
-
-===================================================================
-Before release:
-===================================================================
+## Before release:
 
 (Be careful with version identifiers. They have to be the same in OVT & Install4J)
 
 Sign ovt/dist/ovt.jar (from NetBeans build) with following command:
 
-$ jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkeystore.jks> -storepass <password> <path_to_ovt.jar> server
+`$ jarsigner -tsa http://timestamp.digicert.com -keystore <path_to_hqkeystore.jks> -storepass <password> <path_to_ovt.jar> server`
 
-Replace local paths and <password> with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
+Replace local paths and `<password>` with the keystore password. This will take care of LINUX .jar signing and fixes a bug in INSTALL4J build (java heap space error)
 
 
 
-===================================================================
-if VTK updated or OVT native C package( libovt.jnilib/libovt.so/ovt.dll ) updated:
+
+## if VTK updated or OVT native C package ( libovt.jnilib/libovt.so/ovt.dll ) updated:
 
 build on each target platform.
 
 for Mac OS X native libs, run:
-$sh fix_macosx_nativelibs_fkjn.sh
+`$sh fix_macosx_nativelibs_fkjn.sh`
 make sure all (new) natives found (including jogl & gluegen natives e.g. jogl-all-natives-macosx-universal.jar (+win+linux) etc) when releasing
-
-===================================================================
-
 
 
 2. build all in install4j
 
 3. rsync (4 files) files to server:
+```sh
 $cd <install4j output folder>
 $rsync -rzh --progress ovt*3_0*.* updates.xml frejon@hq.irfu.se:/usr/home/www/ovt/ovt_distribution/
-
+```
 DONE!!
 
 
 
 
-===================================================================
 
-Stuff to make OVT_LINUX run:
+### Stuff to make OVT_LINUX run:
 
 nothing!
 
@@ -183,9 +184,10 @@ ln -s natives/libvtkhdf5_hl.so.8.0.2 libvtkhdf5_hl.so.1.8.13
 
 error at jogl rendering, check linux vtk build.
 
-====================================================================
 
 
-Stuff to make OVT_windows run: (nothing)
+### Stuff to make OVT_windows run:
+(nothing)
+
 obsolete: 
 1. move natives to to jre/bin/  add to path
