@@ -29,7 +29,15 @@ nbproject/private/private.xml
 nbproject/project.properties
 nbproject/project.xml
 
+# Files that seem(?) to store some NetBeans settings. Unsure if they should be part of git repo.
+lib/nblibraries.properties
+nbproject/build-impl.xml
+nbproject/genfiles.properties
+nbproject/project.properties
+
 vtkError.txt
 
 # Java crash log files
 hs_err_pid*.log
+
+
