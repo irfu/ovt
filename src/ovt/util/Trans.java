@@ -223,9 +223,18 @@ public class Trans {
   gei[2] = geo[2];
   }
   }
-
-
-   */
+  */
+  
+    public Matrix3x3 gei_trans_matrix(int toCS) {
+    switch (toCS) {
+      case CoordinateSystem.SM  : return gei_sm_trans_matrix();
+      case CoordinateSystem.GEO : return gei_geo_trans_matrix();
+      case CoordinateSystem.GEI : return new Matrix3x3();
+      case CoordinateSystem.GSM : return gei_gsm_trans_matrix();
+      case CoordinateSystem.GSE : return gei_gse_trans_matrix();
+    }
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
+  }
 
   public Matrix3x3 sm_trans_matrix(int toCS) {
     switch (toCS) {
@@ -279,11 +288,11 @@ public class Trans {
    * @param toCS
    * @return 
    */
-  // Missing GEI --> Anything
   public Matrix3x3 trans_matrix(int fromCS, int toCS) {
     if (fromCS == toCS)
         return new Matrix3x3();
     switch (fromCS) {
+      case CoordinateSystem.GEI : return gei_trans_matrix(toCS);
       case CoordinateSystem.GEO : return geo_trans_matrix(toCS);
       case CoordinateSystem.SM  : return sm_trans_matrix(toCS);
       case CoordinateSystem.GSM : return gsm_trans_matrix(toCS);
