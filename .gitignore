@@ -23,17 +23,13 @@ src/libovt 2/
 src/ovt/object/MainFieldlineModule.javabackup
 src/ovt/util/ImageOperations.backupjava
 
-nbproject/genfiles.properties
-nbproject/private/private.properties
-nbproject/private/private.xml
-nbproject/project.properties
-nbproject/project.xml
-
-# Files that seem(?) to store some NetBeans settings. Unsure if they should be part of git repo.
+# File that seem(?) to store some NetBeans settings. Unsure if it should be part of git repo.
 lib/nblibraries.properties
-nbproject/build-impl.xml
-nbproject/genfiles.properties
-nbproject/project.properties
+
+# Directory that stores NetBeans machine-specific info.
+nbproject/
+
+
 
 vtkError.txt
 
