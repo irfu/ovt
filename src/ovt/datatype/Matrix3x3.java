@@ -145,9 +145,9 @@ public class Matrix3x3 {
 
 
     /**
-     * IMPORTANT NOTE: As we deal only with ortogonal transformation matrixes,
-     * we just transpose them to invert them!!! Therefore only works for
-     * orthogonal matrices.
+     * IMPORTANT NOTE: As we only deal with orthogonal transformation matrices,
+     * the inverse is identical to the transpose the matrix. Therefore only
+     * works for orthogonal matrices.
      */
     public void invert() {
         transpose();

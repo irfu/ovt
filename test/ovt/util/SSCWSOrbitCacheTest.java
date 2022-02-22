@@ -1,6 +1,6 @@
 package ovt.util;
 
-import com.sun.media.jfxmedia.logging.Logger;
+// import com.sun.media.jfxmedia.logging.Logger;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -213,7 +213,7 @@ public class SSCWSOrbitCacheTest {
     @Test
     public void test_CacheIntegrity() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, IOException, ClassNotFoundException, NoSuchSatelliteException {
         System.out.println("test_run1");
-        Logger.setLevel(2);
+        // Logger.setLevel(2);
 
         final Method actualMethod = SSCWSOrbitCache.class.getDeclaredMethod("getOrbitData", Double.TYPE, Double.TYPE, RoundingMode.class, RoundingMode.class, Integer.TYPE, Integer.TYPE, Integer.TYPE);
         final Method resultsMethod = SSCWSLibraryEmul.class.getDeclaredMethod("getOrbitData", Double.TYPE, Double.TYPE, RoundingMode.class, RoundingMode.class, Integer.TYPE, Integer.TYPE, Integer.TYPE);

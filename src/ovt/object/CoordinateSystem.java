@@ -200,7 +200,7 @@ public class CoordinateSystem extends BasicObject {
     for (int i=0; i<csl.length; i++) 
         names[i] = getCoordSystem(csl[i]);
     return names;
-  } 
+  }
   
 
   public int[] getPolarCoordinateSystemsList() {
@@ -209,7 +209,7 @@ public class CoordinateSystem extends BasicObject {
   
   public static String getCoordSystem(int n) {
     switch (n) {
-		case GEI:  return "GEI";
+		case GEI:  return "GEI(J2000.0)";
 		case GSM:  return "GSM";
 		case GSE:  return "GSE";
 		case GSEQ: return "GSEQ";
@@ -218,7 +218,7 @@ public class CoordinateSystem extends BasicObject {
                 //case CORR:  return "CORR";
 		case ECC:  return "ECC";
     }
-    throw new IllegalArgumentException("invalid coord system index");
+    throw new IllegalArgumentException("Invalid coordinate system index");
   }
 
   public Descriptors getDescriptors() {

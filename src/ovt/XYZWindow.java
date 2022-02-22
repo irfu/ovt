@@ -64,7 +64,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     /**
      * NOTE: All loading of native libraries has been collected to this place so
      * that (1) loading is always executed at the launch of the application ==>
-     * Can not use native code for unitialized libraries ==> Less risk of
+     * Can not use native code for uninitialized libraries ==> Less risk of
      * errors, (2) debugging/understanding when loading native libraries becomes
      * easier.<BR>
      * NOTE: It is not ideal (but understandable) to load libraries in a static
@@ -447,8 +447,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * @param arg Command-line arguments
      */
     public static void main(String[] arg) {
-        try {
- 
+        try { 
             final XYZWindow XYZwin = new XYZWindow();
             XYZwin.start();
 

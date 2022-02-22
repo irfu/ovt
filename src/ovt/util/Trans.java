@@ -37,7 +37,7 @@ Khotyaintsev
  * One possible source/reference for coordinate transformations is
  * "Space Physics Coordinate Transformations: A User Guide", M. A. Hapgood,
  * Planet. Space Sci., Vol. 40, No. 5. pp. 711-717, 1992
- *
+ * 
  * Created on March 24, 2000, 1:18 PM
  */
 
@@ -51,7 +51,10 @@ import ovt.Const;
 import ovt.datatype.*;
 
 /**
- * This class holds all transformation stuff.
+ * Instance of class represents coordinate transformations between multiple
+ * standard coordinate systems at a given point in time.
+ *
+ *
  * @author  root
  * @version
  */
@@ -70,7 +73,7 @@ public class Trans {
   protected double[] Eccdy;
   protected double[] Eccdz;
 
-  /**  Transformat matrix geo to gsm
+  /**  Transformation matrix geo to gsm
    * @see #setGSM(double)
    */
   //protected double Ggsm[]  = { 1, 0, 0, 0, 1, 0, 0, 0, 1};
@@ -114,6 +117,7 @@ public class Trans {
 
     sint = getDipoleTiltSine(mjd, Eccdz);
     cost = Math.sqrt(1 - sint * sint);
+    
     sm_gsm  = sm_gsm_trans_matrix(mjd, Eccdz);
     geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);
     geo_gei = geo_gei_trans_matrix(mjd);
@@ -231,9 +235,8 @@ public class Trans {
       case CoordinateSystem.GSM : return sm_gsm_trans_matrix();
       case CoordinateSystem.GSE : return sm_gse_trans_matrix();
     }
-    throw new IllegalArgumentException("Wrong CS '"+toCS+"'");
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
-
 
   public Matrix3x3 geo_trans_matrix(int toCS) {
     switch (toCS) {
@@ -243,7 +246,7 @@ public class Trans {
       case CoordinateSystem.GSM : return geo_gsm_trans_matrix();
       case CoordinateSystem.GSE : return geo_gse_trans_matrix();
     }
-    throw new IllegalArgumentException("Wrong CS '"+toCS+"'");
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
   public Matrix3x3 gsm_trans_matrix(int toCS) {
@@ -254,7 +257,7 @@ public class Trans {
       case CoordinateSystem.GEI : return gsm_gei_trans_matrix();
       case CoordinateSystem.GSE : return gsm_gse_trans_matrix();
     }
-    throw new IllegalArgumentException("Wrong CS '"+toCS+"'");
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
   public Matrix3x3 gse_trans_matrix(int toCS) {
@@ -265,18 +268,28 @@ public class Trans {
       case CoordinateSystem.GEI : return gse_gei_trans_matrix();
       case CoordinateSystem.GSE : return new Matrix3x3();
     }
-    throw new IllegalArgumentException("Wrong CS '"+toCS+"'");
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
+  /**
+   * Convert from (almost) any coordinate system to (almost) any coordinate
+   * system.
+   * 
+   * @param fromCS
+   * @param toCS
+   * @return 
+   */
+  // Missing GEI --> Anything
   public Matrix3x3 trans_matrix(int fromCS, int toCS) {
-    if (fromCS == toCS) return new Matrix3x3();
+    if (fromCS == toCS)
+        return new Matrix3x3();
     switch (fromCS) {
       case CoordinateSystem.GEO : return geo_trans_matrix(toCS);
       case CoordinateSystem.SM  : return sm_trans_matrix(toCS);
       case CoordinateSystem.GSM : return gsm_trans_matrix(toCS);
       case CoordinateSystem.GSE : return gse_trans_matrix(toCS);
     }
-    throw new IllegalArgumentException("Wrong fromCS '"+fromCS+"'");
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
   //  GEO  ->
@@ -453,6 +466,8 @@ public class Trans {
     return gei_gse.multiply(gei);
   }
 
+  // -------- GEI  ->  SM  ---------
+
   public static Matrix3x3 gei_gsm_trans_matrix(double mjd, double[] Eccdz) {
     double[][] geigsm = new double[3][];
     double[] sunv = Utils.sunmjd(mjd);
@@ -471,8 +486,6 @@ public class Trans {
     Matrix3x3 m = new Matrix3x3(geigsm);
     return m;
   }
-
-  // -------- GEI  ->  SM  ---------
 
   /*
   This is the old convension SM coordinates transformation.
@@ -501,7 +514,7 @@ public class Trans {
 
   public static Matrix3x3 gei_gseq_trans_matrix(double mjd) {
     double[][] geigseq = new double[3][];
-  double[]   rotsun = { 0.122, -0.424, 0.899 };
+    double[]   rotsun = { 0.122, -0.424, 0.899 };
     geigseq[0] = Utils.sunmjd(mjd);
     geigseq[1] = Vect.crossn(rotsun, geigseq[0]);
     geigseq[2] = Vect.crossn(geigseq[0], geigseq[1]);
@@ -620,7 +633,7 @@ public class Trans {
         isIGRF = false;
     }
 
-    Log.err("ovt.util.Tans.corrgma is strange!!! It changes models!");
+    Log.err("ovt.util.Trans.corrgma is strange!!! It changes models!");
     
     double[] gsmx=trans.geo2gsm(geo);
     Fieldline fieldLine =
