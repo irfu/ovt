@@ -166,6 +166,7 @@ public class Trans {
 
   /* ***********************************************************
    * Methods for converting 1D vector between coordinate systems
+   * (except methods geo2gma, gma2geo, geo_gma)
    ************************************************************* */
 
   public double[] gei2geo(double gei[]) {
@@ -190,6 +191,10 @@ public class Trans {
 
   public double[] gsm2sm(double gsm[]) {
     return gsm_sm_trans_matrix().multiply(gsm);
+  }
+
+  public double[] gei2gse(double[] gei) {
+    return gei_gse.multiply(gei);
   }
 
   /* ------------------------------------------------------
@@ -333,11 +338,13 @@ public class Trans {
     return gei_gse_trans_matrix().multiply(geo_gei_trans_matrix());
   }
   
-  public Matrix3x3 gse_geo_trans_matrix() {
-      return geo_gse_trans_matrix().getInverse();
+  public Matrix3x3 geo_sm_trans_matrix() {
+    return sm_geo_trans_matrix().getInverse();
   }
 
-  //  SM  ->
+  /* ******************************
+   * SM -> other coordinate systems
+   * ****************************** */
 
   public Matrix3x3 sm_gsm_trans_matrix() {
     return sm_gsm;
@@ -347,11 +354,6 @@ public class Trans {
     return gsm_gse_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
   
-  public Matrix3x3 gse_sm_trans_matrix() {
-    return sm_gse_trans_matrix().getInverse();
-  }
-
-  /** */
   public Matrix3x3 sm_geo_trans_matrix() {
     return gsm_geo_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
@@ -360,7 +362,9 @@ public class Trans {
     return gsm_gei_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
 
-  //  GEI  ->
+  /* *******************************
+   * GEI -> other coordinate systems
+   * ******************************* */
 
   public Matrix3x3 gei_sm_trans_matrix() {
     return sm_gei_trans_matrix().getInverse();
@@ -370,11 +374,6 @@ public class Trans {
     return geo_gei_trans_matrix().getInverse();
   }
 
-  public static Matrix3x3 gei_geo_trans_matrix(double mjd) {
-    return geo_gei_trans_matrix(mjd).getInverse();
-  }
-
-  /** */
   public Matrix3x3 gei_gsm_trans_matrix() {
     return gei_gsm;
   }
@@ -383,12 +382,29 @@ public class Trans {
     return gei_gse;
   }
 
-  /** */
+  /* *******************************
+   * GSE -> other coordinate systems
+   * ******************************* */
+
   public Matrix3x3 gse_gei_trans_matrix() {
     return gei_gse_trans_matrix().getInverse();
   }
   
-  //  GSM  ->
+  public Matrix3x3 gse_geo_trans_matrix() {
+      return geo_gse_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 gse_gsm_trans_matrix() {
+    return gsm_gse_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 gse_sm_trans_matrix() {
+    return sm_gse_trans_matrix().getInverse();
+  }
+  
+  /* *******************************
+   * GSM -> other coordinate systems
+   * ******************************* */
 
   public Matrix3x3 gsm_sm_trans_matrix() {
     return sm_gsm_trans_matrix().getInverse();
@@ -406,17 +422,9 @@ public class Trans {
     return gei_gse_trans_matrix().multiply(gsm_gei_trans_matrix());
   }
 
-  /** */
-  public Matrix3x3 gse_gsm_trans_matrix() {
-    return gsm_gse_trans_matrix().getInverse();
-  }
-  
-  //    GEO ->
-
-  /** */
-  public Matrix3x3 geo_sm_trans_matrix() {
-    return sm_geo_trans_matrix().getInverse();
-  }
+  /* ************************************
+   * Miscellaneous methods, mostly static
+   ************************************** */
 
   //   ------     GEO  ->  GEI    ------
 
@@ -440,6 +448,10 @@ public class Trans {
     m[1][0] = st;  m[1][1] = ct;
     m[2][2] = 1;
     return new Matrix3x3(m);
+  }
+
+  public static Matrix3x3 gei_geo_trans_matrix(double mjd) {
+    return geo_gei_trans_matrix(mjd).getInverse();
   }
 
 
@@ -470,11 +482,7 @@ public class Trans {
     return m;
   }
 
-  public double[] gei2gse(double[] gei) {
-    return gei_gse.multiply(gei);
-  }
-
-  // -------- GEI  ->  SM  ---------
+  // -------- GEI  ->  GSM  ---------
 
   public static Matrix3x3 gei_gsm_trans_matrix(double mjd, double[] Eccdz) {
     double[][] geigsm = new double[3][];
