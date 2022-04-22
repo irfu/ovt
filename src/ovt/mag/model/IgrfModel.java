@@ -77,12 +77,12 @@ public class IgrfModel extends AbstractMagModel {
     // maximum no of harmonics in igrf
     protected final static int Nmax = 10;          // Can not read higher n than this. Will ignore higher ones!!!
 
-    // Excentric dipole coordinates derived from Gh
+    // Eccentric dipole coordinates derived from Gh
     protected static double Eccrr[] = {-0.0625, 0.0405, 0.0281};
     protected static double Eccdx[] = {0.3211, -0.9276, -0.1911};
     protected static double Eccdy[] = {0.9450, 0.3271, 0.0000};
     /**
-     * Coordinates of z-axis of Excentric dipole derived from Gh. It is dipole
+     * Coordinates of z-axis of Eccentric dipole derived from Gh. It is dipole
      * vector.
      */
     protected static double Eccdz[] = {0.0625, -0.1806, 0.9816};
@@ -717,7 +717,7 @@ public class IgrfModel extends AbstractMagModel {
         Vect.crossn(Eccdx, Eccdz, Eccdy);
         Vect.crossn(Eccdy, Eccdz, Eccdx);
 
-        //Excentric dipole (Chapman & Bartels, 1940)
+        // Eccentric dipole (Chapman & Bartels, 1940)
         final float sqrt3 = 1.7320508F;
 
         final double lx = -gANDh.getGcoefs(1, 1) * gANDh.getGcoefs(2, 0)

@@ -67,7 +67,7 @@ public class Trans {
   /** equals to 1 */
   public static final int ECCENTRIC_DIPOLE = 1; 
 
-  // Excentric dipole coordinates derived from IGRF model
+  // Eccentric dipole coordinates derived from IGRF model
   protected double[] Eccrr;
   protected double[] Eccdx;
   protected double[] Eccdy;
@@ -106,10 +106,10 @@ public class Trans {
 
   protected IgrfModel igrfModel;
 
-  /** Creates new Trans */
+  /** Creates new Trans. */
   public Trans(double mjd, IgrfModel igrf) {
     igrfModel = igrf;
-    // set excentric dipole coordinated
+    // Set eccentric dipole coordinated
     Eccrr = igrf.getEccrr(mjd);
     Eccdx = igrf.getEccdx(mjd);
     Eccdy = igrf.getEccdy(mjd);
@@ -163,6 +163,10 @@ public class Trans {
     double sint = Vect.dot(temp[0], Eccdz);
     return sint;
   }
+
+  /* ***********************************************************
+   * Methods for converting 1D vector between coordinate systems
+   ************************************************************* */
 
   public double[] gei2geo(double gei[]) {
     return gei_geo_trans_matrix().multiply(gei);
@@ -224,8 +228,13 @@ public class Trans {
   }
   }
   */
+
+  /* ***************************************************************************
+  * Methods that convert from (1) a method-dependent coordinate system, to
+  * (2) an arbitrary coordinate system (not all such methods).
+  *************************************************************************** */
   
-    public Matrix3x3 gei_trans_matrix(int toCS) {
+  public Matrix3x3 gei_trans_matrix(int toCS) {
     switch (toCS) {
       case CoordinateSystem.SM  : return gei_sm_trans_matrix();
       case CoordinateSystem.GEO : return gei_geo_trans_matrix();
@@ -281,8 +290,8 @@ public class Trans {
   }
 
   /**
-   * Convert from (almost) any coordinate system to (almost) any coordinate
-   * system.
+   * Convert from an (almost) arbitrary coordinate system (CS) to an (almost)
+   * arbitrary coordinate system.
    * 
    * @param fromCS
    * @param toCS
@@ -290,7 +299,7 @@ public class Trans {
    */
   public Matrix3x3 trans_matrix(int fromCS, int toCS) {
     if (fromCS == toCS)
-        return new Matrix3x3();
+      return new Matrix3x3();
     switch (fromCS) {
       case CoordinateSystem.GEI : return gei_trans_matrix(toCS);
       case CoordinateSystem.GEO : return geo_trans_matrix(toCS);
@@ -301,18 +310,18 @@ public class Trans {
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
-  //  GEO  ->
+  /* *******************************
+   * GEO -> other coordinate systems
+   * ******************************* */
 
   public Matrix3x3 geo_gsm_trans_matrix() {
     return geo_gsm;
   }
 
-  /** */
   public Matrix3x3 geo_gei_trans_matrix() {
     return geo_gei;
   }
 
-  /** */
   public Matrix3x3 geo_gse_trans_matrix() {
     /*Matrix3x3 gei_gsm3x3 = gei_gsm_trans_matrix();
     Matrix3x3 geo_gei3x3 = geo_gei_trans_matrix();
@@ -330,12 +339,10 @@ public class Trans {
 
   //  SM  ->
 
-  /** */
   public Matrix3x3 sm_gsm_trans_matrix() {
     return sm_gsm;
   }
 
-  /** */
   public Matrix3x3 sm_gse_trans_matrix() {
     return gsm_gse_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
@@ -349,19 +356,16 @@ public class Trans {
     return gsm_geo_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
 
-  /** */
   public Matrix3x3 sm_gei_trans_matrix() {
     return gsm_gei_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
 
   //  GEI  ->
 
-  /** */
   public Matrix3x3 gei_sm_trans_matrix() {
     return sm_gei_trans_matrix().getInverse();
   }
 
-  /** */
   public Matrix3x3 gei_geo_trans_matrix() {
     return geo_gei_trans_matrix().getInverse();
   }
@@ -375,7 +379,6 @@ public class Trans {
     return gei_gsm;
   }
 
-  /** */
   public Matrix3x3 gei_gse_trans_matrix() {
     return gei_gse;
   }
@@ -387,22 +390,18 @@ public class Trans {
   
   //  GSM  ->
 
-  /** */
   public Matrix3x3 gsm_sm_trans_matrix() {
     return sm_gsm_trans_matrix().getInverse();
   }
 
-  /** */
   public Matrix3x3 gsm_geo_trans_matrix() {
     return geo_gsm_trans_matrix().getInverse();
   }
 
-  /** */
   public Matrix3x3 gsm_gei_trans_matrix() {
     return gei_gsm_trans_matrix().getInverse();
   }
 
-  /** */
   public Matrix3x3 gsm_gse_trans_matrix() {
     return gei_gse_trans_matrix().multiply(gsm_gei_trans_matrix());
   }
@@ -447,7 +446,7 @@ public class Trans {
   //   ------     GEO  ->  GSM    ------
 
   /** @param mjd time
-   *  @param Eccdz excentric dipole coordinates???
+   *  @param Eccdz eccentric dipole coordinates???
    */
   protected static Matrix3x3 geo_gsm_trans_matrix(double mjd, double[] Eccdz) {
     final double sunv[] = Utils.sunmjd(mjd);
@@ -552,8 +551,9 @@ public class Trans {
 
     return m;
   }
+  
   /**
-   * transform geo(3) to gma(3) 
+   * Transform geo(3) to gma(3).
    * flag=0 magnetic dipole (MAGNETIC_DIPOLE)
    *     =1 eccentric dipole (ECCENTRIC_DIPOLE)
    */
@@ -564,7 +564,7 @@ public class Trans {
   }
 
     /**
-   * transform gma(3) to geo(3) 
+   * Transform gma(3) to geo(3).
    * flag=0 magnetic dipole MAGNETIC_DIPOLE)
    *     =1 eccentric dipole (ECCENTRIC_DIPOLE)
    */
@@ -575,7 +575,7 @@ public class Trans {
   }
 
   /**
-   * transform geo(3) to gma(3) if idir =1 and vice versa if idir=-1
+   * Transform geo(3) to gma(3) if idir =1 and vice versa if idir=-1.
    * flag=0 magnetic dipole MAGNETIC_DIPOLE)
    *     =1 eccentric dipole (ECCENTRIC_DIPOLE)
    */
@@ -601,7 +601,7 @@ public class Trans {
   }
 
   /************************************************************************
-  compute corrected magnetic coordinates at the reference altitude alt
+  Compute corrected magnetic coordinates at the reference altitude alt
   input:
   mjd:     modified julian day (use fdate() to find mjd! )
   geo(3):  geographic position (cartesian) in units of re=6371.2 km

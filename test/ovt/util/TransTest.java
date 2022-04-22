@@ -80,7 +80,7 @@ public class TransTest {
 
 
 
-    // Testing trans_matrix.
+    // Test method trans_matrix().
     @Test
     public void test_trans_matrix() {
         final double EPSILON = 1.0e-15;

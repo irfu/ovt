@@ -58,13 +58,15 @@ import java.lang.reflect.*;
  */
 public class CoordinateSystem extends BasicObject {
 
-  /** <B>Geocentric Equatorial Inertial</B><BR>
+  /** <B>Geocentric Equatorial Inertial (J2000.0)</B><BR>
    * <B>X</B> - axis points from the Earth toward the first
    * point of Aries (the position of Sun at the vernal equinox)<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
    * <B>Y</B> - axis completes the right-handed orthogonal set <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
+   *
+   * Note: Refers to GEI J2000.0 (not GEI epoch-of-date/mean-of-date).
    */
-  public static final int GEI =   0;
+  public static final int GEI =  0;
   
   /** <B>Geocentric Solar Magnetospheric</B><BR>
    * <B>X</B> - axis points toward the Sun<BR>
@@ -72,16 +74,16 @@ public class CoordinateSystem extends BasicObject {
    * southward) and the sunward direction (<B>S</B>) so that <CODE>(<B>Y</B> = <B>S</B> x <B>M</B>)</CODE><BR>
    * <B>Z</B> - axis completes the right-handed orthogonal set <CODE>(<B>Z</B> = <B>X</B> x <B>Y</B>)</CODE>.
    */
-  public static final int GSM =   1;
+  public static final int GSM =  1;
   
   /** <B>Geocentric Solar Ecliptic</B><BR>
    * <B>X</B> - axis points toward the Sun<BR>
    * <B>Z</B> - axis points toward the ecliptic north pole<BR>
    * <B>Y</B> - axis points toward dusk, the direction that opposes planetary motion.
    */
-  public static final int GSE =   2;
+  public static final int GSE =  2;
   
-  public static final int GSEQ =  3;
+  public static final int GSEQ = 3;
   
   /** <B>Geographic</B><BR>
    * <B>X</B> - axis is in the Earth equatorial plane and passes through
@@ -89,7 +91,7 @@ public class CoordinateSystem extends BasicObject {
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
    * <B>Y</B> - axis completes the right-handed orthogonal set <CODE>(<B>Y</B> = <B>Z</B> x <B>X</B>)</CODE>.
    */
-  public static final int GEO =   4;
+  public static final int GEO =  4;
   
   /** <B>Solar Magnetospheric</B><BR>
    * <B>Z</B> - axis is along the magnetic dipole and points northward<BR> 
@@ -104,8 +106,8 @@ public class CoordinateSystem extends BasicObject {
    * <B>Magnetic Local Time</B><BR>
    * <B>Magnetic Latitude</B> Not used
    */
-  public static final int CORR =   6;
-  public static final int ECC =   7;
+  public static final int CORR = 6;
+  public static final int ECC =  7;
   /** GeoMagnetic*/
   public static final int GMA =   8;
   
