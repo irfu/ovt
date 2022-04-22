@@ -133,30 +133,32 @@ public class TransTest {
 
 
         /* Transform CS --> same CS
-         * Should always return identity.
          */
         for (int cs1: CS_ARRAY) {
             Matrix3x3 M = T.trans_matrix(cs1, cs1);
+
+            // ASSERT: Always return identity.
             assertTrue(matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON));
         }
 
         /* Transform CS_1 --> CS_2 --> CS_1
-         * Should always return pair of mutually inverse matrices.
          */
         for (int cs1: CS_ARRAY) {
             for (int cs2: CS_ARRAY) {
-                Matrix3x3 M1 = T.trans_matrix(cs1, cs2);
-                Matrix3x3 M2 = T.trans_matrix(cs2, cs1);
-                Matrix3x3 M = M1.multiply(M2);
+                Matrix3x3 M12 = T.trans_matrix(cs1, cs2);
+                Matrix3x3 M21 = T.trans_matrix(cs2, cs1);
+                Matrix3x3 M = M12.multiply(M21);
 
-                boolean success = matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON);
-                assertTrue(success);
+                // ASSERT: Inverse = Transpose
+                assertTrue(matricesEqual(M12, M21.getInverse(), EPSILON));
+                // ASSERT: Pair of mutually inverse matrices.
+                assertTrue(matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON));
+                // ASSERT: No mirroring = Preserve handedness
+                assertTrue(Math.abs(M12.getDeterminant() - 1) < EPSILON);
             }
         }
 
         /* Transform CS_1 --> CS_2 --> CS_3 --> CS_1
-         * Should verify that relationships between different coordinate
-         * transformations are correct.
          */
         for (int cs1: CS_ARRAY) {
             for (int cs2: CS_ARRAY) {
@@ -168,6 +170,7 @@ public class TransTest {
                     // NOTE: Order of matrix multiplication.
                     Matrix3x3 M = M31.multiply(M23).multiply(M12);
 
+                    // ASSERT: "Circle" of transformations should yield unity matrix.
                     boolean success = matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON);
                     if (!success) {
                         System.out.println("Too large diff: ("+cs1+", "+cs2+", "+cs3+")");
