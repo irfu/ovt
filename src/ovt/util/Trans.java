@@ -37,6 +37,14 @@ Khotyaintsev
  * One possible source/reference for coordinate transformations is
  * "Space Physics Coordinate Transformations: A User Guide", M. A. Hapgood,
  * Planet. Space Sci., Vol. 40, No. 5. pp. 711-717, 1992
+ *
+ * One instance of this class represents all transformations between supported
+ * coordinate systems at a fixed point in time and assuming a certain IGRF model
+ * (both stored in the object).
+ *
+ * NOTE: Variable and function naming convention in this class uses
+ *     "gei"=GEI J2000.0 (i.e. not "GEI epoch-of-date)
+ *     "geid = GEI epoch-of-data/mean-of-date
  * 
  * Created on March 24, 2000, 1:18 PM
  */
@@ -93,6 +101,9 @@ public class Trans {
   /** Transformation matrix from gei to gse. */
   protected Matrix3x3 gei_gse;
 
+  /** Transformation matrix from gei to geid. */
+  protected Matrix3x3 gei_geid;
+
   /** Sine of dipole tilt. By default dipole tilt set to zero
    * @see #getSint()
    */
@@ -129,6 +140,7 @@ public class Trans {
     geo_gei = geo_gei_trans_matrix(mjd);
     gei_gsm = gei_gsm_trans_matrix(mjd, Eccdz);
     gei_gse = gei_gse_trans_matrix(mjd);
+    gei_geid = gei_geid_trans_matrix(mjd);
 
     this.mjd = mjd;
   }
@@ -206,6 +218,10 @@ public class Trans {
     return gei_gse.multiply(gei);
   }
 
+  public double[] gei2geid(double[] gei) {
+    return gei_geid.multiply(gei);
+  }
+
   /* ------------------------------------------------------
   FUNCTION:
   transforms gei to geo when ic=+1
@@ -255,6 +271,7 @@ public class Trans {
       case CoordinateSystem.GEI : return new Matrix3x3();
       case CoordinateSystem.GSM : return gei_gsm_trans_matrix();
       case CoordinateSystem.GSE : return gei_gse_trans_matrix();
+      case CoordinateSystem.GEID: return gei_geid_trans_matrix();
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -266,6 +283,7 @@ public class Trans {
       case CoordinateSystem.GEI : return sm_gei_trans_matrix();
       case CoordinateSystem.GSM : return sm_gsm_trans_matrix();
       case CoordinateSystem.GSE : return sm_gse_trans_matrix();
+      case CoordinateSystem.GEID: return sm_geid_trans_matrix();
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -277,6 +295,7 @@ public class Trans {
       case CoordinateSystem.GEI : return geo_gei_trans_matrix();
       case CoordinateSystem.GSM : return geo_gsm_trans_matrix();
       case CoordinateSystem.GSE : return geo_gse_trans_matrix();
+      case CoordinateSystem.GEID: return geo_geid_trans_matrix();
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -288,6 +307,7 @@ public class Trans {
       case CoordinateSystem.GEO : return gsm_geo_trans_matrix();
       case CoordinateSystem.GEI : return gsm_gei_trans_matrix();
       case CoordinateSystem.GSE : return gsm_gse_trans_matrix();
+      case CoordinateSystem.GEID: return gsm_geid_trans_matrix();
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -299,6 +319,19 @@ public class Trans {
       case CoordinateSystem.GEO : return gse_geo_trans_matrix();
       case CoordinateSystem.GEI : return gse_gei_trans_matrix();
       case CoordinateSystem.GSE : return new Matrix3x3();
+      case CoordinateSystem.GEID: return gse_geid_trans_matrix();
+    }
+    throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
+  }
+
+  public Matrix3x3 geid_trans_matrix(int toCS) {
+    switch (toCS) {
+      case CoordinateSystem.SM  : return geid_sm_trans_matrix();
+      case CoordinateSystem.GEO : return geid_geo_trans_matrix();
+      case CoordinateSystem.GEI : return geid_gei_trans_matrix();
+      case CoordinateSystem.GSM : return geid_gsm_trans_matrix();
+      case CoordinateSystem.GSE : return geid_gse_trans_matrix();
+      case CoordinateSystem.GEID: return new Matrix3x3();
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -315,11 +348,12 @@ public class Trans {
     if (fromCS == toCS)
       return new Matrix3x3();
     switch (fromCS) {
-      case CoordinateSystem.GEI : return gei_trans_matrix(toCS);
-      case CoordinateSystem.GEO : return geo_trans_matrix(toCS);
-      case CoordinateSystem.SM  : return sm_trans_matrix(toCS);
-      case CoordinateSystem.GSM : return gsm_trans_matrix(toCS);
-      case CoordinateSystem.GSE : return gse_trans_matrix(toCS);
+      case CoordinateSystem.GEI  : return gei_trans_matrix(toCS);
+      case CoordinateSystem.GEO  : return geo_trans_matrix(toCS);
+      case CoordinateSystem.SM   : return sm_trans_matrix(toCS);
+      case CoordinateSystem.GSM  : return gsm_trans_matrix(toCS);
+      case CoordinateSystem.GSE  : return gse_trans_matrix(toCS);
+      case CoordinateSystem.GEID : return geid_trans_matrix(toCS);
     }
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
@@ -345,6 +379,11 @@ public class Trans {
     return sm_geo_trans_matrix().getInverse();
   }
 
+  public Matrix3x3 geo_geid_trans_matrix() {
+    return gei_geid_trans_matrix().multiply(geo_gei_trans_matrix());
+  }
+
+
   /* ******************************
    * SM -> other coordinate systems
    * ****************************** */
@@ -364,6 +403,11 @@ public class Trans {
   public Matrix3x3 sm_gei_trans_matrix() {
     return gsm_gei_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
+
+  public Matrix3x3 sm_geid_trans_matrix() {
+    return gei_geid_trans_matrix().multiply(sm_gei_trans_matrix());
+  }
+
 
   /* *******************************
    * GEI -> other coordinate systems
@@ -385,6 +429,11 @@ public class Trans {
     return gei_gse;
   }
 
+  public Matrix3x3 gei_geid_trans_matrix() {
+    return gei_geid;
+  }
+
+
   /* *******************************
    * GSE -> other coordinate systems
    * ******************************* */
@@ -405,6 +454,11 @@ public class Trans {
     return sm_gse_trans_matrix().getInverse();
   }
   
+  public Matrix3x3 gse_geid_trans_matrix() {
+    return gei_geid_trans_matrix().multiply(gse_gei_trans_matrix());
+  }
+
+
   /* *******************************
    * GSM -> other coordinate systems
    * ******************************* */
@@ -424,6 +478,37 @@ public class Trans {
   public Matrix3x3 gsm_gse_trans_matrix() {
     return gei_gse_trans_matrix().multiply(gsm_gei_trans_matrix());
   }
+
+  public Matrix3x3 gsm_geid_trans_matrix() {
+    return gei_geid_trans_matrix().multiply(gsm_gei_trans_matrix());
+  }
+
+
+  /* ********************************
+   * GEID -> other coordinate systems
+   * ******************************** */
+
+  public Matrix3x3 geid_sm_trans_matrix() {
+    return sm_geid_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 geid_geo_trans_matrix() {
+    return geo_geid_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 geid_gei_trans_matrix() {
+    return gei_geid_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 geid_gse_trans_matrix() {
+    return gse_geid_trans_matrix().getInverse();
+  }
+
+  public Matrix3x3 geid_gsm_trans_matrix() {
+    return gsm_geid_trans_matrix().getInverse();
+  }
+
+
 
   /* ************************************
    * Miscellaneous methods, mostly static
@@ -562,6 +647,23 @@ public class Trans {
 
     return m;
   }
+
+  // -------- GEI  ->  GEID  ---------
+
+  protected static Matrix3x3 gei_geid_trans_matrix(double mjd)
+  {
+    //return new Matrix3x3();   // FOR TESTING
+    //*
+    return new Matrix3x3(new double[][] {
+        { 0,  1,  0},
+        { 0,  0,  1},
+        { 1,  0,  0},
+    });   // FOR TESTING  //*/
+  }
+
+  /* ********************************************
+   * Conversion methods for 1D vectors GEO<-->GMA
+   ********************************************** */
   
   /**
    * Transform geo(3) to gma(3).

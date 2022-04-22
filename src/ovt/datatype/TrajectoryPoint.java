@@ -53,7 +53,37 @@ public class TrajectoryPoint {
    public double gse[] = new double[3];
    /** SM coordinates (RE) of the satellite. */
    public double sm[] = new double[3];
-   
+   /** GEID coordinates (RE) of the satellite.
+    */
+   /* Only private because it was after other coordinate systems and being
+    * public was not required.
+    */
+   private double geid[] = new double[3];
+
+   /* NOTE: Constructor only seems to be called once in OVT. Could move that
+    * initialization code (which does all the coordinate transformation) to this
+    * constructor in principle and reduce the number of arguments, but that
+    * requires selecting the source coordinate system.
+    */
+   public TrajectoryPoint(
+      double mjd,
+      double[] gei,
+      double[] vei,
+      double[] geo,
+      double[] gsm,
+      double[] gse,
+      double[] sm,
+      double[] geid
+   ) {
+       this.mjd = mjd;
+       this.gei = gei;
+       this.vei = vei;
+       this.geo = geo;
+       this.gsm = gsm;
+       this.gse = gse;
+       this.sm  = sm;
+       this.geid = geid;
+   }
 
 /**
  * Returns point in the coordinate system <code>coordinateSystem</code>
@@ -62,19 +92,28 @@ public class TrajectoryPoint {
 
   public double[] get(int coordinateSystem) throws IllegalArgumentException {
     switch (coordinateSystem) {
-    	case CoordinateSystem.GEI:  return gei;
-    	case CoordinateSystem.GSM:  return gsm;
-    	case CoordinateSystem.GSE:  return gse;
+      case CoordinateSystem.GEI:  return gei;
+      case CoordinateSystem.GSM:  return gsm;
+      case CoordinateSystem.GSE:  return gse;
       case CoordinateSystem.SM:   return sm;
-    	//case Const.GSEQ: return "GSEQ";
-    	case CoordinateSystem.GEO:  return geo;
-    	/*case Const.SMC:  return "SMC";
-    	case Const.COR:  return "COR";
-    	case Const.ECC:  return "ECC";*/
+      //case Const.GSEQ: return "GSEQ";
+      case CoordinateSystem.GEO:  return geo;
+      /*case Const.SMC:  return "SMC";
+      case Const.COR:  return "COR";
+      case Const.ECC:  return "ECC";*/
+
+      /* IMPLEMENTATION NOTE: Can not easily use ovt.util.Trans since the
+      *  constructor requires an IgrfModel argument, even if the GEI-GEID
+      *  transformation itself does not.
+      */
+      /* IMPLEMENTATION NOTE: Added coordinate system GEID
+       * (GEI epoch/mean-of-date) after other coordinate systems. Therefore no
+       * corresponding (public!) instance variable since it simply was not been
+       * needed.
+       */
+      case CoordinateSystem.GEID: return geid;
     }
     throw new IllegalArgumentException("Invalid coordinate system '" + coordinateSystem + "'");
   }
 
-}       
-
-
+}

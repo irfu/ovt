@@ -334,15 +334,15 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         // are put in a Trajectory object ("tra").
         for (int k = 0; k < N; k++) {
             final double mjd = timeMjdMap[k];
-            final TrajectoryPoint trp = new TrajectoryPoint();
-            trp.mjd = mjd;
 
+            double[] gei = new double[3];
+            double[] vei = new double[3];
             for (int i = 0; i < 3; i++) {
-                trp.gei[i] = gei_arr[k][i] / Const.RE;   // NOTE: Changes units: km --> Earth radii.
-                trp.vei[i] = vei_arr[k][i];         // NOTE: Does NOT change units.
+                gei[i] = gei_arr[k][i] / Const.RE;   // NOTE: Changes units: km --> Earth radii.
+                vei[i] = vei_arr[k][i];         // NOTE: Does NOT change units.
             }
 
-            final double velocity = Vect.absv(trp.vei);
+            final double velocity = Vect.absv(vei);
             if (velocity > maxVelocity) {
                 maxVelocity = velocity;
             }
@@ -352,11 +352,14 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
             // Calculate coordinate values for other coordinate systems than GEI.
             final Trans trans = getTrans(mjd);
-            trp.geo = trans.gei2geo(trp.gei);  // Transform gei to geo        
-            trp.gsm = trans.geo2gsm(trp.geo);  // Transform geo to gsm        
-            trp.gse = trans.gei2gse(trp.gei);  // Transform gei to gse        
-            trp.sm = trans.gsm2sm(trp.gsm);    // Transform again.. .-)
+            double[] geo  = trans.gei2geo(gei);  // Transform gei to geo
+            double[] gsm  = trans.geo2gsm(geo);  // Transform geo to gsm
+            double[] gse  = trans.gei2gse(gei);  // Transform gei to gse
+            double[] sm   = trans.gsm2sm(gsm);   // Transform again.. .-)
+            double[] geid = trans.gei2geid(gei);   // Transform again.. .-)
             
+            final TrajectoryPoint trp = new TrajectoryPoint(
+                mjd, gei, vei, geo, gsm, gse, sm, geid);
 
             tra.put(trp);
         }

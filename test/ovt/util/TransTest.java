@@ -105,7 +105,8 @@ public class TransTest {
             CoordinateSystem.GSM,
             CoordinateSystem.GEO,
             CoordinateSystem.GSE,
-            CoordinateSystem.SM
+            CoordinateSystem.SM,
+            CoordinateSystem.GEID,
         };
 
         OVTCore core = XYZwin.getCore();

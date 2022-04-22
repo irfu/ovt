@@ -108,9 +108,19 @@ public class CoordinateSystem extends BasicObject {
    */
   public static final int CORR = 6;
   public static final int ECC =  7;
-  /** GeoMagnetic*/
-  public static final int GMA =   8;
-  
+  /** GeoMagnetic */
+  public static final int GMA =  8;
+
+  /** <B>Geocentric Equatorial Inertial (epoch-of-date/mean-of-date)</B><BR>
+   * <B>X</B> - axis points from the Earth toward the first
+   * point of Aries (the position of Sun at the vernal equinox)<BR>
+   * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
+   * <B>Y</B> - axis completes the right-handed orthogonal set <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
+   *
+   * Note: Refers to GEI epoch-of-date/mean-of-date (not GEI J2000).
+   */
+  public static final int GEID = 9;
+
   
   /** Holds value of property coordinateSystem. */
   private int coordinateSystem = GSM;
@@ -196,7 +206,10 @@ public class CoordinateSystem extends BasicObject {
    *  more).
    */
   public static int[] getCoordinateSystemsList() {
-    return new int[]{ GEI, GSM, GSE, SM, GEO};
+      // NOTE: Puts GEID immediately after GEI (as opposed to the otherwise used
+      // coordinate system order) since they are related and should therefore be
+      // close to each other in the GUI.
+    return new int[]{GEI, GEID, GSM, GSE, SM, GEO};
   }
 
   public String[] getPolarCoordinateSystemNames() {
@@ -214,14 +227,15 @@ public class CoordinateSystem extends BasicObject {
   
   public static String getCoordSystem(int n) {
     switch (n) {
-		case GEI:  return "GEI(J2000.0)";
-		case GSM:  return "GSM";
-		case GSE:  return "GSE";
-		case GSEQ: return "GSEQ";
-		case GEO:  return "GEO";
-		case SM :  return "SMC"; // this is correct!
+      case GEI:  return "GEI(J2000.0)";
+      case GSM:  return "GSM";
+      case GSE:  return "GSE";
+      case GSEQ: return "GSEQ";
+      case GEO:  return "GEO";
+      case SM :  return "SMC"; // this is correct!
                 //case CORR:  return "CORR";
-		case ECC:  return "ECC";
+      case ECC:  return "ECC";
+      case GEID: return "GEI(epoch-of-date)";
     }
     throw new IllegalArgumentException("Invalid coordinate system index");
   }
