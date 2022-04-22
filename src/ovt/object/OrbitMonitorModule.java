@@ -433,7 +433,7 @@ protected JPanel getFootprintPanel() {
         panel.setLayout(new GridLayout(2,4));
         for (int i=0; i<2; i++) {          
           for (int j=0; j<2; j++) {            
-	    fp[i][j] = new JTextField("66.6");
+            fp[i][j] = new JTextField("66.6");
             fp[i][j].setHorizontalAlignment(JTextField.RIGHT);
             fpL[i][j] = new JLabel("lll=");
             fpL[i][j].setHorizontalAlignment(JTextField.RIGHT);
@@ -452,35 +452,35 @@ protected JPanel getDistancePanel() {
 	JPanel container = new JPanel();
 	container.setLayout(new BoxLayout(container, BoxLayout.Y_AXIS));
         
-        dist_to_mpause  = new JTextField("200.23");
-          dist_to_mpause.setHorizontalAlignment(JTextField.RIGHT);
-          dist_to_mpause.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_MP]);
+  dist_to_mpause  = new JTextField("200.23");
+  dist_to_mpause.setHorizontalAlignment(JTextField.RIGHT);
+  dist_to_mpause.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_MP]);
 	dist_to_bowshock = new JTextField("200.23");
-          dist_to_bowshock.setHorizontalAlignment(JTextField.RIGHT);
-          dist_to_bowshock.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_BS]);
+  dist_to_bowshock.setHorizontalAlignment(JTextField.RIGHT);
+  dist_to_bowshock.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_BS]);
+       
+  JLabel title = new JLabel("Distance to", JLabel.LEFT);        
+  JPanel titlePanel = new JPanel();
+  titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
+  titlePanel.add(title);
+  titlePanel.add(Box.createHorizontalGlue());
+  container.add(titlePanel);
+       
+  JPanel panel = new JPanel();
+  panel.setLayout(new GridLayout(1,4));
         
-        JLabel title = new JLabel("Distance to", JLabel.LEFT);        
-        JPanel titlePanel = new JPanel();
-        titlePanel.setLayout(new BoxLayout(titlePanel, BoxLayout.X_AXIS));
-        titlePanel.add(title);
-        titlePanel.add(Box.createHorizontalGlue());
-        container.add(titlePanel);
+  JLabel label = new JLabel("BS=");
+  label.setFont(dist_to_bowshock.getFont());
+  label.setHorizontalAlignment(JLabel.RIGHT);
+  label.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_BS]);
         
-        JPanel panel = new JPanel();
-        panel.setLayout(new GridLayout(1,4));
-        
-        JLabel label = new JLabel("BS=");
-          label.setFont(dist_to_bowshock.getFont());
-          label.setHorizontalAlignment(JLabel.RIGHT);
-          label.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_BS]);
-        
-        panel.add(label);
+  panel.add(label);
 	panel.add(dist_to_bowshock);
 	
 	label = new JLabel("MP=");
-          label.setFont(dist_to_mpause.getFont());
-          label.setHorizontalAlignment(JLabel.RIGHT);
-          label.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_MP]);
+  label.setFont(dist_to_mpause.getFont());
+  label.setHorizontalAlignment(JLabel.RIGHT);
+  label.setToolTipText(DumpRecord.recDescr[DumpRecord.DIST_TO_MP]);
         
 	panel.add(label);
 	panel.add(dist_to_mpause);

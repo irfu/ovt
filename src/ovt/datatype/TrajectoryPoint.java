@@ -39,19 +39,19 @@ import ovt.object.CoordinateSystem;
  */
 
 public class TrajectoryPoint {
-/** Modified Julian day (mjd = 0 for 1950) */
-   public double mjd;   
-/** GEI coordinates (RE) of the satellite */
-   public double gei[] = new double[3];       
-/** GEI velocity  km/s  */
+   /** Modified Julian day (mjd = 0 for 1950). */
+   public double mjd;
+   /** GEI coordinates (RE) of the satellite. */
+   public double gei[] = new double[3];
+   /** GEI velocity, km/s.  */
    public double vei[] = new double[3];
-/** GEO coordinates (RE) of the satellite */   
-   public double geo[] = new double[3];       
-/** GSM coordinates (RE) of the satellite */
+   /** GEO coordinates (RE) of the satellite. */
+   public double geo[] = new double[3];
+   /** GSM coordinates (RE) of the satellite. */
    public double gsm[] = new double[3];
-/** GSE coordinates (RE) of the satellite */      
-   public double gse[] = new double[3];	
-/** SM coordinates (RE) of the satellite */      
+   /** GSE coordinates (RE) of the satellite. */
+   public double gse[] = new double[3];
+   /** SM coordinates (RE) of the satellite. */
    public double sm[] = new double[3];
    
 
@@ -65,14 +65,14 @@ public class TrajectoryPoint {
     	case CoordinateSystem.GEI:  return gei;
     	case CoordinateSystem.GSM:  return gsm;
     	case CoordinateSystem.GSE:  return gse;
-        case CoordinateSystem.SM:  return sm;
+      case CoordinateSystem.SM:   return sm;
     	//case Const.GSEQ: return "GSEQ";
     	case CoordinateSystem.GEO:  return geo;
     	/*case Const.SMC:  return "SMC";
     	case Const.COR:  return "COR";
     	case Const.ECC:  return "ECC";*/
     }
-    throw new IllegalArgumentException("Invalid coord system '" + coordinateSystem + "'");
+    throw new IllegalArgumentException("Invalid coordinate system '" + coordinateSystem + "'");
   }
 
 }       

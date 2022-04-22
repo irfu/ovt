@@ -78,19 +78,19 @@ public class Trans {
    */
   //protected double Ggsm[]  = { 1, 0, 0, 0, 1, 0, 0, 0, 1};
 
-  /** Transformation matrix from sm to gsm */
+  /** Transformation matrix from sm to gsm. */
   protected Matrix3x3 sm_gsm;
 
-  /** Transformation matrix from geo to gsm */
+  /** Transformation matrix from geo to gsm. */
   protected Matrix3x3 geo_gsm;
 
-  /** Transformation matrix from geo to gei */
+  /** Transformation matrix from geo to gei. */
   protected Matrix3x3 geo_gei;
 
-  /** Transformation matrix from gei to gsm */
+  /** Transformation matrix from gei to gsm. */
   protected Matrix3x3 gei_gsm;
 
-  /** Transformation matrix from gei to gse */
+  /** Transformation matrix from gei to gse. */
   protected Matrix3x3 gei_gse;
 
   /** Sine of dipole tilt. By default dipole tilt set to zero
@@ -117,7 +117,13 @@ public class Trans {
 
     sint = getDipoleTiltSine(mjd, Eccdz);
     cost = Math.sqrt(1 - sint * sint);
+
+    /* Coordinate conversion matrices between coordinate systems.
     
+     * NOTE: Technically over-determined since there are
+     * enough conversion matrices to represent a loop of transformations
+     * GEO->GEI->GSM->GEO (there is one matrix too many).
+     */
     sm_gsm  = sm_gsm_trans_matrix(mjd, Eccdz);
     geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);
     geo_gei = geo_gei_trans_matrix(mjd);
@@ -138,20 +144,23 @@ public class Trans {
   /** Returns the sine of the dipole tilt angle
    * @see #getCost() #getDipoleTilt()
    */
-  public double getSint()
-{ return sint; }
+  public double getSint() {
+    return sint;
+  }
 
   /** Returns the cosine of the dipole tilt angle
    * @see #getSint() #getDipoleTilt()
    */
-  public double getCost()
-{ return cost; }
+  public double getCost() {
+    return cost;
+  }
 
   /**  Returns dipole tilt angle in RADIANS
    * @see #getSint() #getCost()
    */
-  public double  getDipoleTilt()
-{ return Math.asin(getSint()); }
+  public double  getDipoleTilt() {
+    return Math.asin(getSint());
+  }
 
 
 
@@ -315,6 +324,7 @@ public class Trans {
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
+  
   /* *******************************
    * GEO -> other coordinate systems
    * ******************************* */
@@ -328,13 +338,6 @@ public class Trans {
   }
 
   public Matrix3x3 geo_gse_trans_matrix() {
-    /*Matrix3x3 gei_gsm3x3 = gei_gsm_trans_matrix();
-    Matrix3x3 geo_gei3x3 = geo_gei_trans_matrix();
-    Matrix3x3 res = gei_gsm3x3.multiply(geo_gei3x3);
-    System.out.println("gei_gsm\n" + gei_gsm3x3.toString());
-    System.out.println("geo_gei\n" + geo_gei3x3.toString());
-    System.out.println("result\n" + res.toString());
-     */
     return gei_gse_trans_matrix().multiply(geo_gei_trans_matrix());
   }
   
@@ -439,9 +442,9 @@ public class Trans {
 
     int i, j;
     for (i=0; i<3; i++) {
-        for (j=0; j<3; j++) {
-            m[i][j] = 0;
-        }
+      for (j=0; j<3; j++) {
+        m[i][j] = 0;
+      }
     }
 
     m[0][0] = ct;  m[0][1] = -st;
@@ -571,7 +574,7 @@ public class Trans {
     return gma;
   }
 
-    /**
+  /**
    * Transform gma(3) to geo(3).
    * flag=0 magnetic dipole MAGNETIC_DIPOLE)
    *     =1 eccentric dipole (ECCENTRIC_DIPOLE)
@@ -609,16 +612,16 @@ public class Trans {
   }
 
   /************************************************************************
-  Compute corrected magnetic coordinates at the reference altitude alt
-  input:
-  mjd:     modified julian day (use fdate() to find mjd! )
-  geo(3):  geographic position (cartesian) in units of re=6371.2 km
-  alt:     reference altitude (km)
-  output:
-  mlat:    corrected magnetic latitude (deg)
-  mlong:   corrected magnetic longitude (deg)
-  mlt:     corrected magnetic local time (hours)
-  ell:     L value (equatorial distance of the field line igrf)
+   * Compute corrected magnetic coordinates at the reference altitude alt
+   * input:
+   * mjd:     modified julian day (use fdate() to find mjd! )
+   * geo(3):  geographic position (cartesian) in units of re=6371.2 km
+   * alt:     reference altitude (km)
+   * output:
+   * mlat:    corrected magnetic latitude (deg)
+   * mlong:   corrected magnetic longitude (deg)
+   * mlt:     corrected magnetic local time (hours)
+   * ell:     L value (equatorial distance of the field line igrf)
    *************************************************************************/
   public static double[] corrgma(MagProps magProps, double mjdx,double[] geo, double alt){
   double[] res = {0,0,0}; //OUTPUT: mlat, mlong, mlt
@@ -646,8 +649,8 @@ public class Trans {
     boolean isIGRF = true;
     int currentExternalModel = magProps.getExternalModelType();
     if(magProps.getInternalModelType()!=MagProps.IGRF) {
-        magProps.setExternalModelType(MagProps.NOMODEL);
-        isIGRF = false;
+      magProps.setExternalModelType(MagProps.NOMODEL);
+      isIGRF = false;
     }
 
     Log.err("ovt.util.Trans.corrgma is strange!!! It changes models!");
@@ -666,7 +669,7 @@ public class Trans {
     cos2 = (ft[0] * ft[0] + ft[1] * ft[1]) / (r * r);
 
     if (cos2 < 4.8e-7)
-    cos2 = 4.8e-7;
+      cos2 = 4.8e-7;
 
     // --------->  cos(89.96)^2=4.8d-7
 
@@ -770,23 +773,24 @@ public class Trans {
   public static double[] xyz2LatLon(double[] xyz) {
     int X = 0; int Y = 1; int Z = 2;
     double irad = 180./Math.PI;
-    double  phi, delta;
+    double phi, delta;
     double radius = Math.sqrt (xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]);
     
     if ((xyz[Y] == 0.) && (xyz[X] == 0.))
-        phi = 0;
+      phi = 0;
     else
-        phi = irad * Math.atan2 (xyz[Y], xyz[X]);
+      phi = irad * Math.atan2 (xyz[Y], xyz[X]);
         
         
-    if (phi < 0.) phi = phi + 360.;
+    if (phi < 0.)
+      phi = phi + 360.;
     
     double arg = xyz[Z] / radius;
         
     if (arg < 1.) {
-        delta = irad * Math.asin (arg);
+      delta = irad * Math.asin (arg);
     } else {
-        delta = 90.;
+      delta = 90.;
     }
     
     return new double[]{ delta, phi };
@@ -800,9 +804,9 @@ public class Trans {
   public static void main(String[] args){
     double[] r = { -1, -1, 0};
     for (double mlt=0;mlt<=24;mlt+=1.) {
-        double[] xyz = Trans.mlat_mlt2xyz(0, mlt, 0.);
-        double[] res = Trans.xyz2MlatMlt(xyz);
-        System.out.println(""+(int)(mlt)+" -> "+res[0]+"deg, "+res[1]+"h");    
+      double[] xyz = Trans.mlat_mlt2xyz(0, mlt, 0.);
+      double[] res = Trans.xyz2MlatMlt(xyz);
+      System.out.println(""+(int)(mlt)+" -> "+res[0]+"deg, "+res[1]+"h");    
     }
   }
 

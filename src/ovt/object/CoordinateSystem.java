@@ -192,6 +192,9 @@ public class CoordinateSystem extends BasicObject {
     return names;
   } 
 
+  /** Determines which coordinate systems are available in the GUI (and maybe
+   *  more).
+   */
   public static int[] getCoordinateSystemsList() {
     return new int[]{ GEI, GSM, GSE, SM, GEO};
   }
@@ -230,7 +233,7 @@ public class CoordinateSystem extends BasicObject {
         // coordinate system
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("coordinateSystem", this);
         pd.setDisplayName("Coordinate System");
-	pd.setToolTipText("Space Coordinate System");
+        pd.setToolTipText("Space Coordinate System");
         
         GUIPropertyEditor editor = new ComboBoxPropertyEditor(pd, getCoordinateSystemsList(), getCoordinateSystemNames());
         // Render each time user changes cs by means of gui

@@ -223,6 +223,7 @@ public class Dumper {
                                 JOptionPane.YES_NO_OPTION);
                 if ( res == JOptionPane.NO_OPTION) return;
         }
+        // false = Do not append
         PrintWriter writer = new PrintWriter(new FileWriter(file.getAbsolutePath(), false));
         logAll(writer);
         writer.close();
@@ -232,7 +233,8 @@ public class Dumper {
     public void logAll(PrintWriter out) throws IOException {
         writeHeader(out);
         double[] timeMap = om.getTimeSet().getValues();
-        for (int i=0; i<timeMap.length; i++) log(out, timeMap[i]);
+        for (int i=0; i<timeMap.length; i++)
+            log(out, timeMap[i]);
     }
 
 
@@ -299,7 +301,7 @@ public class Dumper {
         });
         panel.add(button);
 
-        button = new JButton("Log All");
+        button = new JButton("Log all");
         button.setToolTipText("Dump data for the whole orbit");
         button.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent evt) {

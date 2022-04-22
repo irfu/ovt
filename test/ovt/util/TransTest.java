@@ -114,7 +114,7 @@ public class TransTest {
         Trans T = new ovt.util.Trans(mjd, igrf);
 
 
-        // For testing specific failure.
+        // For testing a specific case, e.g. to debug failed tests.
         if (false) {
             int cs1 = 0;
             int cs2 = 1;
