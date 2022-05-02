@@ -170,7 +170,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     /* Data used for connecting to SSC Web Services. */
     private static final String WSDL_URL_STRING
-            = "http://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
+            = "https://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
     private static final String QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
     private static final String QNAME_LOCAL_PART = "SatelliteSituationCenterService";
 
