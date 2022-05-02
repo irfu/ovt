@@ -575,24 +575,4 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     //##########################################################################
 
-    /**
-     * Informal test code.
-     */
-    public static void test() throws IOException {
-        SSCWSLibraryImpl lib = new SSCWSLibraryImpl(Time.Y1950);
-        List<String> listPIN = lib.getPrivacyAndImportantNotices();
-        List<String> listA = lib.getAcknowledgements();
-
-        System.out.println("getPrivacyAndImportantNotices: ");
-        for (String s : listPIN) {
-            System.out.println("   s = " + s);
-        }
-
-        System.out.println("getAcknowledgements: ");
-        for (String s : listA) {
-            System.out.println("   s = " + s);
-        }
-
-    }
-
 }
