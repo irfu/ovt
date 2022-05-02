@@ -16,6 +16,11 @@ dist/
 lib/jogl/Archive.zip
 lib/vtk copy.jar
 
+# Associated with Erik P G Johansson's work flow.
+*BACKUP*
+
+
+
 # Delete from .gitignore?
 src/libovt/libovt-3.0.jnilib_temp
 src/libovt/magpackbackup.c
@@ -35,5 +40,3 @@ vtkError.txt
 
 # Java crash log files
 hs_err_pid*.log
-
-
