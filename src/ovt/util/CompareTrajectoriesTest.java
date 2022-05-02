@@ -81,6 +81,8 @@ public class CompareTrajectoriesTest {
      */
 //    private static final boolean USE_SSCWS_DISK_CACHE = true;
     private static final boolean USE_SSCWS_DISK_CACHE = false;
+    
+    private static final SSCWSLibraryImpl LIB = (SSCWSLibraryImpl) new SSCWSLibraryImpl();
 
 
     public static void main(String[] args) throws IOException, NoSuchSatelliteException {
@@ -198,7 +200,7 @@ public class CompareTrajectoriesTest {
      * Print raw data from SSC, including unconverted time.
      */
     private static void printSSCPositions(String satID, double beginMjd, double endMjd, int resolutionFactor, CoordinateSystem coordSys) throws IOException {
-        SSCWSLibraryImpl.SSCOrbitRequestResults results = SSCWSLibraryImpl.TYPED_INSTANCE.getTrajectoryRaw(satID, beginMjd, endMjd, resolutionFactor, coordSys);
+        SSCWSLibraryImpl.SSCOrbitRequestResults results = LIB.getTrajectoryRaw(satID, beginMjd, endMjd, resolutionFactor, coordSys);
 
         final SatelliteData data = results.dataResult.getData().get(0);
         final List<XMLGregorianCalendar> time = data.getTime();
@@ -340,7 +342,7 @@ public class CompareTrajectoriesTest {
 //                Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
         compareTrajectories(
-                new SSCWSDataSource("doublestar1", SSCWSLibraryImpl.DEFAULT_INSTANCE),
+                new SSCWSDataSource("doublestar1", LIB),
                 new LTOFFileDataSource("/home/erjo/work_files/OVT/ovt/resources/odata/Double_Star_1.ltof"),
                 Utils.newLinearArray(startMjd, startMjd + lengthMjd, N), timeDifferenceMjd2, rotationVec2);//*/
         //--------------------------
@@ -757,7 +759,6 @@ public class CompareTrajectoriesTest {
             throw new IllegalArgumentException();
         }
 
-        final SSCWSLibraryImpl LIB = (SSCWSLibraryImpl) SSCWSLibraryImpl.DEFAULT_INSTANCE;
         final int RESOLUTION_FACTOR = 1;
 
         final int timeResolution_s = LIB.getSatelliteInfo(satID).bestTimeResolution * RESOLUTION_FACTOR;

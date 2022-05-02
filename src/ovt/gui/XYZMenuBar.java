@@ -434,7 +434,7 @@ public class XYZMenuBar extends JMenuBar {
 
         /* NOTE: Exceptions are likely to be thrown here rather than later,
          * inside addSSCWSSatAction and removeSSCWSSatAction. */
-        final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(SSCWS_satID).name;  // throws IOException, NoSuchSatelliteException
+        final String satName = getCore().getSscwsLib().getSatelliteInfo(SSCWS_satID).name;  // throws IOException, NoSuchSatelliteException
 
         // Create -------- ActionListener --------
         final ActionListener actionListener = (ActionEvent evt) -> {

@@ -75,7 +75,7 @@ public class SSCWSLibraryImplMTest {
      * Informal test code.
      */
     public static void test() throws IOException {
-        SSCWSLibraryImpl lib = SSCWSLibraryImpl.TYPED_INSTANCE;
+        SSCWSLibraryImpl lib = new SSCWSLibraryImpl();
         List<String> listPIN = lib.getPrivacyAndImportantNotices();
         List<String> listA = lib.getAcknowledgements();
 

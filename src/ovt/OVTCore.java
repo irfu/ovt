@@ -117,13 +117,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      + System.getProperty("os.name") + ", "
      + System.getProperty("os.arch");*/
 
-    /**
-     * Select what to use as a data source for the functionality/code that
-     * handles SSC Web Services satellites.
-     */
-    public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
-    //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
-
     private vtkRenderer renderer = null;
     /**
      * @see #setRenderAction(Renderable)
@@ -152,6 +145,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private GroundStations groundStations;    // Ground-based stations
     private ElectPot electPot;
     private OutputLabel outputLabel;
+    private SSCWSLibrary sscwsLib;
 
     private static boolean guiPresent = false;
     private boolean canDisplayGuiMessages = false;  // Whether error/warning messages can be displayed in a popup.
@@ -519,6 +513,20 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
         //set output label
         outputLabel = new OutputLabel(this);
+        
+        /**
+         * Select what to use as a data source for the functionality/code that
+         * handles SSC Web Services satellites.
+         */
+        // The real, nominal data source.
+        sscwsLib = new SSCWSLibraryImpl(
+                Const.EARLIEST_PERMITTED_GUI_TIME_MJD,
+                SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING,
+                SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI,
+                SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART
+        );    
+        // Data source emulator for testing.
+        //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  
 
         //magProps = new ovt.mag.MagProps(this);
         Log.log("Throwing timeChangeEvent to everybody ... ", 4);
@@ -997,6 +1005,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     }
 
 
+    public SSCWSLibrary getSscwsLib() {
+        return sscwsLib;
+    }
+    
+    
     /**
      * for XML
      */

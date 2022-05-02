@@ -156,23 +156,21 @@ import ovt.datatype.Time;
 public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     /**
-     * Only one "canonical" singleton instance of SSCWSLibraryImpl is needed
-     * (except maybe for some kind of testing). This is that one instance.
-     */
-    public static final SSCWSLibraryImpl TYPED_INSTANCE = new SSCWSLibraryImpl(Const.EARLIEST_PERMITTED_GUI_TIME_MJD);
-    public static final SSCWSLibrary DEFAULT_INSTANCE = TYPED_INSTANCE;
-
-    /**
      * Number of milliseconds (ms) before timing out.
      */
-    //private static final long GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS = 10;
     private static final long GET_SATELLITE_DESCRIPTIONS_TIMEOUT_MS = 6000;
 
-    /* Data used for connecting to SSC Web Services. */
-    private static final String WSDL_URL_STRING
+    /* NOTE: Requires https to work. /Erik P G Johansson 2022-05-02. */
+    public static final String DEFAULT_WSDL_URL_STRING
             = "https://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
-    private static final String QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
-    private static final String QNAME_LOCAL_PART = "SatelliteSituationCenterService";
+    /* NOTE: Requires http (not https!) to work. /Erik P G Johansson 2022-05-02. */
+    public static final String DEFAULT_QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
+    public static final String DEFAULT_QNAME_LOCAL_PART = "SatelliteSituationCenterService";
+    
+    /* Data used for connecting to SSC Web Services. */
+    private final String wsdlUrlString;
+    private final String qnameNamespaceUri;
+    private final String qnameLocalPart;
 
     private final double noSatellitesBeforeTime_mjd;
 
@@ -212,13 +210,27 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     private static final int DEBUG = 1;
 
 
-    /**
-     * Private constructor to prevent instantiation.
-     */
-    private SSCWSLibraryImpl(double mNoSatellitesBeforeTime_mjd) {
-        noSatellitesBeforeTime_mjd = mNoSatellitesBeforeTime_mjd;
+    public SSCWSLibraryImpl()
+    {
+        this(
+                Const.EARLIEST_PERMITTED_GUI_TIME_MJD,
+                SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING,
+                SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI,
+                SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART
+        );
     }
-
+    
+    public SSCWSLibraryImpl(
+            double mNoSatellitesBeforeTime_mjd,
+            String wsdlUrlString,
+            String qnameNamespaceUri,
+            String qnameLocalPart
+    ) {
+        this.noSatellitesBeforeTime_mjd = mNoSatellitesBeforeTime_mjd;
+        this.wsdlUrlString = wsdlUrlString;
+        this.qnameNamespaceUri = qnameNamespaceUri;
+        this.qnameLocalPart = qnameLocalPart;
+    }
 
     /**
      * Return a SatelliteSituationCenterInterface object that can be used for
@@ -246,8 +258,8 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
         } else {
             try {
                 sscService = new SatelliteSituationCenterService(
-                        new URL(WSDL_URL_STRING),
-                        new QName(QNAME_NAMESPACE_URI, QNAME_LOCAL_PART));
+                        new URL(wsdlUrlString),
+                        new QName(qnameNamespaceUri, qnameLocalPart));
             } catch (WebServiceException e) {
                 // javax.xml.ws.WebServiceException (extends java.lang.RuntimeException, i.e. it must not be declared)
                 // is not documented as something that can be thrown by getSatelliteSituationCenterPort()

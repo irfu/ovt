@@ -162,7 +162,7 @@ public class SSCWSSat extends Sat {
         cacheFile = new File(dir, Utils.replaceSpaces(SSCWS_satID) + SSCWS_CACHE_FILE_SUFFIX);   // Determine which file to use.
         Log.log(this.getClass().getSimpleName() + ".DataSource: cacheFile = " + cacheFile.getAbsolutePath(), DEBUG);
 
-        dataSource = new DataSource(OVTCore.SSCWS_LIBRARY, SSCWS_satID, cacheFile);
+        dataSource = new DataSource(getCore().getSscwsLib(), SSCWS_satID, cacheFile);
     }
 
 
@@ -260,21 +260,6 @@ public class SSCWSSat extends Sat {
      */
     void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
         this.dataSource.fill_GEI_VEI(timeMjdMap, gei_arr, vei_arr);
-    }
-
-
-    /**
-     * Function for deriving the name to be displayed in the GUI tree in a
-     * standardized fashion (in one single location in the code). Useful for
-     * finding the right SSCWSSat object in the GUI tree given only the SSCWS
-     * Satellite ID. Used for the "name" property (field) that is set/read with
-     * OVTObject#setName and OVTObject#getName.
-     */
-    public static String deriveNameFromSSCWSSatID(String satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
-        final String satName = OVTCore.SSCWS_LIBRARY.getSatelliteInfo(satID).name;   // throws IOException
-
-        return "(SSC) " + satName;
-        //return satID + " (SSC)";
     }
 
 
