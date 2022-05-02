@@ -393,7 +393,7 @@ public class XYZMenuBar extends JMenuBar {
 
 
             public void menuSelected(MenuEvent event) {
-                JMenu satsMenu = (JMenu) event.getSource();
+                final JMenu satsMenu = (JMenu) event.getSource();
                 satsMenu.removeAll();                 // NOTE: Remove all previously existing MenuItems!
 
                 // Import Satellite ...
@@ -552,7 +552,7 @@ public class XYZMenuBar extends JMenuBar {
                 final File[] userFiles = userOrbitDir.listFiles(filenameFilter);
                 allFiles = Utils.concat(allFiles, userFiles);
             } else {
-                System.out.println("Can not find directory (Utils.findUserDir(" + OVTCore.getOrbitDataSubdir() + ")).");
+                Log.log("Can not find directory (Utils.findUserDir(\"" + OVTCore.getOrbitDataSubdir() + "\")).");
             }
 
             // Look for files in system level orbit data directory.
@@ -561,7 +561,7 @@ public class XYZMenuBar extends JMenuBar {
                 final File[] sysFiles = sysOrbitDir.listFiles(filenameFilter);
                 allFiles = Utils.concat(allFiles, sysFiles);
             } else {
-                //System.out.println("Can not find directory (Utils.findSysDir("+OVTCore.getOrbitDataSubdir()+")).");
+                Log.log("Can not find directory (Utils.findSysDir(\"" + OVTCore.getOrbitDataSubdir() + "\")).");
             }
         }
 

@@ -116,8 +116,10 @@ public static final int LOG =   0;
 
 
 // CoordSystems contains coordinate systems used in GUI
-
+/*
 public static final Vector CoordSystems = new Vector();
+// Variable appears to be unused should probably be removed. Probably a remnant
+// from some earlier refactorization. /Erik P G Johansson 2022-05-02
 
 static {
 	CoordSystems.addElement("GSM");
@@ -128,7 +130,7 @@ static {
 	CoordSystems.addElement("COR");
 	CoordSystems.addElement("ECC");
 }
-
+*/
 
 
 

@@ -21,23 +21,28 @@ $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://
 $ mvn org.apache.maven.plugins:maven-dependency-plugin:2.1:get -DrepoUrl=http://download.java.net/maven/2/ -Dartifact=org.jogamp.jogl:jogl-all:2.3.1
 ```
 
-Get OVT repository, e.g. `git clone <OVT>...` etc.
+Obtain the OVT repository using, e.g. `git clone <OVT>...` etc.
+
+
 ```sh
 $ cd ovt
-$ mkdir VTKBuild          // Not necessary to put the entire built VTK in the OVT directory. May be excluded from the git repo using ".gitignore".
+$ mkdir VTKBuild    # Footnote: It is not necessary to put the entire built VTK in the OVT directory. It may be excluded from the git repo using e.g. ".gitignore".
 $ cd VTKBuild
 $ ccmake <path to VTK source code>
 ```
 
+
+
 Set parameters as ccmake/cmake when ccmake asks you to set them, and then try again (and again) a few times.
-* NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to check for should include the ones below but there may be others too.
+
+NOTE: Old versions of CMakeCache.txt may be helpful in finding values. Values to check for should include the ones below but there may be others too.
 ```
-    VTK_WRAP_JAVA:BOOL=ON  
+    VTK_WRAP_JAVA:BOOL=ON
     VTK_JAVA_INSTALL:BOOL=OFF         // "Use the Java rules to build the native libraries."
     VTK_JAVA_JOGL_COMPONENT:BOOL=ON   // "Need JOGL jar files"
     VTK_JAVA_SWT_COMPONENT:BOOL=OFF   // "Should SWT component for Java be built (it requires Eclipse)?"
-    JOGL_GLUE:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/gluegen/gluegen-rt/2.3.1/gluegen-rt-2.3.1.jar    // Example path 
-    JOGL_LIB:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/jogl/jogl-all/2.3.1/jogl-all-2.3.1.jar            // Example path
+    JOGL_GLUE:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/gluegen/gluegen-rt/2.3.1/gluegen-rt-2.3.1.jar    # Example path
+    JOGL_LIB:FILEPATH=C:/Users/erjo/.m2/repository/org/jogamp/jogl/jogl-all/2.3.1/jogl-all-2.3.1.jar            # Example path
 ```
 * NOTE: UPDATE JOGL PATHS PROPOSED BY CMake! Change 2.0.2 to 2.3.1   (not Windows?)
 

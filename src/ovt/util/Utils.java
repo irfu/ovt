@@ -160,7 +160,7 @@ public class Utils extends Object {
 
     /**
      * vector from earth to sun. NOTE: The use of this function in "sunmjd"
-     * implies that the returned value is in GEI.
+     * hints that the returned value is in GEI or GSE.
      */
     public static double[] sun_vect(Julian mjd) {
         return sun_vectJNI(mjd.integer, mjd.fraction);

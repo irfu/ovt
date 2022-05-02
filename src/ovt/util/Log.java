@@ -38,6 +38,8 @@
 package ovt.util;
 
 import java.io.*;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Log class with only static methods. Log and error messages are "registered"
@@ -73,6 +75,7 @@ public class Log extends Object {
 
     private static final int DEFAULT_MSG_LEVEL = 1;
     private static final int DEFAULT_ERROR_MSG_LEVEL = 0;
+    private static final SimpleDateFormat MSG_PREFIX_FORMAT = new SimpleDateFormat("YYYY-MM-dd HH:mm:ss.SSSSSS: ");
 
     /**
      * NOTE: There is an advantage in using System.err as the default for log
@@ -116,19 +119,13 @@ public class Log extends Object {
      */
     public static void log(String msg, int msgLevel) {
         if (msgLevel <= logLevel) {
-            printStream.println(msg);
+            printStream.println(getMsgPrefix()+msg);
         }
     }
 
 
     public static synchronized void log(String msg) {
         log(msg, DEFAULT_MSG_LEVEL);
-    }
-
-
-    // NOTE: Method is called 35 times. /2017-10-04
-    public static void err(String msg) {
-        err(msg, DEFAULT_ERROR_MSG_LEVEL);
     }
 
 
@@ -139,15 +136,27 @@ public class Log extends Object {
     // NOTE: Method is called 6 times. /2017-10-04
     public static void err(String msg, int msgLevel) {
         if (msgLevel <= logLevel) {
-            printStream.println("ERROR: " + msg);
+            printStream.println(getMsgPrefix()+"ERROR: " + msg);
         }
     }
 
 
+    // NOTE: Method is called 35 times. /2017-10-04
+    public static void err(String msg) {
+        err(msg, DEFAULT_ERROR_MSG_LEVEL);
+    }
+    
+    
     // PROPOSAL: Remove and use e.printStackTrace(Log.getPrintStream()) instead?
     public static void logStackTrace(Exception e) {
         // NOTE: Throwable#printStackTrace prints both (1) the contents of
         // the exception (message, toString()) and (2) the stack trace.
         e.printStackTrace(printStream);
+    }
+    
+    
+    private static String getMsgPrefix() {
+        final Calendar currentCalendar = Calendar.getInstance();   // Incorporates the current time.
+        return MSG_PREFIX_FORMAT.format(currentCalendar.getTime());
     }
 }
