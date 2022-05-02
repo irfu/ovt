@@ -129,12 +129,6 @@ public class Log extends Object {
     }
 
 
-    // NOTE: Method is called 35 times. /2017-10-04
-    public static void err(String msg) {
-        err(msg, DEFAULT_ERROR_MSG_LEVEL);
-    }
-
-
     /**
      * Log the error string with the debug level.
      */
@@ -147,6 +141,12 @@ public class Log extends Object {
     }
 
 
+    // NOTE: Method is called 35 times. /2017-10-04
+    public static void err(String msg) {
+        err(msg, DEFAULT_ERROR_MSG_LEVEL);
+    }
+    
+    
     // PROPOSAL: Remove and use e.printStackTrace(Log.getPrintStream()) instead?
     public static void logStackTrace(Exception e) {
         // NOTE: Throwable#printStackTrace prints both (1) the contents of
