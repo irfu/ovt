@@ -98,6 +98,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      * (path) in the save/load state dialog.
      */
     public static final String SETTING_DEFAULT_SAVED_STATE_FILENAME = "StateFileDefault";
+
+    public static final String SETTING_WSDL_URL_STRING     = "SSCWS.WsdlUrl";
+    public static final String SETTING_QNAME_NAMESPACE_URI = "SSCWS.QNameNamespace";
+    public static final String SETTING_QNAME_LOCAL_PART    = "SSCWS.QNameLocalPart";
+    
     private static final Properties globalProperties = new Properties();
     /**
      * File to which stdout should be directed. null=Print to screen instead of
@@ -353,7 +358,24 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public static synchronized void setGlobalSetting(String key, String value) {
+        // PROPOSAL: Change to non-static.
+        //      NOTE: Used in many locations.
         globalProperties.put(key, value);
+    }
+    
+    
+    /**
+     * Get global setting, but use default value if not defined. Then update
+     * properties with the value actually returned.
+     * 
+     * @param key
+     * @param defaultValue
+     * @return 
+     */
+    public synchronized String getSetDefaultGlobalSetting(String key, String defaultValue) {
+        String value = getGlobalSetting(key, defaultValue);
+        setGlobalSetting(key, value);
+        return value;
     }
 
 
@@ -521,10 +543,10 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         // The real, nominal data source.
         sscwsLib = new SSCWSLibraryImpl(
                 Const.EARLIEST_PERMITTED_GUI_TIME_MJD,
-                SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING,
-                SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI,
-                SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART
-        );    
+                getSetDefaultGlobalSetting(SETTING_WSDL_URL_STRING,     SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING),
+                getSetDefaultGlobalSetting(SETTING_QNAME_NAMESPACE_URI, SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI),
+                getSetDefaultGlobalSetting(SETTING_QNAME_LOCAL_PART,    SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART)
+        );
         // Data source emulator for testing.
         //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  
 
