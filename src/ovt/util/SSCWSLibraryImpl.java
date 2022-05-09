@@ -261,10 +261,26 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                         new URL(wsdlUrlString),
                         new QName(qnameNamespaceUri, qnameLocalPart));
             } catch (WebServiceException e) {
-                // javax.xml.ws.WebServiceException (extends java.lang.RuntimeException, i.e. it must not be declared)
-                // is not documented as something that can be thrown by getSatelliteSituationCenterPort()
-                // but it has been observed.
-                throw new IOException("Can not obtain instance of SatelliteSituationCenterService", e);
+                /* javax.xml.ws.WebServiceException (extends java.lang.RuntimeException,
+                i.e. it must not be declared)
+                is not documented as something that can be thrown by getSatelliteSituationCenterPort()
+                but it has been observed.
+
+                IMPLEMENTATION NOTE: Adding more detailed additional message
+                from initial exception to make it easier to debug & diagnose
+                errors. Adds line breaking to wrap long rows.
+                It appears that an exception here is (most likely) caught and
+                sent to ErrorMessageWindow where the message ends up in a JLabel
+                which in turn apparently does not line break on \n (line feed).
+                Therefore using HTML and regular expressions to insert <BR>
+                instead. */
+                String excMsg = e.getMessage();
+                //if (e.getCause() != null) {
+                //    // Add cause exception message. Appears to already be included in e.getMessage().
+                //    excMsg = excMsg + "; <BR><BR>" + e.getCause().getMessage();
+                //}
+                excMsg = excMsg.replaceAll("(.{1,150})\\s+", "$1<BR>");   // Add line breaks using regular expressions.
+                throw new IOException("<html><body>Can not obtain instance of SatelliteSituationCenterService:<BR>"+excMsg+"</body></html>");
             }
             return sscService.getSatelliteSituationCenterPort();
         }
