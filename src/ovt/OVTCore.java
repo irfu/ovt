@@ -72,12 +72,17 @@ import javax.swing.*;
  * @version %I% %E%
  * @see ...
  */
-//
-// PROPOSAL: Split up class into two classes?!: One which is the root node in the GUI tree,
-//           and one which is GUI independent and only supplies information and easy to
-//           instantiate separately (for the purpose of testing other classes relying on
-//           what is now the single OVTCore class).
-//
+/*
+PROPOSAL: Split up class into two classes?!: One which is the root node in the GUI tree,
+          and one which is GUI independent and only supplies information and easy to
+          instantiate separately (for the purpose of testing other classes relying on
+          what is now the single OVTCore class).
+
+PROPOSAL: Convert some variables static-->instance.
+    Ex: globalProperties
+
+PROPOSAL: setGlobalSetting() static --> non-static.
+*/
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
 
     private static final String ROOT_NODE_NAME = "OVT";
