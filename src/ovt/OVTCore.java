@@ -88,11 +88,12 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private static final String ROOT_NODE_NAME = "OVT";
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
-    public static final String RELEASE_DAY = "April 2016";
+    public static final String RELEASE_DAY = "May 2022";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
     // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     // BUILD incremented to "7" (from "6") 2016-04-14. Intended for the final release version.
-    public static final int BUILD = 7;
+    // BUILD incremented to "8" (from "7") 2022-05-10. Intended for SSC-WS "bugfixes".
+    public static final int BUILD = 8;
     public static final String OVT_HOMEPAGE = "https://ovt.irfu.se/";
 
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
