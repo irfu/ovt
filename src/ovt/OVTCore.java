@@ -99,9 +99,9 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      */
     public static final String SETTING_DEFAULT_SAVED_STATE_FILENAME = "StateFileDefault";
 
-    public static final String SETTING_WSDL_URL_STRING     = "SSCWS.WsdlUrl";
-    public static final String SETTING_QNAME_NAMESPACE_URI = "SSCWS.QNameNamespace";
-    public static final String SETTING_QNAME_LOCAL_PART    = "SSCWS.QNameLocalPart";
+    public static final String SETTING_SSCWS_WSDL_URL_STRING     = "SSCWS.WsdlUrl";
+    public static final String SETTING_SSCWS_QNAME_NAMESPACE_URI = "SSCWS.QNameNamespace";
+    public static final String SETTING_SSCWS_QNAME_LOCAL_PART    = "SSCWS.QNameLocalPart";
     
     private static final Properties globalProperties = new Properties();
     /**
@@ -543,9 +543,9 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         // The real, nominal data source.
         sscwsLib = new SSCWSLibraryImpl(
                 Const.EARLIEST_PERMITTED_GUI_TIME_MJD,
-                getSetDefaultGlobalSetting(SETTING_WSDL_URL_STRING,     SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING),
-                getSetDefaultGlobalSetting(SETTING_QNAME_NAMESPACE_URI, SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI),
-                getSetDefaultGlobalSetting(SETTING_QNAME_LOCAL_PART,    SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART)
+                getSetDefaultGlobalSetting(SETTING_SSCWS_WSDL_URL_STRING,     SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING),
+                getSetDefaultGlobalSetting(SETTING_SSCWS_QNAME_NAMESPACE_URI, SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI),
+                getSetDefaultGlobalSetting(SETTING_SSCWS_QNAME_LOCAL_PART,    SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART)
         );
         // Data source emulator for testing.
         //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  
