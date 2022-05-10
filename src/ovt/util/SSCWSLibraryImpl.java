@@ -162,7 +162,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
 
     /* NOTE: Requires https to work. /Erik P G Johansson 2022-05-02. */
     public static final String DEFAULT_WSDL_URL_STRING
-            = "https://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
+            = "http://sscWeb.gsfc.nasa.gov/WS/ssc/2/SatelliteSituationCenterService?wsdl";
     /* NOTE: Requires http (not https!) to work. /Erik P G Johansson 2022-05-02. */
     public static final String DEFAULT_QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
     public static final String DEFAULT_QNAME_LOCAL_PART = "SatelliteSituationCenterService";
