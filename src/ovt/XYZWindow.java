@@ -491,7 +491,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         if (sscwsSatellitesSelectionWindow == null) {
             try {
                 final SSCWSSatellitesSelectionWindow temp = new SSCWSSatellitesSelectionWindow(
-                        OVTCore.SSCWS_LIBRARY, getCore(), this.getSSCWSBookmarksModel());
+                        getCore().getSscwsLib(), getCore(), this.getSSCWSBookmarksModel());
                 sscwsSatellitesSelectionWindow = temp;
             } catch (IOException e) {
                 /**
@@ -590,7 +590,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
             /* NOTE: The string value appears in the GUI tree node, but is also
              used to find the satellite when removing it from the tree(?). */
-            sat.setName(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+            sat.setName(this.deriveNameFromSSCWSSatID(SSCWS_satID));
             sat.setOrbitFile(null);   // The only valid parameter value.
         } catch (IOException | SSCWSLibrary.NoSuchSatelliteException e) {
             getCore().sendErrorMessage(e);
@@ -614,7 +614,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
                 // NOTE: This check will also capture the case of sat==null.
                 //getCore().sendErrorMessage("Error", "Can not find (SSC-based) satellite to remove (SCWS_satID=\""+SSCWS_satID+").");
             } else {
-                removeSatByNameAction(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+                removeSatByNameAction(this.deriveNameFromSSCWSSatID(SSCWS_satID));
             }
             /*getCore().getSats().removeSat(sat);
              getCore().getSats().getChildren().fireChildRemoved(sat); // notify TreePanel, Camera maybe.*/
@@ -633,7 +633,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
     // PROPOSAL: Use getSSCWSSats().
     public boolean sscwsSatAlreadyAdded(String SSCWS_satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
         // NOTE: Implementation assumes there is only one Sat by that exact name.
-        final Sat sat = (Sat) getCore().getSats().getChildren().getChild(SSCWSSat.deriveNameFromSSCWSSatID(SSCWS_satID));
+        final Sat sat = (Sat) getCore().getSats().getChildren().getChild(this.deriveNameFromSSCWSSatID(SSCWS_satID));
         return (sat instanceof SSCWSSat);    // NOTE: Should work also for sat==null.
     }
 
@@ -650,6 +650,21 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
             }
         }
         return sscwsSatList;
+    }
+
+    
+    /**
+     * Function for deriving SSCSat name to be displayed in the GUI tree in a
+     * standardized fashion (in one single location in the code). Useful for
+     * finding the right SSCWSSat object in the GUI tree given only the SSCWS
+     * Satellite ID. Used for the "name" property (field) that is set/read with
+     * OVTObject#setName and OVTObject#getName.
+     */
+    private String deriveNameFromSSCWSSatID(String satID) throws IOException, SSCWSLibrary.NoSuchSatelliteException {
+        final String satName = getCore().getSscwsLib().getSatelliteInfo(satID).name;   // throws IOException
+
+        return "(SSC) " + satName;
+        //return satID + " (SSC)";
     }
 
 }   // XYZWindow

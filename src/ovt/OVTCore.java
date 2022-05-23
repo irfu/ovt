@@ -72,22 +72,28 @@ import javax.swing.*;
  * @version %I% %E%
  * @see ...
  */
-//
-// PROPOSAL: Split up class into two classes?!: One which is the root node in the GUI tree,
-//           and one which is GUI independent and only supplies information and easy to
-//           instantiate separately (for the purpose of testing other classes relying on
-//           what is now the single OVTCore class).
-//
+/*
+PROPOSAL: Split up class into two classes?!: One which is the root node in the GUI tree,
+          and one which is GUI independent and only supplies information and easy to
+          instantiate separately (for the purpose of testing other classes relying on
+          what is now the single OVTCore class).
+
+PROPOSAL: Convert some variables static-->instance.
+    Ex: globalProperties
+
+PROPOSAL: setGlobalSetting() static --> non-static.
+*/
 public final class OVTCore extends OVTObject implements GUIPropertyEditorListener {
 
     private static final String ROOT_NODE_NAME = "OVT";
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
-    public static final String RELEASE_DAY = "April 2016";
+    public static final String RELEASE_DAY = "May 2022";
     // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
     // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
     // BUILD incremented to "7" (from "6") 2016-04-14. Intended for the final release version.
-    public static final int BUILD = 7;
+    // BUILD incremented to "8" (from "7") 2022-05-10. Intended for SSC-WS "bugfixes".
+    public static final int BUILD = 8;
     public static final String OVT_HOMEPAGE = "https://ovt.irfu.se/";
 
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
@@ -98,6 +104,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
      * (path) in the save/load state dialog.
      */
     public static final String SETTING_DEFAULT_SAVED_STATE_FILENAME = "StateFileDefault";
+
+    public static final String SETTING_SSCWS_WSDL_URL_STRING     = "SSCWS.WsdlUrl";
+    public static final String SETTING_SSCWS_QNAME_NAMESPACE_URI = "SSCWS.QNameNamespace";
+    public static final String SETTING_SSCWS_QNAME_LOCAL_PART    = "SSCWS.QNameLocalPart";
+    
     private static final Properties globalProperties = new Properties();
     /**
      * File to which stdout should be directed. null=Print to screen instead of
@@ -116,13 +127,6 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     /*+ "; "
      + System.getProperty("os.name") + ", "
      + System.getProperty("os.arch");*/
-
-    /**
-     * Select what to use as a data source for the functionality/code that
-     * handles SSC Web Services satellites.
-     */
-    public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryImpl.DEFAULT_INSTANCE;   // The real data source.
-    //public final static SSCWSLibrary SSCWS_LIBRARY = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  // Data source emulator for testing.
 
     private vtkRenderer renderer = null;
     /**
@@ -152,6 +156,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     private GroundStations groundStations;    // Ground-based stations
     private ElectPot electPot;
     private OutputLabel outputLabel;
+    private SSCWSLibrary sscwsLib;
 
     private static boolean guiPresent = false;
     private boolean canDisplayGuiMessages = false;  // Whether error/warning messages can be displayed in a popup.
@@ -359,7 +364,24 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
 
     public static synchronized void setGlobalSetting(String key, String value) {
+        // PROPOSAL: Change to non-static.
+        //      NOTE: Used in many locations.
         globalProperties.put(key, value);
+    }
+    
+    
+    /**
+     * Get global setting, but use default value if not defined. Then update
+     * properties with the value actually returned.
+     * 
+     * @param key
+     * @param defaultValue
+     * @return 
+     */
+    public synchronized String getSetDefaultGlobalSetting(String key, String defaultValue) {
+        String value = getGlobalSetting(key, defaultValue);
+        setGlobalSetting(key, value);
+        return value;
     }
 
 
@@ -519,6 +541,20 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
         //set output label
         outputLabel = new OutputLabel(this);
+        
+        /**
+         * Select what to use as a data source for the functionality/code that
+         * handles SSC Web Services satellites.
+         */
+        // The real, nominal data source.
+        sscwsLib = new SSCWSLibraryImpl(
+                Const.EARLIEST_PERMITTED_GUI_TIME_MJD,
+                getSetDefaultGlobalSetting(SETTING_SSCWS_WSDL_URL_STRING,     SSCWSLibraryImpl.DEFAULT_WSDL_URL_STRING),
+                getSetDefaultGlobalSetting(SETTING_SSCWS_QNAME_NAMESPACE_URI, SSCWSLibraryImpl.DEFAULT_QNAME_NAMESPACE_URI),
+                getSetDefaultGlobalSetting(SETTING_SSCWS_QNAME_LOCAL_PART,    SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART)
+        );
+        // Data source emulator for testing.
+        //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  
 
         //magProps = new ovt.mag.MagProps(this);
         Log.log("Throwing timeChangeEvent to everybody ... ", 4);
@@ -997,6 +1033,11 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     }
 
 
+    public SSCWSLibrary getSscwsLib() {
+        return sscwsLib;
+    }
+    
+    
     /**
      * for XML
      */

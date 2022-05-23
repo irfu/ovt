@@ -62,8 +62,9 @@ public class DiscreteIntervalToListCacheTest {
     }
     //##########################################################################
 
-    @Rule
-    public TestName name = new TestName();
+    // Seems unused
+    //@Rule
+    //public TestName name = new TestName();
 
 
     @Test
