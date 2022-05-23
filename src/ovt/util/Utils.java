@@ -149,7 +149,12 @@ public class Utils extends Object {
 
 
     /**
-     * Calculates unit sun vector (GEI) for a modified julian day (mjd).
+     * Calculates unit sun vector (GEI) for a Modified Julian Day (mjd).
+     *
+     * NOTE: The return result from this function has been interpreted as being
+     * GEI J2000.0 since before GEI epoch-of-date was introduced. However, it is
+     * possible that it really returns GEI epoch-of-date.
+     * /Erik P G Johansson 2022-06-07
      */
     public static double[] sunmjd(double mjd) {
         double sunv[] = sun_vect(new Julian(mjd));

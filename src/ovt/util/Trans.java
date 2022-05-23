@@ -43,8 +43,17 @@ Khotyaintsev
  * (both stored in the object).
  *
  * NOTE: Variable and function naming convention in this class uses
- *     "gei"=GEI J2000.0 (i.e. not "GEI epoch-of-date)
- *     "geid = GEI epoch-of-data/mean-of-date
+ *     gei  = GEI J2000.0 (i.e. not "GEI epoch-of-date)
+ *     geid = GEI epoch-of-data/mean-of-date
+ *
+ * NOTE: The naming convention is such that a matrix "xxx_yyy" converts a vector
+ * from coordinate system xxx to coordinate system yyy by matrix-vector
+ * multiplication
+ *     xxx_yyy * v_xxx = v_yyy
+ * . This implies that combining coordinate transformation matrices to form new
+ * transformation matrices is done as
+ *     yyy_zzz * xxx_yyy = xxx_zzz
+ * .
  * 
  * Created on March 24, 2000, 1:18 PM
  */
@@ -52,7 +61,6 @@ Khotyaintsev
 package ovt.util;
 
 import ovt.object.*;
-import ovt.util.*;
 import ovt.mag.model.*;
 import ovt.mag.*;
 import ovt.Const;
@@ -68,11 +76,11 @@ import ovt.datatype.*;
  */
 public class Trans {
 
-  /** Degrees in 1 radian */
+  /** Degrees per radian */
   public static final double RAD = 57.295779513;
-  /** equals to 0 */
+  /** Equals to 0 */
   public static final int MAGNETIC_DIPOLE  = 0;
-  /** equals to 1 */
+  /** Equals to 1 */
   public static final int ECCENTRIC_DIPOLE = 1; 
 
   // Eccentric dipole coordinates derived from IGRF model
@@ -577,10 +585,13 @@ public class Trans {
      */
     final double eqlipt[] = {   0.0, -0.398, 0.917 };
     
-    // Can be intrepreted as three (orthonormal) vectors expressed in GEI.
+    /* Can be interpreted as the three (orthonormal) coordinate vectors that
+       define the GSE coordinate system, expressed in GEI.
+       ==> gei_gse * v_gei = v_gse
+    */
     gei_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
-    gei_gse[1] = Vect.crossn(eqlipt, gei_gse[0]);
-    gei_gse[2] = Vect.crossn(gei_gse[0], gei_gse[1]);
+    gei_gse[1] = Vect.crossn(eqlipt, gei_gse[0]);      // In the ecliptic.
+    gei_gse[2] = Vect.crossn(gei_gse[0], gei_gse[1]);  // Ecliptic north (again?!), but more normalized?!
     final Matrix3x3 m = new Matrix3x3(gei_gse);
     return m;
   }
@@ -675,6 +686,7 @@ public class Trans {
         { 1,  0,  0},
     });   // FOR TESTING  //*/
   }
+
 
   /* ********************************************
    * Conversion methods for 1D vectors GEO<-->GMA

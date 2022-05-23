@@ -56,6 +56,8 @@ import ovt.XYZWindow;
  */
 public class TransTest {
 
+
+    // Help function
     public double matricesMaxDiff(Matrix3x3 M1, Matrix3x3 M2) {
         final int[] MATRIX_INDICES = {0, 1, 2};
 
@@ -73,6 +75,7 @@ public class TransTest {
 
 
 
+    // Help function
     public boolean matricesEqual(Matrix3x3 M1, Matrix3x3 M2, double epsilon) {
         double diff = matricesMaxDiff(M1, M2);
         return diff <= epsilon;

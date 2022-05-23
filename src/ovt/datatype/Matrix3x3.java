@@ -180,7 +180,6 @@ public class Matrix3x3 {
      * @return vector
      */
     public void multiply(double scalar) {
-        //System.out.println("Multiplying by" + scalar);
         double value;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
@@ -211,11 +210,16 @@ public class Matrix3x3 {
      * @return New instance of Matrix3x3.
      */
     public Matrix3x3 multiply(Matrix3x3 matrix) {
+        /* NOTE: If matrix indices are interpreted as get(iRow, iCol), then
+           A.multiply(B) is equivalent to matrix multiplication A*B (not B*A).
+        */
         Matrix3x3 res = new Matrix3x3();
         double value;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                value = get(i, 0) * matrix.get(0, j) + get(i, 1) * matrix.get(1, j) + get(i, 2) * matrix.get(2, j);
+                value = get(i, 0) * matrix.get(0, j) +
+                        get(i, 1) * matrix.get(1, j) +
+                        get(i, 2) * matrix.get(2, j);
                 res.set(i, j, value);
             }
         }

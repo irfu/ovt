@@ -33,22 +33,20 @@ Khotyaintsev
 /*
  * CoordinateSystems.java
  *
+ * NOTE: OVT originally supported only GEI J2000.0 (and not GEI
+ * epoch-of-date). It therefore referred to GEI J2000.0 as only "GEI" throughout
+ * the source code and still mostly does. /Erik P G Johansson 2022-06-07
+ *
  * Created on March 20, 2000, 4:50 PM
  */
  
 package ovt.object;
 
+import java.beans.*;
 import ovt.*;
 import ovt.beans.*;
 import ovt.event.*;
-import ovt.datatype.*;
 import ovt.interfaces.*;
-import ovt.object.editor.*;
-
-import java.beans.*;
-
-import java.util.*;
-import java.lang.reflect.*;
 
 
 /** 
@@ -60,19 +58,22 @@ public class CoordinateSystem extends BasicObject {
 
   /** <B>Geocentric Equatorial Inertial (J2000.0)</B><BR>
    * <B>X</B> - axis points from the Earth toward the first
-   * point of Aries (the position of Sun at the vernal equinox)<BR>
+   *            point of Aries (the position of Sun at the vernal equinox)<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
-   * <B>Y</B> - axis completes the right-handed orthogonal set <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
+   * <B>Y</B> - axis completes the right-handed orthogonal set
+   *            <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
    *
-   * Note: Refers to GEI J2000.0 (not GEI epoch-of-date/mean-of-date).
+   * Note: Not to be confused with GEI epoch-of-date/mean-of-date.
    */
   public static final int GEI =  0;
   
   /** <B>Geocentric Solar Magnetospheric</B><BR>
    * <B>X</B> - axis points toward the Sun<BR>
    * <B>Y</B> - axis is perpendicular to the Earth's magnetic dipole (<B>M</B>, pointing
-   * southward) and the sunward direction (<B>S</B>) so that <CODE>(<B>Y</B> = <B>S</B> x <B>M</B>)</CODE><BR>
-   * <B>Z</B> - axis completes the right-handed orthogonal set <CODE>(<B>Z</B> = <B>X</B> x <B>Y</B>)</CODE>.
+   *            southward) and the sunward direction (<B>S</B>) so that
+   *            <CODE>(<B>Y</B> = <B>S</B> x <B>M</B>)</CODE><BR>
+   * <B>Z</B> - axis completes the right-handed orthogonal set
+   *            <CODE>(<B>Z</B> = <B>X</B> x <B>Y</B>)</CODE>.
    */
   public static final int GSM =  1;
   
@@ -87,16 +88,18 @@ public class CoordinateSystem extends BasicObject {
   
   /** <B>Geographic</B><BR>
    * <B>X</B> - axis is in the Earth equatorial plane and passes through
-   * Greenwich meridian<BR>
+   *            Greenwich meridian<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
-   * <B>Y</B> - axis completes the right-handed orthogonal set <CODE>(<B>Y</B> = <B>Z</B> x <B>X</B>)</CODE>.
+   * <B>Y</B> - axis completes the right-handed orthogonal set
+   *            <CODE>(<B>Y</B> = <B>Z</B> x <B>X</B>)</CODE>.
    */
   public static final int GEO =  4;
   
   /** <B>Solar Magnetospheric</B><BR>
    * <B>Z</B> - axis is along the magnetic dipole and points northward<BR> 
    * <B>Y</B> - axis <CODE>(<B>Y</B> = <B>Z</B> x <B>SUN</B>)</CODE><BR>
-   * <B>X</B> - axis completes the right-handed system <CODE>(<B>X</B> = <B>Y</B> x <B>Z</B>)</CODE><BR>
+   * <B>X</B> - axis completes the right-handed system
+   *            <CODE>(<B>X</B> = <B>Y</B> x <B>Z</B>)</CODE><BR>
    * The angle between the <B>Z</B><SUB>SM</SUB> and <B>Z</B><SUB>GSM</SUB> is
    * the dipole tilt angle (positive toward the sun)
    */
@@ -113,11 +116,12 @@ public class CoordinateSystem extends BasicObject {
 
   /** <B>Geocentric Equatorial Inertial (epoch-of-date/mean-of-date)</B><BR>
    * <B>X</B> - axis points from the Earth toward the first
-   * point of Aries (the position of Sun at the vernal equinox)<BR>
+   *            point of Aries (the position of Sun at the vernal equinox)<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
-   * <B>Y</B> - axis completes the right-handed orthogonal set <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
+   * <B>Y</B> - axis completes the right-handed orthogonal set
+   *            <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
    *
-   * Note: Refers to GEI epoch-of-date/mean-of-date (not GEI J2000).
+   * Note: Not to be confused with GEI epoch-of-date/mean-of-date.
    */
   public static final int GEID = 9;
 
@@ -174,7 +178,11 @@ public class CoordinateSystem extends BasicObject {
     //System.out.println("----------- setCoordinateSystem ------- to " + getCoordSystem(coordinateSystem));
     int oldCoordinateSystem = this.coordinateSystem;
     this.coordinateSystem = coordinateSystem;
-    propertyChangeSupport.firePropertyChange ("coordinateSystem", new Integer (oldCoordinateSystem), new Integer (coordinateSystem));
+    propertyChangeSupport.firePropertyChange(
+            "coordinateSystem",
+            new Integer(oldCoordinateSystem),
+            new Integer(coordinateSystem)
+    );
     csChangeSupport.fireCoordinateSystemChange(Const.XYZ, oldCoordinateSystem, coordinateSystem);
   }
 
@@ -190,7 +198,11 @@ public class CoordinateSystem extends BasicObject {
   public void setPolarCoordinateSystem(int polarCoordinateSystem) {
     int oldPolarCoordinateSystem = this.polarCoordinateSystem;
     this.polarCoordinateSystem = polarCoordinateSystem;
-    propertyChangeSupport.firePropertyChange ("polarCoordinateSystem", new Integer (oldPolarCoordinateSystem), new Integer (polarCoordinateSystem));
+    propertyChangeSupport.firePropertyChange(
+            "polarCoordinateSystem",
+            new Integer(oldPolarCoordinateSystem),
+            new Integer(polarCoordinateSystem)
+    );
     csChangeSupport.fireCoordinateSystemChange(Const.POLAR, oldPolarCoordinateSystem, polarCoordinateSystem);
   }
 
@@ -227,7 +239,7 @@ public class CoordinateSystem extends BasicObject {
   
   public static String getCoordSystem(int n) {
     switch (n) {
-      case GEI:  return "GEI(J2000.0)";
+      case GEI:  return "GEI (J2000.0)";
       case GSM:  return "GSM";
       case GSE:  return "GSE";
       case GSEQ: return "GSEQ";
@@ -235,7 +247,7 @@ public class CoordinateSystem extends BasicObject {
       case SM :  return "SMC"; // this is correct!
                 //case CORR:  return "CORR";
       case ECC:  return "ECC";
-      case GEID: return "GEI(epoch-of-date)";
+      case GEID: return "GEI (epoch-of-date)";
     }
     throw new IllegalArgumentException("Invalid coordinate system index");
   }
