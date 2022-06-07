@@ -106,8 +106,8 @@ public class Trans {
   /** Transformation matrix from gei to gsm. */
   protected Matrix3x3 gei_gsm;
 
-  /** Transformation matrix from gei to gse. */
-  protected Matrix3x3 gei_gse;
+  /** Transformation matrix from geid to gse. */
+  protected Matrix3x3 geid_gse;
 
   /** Transformation matrix from gei to geid. */
   protected Matrix3x3 gei_geid;
@@ -147,7 +147,7 @@ public class Trans {
     geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);
     geo_gei = geo_gei_trans_matrix(mjd);
     gei_gsm = gei_gsm_trans_matrix(mjd, Eccdz);
-    gei_gse = gei_gse_trans_matrix(mjd);
+    geid_gse = geid_gse_trans_matrix(mjd);
     gei_geid = gei_geid_trans_matrix(mjd);
 
     this.mjd = mjd;
@@ -222,12 +222,12 @@ public class Trans {
     return gsm_sm_trans_matrix().multiply(gsm);
   }
 
-  public double[] gei2gse(double[] gei) {
-    return gei_gse.multiply(gei);
+  public double[] gei2gse(double gei[]) {
+    return gei_gse_trans_matrix().multiply(gei);
   }
 
-  public double[] gei2geid(double[] gei) {
-    return gei_geid.multiply(gei);
+  public double[] gei2geid(double gei[]) {
+    return gei_geid_trans_matrix().multiply(gei);
   }
 
   /* ------------------------------------------------------
@@ -434,7 +434,7 @@ public class Trans {
   }
 
   public Matrix3x3 gei_gse_trans_matrix() {
-    return gei_gse;
+    return geid_gse_trans_matrix().multiply(gei_geid_trans_matrix());
   }
 
   public Matrix3x3 gei_geid_trans_matrix() {
@@ -509,7 +509,7 @@ public class Trans {
   }
 
   public Matrix3x3 geid_gse_trans_matrix() {
-    return gse_geid_trans_matrix().getInverse();
+    return geid_gse;
   }
 
   public Matrix3x3 geid_gsm_trans_matrix() {
@@ -566,10 +566,24 @@ public class Trans {
     return m;
   }
 
-  // -------- GEI  ->  GSE  ---------
+  // -------- GEID  ->  GSE  ---------
 
-  public static Matrix3x3 gei_gse_trans_matrix(double mjd) {
-    final double[][] gei_gse = new double[3][];
+  /**
+   * NOTE: This function was originally intended to convert from GEI to GSE,
+   * back when OVT only supported one GEI cordinate system (GEI J2000.0; not GEI
+   * epoch-of-date). This function has been redefined (function name change)
+   * since then to convert from GEI epoch-of-date to GSE after ~bug reports
+   * (Patrick Daly, MPS). However, the implementation implies that this might
+   * not be entirely correct. The implementation uses Utils.sunmjd() which is
+   * (or was previously) assumed to return a value in GEI J2000.0. It uses a
+   * hardcoded vector to represent the ecliptic normal, but the ecliptic normal
+   * is only a constant in GEI J2000.0, not GEI epoch-of-date. It is also
+   * possible that Utils.sunmjd() actually does return a vector in GEI
+   * epoch-of-date and that all other calls to it (which assume GEI J2000.0) are
+   * wrong.
+   */
+  public static Matrix3x3 geid_gse_trans_matrix(double mjd) {
+    final double[][] geid_gse = new double[3][];
     
     /* Normal vector to the ecliptic (in GEI).
      *
@@ -587,12 +601,12 @@ public class Trans {
     
     /* Can be interpreted as the three (orthonormal) coordinate vectors that
        define the GSE coordinate system, expressed in GEI.
-       ==> gei_gse * v_gei = v_gse
+       ==> geid_gse * v_geid = v_gse
     */
-    gei_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
-    gei_gse[1] = Vect.crossn(eqlipt, gei_gse[0]);      // In the ecliptic.
-    gei_gse[2] = Vect.crossn(gei_gse[0], gei_gse[1]);  // Ecliptic north (again?!), but more normalized?!
-    final Matrix3x3 m = new Matrix3x3(gei_gse);
+    geid_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
+    geid_gse[1] = Vect.crossn(eqlipt, geid_gse[0]);      // In the ecliptic.
+    geid_gse[2] = Vect.crossn(geid_gse[0], geid_gse[1]);  // Ecliptic north (again?!), but more normalized?!
+    final Matrix3x3 m = new Matrix3x3(geid_gse);
     return m;
   }
 
@@ -678,13 +692,97 @@ public class Trans {
 
   protected static Matrix3x3 gei_geid_trans_matrix(double mjd)
   {
-    //return new Matrix3x3();   // FOR TESTING
-    //*
+    /*
+    Fortran code from file "PR2000.FOR"
+    -----------------------------------
+        SUBROUTINE PR2000(DAY,P)
+    CP  COMPUTES THE PRECESSION MATRIX P(3,3) FOR CONVERTING A VECTOR
+    C IN MEAN GEOCENTRIC EQUATORIAL SYSTEM OF 2000.0 TO MEAN-OF-DATE.
+    C REF: THE ASTRONOMICAL ALMANAC 1985 PAGE B18.
+    C
+    CINPUT:  DAY = MJD2000 = MOD. JULIAN DAY FOR THE MEAN-OF-DATE SYSTEM
+    C            = MJD(1950) - 18262.0
+    C
+    COUTPUT: P(3,3) = PRECESSION MATRIX FOR THE TRANSFORMATION:
+    C     R(MEAN-OF-DATE) = P(,)*R(2000)
+    C
+        IMPLICIT REAL*8 (A-H,O-Z)
+        DIMENSION P(3,3)
+    C
+    C CONVERT TO STANDARD EPOCH J2000.0 = 2000 JAN 1 AT 12:00:00
+        T = DAY - 0.5D0
+    C
+    C  GZ=GREEK Z(A), ZA=Z(A), TH=THETA, ACCORDING TO THE REFERENCE.
+    C ORIGINAL, WITH TJC = (DAY-0.5D0)/36525.D0  IN JULIAN CENTURIES:
+    C     GZ = RAD*TJC*(0.6406161D0 + TJC*(839.D-7 + TJC*5.D-6))
+    C     ZA = GZ + RAD*TJC*TJC*(2202.D-7 + TJC*1.D-7)
+    C     TH = RAD*TJC*(0.5567530D0 - TJC*(1185.D-7 + TJC*116.D-7))
+    C
+        GZ = T*(0.3061153D-6 + T*(0.10976D-14 + T*0.179D-20))
+        ZA = GZ + T*T*(0.2881D-14 + T*0.358D-22)
+        TH = T*(0.2660417D-6 - T*(0.1550D-14 + T*0.41549D-20))
+    C
+        CGZ=DCOS(GZ)
+        SGZ=DSIN(GZ)
+        CZA=DCOS(ZA)
+        SZA=DSIN(ZA)
+        CTH=DCOS(TH)
+        STH=DSIN(TH)
+        P(1,1) = CGZ*CZA*CTH - SGZ*SZA
+        P(1,2) = -SGZ*CZA*CTH - CGZ*SZA
+        P(1,3) = -CZA*STH
+        P(2,1) = CGZ*SZA*CTH + SGZ*CZA
+        P(2,2) = -SGZ*SZA*CTH + CGZ*CZA
+        P(2,3) = -SZA*STH
+        P(3,1) = CGZ*STH
+        P(3,2) = -SGZ*STH
+        P(3,3) = CTH
+        RETURN
+        END
+    */
+    /*
+      Below is the translation of above Fortran code to Java.
+
+      TODO-NI: Inverted matrix?
+      TODO-NI: Reduces to unit matrix?
+      TODO-NI: Correct epoch
+    */
+    /* NOTE: OVT uses mjd with epoch 1950. The Fortran code above requires
+      epoch 2000 and specifices this conversion.
+    */
+    double mjd2000 = mjd - 18262.0;
+    double T = mjd2000 - 0.5;   // Translation of Fortran code (sic!).
+
+    double GZ = T*(0.3061153e-6 + T*(0.10976e-14 + T*0.179e-20));
+    double ZA = GZ + T*T*(0.2881e-14 + T*0.358e-22);
+    double TH = T*(0.2660417e-6 - T*(0.1550e-14 + T*0.41549e-20));
+
+    /* NOTE:
+    Both (1) Fortran's dsin() and dcos(), and (2) Java's Math.sin() and
+    Math.cos() should interpret arguments as radians (not degrees).
+    */
+    double CGZ = Math.cos(GZ);
+    double SGZ = Math.sin(GZ);
+    double CZA = Math.cos(ZA);
+    double SZA = Math.sin(ZA);
+    double CTH = Math.cos(TH);
+    double STH = Math.sin(TH);
+
     return new Matrix3x3(new double[][] {
-        { 0,  1,  0},
-        { 0,  0,  1},
-        { 1,  0,  0},
-    });   // FOR TESTING  //*/
+        {
+             CGZ*CZA*CTH - SGZ*SZA,
+            -SGZ*CZA*CTH - CGZ*SZA,
+            -CZA*STH
+        }, {
+             CGZ*SZA*CTH + SGZ*CZA,
+            -SGZ*SZA*CTH + CGZ*CZA,
+            -SZA*STH
+        }, {
+             CGZ*STH,
+            -SGZ*STH,
+             CTH
+        }
+    });
   }
 
 
