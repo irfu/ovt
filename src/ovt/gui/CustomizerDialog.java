@@ -43,7 +43,7 @@ import javax.swing.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class CustomizerDialog extends JFrame {
 
@@ -51,7 +51,7 @@ public class CustomizerDialog extends JFrame {
     public CustomizerDialog() {
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     }
-    
+
     /*public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
         System.out.println("addPropertyChangeListener is a fake!");
     }*/

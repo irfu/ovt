@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on February 29, 2000, 2:06 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.*;
@@ -46,19 +46,19 @@ import ovt.interfaces.*;
 import java.beans.*;
 
 
-/** 
+/**
  * This OVT-oriented implementation of  java.beans.PropertyDescriptor
- * This object is used to get properties editor and 
+ * This object is used to get properties editor and
  * to know the properties name, description.
  * @author  mykola
- * @version 
+ * @version
  */
 public class BasicPropertyDescriptor extends PropertyDescriptor {
 
   private Object bean = null;
-  
+
   private OVTPropertyEditor editor = null;
-  
+
   /** Holds value of property label. */
   private String label = "";
     /** Holds value of property textAccessible. */
@@ -67,44 +67,44 @@ public class BasicPropertyDescriptor extends PropertyDescriptor {
   private boolean componentAccessible = true;
   /** Holds value of property windowAccessible. */
   private boolean windowAccessible = true;
-  
+
   /** Holds value of property menuAccessible. */
   private boolean menuAccessible = true;
-  
+
   /** Holds value of property derived. */
-  private boolean derived = false;  
-  
+  private boolean derived = false;
+
   /** Holds value of property tooltipText. */
   private String toolTipText = null;
-  
+
   /** Utility field used by bound properties. */
   private OVTPropertyChangeSupport propertyChangeSupport =  new OVTPropertyChangeSupport (this);
-  
+
   /** Creates new ovtPropertyDescriptor */
   public BasicPropertyDescriptor(String fieldName, Object bean) throws IntrospectionException {
     super(fieldName, bean.getClass());
     this.bean = bean;
    }
-  
+
   public Object getBean() {
     return bean;
   }
-  
+
   public void setPropertyEditor(OVTPropertyEditor editor) {
     this.editor = editor;
   }
-  
+
   public OVTPropertyEditor getPropertyEditor() {
     return editor;
   }
-  
+
   /** Getter for label.
    * @return Value of property label.
    */
   public String getLabel() {
     //System.out.println("getLable - "+label);
     //if (label.equals("")) return getName();
-    //else 
+    //else
     return label;
   }
   /** Setter for property label.
@@ -116,39 +116,39 @@ public class BasicPropertyDescriptor extends PropertyDescriptor {
       this.label = label;
       propertyChangeSupport.firePropertyChange ("label", oldLabel, label);
   }
-  
-  
+
+
   /*
   public int getAccessType() {
     return access;
   }
-  
+
   public void setAccessType(int access_type) throws IllegalArgumentException {
     if ((access_type == TEXT) || (access_type == COMPONENT) || (access_type == WINDOW)
       accessType = access_type;
     else throw IllegalArgumentException(getClass()+"-> There is no access type for acces_type=" + access_type);
   }*/
-  
+
   public void setAccessType(boolean textAccessible, boolean componentAccessible, boolean windowAccessible) {
     setTextAccessible(textAccessible);
     setComponentAccessible(componentAccessible);
     setWindowAccessible(windowAccessible);
   }
-  
+
   public void setAccessType(boolean textAccessible, boolean menuAccessible, boolean componentAccessible, boolean windowAccessible) {
     setTextAccessible(textAccessible);
     setMenuAccessible(menuAccessible);
     setComponentAccessible(componentAccessible);
     setWindowAccessible(windowAccessible);
   }
-  
+
   public void setTextOnlyAccessible() {
     setTextAccessible(true);
     setMenuAccessible(false);
     setComponentAccessible(false);
     setWindowAccessible(false);
   }
-  
+
   /** Getter for property textAccessible.
    * @return Value of property textAccessible.
    */
@@ -201,7 +201,7 @@ public class BasicPropertyDescriptor extends PropertyDescriptor {
   public String getPropertyPathString() {
     return ((OVTObject)getBean()).getPathString() + "." + getName();
   }
-  
+
 /** Indicates if the property is derived. Is used for saving object's
  * state. By default <CODE>false</CODE>
  * @return Value of property derived.
@@ -209,14 +209,14 @@ public class BasicPropertyDescriptor extends PropertyDescriptor {
 public boolean isDerived() {
     return derived;
 }
-  
+
 /** Setter for property derived.
  * @param derived New value of property derived.
  */
 public void setDerived(boolean derived) {
   this.derived = derived;
 }
-  
+
 /** Getter for property tooltipText.
  * @return Value of property tooltipText.
  */

@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/object/FrameModule.java,v $
   Date:      $Date: 2003/09/28 17:52:48 $
   Version:   $Revision: 2.8 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 /*
@@ -58,27 +58,27 @@ import java.awt.*;
  * @version
  */
 public class FrameModule extends VisualObject {
-    
+
     public static final int XOYPLANE = 1;
     public static final int XOZPLANE = 2;
     public static final int YOZPLANE = 3;
-    
+
     /** Holds value of property representation. */
     private int representation = RepresentationEditor.WIREFRAME;
     /** Holds value of property opacity. */
     private double opacity = 1.;
     /* Holds value of property color. */
     private Color color = Color.gray;
-    
+
     protected vtkActor actor = null;
-    
+
     private Frames parent;
-    
+
     protected int type = XOYPLANE;
-    
+
     /** Holds value of property position. */
     //private int position = 0;
-    
+
 /** Creates new FrameModule */
 public FrameModule(Frames frames, int type) {
     super(frames.getCore(), getName(type), "images/frame.gif");
@@ -148,7 +148,7 @@ protected vtkActor createActor(int l, int dx) {
         actorTmp.GetProperty().SetRepresentation(this.representation);
         float[] rgb = ovt.util.Utils.getRGB(getColor());
         actorTmp.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-        actorTmp.GetProperty().SetOpacity(this.opacity);	
+        actorTmp.GetProperty().SetOpacity(this.opacity);
     //actor.GetProperty().SetAmbientColor (0, 0, 0);
     //actor.GetProperty().SetSpecularColor(0, 0, 0);
     //actor.GetProperty().SetDiffuseColor (0, 0, 0);
@@ -255,7 +255,7 @@ public void setColor(Color color) {
         actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
     }
 }
-    
+
     /** Getter for property representation.
  * @return RepresentationEditor.WIREFRAME or RepresentationEditor.SURFACE.
  */
@@ -295,11 +295,11 @@ public Descriptors getDescriptors() {
         descriptors = super.getDescriptors();
 
         try {
-            // representation property descriptor 
+            // representation property descriptor
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("representation", this);
             pd.setDisplayName("Representation:");
-            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd, 
-                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE}, 
+            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd,
+                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE},
                 new String[]{ "Wireframe", "Surface"}
             );
             // Render each time user changes time by means of gui
@@ -310,14 +310,14 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(representationEditor);
             descriptors.put(pd);
-            addPropertyChangeListener("representation", representationEditor); 
+            addPropertyChangeListener("representation", representationEditor);
 
             // opacity
 
             pd = new BasicPropertyDescriptor("opacity", this);
             pd.setLabel("Opacity");
             pd.setDisplayName(getName()+" Opacity");
-            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05, 
+            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05,
                 new double[]{0,.25,.5,.75,1}, new String[]{"0%","25%","50%","75%","100%"});
             addPropertyChangeListener("opacity", sliderEditor);
             sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -327,7 +327,7 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
-            
+
             // color property descriptor
 
             pd = new BasicPropertyDescriptor("color", this);
@@ -352,5 +352,5 @@ public Descriptors getDescriptors() {
     }
     return descriptors;
 }
-    
+
 }

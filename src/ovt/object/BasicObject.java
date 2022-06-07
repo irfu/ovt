@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 10, 2000, 5:23 PM
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -50,80 +50,80 @@ import vtk.*;
 import java.util.*;
 
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class BasicObject extends OVTObject implements CoreSource, Renderable  {
 
   /** Holds value of property core. */
   private OVTCore core = null;
-  
+
   /** Creates new BasicObject */
   public BasicObject(OVTCore core, String name) {
     super(name);
     this.core = core;
   }
-  
+
   /** Creates new BasicObject */
   public BasicObject(OVTCore core) {
     this.core = core;
   }
-  
+
   /** Getter for property core.
    * @return Value of property core.
    */
   public OVTCore getCore() {
     return core;
   }
-  
+
   public int getCS() {
     return core.getCS();
   }
-  
+
   public int getPolarCS() {
     return core.getPolarCS();
   }
-  
+
   /** Returns current time */
   public double getMjd() {
     return core.getMjd();
   }
-  
+
   /** Returns current time index. 0 - corresponds to startMjd*/
   public int getMjdIndex() {
     return core.getTimeSettings().getTimeSet().getCurrentMjdIndex();
   }
-  
+
   /** Returns the number of mjd values in the current time settings */
   public int getNumberOfMjdValues() {
     return core.getTimeSettings().getTimeSet().getNumberOfValues();
   }
-  
+
   /** Returns the maximum mjdIndex (which corresponds to stopMjd)*/
   public int getMaxMjdIndex() {
     return core.getTimeSettings().getTimeSet().getNumberOfValues() - 1;
   }
-  
+
   public Trans getTrans(double mjd) {
     return core.getTrans(mjd);
   }
-  
+
   public MagProps getMagProps() {
     return core.getMagProps();
   }
 
-  
+
   /** Getter for renderer.
    * @return Value of property renderer.
    */
   public vtkRenderer getRenderer() {
     return core.getRenderer();
   }
-  
+
   public void Render() {
     core.Render();
   }
-  
+
 }

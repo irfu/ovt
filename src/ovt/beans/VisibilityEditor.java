@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,13 +35,13 @@ Khotyaintsev
  *
  * Created on March 14, 2000, 3:52 PM
  */
- 
+
 package ovt.beans;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class VisibilityEditor extends MenuPropertyEditor {
 
@@ -50,18 +50,18 @@ public class VisibilityEditor extends MenuPropertyEditor {
     super(pd, MenuPropertyEditor.SWITCH);
     initialize(new String[]{"Show", "Hide"});
   }
-  
+
   /** Creates new VisibilityEditor with tags (showStr/hideStr) */
   public VisibilityEditor(BasicPropertyDescriptor pd, String showStr, String hideStr) {
     super(pd, MenuPropertyEditor.SWITCH);
     initialize(new String[]{showStr, hideStr});
   }
-  
+
   public VisibilityEditor(BasicPropertyDescriptor pd, int type) {
     super(pd, type);
     initialize(new String[]{"Show", "Hide"});
   }
-  
+
   protected void initialize(String[] tags) {
     setTags(tags);
     setValues(new Object[]{new Boolean(true), new Boolean(false)});

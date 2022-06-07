@@ -62,27 +62,27 @@ import javax.swing.event.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class DataModuleCustomizer extends JDialog implements PropertyChangeListener {
-    
+
     protected DataModule module;
     private Descriptors desc;
     private JLabel fileL = new JLabel("File : .........");
     private JLabel recordsL = new JLabel("Data has ..... records");
     private JLabel timeL = new JLabel("2000-01-01 00:00:00 - 2000-01-02 00:00:00");
-    
+
     public DataModuleCustomizer(DataModule module) {
-        super(module.getCore().getXYZWin(), true); 
+        super(module.getCore().getXYZWin(), true);
         this.module = module;
-        
+
         JPanel cont = new JPanel();
         // create layout : new java.awt.GridLayout (4, 1, 5, 5)
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
         cont.setBorder( BorderFactory.createEmptyBorder( 10, 10, 10, 10));
-        
-        
-        
+
+
+
         JButton okButton = new JButton("  OK  ");
         okButton.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -91,7 +91,7 @@ public class DataModuleCustomizer extends JDialog implements PropertyChangeListe
         });
         okButton.setAlignmentX(0.5f);
         okButton.setMaximumSize(new Dimension(Short.MAX_VALUE, Short.MAX_VALUE));
-        
+
         cont.add(fileL);
         cont.add(Box.createRigidArea( new Dimension(0, 10)));
         cont.add(recordsL);
@@ -99,27 +99,27 @@ public class DataModuleCustomizer extends JDialog implements PropertyChangeListe
         cont.add(timeL);
         cont.add(Box.createRigidArea( new Dimension(0, 10)));
         cont.add(okButton);
-        
+
         getRootPane().setDefaultButton(okButton);
-        
+
         getContentPane().add(cont);
-        
+
         // Appears to be unnecessary for unknown reason.
         Utils.setInitialWindowPosition(this, null);
 
     }
-    
+
     public void propertyChange(PropertyChangeEvent evt) {
         // listens to visibility change of a camera
         String propertyName = evt.getPropertyName();
         if (propertyName.equals("customizerVisible")) {
-            
+
             boolean value = ((Boolean)evt.getNewValue()).booleanValue();
             setVisible(value);
-            
-        } 
+
+        }
     }
-    
+
     private void refresh() {
         setTitle(module.getSat().getName() + " data : " + module.getFile().getName());
         fileL.setText("File : "+module.getFile().getAbsolutePath());
@@ -128,13 +128,13 @@ public class DataModuleCustomizer extends JDialog implements PropertyChangeListe
                               new Time(module.getDataTimePeriod().getStopMjd()));
     }
 
-    
+
     public void setVisible(boolean visible) {
-        if (visible) { 
+        if (visible) {
             refresh();
             pack();
         }
         super.setVisible(visible);
     }
-    
+
 }

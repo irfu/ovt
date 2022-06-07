@@ -55,10 +55,10 @@ import java.util.*;
 /**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class ExtendedTimeFormat extends OVTObject {
-    
+
     private static final int DAY    = 0;
     private static final int HOUR   = 1;
     private static final int MINUTE = 2;
@@ -69,22 +69,22 @@ public class ExtendedTimeFormat extends OVTObject {
 
     /** Holds value of property offsetMjd. */
     private double offsetMjd = Time.Y2000;
-    
-    
+
+
     public ExtendedTimeFormat() {
     }
-    
+
     public DoubleAndInteger parseMjd(String str) throws NumberFormatException {
         return parseMjd(str, 0);
     }
-    
+
     public DoubleAndInteger parseMjd(String str, int bedinindex) throws NumberFormatException {
         int startIndex = StringUtils.doubleStartsAt(str, bedinindex);
         if (startIndex == -1) throw new NumberFormatException("Double could not be found in string ("+str+")");
         int endIndex = StringUtils.doubleEndsAt(str, startIndex);
         //Log.log("Trying to parse double from '"+str.substring(startIndex, endIndex+1)+"'");
         double v = new Double(str.substring(startIndex, endIndex+1)).doubleValue();
-        
+
         double mjd = this.offsetMjd + v / this.unitMultiplyFactor;
         return new DoubleAndInteger(mjd, endIndex);
     }
@@ -94,7 +94,7 @@ public class ExtendedTimeFormat extends OVTObject {
  */
     public int getUnit() {
         return unit;
-    }    
+    }
 
     /** Setter for property unit.
      * @param unit New value of property unit.
@@ -105,18 +105,18 @@ public class ExtendedTimeFormat extends OVTObject {
         int oldUnit = this.unit;
         this.unit = unit;
         if (unit == DAY) unitMultiplyFactor = 1;
-        else unitMultiplyFactor = 24*(int)Math.pow(60., unit-1); 
+        else unitMultiplyFactor = 24*(int)Math.pow(60., unit-1);
         propertyChangeSupport.firePropertyChange ("unit", new Integer (oldUnit), new Integer (unit));
-    }    
+    }
 
-    
+
 /** Getter for property offsetMjd.
  * @return Value of property offsetMjd.
  */
     public double getOffsetMjd() {
         return offsetMjd;
     }
-    
+
     /** Setter for property offsetMjd.
      * @param offsetMjd New value of property offsetMjd.
  */
@@ -125,12 +125,12 @@ public class ExtendedTimeFormat extends OVTObject {
         this.offsetMjd = offsetMjd;
         propertyChangeSupport.firePropertyChange ("offsetMjd", new Double (oldOffsetMjd), new Double (offsetMjd));
     }
-    
+
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
                 descriptors = new Descriptors();
-                
+
                 // date format
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("offsetMjd", this);
                 pd.setDisplayName("Offset time:");
@@ -139,7 +139,7 @@ public class ExtendedTimeFormat extends OVTObject {
                 pd.setPropertyEditor(editor);
                 addPropertyChangeListener("offsetMjd", editor);
                 descriptors.put(pd);
-                
+
                 // hours format
                 pd = new BasicPropertyDescriptor("unit", this);
                 pd.setDisplayName("Time unit");
@@ -148,12 +148,12 @@ public class ExtendedTimeFormat extends OVTObject {
                 pd.setPropertyEditor(editor);
                 addPropertyChangeListener("unit", editor);
                 descriptors.put(pd);
-                
+
             } catch (IntrospectionException e2) {
                 System.out.println(getClass().getName() + " -> " + e2.toString());
                 System.exit(0);
             }
         }
         return descriptors;
-    }    
+    }
 }

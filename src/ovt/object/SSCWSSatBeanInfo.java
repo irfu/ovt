@@ -11,7 +11,7 @@ import java.beans.*;
  * IMPLEMENTATION NOTE: orbitFile should be included since Sat#setOrbitFile does
  * some initialization of (Sat#firstDataMjd, Sat#lastDataMjd, Sat#revolutionPeriod,
  * Sat#satNumber). Ugly for SSCWSSat but it works.
- * 
+ *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden
  */
 public class SSCWSSatBeanInfo extends SimpleBeanInfo {
@@ -38,11 +38,11 @@ public class SSCWSSatBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_satelliteModule = 9;
     private static final int PROPERTY_SSCWSSatelliteID = 10;
 
-    // Property array 
+    // Property array
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
         PropertyDescriptor[] properties = new PropertyDescriptor[11];
-    
+
         try {
             properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ovt.object.SSCWSSat.class, "getDataModules", "setDataModules" ); // NOI18N
             properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ovt.object.SSCWSSat.class, "getLabelsModule", null ); // NOI18N
@@ -75,7 +75,7 @@ public class SSCWSSatBeanInfo extends SimpleBeanInfo {
 
     // Method identifiers//GEN-FIRST:Methods
 
-    // Method array 
+    // Method array
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
         MethodDescriptor[] methods = new MethodDescriptor[0];//GEN-HEADEREND:Methods
@@ -253,5 +253,5 @@ public class SSCWSSatBeanInfo extends SimpleBeanInfo {
                 return null;
         }
     }
-    
+
 }

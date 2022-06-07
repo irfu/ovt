@@ -6,7 +6,7 @@
   Version:   $Revision: 2.13 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 22, 2000, 8:22 AM
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -54,35 +54,35 @@ import javax.swing.*;
 import java.awt.event.*;
 
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
-public final class Earth extends SingleActorObject implements TimeChangeListener, 
+public final class Earth extends SingleActorObject implements TimeChangeListener,
                       CoordinateSystemChangeListener, MenuItemsSource, PositionSource  {
 
   public static final int NO_TEXTURE                = 0;
   public static final int BnW_TEXTURE               = 1; // Black & White
-  public static final int NORMAL_TEXTURE            = 2; 
-  public static final int HIGH_RESOLUTION_TEXTURE   = 3; 
+  public static final int NORMAL_TEXTURE            = 2;
+  public static final int HIGH_RESOLUTION_TEXTURE   = 3;
   /** used by getPosition() method */
   private static final double[] zero_zero_zero = {0., 0., 0.};
-  
+
   protected vtkTexture[] texture = new vtkTexture[4];
-  
+
   /** Holds value of property textureType. */
   protected int textureType = HIGH_RESOLUTION_TEXTURE; // let's set default to high res FKJN 22/6 2015
-  
+
   /** The type of the texture to be used in the case of no conflicts */
   protected int prefferedTextureType = NORMAL_TEXTURE;
-  
+
   protected MenuPropertyEditor textureTypeEditor;
-  
+
   public EarthGrid earthGrid;
   public CoastLine coastLine;
 
-  
+
   /** Creates new Earth
    * @param core */
   public Earth(OVTCore core) {
@@ -102,15 +102,15 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
     }
-    
+
     initTextures();
-    
+
     earthGrid = new EarthGrid(this);
     coastLine = new CoastLine(this);
-    
+
     setVisible(true);
   }
-  
+
   private void initTextures() {
     String[] textureFiles = {"", "earth_BnW.pnm", "earth_normal.pnm", "earth8km2000x1000.pnm"};
     texture[0] = new vtkTexture();
@@ -127,11 +127,11 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
     }
   }
 
-  
+
   @Override
   protected void validate() {
     Log.log("Recalculating Earth ...", 5);
-    
+
       // create sphere geometry
     vtkTexturedSphereSource tss = new vtkTexturedSphereSource();
       tss.SetRadius(1.0);
@@ -144,7 +144,7 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
 
 
       //vtkTransformTextureCoords transformTexture = new vtkTransformTextureCoords();
-      
+
       //transformTexture.SetInputConnection(tss.GetOutputPort());
       //transformTexture.SetPosition(translate);
 
@@ -153,7 +153,7 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
   //  transformTexture->SetInputConnection(source->GetOutputPort());
    // transformTexture->SetPosition(translate);
 
-      
+
       // scale the texture
     vtk.vtkTransformTextureCoords trans = new vtk.vtkTransformTextureCoords();
     trans.SetInputConnection(tss.GetOutputPort());
@@ -183,32 +183,32 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
     earthGrid.setVisible(visible);
     coastLine.setVisible(visible);
   }
-  
+
   @Override
   protected void show() {
     super.show();
     rotate();
   }
-  
+
   public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).trans_matrix(getPolarCS(), getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
+    actor.SetUserMatrix(m3x3.getVTKMatrix());
   }
-  
+
   @Override
   public void timeChanged(TimeEvent evt) {
-    if (isVisible()) rotate(); 
+    if (isVisible()) rotate();
     earthGrid.timeChanged(evt);
     coastLine.timeChanged(evt);
   }
 
   @Override
   public void coordinateSystemChanged(CoordinateSystemEvent evt) {
-    
+
     if (isVisible()) rotate();
-          
+
     if (evt.getWindow() == Const.POLAR) {
-      // it is not possible to show earth with continents 
+      // it is not possible to show earth with continents
       // if CS is not GEO
       if (evt.getNewCS() == CoordinateSystem.GEO) {
         setTextureType(prefferedTextureType);
@@ -228,7 +228,7 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
     coastLine.coordinateSystemChanged(evt);
   }
 
-  
+
   /** Getter for property textureType.
    * @return Value of property textureType.
    */
@@ -246,20 +246,20 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
     if ((getPolarCS() != CoordinateSystem.GEO) && (textureType != NO_TEXTURE))
         throw new IllegalArgumentException("Continents cannot be displayed in the " +
             CoordinateSystem.getCoordSystem(getPolarCS()) + " coordinate system");
-    
+
     this.textureType = textureType;
     if (actor != null) actor.SetTexture(texture[textureType]);
     propertyChangeSupport.firePropertyChange ("textureType", oldtextureType, textureType);
   }
-  
+
   /** Is needed for Camera, returns { 0, 0, 0}.
    * @return  */
   @Override
   public double[] getPosition() {
       return zero_zero_zero;
   }
-  
-  
+
+
   @Override
   public JMenuItem[] getMenuItems() {
       JMenuItem item1 = new JMenuItem("Look at");
@@ -270,7 +270,7 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
           getCore().getCamera().setViewTo(Earth.this);
           getCore().Render();
       });
-     
+
       JMenu menu1 = new JMenu("Grid");
           menu1.setFont(ovt.gui.Style.getMenuFont());
           MenuUtils.addMenuItemsFromDescriptors(menu1, earthGrid, getCore());
@@ -279,15 +279,15 @@ public final class Earth extends SingleActorObject implements TimeChangeListener
       JMenu menu2 = new JMenu("Coastline");
           menu2.setFont(ovt.gui.Style.getMenuFont());
           MenuUtils.addMenuItemsFromDescriptors(menu2, coastLine, getCore());
-          
+
       return new JMenuItem[]{ menu1, menu2, null, item1 };
-  }  
+  }
 
   /* for XML */
   public EarthGrid getEarthGrid() { return earthGrid; }
   public CoastLine getCoastLine() { return coastLine; }
-  
-  
+
+
 }
 
 

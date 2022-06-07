@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -55,29 +55,29 @@ import java.lang.Cloneable;
 import java.lang.reflect.*;
 
 /**
- * A superclass of all PropertyEditors, has {@link #getAsText} and {@link #setAsText} 
+ * A superclass of all PropertyEditors, has {@link #getAsText} and {@link #setAsText}
  * methods. It is a OVT-oriented implementation of <CODE>java.beans.PropertyEditorSupport</CODE>
  * It can edit properties of all basic types: int, double, boolean, etc. and String.
  * Besides that, it can edit index'ed properties. One has to specify <CODE>tags</CODE>
  * and <CODE>values</CODE> to be able to do this.
  * @author  mykola
  */
-public class BasicPropertyEditor implements OVTPropertyEditor, 
+public class BasicPropertyEditor implements OVTPropertyEditor,
             PropertyChangeListener {
 
-  private static final int DEBUG = 8;              
-                
+  private static final int DEBUG = 8;
+
   public final int TEXT = 1;
   public final int COMPONENT = 2;
   public final int WINDOW = 4;
-  
+
   private BasicPropertyDescriptor propertyDescriptor = null;
-  
+
   private Vector beanCollection = new Vector();
   protected OVTPropertyChangeSupport propertySupport = new OVTPropertyChangeSupport ( this );
   private String[] tags = null;
   private Object[] values = null;
-  
+
   /** Holds value of property enabled. */
   private boolean enabled = true;
 
@@ -118,11 +118,11 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
   public String getPropertyDisplayName() {
     return getPropertyDescriptor().getDisplayName();
   }
-  
+
   public String getPropertyLabel() {
     return getPropertyDescriptor().getLabel();
   }
-  
+
   public void addBean(Object bean) {
     // add bean
     beanCollection.addElement(bean);
@@ -133,7 +133,7 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
     } catch (ClassCastException e2) {
       //System.out.println("Bean doesn't implement Enableable");
     }
-    
+
   }
 
   public void removeBean(Object bean) {
@@ -147,23 +147,23 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
   protected Object getBean() {
     return getBeans().firstElement();
   }
-  
+
   public void addPropertyChangeListener (PropertyChangeListener listener) {
     propertySupport.addPropertyChangeListener (listener);
   }
 
-  
+
   public void addPropertyChangeListener (String property, PropertyChangeListener listener) {
     propertySupport.addPropertyChangeListener (property, listener);
   }
-  
+
   public void removePropertyChangeListener (PropertyChangeListener listener) {
     propertySupport.removePropertyChangeListener (listener);
   }
 
 
   public Object getValue() {
-    
+
     // no bean - no value ;)
     if (getBeans().size() == 0) return null;
 
@@ -194,8 +194,8 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
       // edit property of one bean
       try {
         value = method.invoke(getBeans().firstElement(), null);
-      } catch (IllegalAccessException e1) { 
-          System.err.println("Problem in "+propertyDescriptor.getName()); 
+      } catch (IllegalAccessException e1) {
+          System.err.println("Problem in "+propertyDescriptor.getName());
           e1.printStackTrace(System.err);
       } catch (IllegalArgumentException e2) { e2.printStackTrace();
       } catch (InvocationTargetException e3) {
@@ -216,18 +216,18 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
  *   *      this kind of property can't be expressed as text.
  * @param value
  * @throws PropertyVetoException
- */  
+ */
   public void setValue(Object value) throws PropertyVetoException {
     setValue(value, getBeans().firstElement());
   }
-  
+
   public void setValue(Object value, Object bean) throws PropertyVetoException {
       // set a property of one bean
     Method method = getPropertyDescriptor().getWriteMethod();
        try {
         method.invoke(bean, new Object[]{value});
       } catch (IllegalAccessException e1) { System.out.println(e1.toString());
-      } catch (IllegalArgumentException e2) { 
+      } catch (IllegalArgumentException e2) {
         // pay atention to this exception!
         // this is incapsulated exception, that carries exception, thrown by the WriteMethod.
       } catch (InvocationTargetException e3) {
@@ -269,13 +269,13 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
             return "" + ((Integer)getValue()).intValue();
         } else if (returnType.equals("double")) {
             return "" + ((Double)getValue()).doubleValue();
-        } else if (returnType.equals("float")) { 
+        } else if (returnType.equals("float")) {
             return "" + ((Float)getValue()).floatValue();
         } else if (returnType.equals("long")) {
             return "" + ((Long)getValue()).longValue();
         } else if (returnType.equals("java.lang.String")) {
-            return (String)getValue(); 
-        } 
+            return (String)getValue();
+        }
     }
     return result;
   }
@@ -292,10 +292,10 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
       for (int i=0; (i<length); i++) {
         tag = tags[i];
         //DBG*/System.out.println("tag: "+tag);
-        if (tag.equals(text)) { 
+        if (tag.equals(text)) {
           //System.out.println("Equals!! Trying to set "+values[i]);
-          setValue(values[i]); 
-          return; 
+          setValue(values[i]);
+          return;
         }
       }
       // nothing was found ...
@@ -313,11 +313,11 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
                 setValue(text); return;
             } else if (inputType.equals("boolean")) {
                 setValue(new Boolean(text)); return;
-            } else if (inputType.equals("float")) { 
+            } else if (inputType.equals("float")) {
                 setValue(new Float(text)); return;
             } else if (inputType.equals("long")) {
                 setValue(new Long(text)); return;
-            }  
+            }
         } catch (NumberFormatException e2) {
             throw new PropertyVetoException("Invalid format!", null);
         }
@@ -330,33 +330,33 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
    *      support the use of setAsText with a tag value as a way of setting the value.
    * @return The tag values for this property.
    */
-  
+
   public String[] getTags() {
     return tags;
   }
-  
-    
+
+
   public void setTags(String[] newTags) {
     String[] oldTags = tags;
     tags = newTags;
     propertySupport.firePropertyChange("tags", oldTags, tags);
   }
-  
-  
+
+
   public Object[] getValues() {
     return values;
   }
 
   public void setValues(int[] values) {
     Integer[] intValues = new Integer[values.length];
-    for (int i=0; i<values.length; i++) 
+    for (int i=0; i<values.length; i++)
         intValues[i] = new Integer(values[i]);
     setValues(intValues);
   }
 
   public void setValues(double[] values) {
     Double[] dValues = new Double[values.length];
-    for (int i=0; i<values.length; i++) 
+    for (int i=0; i<values.length; i++)
         dValues[i] = new Double(values[i]);
     setValues(dValues);
   }
@@ -366,13 +366,13 @@ public class BasicPropertyEditor implements OVTPropertyEditor,
     this.values = newValues;
     propertySupport.firePropertyChange("values", oldValues, newValues);
   }
-  
+
   public void propertyChange(PropertyChangeEvent evt) {
     //System.out.println(getClass().getName()+".prpropertyChange event : "+ evt.getPropertyName());
     if (evt.getPropertyName().equals("enabled")) {
       //System.out.println("Received event enabled!!!!!!!!");
       boolean enabled = ((Boolean)evt.getNewValue()).booleanValue();
-      setEnabled(enabled); 
+      setEnabled(enabled);
     } else
     // Tell all editor, to update itself.
      propertySupport.firePropertyChange(evt);

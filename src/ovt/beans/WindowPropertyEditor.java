@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 3:55 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.event.*;
@@ -46,43 +46,43 @@ import javax.swing.*;
 import java.awt.*;
 
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
-public class WindowPropertyEditor extends ComponentPropertyEditor 
+public class WindowPropertyEditor extends ComponentPropertyEditor
                               implements GUIPropertyEditorListener, MenuItemsSource {
 
   private DefaultPropertyEditorWindow window = null;
   private boolean windowVisible = false;
   private MenuPropertyEditor visibilityEditor = null;
-  
-  
- 
+
+
+
   /** Holds value of property modal. */
   private boolean modal = true;
-  /** Creates new WindowPropertyEditor 
+  /** Creates new WindowPropertyEditor
    * type shoud be one of MenuPropertyEditor constants.
    */
   public WindowPropertyEditor(BasicPropertyDescriptor pd, int type) {
     super(pd);
     initialize(type, new String[]{"show", "hide"});
   }
-  
+
   public WindowPropertyEditor(BasicPropertyDescriptor pd, String[] showHideTags) {
     super(pd);
     initialize(MenuPropertyEditor.SWITCH, showHideTags);
   }
-  
-  /** Creates new WindowPropertyEditor 
+
+  /** Creates new WindowPropertyEditor
    * with default MenuItem type = SWITCH
    */
   public WindowPropertyEditor(BasicPropertyDescriptor pd) {
     super(pd);
     initialize(MenuPropertyEditor.SWITCH, new String[]{"show", "hide"});
   }
-  
+
   protected void initialize(int type, String[] showHideTags) {
     try {
       BasicPropertyDescriptor prop_descr = new BasicPropertyDescriptor("windowVisible", this);
@@ -92,13 +92,13 @@ public class WindowPropertyEditor extends ComponentPropertyEditor
       visibilityEditor.setValues(new Object[]{new Boolean(true), new Boolean(false)});
       //prop_descr.setPropertyEditor(visibilityEditor);
       addPropertyChangeListener(visibilityEditor);
-      
+
     } catch (IntrospectionException e2) {
         System.out.println(""+e2);
     }
     addGUIPropertyEditorListener(this);
   }
-  
+
   /** By default makes
    *
    * @return GUI Editor
@@ -111,7 +111,7 @@ public class WindowPropertyEditor extends ComponentPropertyEditor
     }
     return window;
   }
-  
+
   public void setWindowVisible(boolean value) {
     if (value == windowVisible) return; // nothing, s changed
     boolean oldvalue = windowVisible;
@@ -119,11 +119,11 @@ public class WindowPropertyEditor extends ComponentPropertyEditor
     getWindow().setVisible(value);
     propertySupport.firePropertyChange("windowVisible", new Boolean(oldvalue), new Boolean(windowVisible));
   }
-  
+
   public boolean isWindowVisible() {
     return windowVisible;
   }
-  
+
   public JMenuItem[] getMenuItems() {
     return visibilityEditor.getMenuItems();
   }
@@ -143,7 +143,7 @@ public class WindowPropertyEditor extends ComponentPropertyEditor
   public void setModal(boolean modal) {
     this.modal = modal;
   }
-  
+
   public boolean closeOnEditingFinished() {
     return false;
   }

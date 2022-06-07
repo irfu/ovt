@@ -30,7 +30,7 @@ import javax.swing.event.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 
 /*
@@ -55,13 +55,13 @@ import javax.swing.event.*;
 public class CoordPanel extends JPanel implements ActionListener, FocusListener {
 
     public JTextField[] textField = new JTextField[3];
-    
+
     protected JLabel[] label = new JLabel[3];
     protected String[] cartesianComponents = {"X:", "Y:", "Z:"};
     /** The value, before user change */
     protected String tempValue = "0";
     protected JTextField textFieldBeingEdited = null;
-    
+
     public CoordPanel() {
         for (int i=0; i<3; i++) {
             label[i] = new JLabel(cartesianComponents[i]);
@@ -69,7 +69,7 @@ public class CoordPanel extends JPanel implements ActionListener, FocusListener 
             textField[i].addActionListener(this);
             textField[i].addFocusListener(this);
         }
-        
+
       // create layout
         GridBagLayout gridbag = new GridBagLayout();
         GridBagConstraints c = new GridBagConstraints();
@@ -81,50 +81,50 @@ public class CoordPanel extends JPanel implements ActionListener, FocusListener 
         c.gridy = 0;
         gridbag.setConstraints(label[0], c);
         add(label[0]);
-        
+
         c.gridx = 1;
         c.gridy = 0;
         gridbag.setConstraints(textField[0], c);
         add(textField[0]);
-        
+
         c.gridx = 0;
         c.gridy = 1;
         gridbag.setConstraints(label[1], c);
         add(label[1]);
-        
+
         c.gridx = 1;
         c.gridy = 1;
         gridbag.setConstraints(textField[1], c);
         add(textField[1]);
-        
+
         c.gridx = 0;
         c.gridy = 2;
         gridbag.setConstraints(label[2], c);
         add(label[2]);
-        
+
         c.gridx = 1;
         c.gridy = 2;
         gridbag.setConstraints(textField[2], c);
         add(textField[2]);
-        
+
     }
-    
+
     public void actionPerformed(ActionEvent evt) {
         System.out.println("action Performed..... oops.");
         firePropertyChange("values", null, null);
     }
-    
+
     public void focusGained(final java.awt.event.FocusEvent evt) {
         textFieldBeingEdited = (JTextField)(evt.getSource());
         tempValue = textFieldBeingEdited.getText();
     }
-    
+
     // one has to consider the case when user changes nothing
     // in the TextField.
     public void focusLost(FocusEvent evt) {
         firePropertyChange("values", null, null);
     }
-    
+
     protected void setValues(double[] values) {
         for (int i=0; i<3; i++) {
             textField[i].removeActionListener(this);
@@ -132,7 +132,7 @@ public class CoordPanel extends JPanel implements ActionListener, FocusListener 
             textField[i].addActionListener(this);
         }
     }
-    
+
     public double[] getValues() throws NumberFormatException {
         double[] res = new double[3];
         for (int i=0; i<3; i++) {

@@ -46,7 +46,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*; 
+import javax.swing.text.*;
 import javax.swing.plaf.*;
 
 import java.awt.Toolkit;
@@ -55,19 +55,19 @@ import java.awt.Toolkit;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class StringEditorPanel extends JTextField implements PropertyChangeListener, Syncer {
     private PropertyEditor editor;
     private DocumentListener documentListener;
-    
+
 /** Creates new IntervalEditorPanel */
 public StringEditorPanel(PropertyEditor ed) {
     this.editor = ed;
     editor.addPropertyChangeListener( this );
-    
+
     //setDocument( new IntervalDocument() );
-    
+
     documentListener = new DocumentListener() {
         public void changedUpdate(DocumentEvent evt) {
         }
@@ -78,7 +78,7 @@ public StringEditorPanel(PropertyEditor ed) {
             applyChangesSilently();
         }
     };
-    
+
     getDocument().addDocumentListener( documentListener );
 }
 

@@ -9,11 +9,11 @@ package ovt.interfaces;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public interface FireChangeMethodSource {
 
     public java.lang.reflect.Method getFireChangeMethod();
-    
+
 }
 

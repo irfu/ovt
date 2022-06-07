@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 28, 2000, 8:50 PM
  */
- 
+
 package ovt.object;
 
 import vtk.*;
@@ -47,10 +47,10 @@ import ovt.interfaces.*;
 
 import java.beans.*;
 
-/** 
+/**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public final class Axes extends VisualObject {
 
@@ -59,30 +59,30 @@ public final class Axes extends VisualObject {
   protected double normalTitleSize = 0.1;
   private double scale = 2;
   /** Axes actor */
-  protected vtkActor actor; 
+  protected vtkActor actor;
   protected vtkFollower[] axeTitleActor = new vtkFollower[3];
   protected String[] axeTitle = {"x", "y", "z"};
   protected static final int[][] axeTitlePosition = { {1, 0, 0}, {0, 1, 0}, {0, 0, 1} };
-  
+
   /** Creates new Axes
    * @param core */
   public Axes(OVTCore core) {
     super(core, "Axes", "images/axes.gif");
-    
+
     vtkAxes axes = new vtkAxes();
-      axes.SetOrigin(0, 0, 0);      
-    
+      axes.SetOrigin(0, 0, 0);
+
     vtkTubeFilter tubeFilter = new vtkTubeFilter();
     tubeFilter.SetInputConnection(axes.GetOutputPort());
     tubeFilter.SetRadius(0.01);
-    
+
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
     mapper.SetInputConnection(tubeFilter.GetOutputPort());
-    
+
     actor = new vtkActor();
     actor.SetMapper(mapper);
-    
-    
+
+
     vtkVectorText atext;
     vtkFollower textActor;
     double[] x = new double[3];
@@ -101,11 +101,11 @@ public final class Axes extends VisualObject {
     setScale(scale);
     setVisible(true);
   }
-  
+
   public double getScale() {
         return scale;
   }
-    
+
   public void setScale(double scale) {
         //Log.log("new scale: " + scale);
         double oldScale = scale;
@@ -121,12 +121,12 @@ public final class Axes extends VisualObject {
         }
         firePropertyChange("scale", oldScale, scale);
   }
-  
+
   public void show() {
     for (int k=0; k<3; k++) getRenderer().AddActor(axeTitleActor[k]);
     getRenderer().AddActor(actor);
   }
-  
+
   public void hide() {
     for (int k=0; k<3; k++) getRenderer().RemoveActor(axeTitleActor[k]);
     getRenderer().RemoveActor(actor);
@@ -140,17 +140,17 @@ public final class Axes extends VisualObject {
       super.setVisible(visible);
     }
   }
-  
+
   @Override
   public Descriptors getDescriptors() {
     if (descriptors == null) {
         try {
             descriptors = super.getDescriptors();
-            
+
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("scale", this);
             pd.setLabel("Length");
             pd.setDisplayName("Axes length (RE)");
-            SliderPropertyEditor sliderEditor = //new SliderPropertyEditor(pd, 2, 30, 2, 2); 
+            SliderPropertyEditor sliderEditor = //new SliderPropertyEditor(pd, 2, 30, 2, 2);
               new ExponentialSliderPropertyEditor(pd, 1, 32, 100, new double[] {1, 2, 4, 8, 16, 32});
             sliderEditor.setPrecision(3);
             addPropertyChangeListener("scale", sliderEditor);
@@ -161,7 +161,7 @@ public final class Axes extends VisualObject {
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
-            
+
         } catch (IntrospectionException e2) {
             System.out.println(getClass().getName() + " -> " + e2.toString());
             System.exit(0);

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,13 +35,13 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 7:29 PM
  */
- 
+
 package ovt.beans;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class BooleanEditor extends MenuPropertyEditor {
 
@@ -51,7 +51,7 @@ public class BooleanEditor extends MenuPropertyEditor {
     setTags(new String[]{"true", "false"});
     setValues(new Object[]{new Boolean(true), new Boolean(false)});
   }
-  
+
   public BooleanEditor(BasicPropertyDescriptor pd, int type) {
     super(pd, type);
     setTags(new String[]{"true", "false"});

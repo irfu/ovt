@@ -49,7 +49,7 @@ import java.util.*;
 import java.awt.*;
 /**
  * This class cares about plotting the magnetosphere.
- * 
+ *
  * NOTE: Contains two classes with similarily-named methods: Magnetosphere and
  * MagnetosphereActor. Do not confuse the two.
  */
@@ -585,7 +585,7 @@ public void setVisible(boolean visible) {
   public boolean isScalarcolor() {
       return scalarcolor;
   }
-    
+
 public void setScalarcolor(boolean scalarcolor) {
       boolean oldScalarcolor = this.scalarcolor;
       this.scalarcolor = scalarcolor;
@@ -620,7 +620,7 @@ public void setScalarcolor(boolean scalarcolor) {
             //firePropertyChange("color", oldColor, color);
           this.setScalarcolor(false);
 
-          propertyChangeSupport.firePropertyChange("scalarcolor", oldsetscalar, false);          
+          propertyChangeSupport.firePropertyChange("scalarcolor", oldsetscalar, false);
           propertyChangeSupport.firePropertyChange ("color", oldColor, color);
       }
 
@@ -746,7 +746,7 @@ class MagnetosphereActor extends vtkActor {
         return fieldlineRadius;
     }
 
-    
+
    public boolean isScalarcolor() {
         return scalarcolor;
     }

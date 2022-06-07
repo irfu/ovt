@@ -12,14 +12,14 @@ import java.io.File;
 /**
  *
  * @author  yuri
- * @version 
+ * @version
  */
 public class FileEditor extends PropertyEditorSupport {
 
     /** Creates new FileEditor */
     public FileEditor() {
     }
-    
+
     /** Creates new FileEditor */
     public FileEditor(File file) {
         setValue(file);
@@ -28,7 +28,7 @@ public class FileEditor extends PropertyEditorSupport {
     public void setAsText(String text) {
         setValue(new File(text));
     }
-    
+
     public String getAsText() {
         return ""+getValue();
     }

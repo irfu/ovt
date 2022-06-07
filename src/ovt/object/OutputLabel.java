@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/object/OutputLabel.java,v $
   Date:      $Date: 2009/10/27 12:14:36 $
   Version:   $Revision: 2.9 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 package ovt.object;
@@ -53,12 +53,12 @@ import javax.swing.*;
  */
 public class OutputLabel extends VisualObject implements MenuItemsSource,
             BeansSource, TimeChangeListener {
-    
+
     private vtkActor2D    actor  = null;
     private vtkTextMapper mapper = null;
 
     private OutputLabelCustomizer customizer = null;
-    
+
     protected static final int MAX_X  = 100;
     protected static final int MAX_Y  = 100;
 
@@ -72,37 +72,37 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
     public static final int BOTTOM = 0;
     /** Top justification value */
     public static final int TOP    = 2;
-    
+
 /** values for justification combobox
- */    
+ */
     protected static final int[]    justificationValues = { LEFT,   CENTER,   RIGHT };
 /** tags for justification combobox
- */    
+ */
     protected static final String[] justificationTags   = {"Left", "Center", "Right"};
-    
+
     /** Holds value of property customizerVisible. */
     private boolean customizerVisible;
-    
+
     /** Holds value of bean font. */
     public OVTFont font = new OVTFont(this);
-    
+
     /** Holds value of property labelText. */
     private String labelText;
-    
+
     /** Holds value of property x. */
     private int x = MAX_X;
-    
+
     /** Holds value of property y. */
     private int y = 0;
-    
+
     /** Holds value of property justification. */
     private int justification = RIGHT;
-    
+
     /** Holds value of property color. */
     private Color color = Color.black;
-    
+
     private BeansCollection beans = null;
-    
+
     /** Creates new OutputLabel
      * @param core ovt core object
  */
@@ -113,11 +113,11 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         addPropertyChangeListener(this);    // to re-create actor after property change
     }
 
-    
+
 /** Generates default label, with all wisible sats enumeration and time range,
  * for example: "Astrid, Polar, 2000-01-01 00:00 - 2000-02-03 00:00"
  * @return Generated label
- */    
+ */
     public String getDefaultLabel() {
         StringBuffer label = new StringBuffer();
         Enumeration enSats = getCore().getSats().getChildren().elements();
@@ -133,7 +133,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                             if (!first) label.append(","); first = false;
                             label.append(clusterSat.getName());
                         }
-                    }   
+                    }
                 }
                 else {
                     if (!first) label.append(","); first = false;
@@ -147,16 +147,16 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         Time start = new Time(timeSet.getStartMjd());
         Time stop = new Time(timeSet.getStopMjd());
         int[] index = { Time.YEAR, Time.MONTH, Time.DAY, Time.HOUR };
-        int startFrom = Time.YEAR; // = 0 
-        if (start.getYear() != stop.getYear()) { 
+        int startFrom = Time.YEAR; // = 0
+        if (start.getYear() != stop.getYear()) {
             startFrom = Time.YEAR;
-        } else {     
-            if (start.getMonth() != stop.getMonth()) { 
-                startFrom = Time.MONTH; 
+        } else {
+            if (start.getMonth() != stop.getMonth()) {
+                startFrom = Time.MONTH;
             } else {
-                if (start.getDay() != stop.getDay())  
-                    startFrom = Time.DAY; 
-                else startFrom = Time.HOUR; 
+                if (start.getDay() != stop.getDay())
+                    startFrom = Time.DAY;
+                else startFrom = Time.HOUR;
             }
         }
         String hh_mm_ss = stop.getAsText(Time.HOUR)+":"+stop.getAsText(Time.MINUTE)+":"+stop.getAsText(Time.SECOND);
@@ -166,20 +166,20 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
             case Time.DAY   : label.append(stop.getAsText(Time.DAY)+" ");
             case Time.HOUR  : label.append(hh_mm_ss);
         }
-        
+
         return label.toString();
     }
-    
+
 /** Getter for property descriptors
  * @return Descriptors from this object
- */    
+ */
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
                 descriptors = super.getDescriptors();
                 BasicPropertyDescriptor pd;
                 GUIPropertyEditor editor;
-                
+
             /* color property descriptor */
                 pd = new BasicPropertyDescriptor("color", this);
                 pd.setDisplayName(getName() + " color");
@@ -193,7 +193,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                 addPropertyChangeListener("color", cpEditor);
                 pd.setPropertyEditor(new WindowedPropertyEditor(cpEditor, getCore().getXYZWin(), "Close"));
                 descriptors.put(pd);
-                
+
             /* horizJustification property descriptor */
                 pd = new BasicPropertyDescriptor("justification", this);
                 pd.setTextOnlyAccessible();
@@ -202,7 +202,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                 addPropertyChangeListener("justification", editor);
                 pd.setPropertyEditor(editor);
                 descriptors.put(pd);
-                
+
             /* x property descriptor */
                 pd = new BasicPropertyDescriptor("x", this);
                 pd.setTextOnlyAccessible();
@@ -211,7 +211,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                 addPropertyChangeListener("x", sEditor);
                 pd.setPropertyEditor(sEditor);
                 descriptors.put(pd);
-                
+
             /* x property descriptor */
                 pd = new BasicPropertyDescriptor("y", this);
                 pd.setTextOnlyAccessible();
@@ -220,7 +220,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                 pd.setPropertyEditor(sEditor);
                 addPropertyChangeListener("y", sEditor);
                 descriptors.put(pd);
-                
+
             /* label property descriptor  */
                 pd = new BasicPropertyDescriptor("labelText", this);
                 pd.setTextOnlyAccessible();
@@ -229,7 +229,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
                 addPropertyChangeListener("labelText", editor);
                 pd.setPropertyEditor(editor);
                 descriptors.put(pd);
-                
+
             } catch (IntrospectionException e2) {
                 System.out.println(getClass().getName() + " -> " + e2.toString());
                 System.exit(0);
@@ -237,14 +237,14 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         }
         return descriptors;
     }
-    
+
     /** Getter for property customizerVisible.
      * @return Value of property customizerVisible.
      */
     public boolean isCustomizerVisible() {
         return customizerVisible;
     }
-    
+
     /** Setter for property customizerVisible.
      * @param customizerVisible New value of property customizerVisible.
      */
@@ -252,7 +252,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         this.customizerVisible = customizerVisible;
         getCustomizer().setVisible(customizerVisible);
     }
-    
+
     /** Popups customizer modal */
     public void popupCustomizer() {
         getCustomizer().setModal(true);
@@ -266,15 +266,15 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
     public OVTFont getFont() {
         return font;
     }
-    
-    
+
+
     /** Getter for property labelText.
      * @return Value of property labelText.
      */
     public String getLabelText() {
         return labelText;
     }
-    
+
     /** Setter for property labelText.
      * @param labelText New value of property labelText.
      */
@@ -283,14 +283,14 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         this.labelText = labelText;
         propertyChangeSupport.firePropertyChange ("labelText", oldLabelText, labelText);
     }
-    
+
     /** Getter for property x.
      * @return Value of property x.
      */
     public int getX() {
         return x;
     }
-    
+
     /** Setter for property x.
      * @param x New value of property x.
      */
@@ -299,14 +299,14 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         this.x = x;
         propertyChangeSupport.firePropertyChange ("x", new Integer (oldX), new Integer (x));
     }
-    
+
     /** Getter for property y.
      * @return Value of property y.
      */
     public int getY() {
         return y;
     }
-    
+
     /** Setter for property y.
      * @param y New value of property y.
      */
@@ -322,7 +322,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
     public Color getColor() {
         return color;
     }
-    
+
     /** Setter for property color.
      * @param color New value of property color.
      */
@@ -331,14 +331,14 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         this.color = color;
         propertyChangeSupport.firePropertyChange ("color", oldColor, color);
     }
-    
+
     /** Getter for property justification.
      * @return Value of property justification.
      */
     public int getJustification() {
         return justification;
     }
-    
+
     /** Setter for property justification.
      * @param justification New value of property justification.
      */
@@ -347,28 +347,28 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         this.justification = justification;
         propertyChangeSupport.firePropertyChange ("justification", new Integer (oldJustification), new Integer (justification));
     }
-    
+
     /** Getter for text mapper.
      * @return output label text mapper object
      */
     protected vtkTextMapper getMapper() {
         if (mapper == null) {
             mapper = new vtkTextMapper();
-        
+
             mapper.SetInput(getLabelText());
             mapper.GetTextProperty().SetFontSize(getFont().getFontSize());
             mapper.GetTextProperty().SetFontFamily(getFont().getFontFamily());
-            
+
             mapper.GetTextProperty().SetBold  (getFont().bold());
             mapper.GetTextProperty().SetItalic(getFont().italic());
             mapper.GetTextProperty().SetShadow(getFont().shadow());
-            
+
             mapper.GetTextProperty().SetJustification(getJustification());
             mapper.GetTextProperty().SetVerticalJustification(BOTTOM);
         }
         return mapper;
     }
-    
+
     /** Getter for actor.
      * @return output label actor object
      */
@@ -379,23 +379,23 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
 
             float[] rgb = ovt.util.Utils.getRGB(getColor());
             actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-            
+
             //actor.GetPositionCoordinate().SetCoordinateSystemToNormalizedDisplay();
             updatePosition();
         }
         return actor;
     }
-    
+
     /** adds actor to renderer */
     protected void show() {
         getRenderer().AddActor(getActor());
     }
-    
+
     /** removes actor to renderer */
     protected void hide() {
         getRenderer().RemoveActor(getActor());
     }
-    
+
     /** Setter for property visible.
      * @param visible New value of property visible.
      */
@@ -407,7 +407,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
             super.setVisible(visible);
         }
     }
-    
+
     /** Creates array of JMenuItems, specyfic to this object.
      * @return array of JMenuItems.
      */
@@ -420,7 +420,7 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
             }
         });
         item[0].setFont(Style.getMenuFont());
-        
+
         item[1] = new JMenuItem("Properties...");
         item[1].addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -430,9 +430,9 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         item[1].setFont(Style.getMenuFont());
         return item;
     }
-    
+
 /**
- * @param evt  */    
+ * @param evt  */
     public void propertyChange(PropertyChangeEvent evt) {
         if (!isVisible()) {
             actor = null;
@@ -473,21 +473,21 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
         updatePosition();
         Render();
     }
-    
+
 /** updates position of output label, called if label or window size changes ocures
- */    
+ */
     public void updatePosition() {
         //System.out.println("OutputLabel Position ");
         if (actor != null) {
 
             vtkViewport vp = (vtkViewport)getCore().getRenderer();
             int textSize[] = new int[2];
-            
+
             int ts_x = mapper.GetWidth(vp);     // x size of text
             int ts_y = mapper.GetHeight(vp);    // y size od text
-            
+
             int vpSize[] = vp.GetSize();        // size of viewport
-            
+
             int x = (int) ( getX() / (double)MAX_X * (vpSize[0] - ts_x - 1)); // x position
             int y = (int) ( getY() / (double)MAX_Y * (vpSize[1] - ts_y - 1)); // y position
 
@@ -503,21 +503,21 @@ public class OutputLabel extends VisualObject implements MenuItemsSource,
             actor.GetPositionCoordinate().SetValue(x,y);
         }
     }
-    
+
 /** Getter for customizer
  * @return customizer
- */    
+ */
     public OutputLabelCustomizer getCustomizer() {
         if (customizer == null)
             customizer = new OutputLabelCustomizer(this, getCore().getXYZWin());
         return customizer;
     }
-    
+
     /** Set's labelText to getDefaultLabel() */
     public void resetLabelText() {
         setLabelText(getDefaultLabel());
     }
-    
+
 public BeansCollection getBeanDesriptors() {
         if (beans == null)
         {
@@ -528,12 +528,12 @@ public BeansCollection getBeanDesriptors() {
         }
         return beans;
 }
-    
+
 public void timeChanged(TimeEvent evt) {
     if (evt.timeSetChanged()) {
         // time period have changed
         resetLabelText();
     }
 }
-    
+
 }

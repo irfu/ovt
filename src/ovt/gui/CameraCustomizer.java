@@ -57,11 +57,11 @@ import javax.swing.*;
  * the camera view (camera position, focal point, projection etc.).
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class CameraCustomizer extends JFrame implements PropertyChangeListener {
-    
-    /* first element corresponds to Camera.PARALLEL_PROJECTION, 
+
+    /* first element corresponds to Camera.PARALLEL_PROJECTION,
      * second - PERSPECTIVE_PROJECTION. Is used to indicate
      * panel in CardLayout container.
      */
@@ -73,8 +73,8 @@ public class CameraCustomizer extends JFrame implements PropertyChangeListener {
     protected JComboBox viewFromComboBox;
     protected JComboBox viewToComboBox;
     protected JComboBox projectionComboBox;
-    
-    
+
+
 // PROPOSAL: Remove "parent"
 public CameraCustomizer(Camera acam, Window parent) {
     super();
@@ -84,26 +84,26 @@ public CameraCustomizer(Camera acam, Window parent) {
     } catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
     this.cam = acam;
     desc = cam.getDescriptors();
-    
+
     viewFromComboBox = (JComboBox)((ComponentPropertyEditor)(desc.getDescriptor("viewFrom").getPropertyEditor())).getComponent();
     viewToComboBox = (JComboBox)((ComponentPropertyEditor)(desc.getDescriptor("viewTo").getPropertyEditor())).getComponent();
     projectionComboBox = (JComboBox)((ComponentPropertyEditor)(desc.getDescriptor("projection").getPropertyEditor())).getComponent();
-    
+
     Dimension dim = viewFromComboBox.getPreferredSize();
     dim.width = 100;
     viewFromComboBox.setPreferredSize(dim);
     viewToComboBox.setPreferredSize(dim);
-    
+
     Container cont = getContentPane();
     //create layout : new java.awt.GridLayout (4, 1, 5, 5)
     cont.setLayout(new BoxLayout(cont,BoxLayout.Y_AXIS));
     //cont.set
     //cont.setLayout(new BorderLayout(0,5));
-    
+
     // Undo and redo buttons panel
         /* JPanel undoredoPanel = new JPanel();
         undoredoPanel.setLayout(new java.awt.GridLayout (1, 2, 10, 10));
-         
+
         JButton undoButton = new JButton("Undo");
         undoButton.setEnabled(false);
         undoButton.addActionListener(new ActionListener() {
@@ -112,7 +112,7 @@ public CameraCustomizer(Camera acam, Window parent) {
             }
         });
         undoredoPanel.add(undoButton);
-         
+
         JButton redoButton = new JButton("Redo");
         redoButton.setEnabled(false);
         redoButton.addActionListener(new ActionListener() {
@@ -121,42 +121,42 @@ public CameraCustomizer(Camera acam, Window parent) {
             }
         });
         undoredoPanel.add(redoButton);
-         
+
         cont.add(undoredoPanel); */
-    
+
     // -------- views Panel -------
-    
+
     JPanel viewsPanel = createViewsPanel();
-    
+
     cont.add(viewsPanel); //, BorderLayout.NORTH
-    
+
     // -------- positions Panel -------
-    
+
     JPanel positionPanel = createPositionPanel();
-    
+
     cont.add(positionPanel); //, BorderLayout.CENTER
-    
-    
+
+
     // -------- Projection Panel -------
-    
+
     JPanel panel = new JPanel();
     panel.setLayout( new BoxLayout(panel, BoxLayout.X_AXIS) );
     panel.add(new JLabel("Projection:"));
     panel.add(Box.createHorizontalGlue());
     panel.add(projectionComboBox);
-    
+
     cont.add(panel);
-    
+
     // -------- Camera light controls -------
-    
+
     //Component lightControls = ((ComponentPropertyEditor)(desc.getDescriptor("lightIntensity").getPropertyEditor())).getComponent();
     //cont.add(lightControls, BorderLayout.EAST);
-    
+
     // ------------------- close, reset buttons ----------------
-    
+
     panel = new JPanel();
     panel.setLayout(new java.awt.GridLayout(1, 2, 5, 5));
-    
+
     JButton closeButton = new JButton("Close");
     closeButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -164,13 +164,13 @@ public CameraCustomizer(Camera acam, Window parent) {
         }
     });
     panel.add(closeButton);
-    
+
     addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent e) {
             cam.setCustomizerVisible(false);
         }
     });
-    
+
     JButton resetButton = new JButton("Reset");
     resetButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent evt) {
@@ -179,11 +179,11 @@ public CameraCustomizer(Camera acam, Window parent) {
         }
     });
     panel.add(resetButton);
-    
+
     cont.add(panel); //, BorderLayout.SOUTH
-    
-    
-    
+
+
+
     pack();
     //setResizable(false);
     // Can not use XYZWindow as reference since it has not been initialized yet.
@@ -209,9 +209,9 @@ private JPanel createPositionPanel() {
     // create layout
     posPanel.setLayout( new BoxLayout(posPanel, BoxLayout.Y_AXIS) );
     //String[] list = {"r", "parallelScale", "delta", "phi"};
-    
+
     JSlider slider[] = new JSlider[5]; // we have five sliders
-    
+
     // ---- r ----
     BasicPropertyDescriptor pd = desc.getDescriptor("r");
     slider[0] = (JSlider)((ComponentPropertyEditor)(pd.getPropertyEditor())).getComponent();
@@ -219,66 +219,66 @@ private JPanel createPositionPanel() {
     JTextField tf = createDoubleEditorComponent(pd);
     tf.setMaximumSize(new Dimension( 100, tf.getPreferredSize().height ));
     //label.setAlignmentX(CENTER_ALIGNMENT);
-    
+
     JPanel rPanel = new JPanel();
         rPanel.setLayout( new BoxLayout(rPanel, BoxLayout.X_AXIS) );
         rPanel.add(label);
         rPanel.add(Box.createHorizontalGlue());
         rPanel.add(tf);
         rPanel.add(slider[0]);
-    
-    
-    
+
+
+
     // ---- parallelScale ----
     pd = desc.getDescriptor("parallelScale");
     slider[1] = (JSlider)((ComponentPropertyEditor)(pd.getPropertyEditor())).getComponent();
     label = new JLabel(pd.getDisplayName());
     tf = createDoubleEditorComponent(pd);
     tf.setMaximumSize(new Dimension( 100, tf.getPreferredSize().height ));
-    
+
     JPanel pscPanel = new JPanel();
         pscPanel.setLayout( new BoxLayout(pscPanel, BoxLayout.X_AXIS) );
         pscPanel.add(label);
         pscPanel.add(Box.createHorizontalGlue());
         pscPanel.add(tf);
         pscPanel.add(slider[1]);
-    
+
     // create container for r and parallelScale panels
     // with Card Layout
     scalePanel = new JPanel( new CardLayout());
     scalePanel.add(pscPanel, SCALE_PANEL[Camera.PARALLEL_PROJECTION]);
-    scalePanel.add(rPanel, SCALE_PANEL[Camera.PERSPECTIVE_PROJECTION]);    
-    
+    scalePanel.add(rPanel, SCALE_PANEL[Camera.PERSPECTIVE_PROJECTION]);
+
     posPanel.add(scalePanel);
-    
+
     // ---- delta ----
     pd = desc.getDescriptor("delta");
     slider[2] = (JSlider)((ComponentPropertyEditor)(pd.getPropertyEditor())).getComponent();
     label = new JLabel(pd.getDisplayName());
     tf = createDoubleEditorComponent(pd);
     tf.setMaximumSize(new Dimension( 100, tf.getPreferredSize().height ));
-    
+
     JPanel panel = new JPanel();
         panel.setLayout( new BoxLayout(panel, BoxLayout.X_AXIS) );
         panel.add(label);
         panel.add(Box.createHorizontalGlue());
         panel.add(tf);
-        panel.add(slider[2]);    
+        panel.add(slider[2]);
     posPanel.add(panel);
-    
+
     // ---- phi ----
     pd = desc.getDescriptor("phi");
     slider[3] = (JSlider)((ComponentPropertyEditor)(pd.getPropertyEditor())).getComponent();
     label = new JLabel(pd.getDisplayName());
     tf = createDoubleEditorComponent(pd);
     tf.setMaximumSize(new Dimension( 100, tf.getPreferredSize().height ));
-    
+
     panel = new JPanel();
         panel.setLayout( new BoxLayout(panel, BoxLayout.X_AXIS) );
         panel.add(label);
         panel.add(Box.createHorizontalGlue());
         panel.add(tf);
-        panel.add(slider[3]);    
+        panel.add(slider[3]);
     posPanel.add(panel);
 
     // ---- viewUpAngle ----
@@ -287,13 +287,13 @@ private JPanel createPositionPanel() {
     label = new JLabel(pd.getDisplayName());
     tf = createDoubleEditorComponent(pd);
     tf.setMaximumSize(new Dimension( 100, tf.getPreferredSize().height ));
-    
+
     panel = new JPanel();
         panel.setLayout( new BoxLayout(panel, BoxLayout.X_AXIS) );
         panel.add(label);
         panel.add(Box.createHorizontalGlue());
         panel.add(tf);
-        panel.add(slider[4]);    
+        panel.add(slider[4]);
     posPanel.add(panel);
 
     // set each slider's preffered size to the biggest slider size
@@ -305,17 +305,17 @@ private JPanel createPositionPanel() {
     for (int i=0; i<slider.length; i++) {
         slider[i].setMaximumSize(new Dimension(maxWidth, slider[i].getPreferredSize().height));
     }
-    
-    
+
+
     // ----- update scalePanel when Projectiom method is changed
     cam.addPropertyChangeListener("projection", new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
             updateScalePanel();
         }
     });
-    
+
     updateScalePanel();
-    
+
     return posPanel;
 }
 
@@ -343,10 +343,10 @@ public void propertyChange(PropertyChangeEvent evt) {
     // listens to visibility change of a camera
     String propertyName = evt.getPropertyName();
     if (propertyName.equals("customizerVisible")) {
-        
+
         boolean value = ((Boolean)evt.getNewValue()).booleanValue();
         setVisible(value);
-        
+
     }
 }
 

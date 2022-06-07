@@ -10,7 +10,7 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
   private static final int PROPERTY_intervalMjd = 2;
   private static final int PROPERTY_stepMjd = 3;
 
-  // Property array 
+  // Property array
   private static PropertyDescriptor[] properties = new PropertyDescriptor[4];
 
   static {
@@ -41,12 +41,12 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
   // Method identifiers //GEN-FIRST:Methods
 
-  // Method array 
+  // Method array
   private static MethodDescriptor[] methods = new MethodDescriptor[0];
 //GEN-HEADEREND:Methods
 
     // Here you can add code for customizing the methods array.
-    
+
   //GEN-LAST:Methods
 
     private static java.awt.Image iconColor16 = null; //GEN-BEGIN:IconsDef
@@ -64,7 +64,7 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>PropertyDescriptor</code>s.
-     * 
+     *
      * @return An array of PropertyDescriptors describing the editable
      * properties supported by this bean.  May return null if the
      * information should be obtained by automatic analysis.
@@ -80,8 +80,8 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>EventSetDescriptor</code>s.
-     * 
-     * @return  An array of EventSetDescriptors describing the kinds of 
+     *
+     * @return  An array of EventSetDescriptors describing the kinds of
      * events fired by this bean.  May return null if the information
      * should be obtained by automatic analysis.
      */
@@ -91,8 +91,8 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
     /**
      * Gets the bean's <code>MethodDescriptor</code>s.
-     * 
-     * @return  An array of MethodDescriptors describing the methods 
+     *
+     * @return  An array of MethodDescriptors describing the methods
      * implemented by this bean.  May return null if the information
      * should be obtained by automatic analysis.
      */
@@ -102,7 +102,7 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
     /**
      * A bean may have a "default" property that is the property that will
-     * mostly commonly be initially chosen for update by human's who are 
+     * mostly commonly be initially chosen for update by human's who are
      * customizing the bean.
      * @return  Index of default property in the PropertyDescriptor array
      * 		returned by getPropertyDescriptors.
@@ -114,7 +114,7 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
 
     /**
      * A bean may have a "default" event that is the event that will
-     * mostly commonly be used by human's when using the bean. 
+     * mostly commonly be used by human's when using the bean.
      * @return Index of default event in the EventSetDescriptor array
      *		returned by getEventSetDescriptors.
      * <P>	Returns -1 if there is no default event.
@@ -139,7 +139,7 @@ public class TimeSetBeanInfo extends SimpleBeanInfo {
      * so they can be rendered onto an existing background.
      *
      * @param  iconKind  The kind of icon requested.  This should be
-     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32, 
+     *    one of the constant values ICON_COLOR_16x16, ICON_COLOR_32x32,
      *    ICON_MONO_16x16, or ICON_MONO_32x32.
      * @return  An image object representing the requested icon.  May
      *    return null if no suitable icon is available.

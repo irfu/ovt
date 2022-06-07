@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -41,32 +41,32 @@ import java.io.*;
 /**
  * @author kono
  */
-public class SpinData {  
-  
+public class SpinData {
+
    private boolean isAvailable=false;
    protected String fname;
    protected SpinRecord spinRecord=new SpinRecord();
-   
+
    // For testing only!
    private SpinData(){
    }
-  
+
    //for test only!
    private static void testRecord(String x){
       SpinRecord tmp=new SpinRecord(x);
       tmp.print();
    }
-  
+
    /** @param filename Spin file. Null (e.g.) represents there being no spin file. */
    public SpinData(String filename){
       this.fname = filename;
       this.isAvailable = isAvailable(fname);
    }
-   
+
    public boolean isAvailable(){
       return isAvailable;
    }
-  
+
    /** @param filename Spin file. Null (e.g.) represents there being no spin file. */
    private static boolean isAvailable(String filename){
       if (filename == null) return false;
@@ -76,7 +76,7 @@ public class SpinData {
       if (file.canRead() == false) return false;
       return true;
    }
-   
+
    /**
     *@param mjd (epoch J1950)
     *@return x,y,z - spin vector in GEI CS (abs. value indicates spin rate!)
@@ -87,7 +87,7 @@ public class SpinData {
          return null;
       try {
          if(this.spinRecord!=null){   //trying to access to previos data
-            if(mjd>=spinRecord.vsttimMjd && 
+            if(mjd>=spinRecord.vsttimMjd &&
                   mjd<=spinRecord.ventimMjd && !spinRecord.isInvalid() ){
 //System.out.println("  From BUFFER!!! ");
                return Utils.astro2xyz(spinRecord.sprasc,spinRecord.spdecl,spinRecord.sprate);
@@ -105,9 +105,9 @@ public class SpinData {
          return null;
       }
    }
-   
-   
-   
+
+
+
    /** Returns null if any error or spin parameters (record).
     * @param mjd - MJD from 1950
     * @param fileName - File name
@@ -116,7 +116,7 @@ public class SpinData {
    private static SpinRecord getSpinRecord(String fileName, double mjd) throws IOException{
       if(isAvailable(fileName)==false)
          throw new IOException("File "+fileName+" is not available.");
-      
+
       BufferedReader inData;
       boolean isFound=false;
       String str;
@@ -124,7 +124,7 @@ public class SpinData {
       double[] spinVect={0,0,0};
       SpinRecord spRec=new SpinRecord();
       SpinRecord closestRec=new SpinRecord();
-      
+
       try {
          inData=new BufferedReader(new FileReader(fileName));
       } catch (FileNotFoundException e){
@@ -134,7 +134,7 @@ public class SpinData {
       while(inData.ready() && isFound==false){
          str=inData.readLine();
          spRec.setRecord(str);
-        
+
          if(spRec.isInvalid())
             continue;                  // just skip bad records
          if(mjdx>=spRec.vsttimMjd && mjdx<=spRec.ventimMjd){
@@ -142,14 +142,14 @@ public class SpinData {
          }
       }
       inData.close();
-      
+
       if(isFound)
          return spRec;
       else return null;
    }
-  
-   
-   
+
+
+
    public static void main(String[] s){
 /*      SpinData xx=new SpinData();
       String str=new String(" 1 R 2001-01-01T12:35:25Z 2001-01-02T16:35:25Z 273.45 -43.56 14.456789 333.723 777.9  -2.1   1.3  0.02 -0.05 2001-01-02T16:33:31Z");

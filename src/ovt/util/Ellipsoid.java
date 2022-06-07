@@ -40,7 +40,7 @@ public class Ellipsoid {
 
 
 
-  /** 
+  /**
    * Create ellipsoid <code>(r/ae)^2 + (z/(1-f)ae)^2 = 1 with the main axis along z.</code>
    */
   public Ellipsoid (double ae, double f) {
@@ -53,13 +53,13 @@ public class Ellipsoid {
     ae2     = ae * ae;
   }
 
-  /** 
+  /**
    * @param eMax - maximum error
    */
   public double getMinDistance(double x, double y, double z, double eMax) {
     return toEllipsoidic(new Cartesian(x, y, z), eMax).h;
   }
-  
+
   public Cartesian toCartesian (Ellipsoidic ell) {
     double cphi = Math.cos (ell.phi);
     double sphi = Math.sin (ell.phi);
@@ -79,7 +79,7 @@ public class Ellipsoid {
       if (!Double.isFinite(cart.x) || !Double.isFinite(cart.y) || !Double.isFinite(cart.z)) {
           throw new IllegalArgumentException("Argument is not finite. cart="+cart.toString());
           /** JUSTIFICATION FOR CHECK: In the past, using a time outside of
-           * what the IGRF code (IgrfModel.java?) can handle has led to 
+           * what the IGRF code (IgrfModel.java?) can handle has led to
            * cart.x=NaN and cart.y=NaN which has led to the algorithm failing
            * which has in turn led to exception (thrown after the end of the algorithm).
            * /Erik P G Johansson 2015-10-28
@@ -122,7 +122,7 @@ public class Ellipsoid {
     if (Math.abs(k) < (1.0e-10 * dist)) {
       return new Ellipsoidic(Math.atan2(cart.y, cart.x), phi, k);
     }
- 
+
     for (int iterations = 0; iterations < 100; ++iterations) {
 
       // 4th degree normalized polynom describing
@@ -200,7 +200,7 @@ public class Ellipsoid {
                                phi,
                                r * cPhi + cart.z * sPhi - ae * coeff);
       }
-      
+
       b = ae / coeff;
       double dR = r - cPhi * b;
       double dZ = cart.z - sPhi * b * g2;
@@ -215,45 +215,45 @@ public class Ellipsoid {
     throw new IllegalArgumentException("Unable to converge in "
             + getClass().getName() + "#toEllipsoidic(cart=" + cart.toString() + ", eMax=" + eMax + ").");
   }
-  
+
   /**
    * Reurns min. distance from the point (x,y,z) to the ellipse along the vector vec.
-   * 
+   *
    * Returns NaN if the line does not intersect with the ellipse.
-   * 
-   * @param 
+   *
+   * @param
    */
   public double getDistanceAlongVector(double x, double y, double z, double[] vec) {
     double[] dir = Vect.norm(vec);
-    
+
     // coefficients of the equations a*d^2 + 2bd + c = 0
     double a = (dir[0]*dir[0] + dir[1]*dir[1] + dir[2]*dir[2]/g2);
     double b = (dir[0]*x + dir[1]*y + dir[2]*z/g2);
     double c = (x*x + y*y + z*z/g2 - ae2);
-    
+
     double descr = b*b - a*c;
-    
+
     if (descr < 0) return Double.NaN; // no intersection
-    
+
     double d1 = (-b + Math.sqrt(descr)) / a;
     double d2 = (-b - Math.sqrt(descr)) / a;
-    
+
     return (Math.abs(d1) > Math.abs(d2)) ? d2 : d1;
   }
 
 
   /**
    * Reurns outer normal for positive z.
-   * 
+   *
    */
   public double[] getNormal(double x, double y) {
-    double z = Math.sqrt(ae2 - x*x - y*y)*g;   
-    
+    double z = Math.sqrt(ae2 - x*x - y*y)*g;
+
     //System.out.println("x="+z+" y="+x+" z="+y);
-    
+
     double dzdy = -1*g2*y/z;
     double dzdx = -1*g2*x/z;
-    
+
     return Vect.norm(new double[]{-1*dzdx, -1*dzdy, 1});
   }
 
@@ -303,7 +303,7 @@ class Cartesian {
     this.y = y;
     this.z = z;
   }
-  
+
   // For debugging.
   public String toString() {
       return "[x="+x+", y="+y+", z="+z+"]";

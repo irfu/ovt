@@ -53,12 +53,12 @@ import java.io.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class DataModule extends AbstractSatModule implements MenuItemsSource {
     private static final int TIME  = 0;
     private static final int VALUE = 1;
-    
+
     private static final int X = 0;
     private static final int Y = 1;
     private static final int Z = 2;
@@ -66,28 +66,28 @@ public class DataModule extends AbstractSatModule implements MenuItemsSource {
     private int[] firstAndLastIndexes = { 0, 0 };
     double max = Double.NEGATIVE_INFINITY;
     double min = Double.POSITIVE_INFINITY;
-    
+
     /** Holds value of property file. */
     private File file = null;
     private int numberOfColumns = 0;
     private TimeFormat timeFormat = new TimeFormat();
     private ovt.util.ExtendedTimeFormat extendedTimeFormat = new ExtendedTimeFormat();
-    
+
     /** Timeset of Data */
     TimePeriod dataTimePeriod = new TimePeriod();
     DataModuleCustomizer customizer;
-    
+
     private vtkLookupTable lookupTable;
     private DataScalarBar dataScalarBar;
     private OrbitDataModule orbitDataModule;
     private FieldlineDataModule fieldlineDataModule;
-    
+
     public static final int TIME_FORMAT_NORMAL   = 0;
     public static final int TIME_FORMAT_EXTENDED = 1;
-    
+
     /** Holds value of property timeFormatType. */
     private int timeFormatType = TIME_FORMAT_NORMAL;
-    
+
     /** Creates new DataModule */
     public DataModule(Sat sat) {
         super(sat,  "Data", "images/data.gif");
@@ -96,51 +96,51 @@ public class DataModule extends AbstractSatModule implements MenuItemsSource {
         // when this object is removed - one has to remove
         // itself from the list of listeners !! NO NOT FORGET!
         sat.addPropertyChangeListener("enabled", this);
-        
+
         sat.getCore().getTimeSettings().addTimeChangeListener(this);
         sat.getCore().getCoordinateSystem().addCoordinateSystemChangeListener(this);
-        
+
         timeFormat.setParent(this); // let children know their roots ;-)
-        extendedTimeFormat.setParent(this); 
-        
+        extendedTimeFormat.setParent(this);
+
         lookupTable = new vtkLookupTable();
             lookupTable.SetHueRange(0.6667, 0);
-        
+
         dataScalarBar  = new DataScalarBar(this);
         addChild(dataScalarBar);
-        
+
         try {
             descriptors = new Descriptors();
-            
+
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("file", this);
             pd.setMenuAccessible(false);
             GUIPropertyEditor editor = new FileEditor(pd);
             addPropertyChangeListener("file", editor);
             pd.setPropertyEditor(editor);
             descriptors.put(pd);
-            
+
             pd = new BasicPropertyDescriptor("timeFormatType", this);
             pd.setMenuAccessible(false);
-            editor = new RadioButtonPropertyEditor(pd, 
-                new int[]{ TIME_FORMAT_NORMAL, TIME_FORMAT_EXTENDED}, 
+            editor = new RadioButtonPropertyEditor(pd,
+                new int[]{ TIME_FORMAT_NORMAL, TIME_FORMAT_EXTENDED},
                 new String[] { "Normal", "Extended" });
             addPropertyChangeListener("timeFormatType", editor);
             pd.setPropertyEditor(editor);
             descriptors.put(pd);
-            
+
             descriptors.put(timeFormat.getDescriptors().getDescriptor("dateFormat"));
-            
+
             descriptors.put(extendedTimeFormat.getDescriptors().getDescriptor("offsetMjd"));
             descriptors.put(extendedTimeFormat.getDescriptors().getDescriptor("unit"));
-            
+
             setDescriptors(descriptors);
-            
+
             if (!OVTCore.isServer()) {
                 customizer = new DataModuleCustomizer(this);
                 // can be (visible, customizer). think about it, MAN ;)
                 pd = new BasicPropertyDescriptor("customizerVisible", this);
                 pd.setMenuAccessible(false);
-                
+
                 editor = new VisibilityEditor(pd);
                 //editor.setTags(new String[]{"Properties ...", "Properties ..."});
                 //editor.setValues(new Object[]{new Boolean(true), new Boolean(true)});
@@ -148,20 +148,20 @@ public class DataModule extends AbstractSatModule implements MenuItemsSource {
                 pd.setPropertyEditor(editor);
                 descriptors.put(pd);
             }
-            
+
         } catch (IntrospectionException e2) {
             e2.printStackTrace(); System.exit(0);
         }
-        
+
   orbitDataModule  = new OrbitDataModule(this);
   addChild(orbitDataModule);
-   
+
   fieldlineDataModule  = new FieldlineDataModule(this);
   addChild(fieldlineDataModule);
-        
+
 }
-    
-public String getName() {  
+
+public String getName() {
     String f = "";
     if (file != null) f = file.getName();
     return "Data ("+f+")";
@@ -211,7 +211,7 @@ private int[] findFirstAndLastIndexes() {
             // set first index
             if (mjd >= startMjd  &&  first == -1) first = i;
             // return result when the last index is found
-            if (mjd > stopMjd) { 
+            if (mjd > stopMjd) {
                 //Log.log("mjd="+new Time(mjd)+" i="+i);
                 return new int[]{ first, i-1 };
             }
@@ -235,10 +235,10 @@ public double[][] getData() {
 
 public void loadData() throws IOException {
     if (file == null) throw new IOException("File is not specified");
-    
+
     max = Double.NEGATIVE_INFINITY;
     min = Double.POSITIVE_INFINITY;
-    
+
     BufferedReader inData = new BufferedReader(new FileReader(this.file));
     StringTokenizer st;
     String line;
@@ -252,25 +252,25 @@ public void loadData() throws IOException {
             lineNumber++;
             //System.out.println("["+lineNumber+"] "+line);
             if (line.startsWith("#")) continue; // skip comments
-            
+
             try {
-                if (timeFormatType == TIME_FORMAT_NORMAL) 
+                if (timeFormatType == TIME_FORMAT_NORMAL)
                         di = timeFormat.parseMjd(line);
                 else  // timeFormatType == TIME_FORMAT_EXTENDED
                     di = extendedTimeFormat.parseMjd(line);
             } catch (NumberFormatException e2) {
                 throw new IOException("Wrong time at line "+lineNumber + " ("+line+")\n"+file);
             }
-            
+
             mjd = di.d;
             offset = di.i+1;
-            
+
             int startIndex = StringUtils.doubleStartsAt(line, offset);
             int endIndex = StringUtils.doubleEndsAt(line, startIndex);
             //Log.log("->"+offset+" "+startIndex+" "+endIndex+" = '"+line.substring(startIndex, endIndex+1)+"'------");
             val = new Double(line.substring(startIndex, endIndex+1)).doubleValue();
             //Log.log("val = " + val + " max = " + max + " min = " + min);
-            //Log.log(""+new Time(mjd)+" "+val); 
+            //Log.log(""+new Time(mjd)+" "+val);
             tt.put(mjd, new Double(val));
             // set minimum and maximum values
             if (val > max) max = val;
@@ -291,15 +291,15 @@ public void loadData() throws IOException {
     i=0;
     while (e.hasMoreElements())
         data[i++][VALUE] = ((Double)e.nextElement()).doubleValue();
-    
+
     dataTimePeriod.setStartMjd(data[0][TIME]);
     dataTimePeriod.setStopMjd(data[data.length - 1][TIME]);
-    
+
     //System.out.println("Data Time Set: " + dataTimeSet);
-    
+
     boolean intersects = getTimeSet().intersectsWith(dataTimePeriod);
     if (isEnabled() != intersects) setEnabled(intersects);
-    
+
     // update lookup table
     lookupTable.SetTableRange(min, max);
     lookupTable.Build();
@@ -319,19 +319,19 @@ public File getFile() {
  */
 public void setFile(File file) throws IOException {
   File oldFile = this.file;
-  if (!file.exists()) 
+  if (!file.exists())
       throw new IOException("File '"+ file +"' does not exist");
-  if (file.isDirectory()) 
+  if (file.isDirectory())
       throw new IOException("File '"+ file +"' is a directory");
   if (!file.canRead())
       throw new IOException("File '"+ file +"' is not readable");
-  
+
   int n = getNumberOfColumns(file);
-  
+
   if (n < 2) throw new IOException("File '"+ file +"' has "+n+" column(s)");
-  
+
   numberOfColumns = n;
-  
+
   this.file = file;
   data = null;
   System.gc(); // run garbage collector
@@ -343,7 +343,7 @@ public TimeFormat getTimeFormat() {
 }
 
 public int getNumberOfColumns() {
-  return numberOfColumns;  
+  return numberOfColumns;
 }
 
 private static int getNumberOfColumns(File file) throws IOException {
@@ -387,14 +387,14 @@ private void showFileOpenDialog() {
  */
 public boolean isCustomizerVisible() {
   if (!OVTCore.isServer()) return customizer.isVisible();
-  else return false; 
+  else return false;
 }
 
 /** Setter for property customizerVisible.
  * @param customizerVisible New value of property customizerVisible.
  */
 public void setCustomizerVisible(boolean customizerVisible) {
-  if (!OVTCore.isServer()) { 
+  if (!OVTCore.isServer()) {
         boolean oldCustomizerVisible = isCustomizerVisible();
         if (oldCustomizerVisible == customizerVisible) return; // nothing is changed
         customizer.setVisible(customizerVisible);
@@ -431,24 +431,24 @@ public JMenuItem[] getMenuItems() {
         final int ITEM_COUNT = 3;
         JMenuItem[] item = new JMenuItem[ITEM_COUNT];
         int i=-1;
-        
+
         item[++i] = new JMenuItem("Remove");
         item[i].addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {       
+            public void actionPerformed(ActionEvent e) {
                 sat.removeDataModule(DataModule.this);
                 sat.getChildren().fireChildRemoved(DataModule.this);
             }
         });
-        
+
         item[++i] = null; // Separator
-        
+
         item[++i] = new JMenuItem("Properties...");
-        item[i].addActionListener(new ActionListener() { 
-            public void actionPerformed(ActionEvent e) { 
+        item[i].addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
                 setCustomizerVisible(true);
-            } 
+            }
         });
-        
+
         for (i=0; i<ITEM_COUNT; i++) {
             if (item[i] != null) item[i].setFont(Style.getMenuFont());
         }

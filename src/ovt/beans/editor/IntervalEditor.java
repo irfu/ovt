@@ -32,7 +32,7 @@ Khotyaintsev
 
 /*
  * IntervalEditor.java
- * 
+ *
  * Created on June 21, 2002, 4:13 PM
  */
 
@@ -48,21 +48,21 @@ import ovt.util.Log;
  * /Erik P G Johansson 2016-02-04
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class IntervalEditor extends PropertyEditorSupport {
 
     //private static final int DEBUG = 2;
-    
+
     /** Creates new IntervalEditor */
     public IntervalEditor() {
     }
-    
+
     public String getAsText() {
         double mjd = (double) getValue();
         return new Interval(mjd).toString(true);
     }
-    
+
     public void setAsText(String s) throws IllegalArgumentException {
         try {
             final Interval interval = new Interval(s);
@@ -75,13 +75,13 @@ public class IntervalEditor extends PropertyEditorSupport {
             throw new IllegalArgumentException("Time format : ([_d] [_h] [_m] [_s])");
         }
     }
-    
+
     public boolean supportsCustomEditor() {
         return true;
     }
-    
+
     public Component getCustomEditor() {
         return new IntervalEditorPanel(this);
     }
-    
+
 }

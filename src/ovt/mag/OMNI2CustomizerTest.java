@@ -6,7 +6,7 @@
  Version:   $Revision: 1.00 $
 
 
- Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 
@@ -106,7 +106,7 @@ public class OMNI2CustomizerTest {
 //                throw new OMNI2DataSource.ValueNotFoundException("mjd="+mjd);
                 throw new IOException("Exception message, zzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzzz");
             }
-            
+
             final double x = activityIndex + mjd/1e3;
             final double xr = Math.round(x*10)/10.0;
             double[] result;
@@ -115,7 +115,7 @@ public class OMNI2CustomizerTest {
             } else {
                 result = new double[]{xr};
             }
-            
+
             System.out.println("getActivityOMNI2("+activityIndex+", "+mjd+") = "+Arrays.toString(result));
             return result;
         }

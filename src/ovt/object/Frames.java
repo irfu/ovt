@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/object/Frames.java,v $
   Date:      $Date: 2005/12/14 18:33:46 $
   Version:   $Revision: 2.7 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 package ovt.object;
@@ -47,7 +47,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/** 
+/**
   * Should represent a "frame" i.e. a graphic plane representing a coordinate plane (e.g. z=0).
  */
 public class Frames extends VisualObject
@@ -55,23 +55,23 @@ implements MenuItemsSource {
 
     private FrameModule xoy, xoz, yoz;
     private FramesCustomizer customizer = null;
-    
+
     vtkActor YOZActor = null, XOZActor = null, XOYActor = null;
-    
+
     boolean isInitialised = false;
-    
+
     /** Holds value of property customizerVisible. */
     private boolean customizerVisible;
-    
+
     /** Holds value of property cellsNumber. */
     private int cellsNumber = 10;
-    
+
     /** Holds value of property cellSize. */
     private int cellSize = 5;
 
     /** Holds value of property yozPosition. */
     private int YOZPosition = -5;
-    
+
     public Frames(OVTCore core) {
         super(core, "Frames", "images/frame.gif", true);
         xoy = new FrameModule(this, FrameModule.XOYPLANE);
@@ -84,13 +84,13 @@ implements MenuItemsSource {
         addPropertyChangeListener(xoz);
         addPropertyChangeListener(yoz);
     }
-    
+
     public void timeChanged(TimeEvent e) {}
-    
+
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             descriptors = super.getDescriptors();
-            
+
             try {
             /* cellsNumber Property Descriptor */
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("cellsNumber", this);
@@ -100,7 +100,7 @@ implements MenuItemsSource {
                 addPropertyChangeListener("cellsNumber", sliderEditor);
                 pd.setPropertyEditor(sliderEditor);
                 descriptors.put(pd);
-                
+
             /* cellSize Property Descriptor */
                 pd = new BasicPropertyDescriptor("cellSize", this);
                 pd.setMenuAccessible(false);
@@ -109,7 +109,7 @@ implements MenuItemsSource {
                 addPropertyChangeListener("cellSize", sliderEditor);
                 pd.setPropertyEditor(sliderEditor);
                 descriptors.put(pd);
-                                
+
             /* YOZPosition Property Descriptor */
                 pd = new BasicPropertyDescriptor("YOZPosition", this);
                 pd.setMenuAccessible(false);
@@ -126,15 +126,15 @@ implements MenuItemsSource {
         }
         return descriptors;
     }
-    
-    
+
+
     /** Getter for property customizerVisible.
      * @return Value of property customizerVisible.
      */
     public boolean isCustomizerVisible() {
         return customizerVisible;
     }
-    
+
     /** Setter for property customizerVisible.
      * @param customizerVisible New value of property customizerVisible.
      */
@@ -146,28 +146,28 @@ implements MenuItemsSource {
         }
         customizer.setVisible(customizerVisible);
     }
-    
+
     public JMenuItem[] getMenuItems() {
        JMenuItem item = new JMenuItem();
         item = new JMenuItem("Properties...");
         item.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {       
+            public void actionPerformed(ActionEvent e) {
                 setCustomizerVisible(true);
             }
         });
         item.setFont(Style.getMenuFont());
         return new JMenuItem[] {item};
     }
-    
+
     Frames getThis() {return this;}
-    
+
     /** Getter for property cellsNumber.
      * @return Value of property cellsNumber.
      */
     public int getCellsNumber() {
         return cellsNumber;
     }
-    
+
     /** Setter for property cellsNumber.
      * @param cellsNumber New value of property cellsNumber.
      */
@@ -177,14 +177,14 @@ implements MenuItemsSource {
         this.cellsNumber = cellsNumber;
         propertyChangeSupport.firePropertyChange ("cellsNumber", new Integer (oldCellsNumber), new Integer (cellsNumber));
     }
-    
+
     /** Getter for property cellSize.
      * @return Value of property cellSize.
      */
     public int getCellSize() {
         return cellSize;
     }
-    
+
     /** Setter for property cellSize.
      * @param cellSize New value of property cellSize.
      */
@@ -194,14 +194,14 @@ implements MenuItemsSource {
         propertyChangeSupport.firePropertyChange ("cellSize", new Integer (oldCellSize), new Integer (cellSize));
         propertyChangeSupport.firePropertyChange ("yozPosLabel", null, null);   // TO CUSTOMIZER
     }
-    
+
     /** Getter for property YOZPosition.
      * @return Value of property YOZPosition.
      */
     public int getYOZPosition() {
         return this.YOZPosition;
     }
-    
+
     /** Setter for property YOZPosition.
      * @param YOZPosition New value of property YOZPosition.
      */
@@ -211,7 +211,7 @@ implements MenuItemsSource {
         propertyChangeSupport.firePropertyChange ("YOZPosition", new Integer (oldYOZPosition), new Integer (YOZPosition));
         propertyChangeSupport.firePropertyChange ("yozPosLabel", null, null);   // TO CUSTOMIZER
     }
-    
+
     /** for XML */
     public FrameModule getXOYFrame() { return xoy; }
     /** for XML */

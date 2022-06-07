@@ -46,26 +46,26 @@ import java.beans.*;
 /**
  * Appears to represent a period in time between two specific points in time
  * (not to be confused with "Interval" which represents a fixed length of time).
- * 
+ *
  * @author  root
- * @version 
+ * @version
  */
 public class TimePeriod extends Object implements TimePeriodSource {
 
    private double startMjd = 0;
    private double stopMjd = 0;
-    
+
     /** Creates new TimePeriod */
     public TimePeriod() {
     }
 
- 
+
   /** Creates new TimePeriod */
   public TimePeriod(double startMjd, double stopMjd) {
     this.startMjd = startMjd;
     this.stopMjd = stopMjd;
   }
-  
+
   public void set(TimePeriodSource timePeriodSource) {
     setStartMjd(timePeriodSource.getStartMjd());
     setStopMjd(timePeriodSource.getStopMjd());
@@ -91,11 +91,11 @@ public class TimePeriod extends Object implements TimePeriodSource {
       this.startMjd = startMjd;
       //firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }
-  
+
   public double getIntervalMjd() {
     return stopMjd - startMjd;
   }
-  
+
   public void setIntervalMjd(double intervalMjd) throws IllegalArgumentException {
       double oldIntervalMjd = getIntervalMjd();
       if (intervalMjd == oldIntervalMjd) return;
@@ -103,7 +103,7 @@ public class TimePeriod extends Object implements TimePeriodSource {
       setStopMjd(startMjd + intervalMjd);
       //firePropertyChange("intervalMjd", new Double(oldIntervalMjd), new Double(intervalMjd));
   }
-  
+
   /** Getter for property stopMjd.
    * @return Value of property stopMjd.
    */
@@ -118,8 +118,8 @@ public class TimePeriod extends Object implements TimePeriodSource {
   public void setStopMjd(double stopMjd) throws IllegalArgumentException {
         this.stopMjd = stopMjd;
   }
-  
-  
+
+
   /** Equals function. Doesn't care about currentMjd */
   public boolean equals(ovt.interfaces.TimePeriodSource ts) {
     if (ts.getStartMjd() == getStartMjd()  &&
@@ -136,6 +136,6 @@ public class TimePeriod extends Object implements TimePeriodSource {
       if ( start2 < stop1  && stop2 > start1) return true;
       return false;
   }
-  
+
 
 }

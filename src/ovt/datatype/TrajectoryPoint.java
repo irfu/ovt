@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ package ovt.datatype;
 import ovt.object.CoordinateSystem;
 
 /**
- * The basic data type of the satellite's trajectory. 
+ * The basic data type of the satellite's trajectory.
  */
 
 public class TrajectoryPoint {
@@ -53,7 +53,7 @@ public class TrajectoryPoint {
    public double gse[] = new double[3];
    /** SM coordinates (RE) of the satellite. */
    public double sm[] = new double[3];
-   
+
 
 /**
  * Returns point in the coordinate system <code>coordinateSystem</code>
@@ -75,6 +75,6 @@ public class TrajectoryPoint {
     throw new IllegalArgumentException("Invalid coordinate system '" + coordinateSystem + "'");
   }
 
-}       
+}
 
 

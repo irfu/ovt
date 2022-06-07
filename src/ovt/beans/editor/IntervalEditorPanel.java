@@ -46,7 +46,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*; 
+import javax.swing.text.*;
 
 import java.awt.Toolkit;
 import ovt.util.Log;
@@ -55,23 +55,23 @@ import ovt.util.Log;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
-public class IntervalEditorPanel extends JTextField 
+public class IntervalEditorPanel extends JTextField
         implements Syncer, PropertyChangeListener {
 
     private static final int DEBUG = 2;
-    
+
     private IntervalEditor editor;
     private DocumentListener documentListener;
-    
+
 /** Creates new IntervalEditorPanel */
 public IntervalEditorPanel(IntervalEditor ed) {
     this.editor = ed;
     editor.addPropertyChangeListener( this );
-    
+
     setDocument( new IntervalDocument() );
-    
+
     documentListener = new DocumentListener() {
         public void changedUpdate(DocumentEvent evt) {
         }
@@ -82,7 +82,7 @@ public IntervalEditorPanel(IntervalEditor ed) {
             applyChangesSilently();
         }
     };
-    
+
     getDocument().addDocumentListener( documentListener );
 }
 
@@ -103,10 +103,10 @@ private void applyChangesSilently() {
 public void propertyChange(PropertyChangeEvent evt) {
     // oldPropertyValue is changed only from outside
     getDocument().removeDocumentListener( documentListener );
-    final String s = editor.getAsText();   
+    final String s = editor.getAsText();
     //Log.log(getClass().getSimpleName()+"#propertyChange", DEBUG);
     //Log.log("   s = \""+s+"\"", DEBUG);
-    setText(s);  // NOTE: Must use text that can be parsed into an interval again. 
+    setText(s);  // NOTE: Must use text that can be parsed into an interval again.
     getDocument().addDocumentListener( documentListener );
 }
 
@@ -131,19 +131,19 @@ class IntervalDocument extends DefaultStyledDocument {
     /** Called whenever the user types something into the text field
      * (and other text field updates too). All calls to setText seem to
      * indirectly lead to a call to this function.
-     * 
+     *
      * @param str The string that "someone" tried to INSERT.
      */
-    public void insertString(int offs, String str, AttributeSet a) 
+    public void insertString(int offs, String str, AttributeSet a)
         throws BadLocationException {
-        
+
         // Insert string into text field, but only if the string contains permitted characters.
         if ( onlyContainsPermittedCharacters(str) )
             super.insertString(offs, str, a);   // Triggers call to DocumentListener#insertUpdate.
         else
             Toolkit.getDefaultToolkit().beep();
     }
-    
+
     private static boolean onlyContainsPermittedCharacters(String intervalStr){
       if (intervalStr != null ) {
         for (int i=0;i<intervalStr.length();i++) {
@@ -157,7 +157,7 @@ class IntervalDocument extends DefaultStyledDocument {
             }
         }
       }
-      
+
       return true;
     }
 }

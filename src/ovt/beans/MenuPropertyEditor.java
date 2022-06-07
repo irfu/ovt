@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,40 +35,40 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 3:31 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.interfaces.*;
 
 import javax.swing.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class MenuPropertyEditor extends GUIPropertyEditor implements MenuItemsSource {
-  
+
   public static final int CHECKBOX    = 0;
   public static final int RADIOBUTTON = 1;
   public static final int SWITCH      = 2;
-  
+
   private MenuItemEditor menuItemEditor = null;
   private int type = RADIOBUTTON;
-  
-  
+
+
   /** Creates new MenuPropertyEditor */
   public MenuPropertyEditor(BasicPropertyDescriptor pd) {
     super(pd);
     this.type = RADIOBUTTON;
   }
-  
+
   /** Creates new MenuPropertyEditor */
   public MenuPropertyEditor(BasicPropertyDescriptor pd, int type) {
     super(pd);
     this.type = type;
   }
-  
+
   /** Creates new MenuPropertyEditor */
   public MenuPropertyEditor(BasicPropertyDescriptor pd, String[] tags) {
     super(pd);
@@ -76,7 +76,7 @@ public class MenuPropertyEditor extends GUIPropertyEditor implements MenuItemsSo
     setValues(ovt.util.Utils.getIndexes(tags));
     setTags(tags);
   }
-  
+
   /** Creates new MenuPropertyEditor */
   public MenuPropertyEditor(BasicPropertyDescriptor pd, int[] values, String[] tags) {
     super(pd, values, tags);
@@ -84,9 +84,9 @@ public class MenuPropertyEditor extends GUIPropertyEditor implements MenuItemsSo
     //setValues(ovt.util.Utils.getIndexes(tags));
     //setTags(tags);
   }
-  
-  
-  
+
+
+
   protected MenuItemEditor getMenuItemEditor() {
     //System.out.println("Type = " + type);
     if (menuItemEditor == null) {

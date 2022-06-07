@@ -15,7 +15,7 @@ import java.awt.Component;
 /**
  *
  * @author  yuri
- * @version 
+ * @version
  */
 public class MjdEditor extends PropertyEditorSupport {
 
@@ -30,16 +30,16 @@ public class MjdEditor extends PropertyEditorSupport {
             throw new IllegalArgumentException("Time format: YYYY-MM-DD HH:MM:SS");
         }
     }
-    
+
     public String getAsText() {
         // NOTE: Uses Time#toString().
         return "" + new ovt.datatype.Time(((Double)getValue()).doubleValue());
     }
-    
+
     public boolean supportsCustomEditor() {
         return true;
     }
-    
+
     public Component getCustomEditor() {
         return new MjdEditorPanel(this);
     }

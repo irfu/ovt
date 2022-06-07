@@ -6,7 +6,7 @@
   Version:   $Revision: 2.7 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 10, 2000, 6:27 PM
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -51,17 +51,17 @@ import java.beans.*;
 import java.awt.*;
 import javax.swing.*;
 
-/** 
+/**
  * The Visual Object is an object, that deals with Visualization.
  * @author  root
- * @version 
+ * @version
  */
 public class VisualObject extends BasicObject implements PropertyChangeListener {
 
   /** Holds value of property visible. */
   private boolean visible = false;
-  
-  /** Indicates weather the object will have visual children. 
+
+  /** Indicates weather the object will have visual children.
    * If <CODE>containsVisualChildren</CODE> is <CODE>true</CODE> -
    * <CODE>vidibilityPropertyDescriptor.isDerived()</CODE> returns <CODE>true</CODE>
    * By default - <CODE>false</CODE>.
@@ -73,12 +73,12 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     super(core, name);
     this.containsVisualChildren = containsVisualChildren;
   }
-  
+
   /** Creates new VisualObject with name, which will not have VisualObject children */
   public VisualObject(OVTCore core, String name) {
     super(core, name);
   }
-  
+
   /** Creates new VisualObject with name and Icon, which will not have VisualObject children*/
   public VisualObject(OVTCore core, String name, String iconFilename) {
     super(core, name);
@@ -86,7 +86,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
       setIcon(new ImageIcon(Utils.findResource(iconFilename)));
     } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
   }
-  
+
   /** Creates new VisualObject with name and Icon */
   public VisualObject(OVTCore core, String name, String iconFilename, boolean containsVisualChildren) {
     super(core, name);
@@ -95,25 +95,25 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     } catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
     this.containsVisualChildren = containsVisualChildren;
   }
-  
+
   public Descriptors getDescriptors() {
     if (descriptors == null) {
     // Add default property descriptor for visible property.
     // each visual object can be hidden or shown.
       try {
-      
+
         descriptors = new Descriptors();
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("visible", this);
         pd.setDisplayName(getName());
-        
+
         if (containsVisualChildren) pd.setDerived(true);
-        
+
         BasicPropertyEditor editor = new VisibilityEditor(pd);
         addPropertyChangeListener("visible", editor);
         addPropertyChangeListener("enabled", editor);
         pd.setPropertyEditor(editor);
         descriptors.put(pd);
-        
+
       } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
@@ -121,8 +121,8 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     }
     return descriptors;
   }
-  
-  
+
+
   /** Getter for property visible.
    * @return Value of property visible.
    */
@@ -133,11 +133,11 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
    */
   public boolean isVisible() {
     final int type = hasVisualChildEx();
-    
+
     if (type == 0) {
         return visible;
     }
-    
+
     final boolean realVisible = (type == 2);   // if type = 2 -> has visible leafs (children, also indirect)
     if (visible != realVisible) {
         boolean oldVisible = visible;
@@ -151,7 +151,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
   /** Setter for property visible.
    * Note that method influences the "visible" property of its children and uses
    * previous visibility if set to true.
-   * 
+   *
    * @param visible New value of property visible.
    *
    * @throws PropertyVetoException
@@ -161,11 +161,11 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     if (oldVisible == visible) {
         return;    // Nothing to change
     }
-    
+
     //if (!isEnabled()) return; // object is not enabled - no motion. ;)
     if (visible && !isEnabled()) {
         throw new IllegalArgumentException("Attempt to show the object while it is not enabled!");
-    }    
+    }
 
     final Vector vVisual = getVisualLeafs();
     Enumeration eVisual;
@@ -173,7 +173,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     if (vVisual.size() > 0) {
 
         if (visible) { // show event
-            
+
             // Restore the previous visibility of the children ("visual leafs").
             boolean some_restored = false;
             if (stored) {
@@ -184,7 +184,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
                     some_restored |= obj.restoreVisible();
                 }
             }
-            
+
             // If none of the children ("visual leafs") was made visible, then show all of them.
             if (!some_restored) {
                 eVisual = vVisual.elements();
@@ -193,16 +193,16 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
                     obj.setVisible(true);
                 }
             }
-            
+
         } else { // hide event
-            
+
             Enumeration eVisible = getVisibleLeafs().elements();
 
             boolean or_mask = false;
             if (!eVisible.hasMoreElements()) {
                 or_mask = true; // if no leafs are visible
             }
-        
+
             // Store old visible propery values
             eVisual = vVisual.elements();
             while(eVisual.hasMoreElements()) {
@@ -215,13 +215,13 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
                 VisualObject obj = (VisualObject) eVisible.nextElement();
                 obj.setVisible(false);
             }
-            
+
         }
     }
     this.visible = visible;
     firePropertyChange ("visible", oldVisible, visible);
   }
-  
+
   private boolean wasVisible = true;
   private boolean stored = false;
 
@@ -235,7 +235,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     }
     return wasVisible;
   }
-  
+
   /** hides the object if enabled=false and calls superclass method setEnabled */
   public void setEnabled(boolean enabled) {
     if (!enabled && isVisible()) {
@@ -243,12 +243,12 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
     }
     super.setEnabled(enabled);
   }
-  
+
     /** Listens to events from parent */
   public void propertyChange(PropertyChangeEvent evt) {
     //System.out.println("Parent is " + getParent());
     //System.out.print("Is this event from my parent ... ");
-    if (evt.getSource() == getParent()) { 
+    if (evt.getSource() == getParent()) {
       // this is event from my parent
       //System.out.println("yes!");
       if (evt.getPropertyName().equals("enabled")) { // Sat.enabled property changed
@@ -257,7 +257,7 @@ public class VisualObject extends BasicObject implements PropertyChangeListener 
             setEnabled(satEnabled);
         }
       }
-      
+
     } //else System.out.println("no :(");
   }
 

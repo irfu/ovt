@@ -65,17 +65,17 @@ import javax.swing.event.*;
 /**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class DataScalarBarCustomizer extends JDialog {
-    
+
     private DataScalarBar dataScalarBar;
 
     /** Creates new DataScalarBarCustomizer */
     public DataScalarBarCustomizer(DataScalarBar dataScalarBar, JFrame owner) {
         super(owner, "Scalar Bar Customizer", false);
         this.dataScalarBar = dataScalarBar;
-        
+
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 // direct method this.setVisible should not be used
@@ -84,17 +84,17 @@ public class DataScalarBarCustomizer extends JDialog {
         });
         makeInterior();
     }
-    
+
     private void makeInterior() {
         Container cont = getContentPane();
-        
+
         JPanel panel = new JPanel();
         panel.setBorder(new TitledBorder(new EtchedBorder(), "Position"));
         panel.setLayout(new GridLayout(4, 1, 10, 10));
         addPropertyEditor(panel, "x");
         addPropertyEditor(panel, "y");
         cont.add(panel, BorderLayout.NORTH);
-        
+
         panel = new JPanel();
         panel.setBorder(new TitledBorder(new EtchedBorder(), "Size"));
         panel.setLayout(new GridLayout(4, 1, 10, 10));

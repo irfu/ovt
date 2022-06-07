@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -36,18 +36,18 @@ Khotyaintsev
  *
  * Created on March 25, 2000, 9:23 PM
  */
- 
+
 package ovt.interfaces;
 
-/** 
+/**
  * Apparently interface for "things" which can return a magnetic field vector.
  *
  * @author  root
- * @version 
+ * @version
  */
 public interface MagModel {
 
     /** Return magnetic field vector. */
   public double[] bv(double[] gsm, double mjd);
-  
+
 }

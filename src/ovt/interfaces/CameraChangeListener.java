@@ -11,10 +11,10 @@ import ovt.event.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public interface CameraChangeListener {
 
     public void cameraChanged(CameraEvent evt);
-    
+
 }

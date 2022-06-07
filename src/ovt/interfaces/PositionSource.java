@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -33,17 +33,17 @@ Khotyaintsev
 /*
  * PositionSource.java
  *
- * 
+ *
  */
- 
+
 package ovt.interfaces;
 
-/** 
+/**
  * Used by {@link ovt.object.Camera ovt.object.Camera} to determine different
  * objects location.
- * 
+ *
  * @author  oleg
- * @version 
+ * @version
  */
 public interface PositionSource {
 

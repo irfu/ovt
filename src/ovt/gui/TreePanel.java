@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/gui/TreePanel.java,v $
   Date:      $Date: 2005/12/13 16:33:06 $
   Version:   $Revision: 2.7 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 package ovt.gui;
@@ -52,44 +52,44 @@ public class TreePanel extends JScrollPane implements ActionListener {
     protected OVTNode rootNode = null;
     protected DefaultTreeModel treeModel;   // Refers to javax.swing.tree.DefaultTreeModel
     protected OVTTreeCellRenderer renderer;
-    
+
         /** True if the tree consists only from one Root node */
     protected boolean isEmpty = true;
 
     public TreePanel(OVTCore core) {
         super();
         this.core = core;
-        
+
         //Create the nodes.
         //System.out.println("Creating nodes");
         rootNode = new OVTNode(core, this);
         //System.out.println("finished creating nodes");
-        
+
         treeModel = new DefaultTreeModel((DefaultMutableTreeNode)rootNode);
         tree = new JTree(treeModel);
         tree.setCellRenderer(renderer = new OVTTreeCellRenderer());
         tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        
+
         //tree.putClientProperty("JTree.lineStyle", lineStyle);
         tree.putClientProperty("JTree.lineStyle", "Angled");
-        
+
         tree.addMouseListener(new TreePanelMouseListener());
-        
+
         //setColumnHeaderView(tree);
         setViewportView(tree);
-        
+
         // Expand Satellites tree node
         expandSatellitesNode();
     }
-    
+
     public OVTCore getCore()
     { return core; }
-    
+
   /** notifies the tree model listeners that <CODE>node</CODE> has changed */
     public void nodeChanged(OVTNode node) {
         treeModel.nodeChanged(node);
     }
-    
+
     public void actionPerformed(ActionEvent e) {
         JMenuItem source = (JMenuItem)(e.getSource());
         String s = "Action event detected";
@@ -108,12 +108,12 @@ public class TreePanel extends JScrollPane implements ActionListener {
             }
         }
     }
-    
+
     /** Expands Satellites/Cluster tree node */
     public void expandClusterNode() {
         for (int i=0; i<treeModel.getChildCount(rootNode); i++) {
-            OVTNode treeNode = (OVTNode) treeModel.getChild(rootNode, i);            
-            if (treeNode.getUserObject() instanceof Sats) {                
+            OVTNode treeNode = (OVTNode) treeModel.getChild(rootNode, i);
+            if (treeNode.getUserObject() instanceof Sats) {
                 for (int j=0; j<treeModel.getChildCount(treeNode); j++) {
                   OVTNode treeNode2 = (OVTNode) treeModel.getChild(treeNode, j);
                   if (treeNode2.getUserObject() instanceof ClusterSats) {
@@ -124,7 +124,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
             }
         }
     }
-    
+
     /*
     class TestMouseAdapter extends MouseAdapter {
         public void mouseClicked(MouseEvent e) {
@@ -155,7 +155,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
     }*/
 
     class TreePanelMouseListener extends MouseAdapter {
-        
+
         public void mouseClicked(MouseEvent e) {
             //System.out.println("Mouse CLICKed");
             final boolean checkBoxClicked = renderer.isCheckBoxClicked(tree, e);
@@ -170,7 +170,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
                             if (checkBoxClicked) getCore().Render();
                         }
                         tree.repaint();
-                        
+
                     }
                     catch(ClassCastException e2) {
                         System.err.println("Error: non-visual object! " + e2);
@@ -178,18 +178,18 @@ public class TreePanel extends JScrollPane implements ActionListener {
                 }
             }
         }
-        
+
         public void mousePressed(MouseEvent e) {
             //System.out.println("Mouse PRESSed");
             int selRow = tree.getRowForLocation(e.getX(), e.getY());
             tree.setSelectionRow(selRow);
         }
-        
+
         public void mouseReleased(MouseEvent e) {
             //System.out.println("Mouse released");
             if (isRightButton(e)) {
                 showPopup(e);
-            } 
+            }
         }
 
         public boolean isLeftButton(MouseEvent e) {
@@ -200,9 +200,9 @@ public class TreePanel extends JScrollPane implements ActionListener {
             return (e.getModifiers() & e.BUTTON3_MASK) != 0;
         }
 
-        
+
     }
-    
+
     public void showPopup(MouseEvent e) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) tree.getLastSelectedPathComponent();
         if (node != null) {
@@ -216,7 +216,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
             try {
                 menu = addMenuItemsFromSource(menu, (MenuItemsSource) obj, false);
             } catch (ClassCastException ignore) {}
-            if (menu != null ) 
+            if (menu != null )
                 menu.show(e.getComponent(), e.getX(), e.getY());
         }
     }
@@ -224,17 +224,17 @@ public class TreePanel extends JScrollPane implements ActionListener {
     private JPopupMenu addMenuItemsFromDescriptors(JPopupMenu menu, DescriptorsSource source) {
         Descriptors descriptors = source.getDescriptors();
         if (descriptors == null) return menu;
-        
+
         //System.out.println("Descriptors: " + descriptors);
-        
+
         Enumeration e = descriptors.elements();
 
         while (e.hasMoreElements()) {
             BasicPropertyDescriptor pd = (BasicPropertyDescriptor) e.nextElement();
             //System.out.println("Property=" + pd.getName());
-            
+
             if (pd.isMenuAccessible()) {
-                
+
                 try {
                     menu = addMenuItemsFromSource(menu, (MenuItemsSource) pd.getPropertyEditor(), false);
                     // One should render after user changes any parameter by means of editor
@@ -244,7 +244,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
                         if (!guiEd.hasListener((GUIPropertyEditorListener)getCore()))
                             guiEd.addGUIPropertyEditorListener((GUIPropertyEditorListener)getCore());
                     } catch (ClassCastException ignore) {}
-                    
+
                 } catch (ClassCastException e2) {
                     System.out.println("Property " + pd.getName() + " editor has no menu items." + e2);
                 }
@@ -252,7 +252,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
         }
         return menu;
     }
-    
+
     private JPopupMenu addMenuItemsFromSource(JPopupMenu menu, MenuItemsSource source, boolean multiple_sep) {
         JMenuItem [] mItem = source.getMenuItems();
         if (menu == null) menu = new JPopupMenu();
@@ -270,7 +270,7 @@ public class TreePanel extends JScrollPane implements ActionListener {
     private void addSeparator(JPopupMenu menu) {
         if (menu.getComponentCount() > 0) menu.add(new JSeparator());
     }
-    
+
     public DefaultTreeModel getTreeModel() { // added by Oleg
         return treeModel;
     }
@@ -279,11 +279,11 @@ public class TreePanel extends JScrollPane implements ActionListener {
 /*
   class NodeSelectionListener extends MouseAdapter {
     JTree tree;
-    
+
     NodeSelectionListener(JTree tree) {
       this.tree = tree;
     }
-    
+
     public void mouseClicked(MouseEvent e) {
       int x = e.getX();
       int y = e.getY();

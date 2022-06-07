@@ -8,22 +8,22 @@
  Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev)
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev
 
@@ -129,17 +129,17 @@ public class IgrfModel extends AbstractMagModel {
 
 
     // Returns the year, for which IGRF coefficients are valid.
-/* ------------------------------------------------------------ 
-     FUNCTION: 
+/* ------------------------------------------------------------
+     FUNCTION:
      compute igrf field for cartesian geo
-     input: 
+     input:
      geo(3) position vector (geo) in earth radii (re = 6371.2 km)
-     output: 
+     output:
      bv(3)  magnetic field vector in geo (units as set by setigrf)
      files/COMMONs:
      COMMON /cigrf/ with coefficients set by setigrf(mjd)
-     remarks: 
-     CALL setigrf(mjd) before first use 
+     remarks:
+     CALL setigrf(mjd) before first use
      --------------------------------------------------------------- */
     protected double[] igrf(double[] geo) {
 
@@ -319,7 +319,7 @@ public class IgrfModel extends AbstractMagModel {
         char ghMarker = '\0';
         // NOTE: Will throw exception if dataFile does not refer to an existing file.
         // Therefore good to check for this first.
-        // NOTE: File#getCanonicalPath() will resolve symbolic links whereas File#getAbsolutePath() will not. 
+        // NOTE: File#getCanonicalPath() will resolve symbolic links whereas File#getAbsolutePath() will not.
         final String INVALID_FILE_FORMAT_EXCEPTION_MSG
                 = "The IGRF data file has an invalid format, \"" + igrfFile.getAbsolutePath() + "\".";
         final BufferedReader inData;
@@ -644,10 +644,10 @@ public class IgrfModel extends AbstractMagModel {
             // but still the entry in the cache implies that they are valid for an integer year (intYear)!!
             // See the notice/documentation for method.
             // /Erik P G Johansson 2015-10-29 (who did not write the code)
-            // 
+            //
             // NOTE: This is the same cache that initHashTableFromFile uses.
-            // 
-            // IMPLEMENTATION NOTE: Important that values are not cached if there was an error     
+            //
+            // IMPLEMENTATION NOTE: Important that values are not cached if there was an error
             // since the error message will only be triggered when the data is derived,
             // but NOT when the faulty data is later obtained from the cache, and NOT
             // if the data is later used to interpolate other years. The latter should not
@@ -665,7 +665,7 @@ public class IgrfModel extends AbstractMagModel {
 
         } catch (IOException e) {
             // NOTE: Bad way of handling exception but not sure of what would be better.
-            // If failure to read IGRF data file due to using a high year, then 
+            // If failure to read IGRF data file due to using a high year, then
             // it will/should lead to all coefficients being zero. ==> Dipole direction and GSM undefined.
             //
             // NOTE: Error should preferably lead to erronoues g & h values not being stored in the cache at least(?).
@@ -748,7 +748,7 @@ public class IgrfModel extends AbstractMagModel {
         // Can not test entirely since since one can not easily instantiate MagProps.
 
         //IgrfModel igrf = new IgrfModel(null);
-        //igrf.setIgrf(1993.34F);        
+        //igrf.setIgrf(1993.34F);
         //File file = new File("/home/erjo/.ovt/3.0/mdata/igrf.d_new");
         File igrfFilePath = new File("/home/erjo/.ovt/3.0/mdata/igrf.d_old");
 

@@ -25,7 +25,7 @@ public class Tsyganenko96 extends AbstractMagModel {
   public Tsyganenko96(MagProps magProps) {
     super(magProps);
   }
-  
+
   public double[] bv(double[] gsm, double mjd){
     double[] b = new double[3];
     double swp = magProps.getSWP(mjd);
@@ -33,17 +33,17 @@ public class Tsyganenko96 extends AbstractMagModel {
     double bYimf = imf[1];
     double bZimf = imf[2];
     double dst = magProps.getDSTIndex(mjd);
-    
+
     Trans tr = magProps.getTrans(mjd);
     double tilt=tr.getDipoleTilt();
     tsyganenko96JNI(gsm,tilt,swp,dst,bYimf,bZimf,b); // ????
     return b;
   }
-  
+
 
 //  protected static native void tsyganenko96JNI(double[] gsm, double kp, double sint, double cost, double[] bv);
 
-  
+
   // for native methods
 //  static {
 //    System.loadLibrary("ovt2g");

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.13 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -50,32 +50,32 @@ public class ClusterSat extends LTOFSat {
         e2.printStackTrace(System.err);
     }
  }
- 
+
  public void setOrbitFile(File orbitFile) throws IOException {
     super.setOrbitFile(orbitFile);
     // color cluster satellites according to the convension
     Color color = null;
     switch (getSatNumber()) {
-        case 1 :  color = Color.black; 
+        case 1 :  color = Color.black;
                         break;
-        case 2 :  color = Color.red; 
+        case 2 :  color = Color.red;
                         break;
-        case 3 :  color = Color.green; 
+        case 3 :  color = Color.green;
                         break;
-        case 4 : color = Color.magenta; 
+        case 4 : color = Color.magenta;
                        break;
         default: throw new IOException("This is not a Cluster LTOF. The number of a s/c should be 1-4.");
     }
-    getSatelliteModule().setColor(color); 
-    getOrbitModule().setColor(color); 
-    getMagFootprintModule().setColor(color); 
+    getSatelliteModule().setColor(color);
+    getOrbitModule().setColor(color);
+    getMagFootprintModule().setColor(color);
   }
- 
+
 
 
  /**
-  * Redefinition of a parent's method. 
-  * @return spin vector in gei, vector antiparallel to Z-GSE if no spin data available 
+  * Redefinition of a parent's method.
+  * @return spin vector in gei, vector antiparallel to Z-GSE if no spin data available
   */
   protected double[] getSpinVectGEI(double mjd) {
     double[] res = super.getSpinVectGEI(mjd);
@@ -86,8 +86,8 @@ public class ClusterSat extends LTOFSat {
     } //else System.out.println("Spin for "+ new Time(mjd) +" is available.");
     return res;
   }
-  
-  /** redefinition of previous method. 
+
+  /** redefinition of previous method.
    * @return true
    */
   public boolean isSpinAvailable(){
@@ -95,11 +95,11 @@ public class ClusterSat extends LTOFSat {
   }
 
   /** returns super.getMenuItems() with the invalidated "Remove" item. */
-  public JMenuItem[] getMenuItems() { 
+  public JMenuItem[] getMenuItems() {
      JMenuItem[] items = super.getMenuItems();
      items[6].setEnabled(false);
      return items;
   }
- 
- 
+
+
 }

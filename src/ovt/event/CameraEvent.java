@@ -13,7 +13,7 @@ import java.util.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 
 public class CameraEvent extends Object {

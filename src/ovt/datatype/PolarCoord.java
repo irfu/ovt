@@ -6,7 +6,7 @@
   Version:   $Revision: 2.2 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,13 +35,13 @@ package ovt.datatype;
 /**
  * This object contains Polar Coordinate - longitude and lattitude
  * @author  ko
- * @version 
+ * @version
  */
 public class PolarCoord extends Object {
 
     public double lat = 0;
     public double lon = 0;
-    
+
     /** Creates new PolarCoord */
     public PolarCoord() {
     }
@@ -51,16 +51,16 @@ public class PolarCoord extends Object {
         this.lat = lat;
         this.lon = lon;
     }
-    
+
     public double[] getAsArray() {
         return new double[]{ lat, lon};
     }
-    
+
     /** Overrides Object.hashCode() */
     public int hashCode() {
         return new String(""+lon+" "+lat).hashCode();
     }
-    
+
     /** Overrides Object.equals() method */
     public boolean equals(Object obj) {
         try {
@@ -70,23 +70,23 @@ public class PolarCoord extends Object {
             return false;
         }
     }
-    
+
     public double getLon() {
         return lon;
     }
-    
+
     public void setLon(double lon) {
         this.lon=lon;
     }
-    
+
     public double getLat() {
         return lat;
     }
-    
+
     public void setLat(double lat) {
         this.lat=lat;
     }
-    
+
     public String toString() {
         return "("+lat+","+lon;
     }

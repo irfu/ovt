@@ -1,32 +1,32 @@
 /*=========================================================================
- 
+
  Program:   Orbit Visualization Tool
  Source:    $Source: /stor/devel/ovt2g/ovt/OVTCore.java,v $
  Date:      $Date: 2009/10/08 20:53:40 $
  Version:   $Revision: 2.25 $
- 
+
  Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev)
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev
- 
+
  =========================================================================*/
 package ovt;
 
@@ -108,7 +108,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String SETTING_SSCWS_WSDL_URL_STRING     = "SSCWS.WsdlUrl";
     public static final String SETTING_SSCWS_QNAME_NAMESPACE_URI = "SSCWS.QNameNamespace";
     public static final String SETTING_SSCWS_QNAME_LOCAL_PART    = "SSCWS.QNameLocalPart";
-    
+
     private static final Properties globalProperties = new Properties();
     /**
      * File to which stdout should be directed. null=Print to screen instead of
@@ -319,7 +319,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
          config file if none already exists. Therefore, if no old config file
          exists, no new one will be created.
          */
-        //File confFile = Utils.findFile(getConfSubdir() + globalSettingsFileName);  
+        //File confFile = Utils.findFile(getConfSubdir() + globalSettingsFileName);
         /*if (confFile == null) {
          throw new IOException("Can not find a global settings file to overwrite. ");
          }*/
@@ -368,15 +368,15 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
         //      NOTE: Used in many locations.
         globalProperties.put(key, value);
     }
-    
-    
+
+
     /**
      * Get global setting, but use default value if not defined. Then update
      * properties with the value actually returned.
-     * 
+     *
      * @param key
      * @param defaultValue
-     * @return 
+     * @return
      */
     public synchronized String getSetDefaultGlobalSetting(String key, String defaultValue) {
         String value = getGlobalSetting(key, defaultValue);
@@ -541,7 +541,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
 
         //set output label
         outputLabel = new OutputLabel(this);
-        
+
         /**
          * Select what to use as a data source for the functionality/code that
          * handles SSC Web Services satellites.
@@ -554,7 +554,7 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
                 getSetDefaultGlobalSetting(SETTING_SSCWS_QNAME_LOCAL_PART,    SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART)
         );
         // Data source emulator for testing.
-        //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;  
+        //sscwsLib = SSCWSLibraryTestEmulator.DEFAULT_INSTANCE;
 
         //magProps = new ovt.mag.MagProps(this);
         Log.log("Throwing timeChangeEvent to everybody ... ", 4);
@@ -1036,8 +1036,8 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public SSCWSLibrary getSscwsLib() {
         return sscwsLib;
     }
-    
-    
+
+
     /**
      * for XML
      */

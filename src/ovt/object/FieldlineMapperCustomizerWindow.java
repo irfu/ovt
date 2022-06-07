@@ -55,18 +55,18 @@ import javax.swing.table.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class FieldlineMapperCustomizerWindow extends JFrame implements Customizer {
-    
+
     private static final int DEBUG = 9;
     /** Helps to create a name (ID) for the new point. It should be "new"+(newRowID++) */
     private int newRowID = 0;
     private FieldlineMapper fieldlineMapper;
-    
+
     private StringEditor nameEditor;
     private JTable table;
-    
+
     private javax.swing.JButton insertButton, deleteButton, applyButton,closeButton,moveUpButton,moveDownButton;
 
 public FieldlineMapperCustomizerWindow() {
@@ -74,7 +74,7 @@ public FieldlineMapperCustomizerWindow() {
     try {
         setIconImage (Toolkit.getDefaultToolkit().getImage(Utils.findResource("images/fl_mapper.gif")));
     } catch (FileNotFoundException e2) { e2.printStackTrace(System.err); }
-    
+
     // name editor
     nameEditor = new StringEditor();
     nameEditor.addPropertyChangeListener( new PropertyChangeListener() {
@@ -86,7 +86,7 @@ public FieldlineMapperCustomizerWindow() {
 
     // Create table (TableModel editor)
     table = new JTable ();
-    
+
     // Add selection listener
     table.getSelectionModel().addListSelectionListener( new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
@@ -105,7 +105,7 @@ public FieldlineMapperCustomizerWindow() {
                 // if only one row is selected - enable move buttons
                 if (lsm.getMaxSelectionIndex() == lsm.getMinSelectionIndex()) {
                     boolean upEnabled = true; boolean downEnabled = true;
-                    if (lsm.getMinSelectionIndex() == table.getRowCount()-1) 
+                    if (lsm.getMinSelectionIndex() == table.getRowCount()-1)
                         downEnabled = false;
                     if (lsm.getMinSelectionIndex() == 0) upEnabled = false;
 
@@ -123,12 +123,12 @@ public FieldlineMapperCustomizerWindow() {
 
     initComponents();
     pack();
-    
+
     Utils.setInitialWindowPosition(this, null);
 }
 
 public void setObject(Object bean) {
-    if (!(bean instanceof FieldlineMapper)) 
+    if (!(bean instanceof FieldlineMapper))
         throw new IllegalArgumentException("This object is not FieldlineMapper ("+bean+")");
     this.fieldlineMapper = (FieldlineMapper)bean;
     nameEditor.setValue(fieldlineMapper.getName());
@@ -142,12 +142,12 @@ private DefaultTableModel getTableModel() {
 
 private void initComponents () {
     //setIconImage(Toolkit.getDefaultToolkit().getImage(magProps.getCore().getImagesDir()+"ovt.gif"));
-    
+
     // create name panel
-    
+
     JPanel namePanel = new JPanel();
     namePanel.setLayout(new BoxLayout(namePanel,BoxLayout.X_AXIS));
-    
+
     namePanel.setBorder(BorderFactory.createEmptyBorder(5,5,5,5));
     namePanel.add(new JLabel("Name:"));
     namePanel.add(Box.createHorizontalStrut(5));
@@ -155,25 +155,25 @@ private void initComponents () {
     tf.setPreferredSize( new Dimension(150, tf.getPreferredSize().height));
     namePanel.add(tf); // name property
     namePanel.add(Box.createHorizontalGlue());
-    
+
     JPanel buttonsPanel = createButtonsPanel();
-    
+
     JScrollPane jScrollPane1 = new JScrollPane ();
     jScrollPane1.setViewportView (table);
     jScrollPane1.setBorder(BorderFactory.createTitledBorder("Fieldline start points"));
-    
+
     // adjust the height of Table
-    jScrollPane1.setPreferredSize( 
-        new Dimension( jScrollPane1.getPreferredSize().width, 
+    jScrollPane1.setPreferredSize(
+        new Dimension( jScrollPane1.getPreferredSize().width,
                        buttonsPanel.getPreferredSize().height*2)
     );
 
     // add all those panels to content pane
-    
+
     getContentPane ().add (namePanel, java.awt.BorderLayout.NORTH);
-    
+
     getContentPane().add(jScrollPane1, java.awt.BorderLayout.CENTER);
-    
+
     getContentPane ().add (buttonsPanel, java.awt.BorderLayout.EAST);
 
 }
@@ -181,7 +181,7 @@ private void initComponents () {
 private JPanel createButtonsPanel() {
     JPanel jPanel = new JPanel ();
     jPanel.setLayout(new java.awt.GridLayout (6, 1));
-    
+
     moveUpButton = new JButton ("Move Up");
     moveUpButton.setEnabled(false);
     moveUpButton.addActionListener (new java.awt.event.ActionListener () {
@@ -212,7 +212,7 @@ private JPanel createButtonsPanel() {
 
     jPanel.add (moveDownButton);
 
-    
+
     insertButton = new JButton ("Insert row");
     insertButton.addActionListener (new java.awt.event.ActionListener () {
       public void actionPerformed (java.awt.event.ActionEvent evt) {
@@ -253,7 +253,7 @@ private JPanel createButtonsPanel() {
 
     jPanel.add (closeButton);
     getRootPane().setDefaultButton(closeButton);
-    
+
     return jPanel;
 }
 
@@ -281,10 +281,10 @@ private void insertRow() {
 
   if (table.getRowCount() == 0) row = -1;
 
-  Log.log("Inserting row after " + row, DEBUG);  
+  Log.log("Inserting row after " + row, DEBUG);
 
   getTableModel().insertRow(row+1, new Object[]{"new"+(newRowID++), "", ""});
-  
+
   table.setRowSelectionInterval(row+1,row+1);
  }
 
@@ -306,13 +306,13 @@ private void deleteRows() {
     int rowToSelect = rows[rows.length - 1] - rows.length;
     if (rowToSelect < 0) rowToSelect = 0;
     table.getSelectionModel().setSelectionInterval(rowToSelect, rowToSelect);
-    
-  } 
+
+  }
   /*  JOptionPane.showMessageDialog(this,
                              "No rows selected.",
                              "Error",
                              JOptionPane.ERROR_MESSAGE); */
-  
+
 }
 
   /** Exit the Application */
@@ -320,5 +320,5 @@ private void deleteRows() {
     this.setVisible(false);
   }
 
-  
+
 }

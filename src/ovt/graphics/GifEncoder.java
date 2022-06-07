@@ -112,7 +112,7 @@ public class GifEncoder extends ImageEncoder
     // Acme.IntHashtable colorHash;
     // changed by ko
     IntHashtable colorHash;
-    
+
     void encodeDone() throws IOException
 	{
 	int transparentIndex = -1;

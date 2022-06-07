@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 6, 2000, 1:10 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.gui.Style;
@@ -45,20 +45,20 @@ import javax.swing.*;
 import java.awt.event.*;
 
 
-/** 
+/**
  * Is used for properties which can be true/false
  * @author  root
- * @version 
+ * @version
  */
 public class CheckBoxMenuItemEditor extends MenuItemEditor implements ItemListener {
 
   private JMenuItem menuItem = null;
-  
+
   /** Creates new OVTCheckBoxMenuItemEditor */
   public CheckBoxMenuItemEditor(GUIPropertyEditor editor) {
     super(editor);
   }
-  
+
   public JMenuItem[] getMenuItems() {
     if (menuItem == null) {
       // create menu items
@@ -71,21 +71,21 @@ public class CheckBoxMenuItemEditor extends MenuItemEditor implements ItemListen
     }
     return new JMenuItem[]{menuItem};
   }
-  
-  
-  
+
+
+
   public void propertyChange(PropertyChangeEvent event) {
     if (event.getPropertyName().equals(getEditor().getPropertyName())) {
       //
       JMenuItem menuItem = getMenuItems()[0];
       boolean newState = ((Boolean)(getEditor().getValue())).booleanValue();
       menuItem.removeItemListener(this);
-      menuItem.setSelected(newState); 
+      menuItem.setSelected(newState);
       menuItem.addItemListener(this);
     }
     super.propertyChange(event);
   }
-  
+
   public void itemStateChanged(ItemEvent evt) {
     try {
       getEditor().setValue(new Boolean(((JCheckBoxMenuItem)(evt.getSource())).isSelected()));
@@ -94,5 +94,5 @@ public class CheckBoxMenuItemEditor extends MenuItemEditor implements ItemListen
       System.out.println(getClass().getName() + "->" + e2);
     }
   }
-  
+
 }

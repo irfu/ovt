@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,48 +35,48 @@ Khotyaintsev
  *
  * Created on March 8, 2000, 9:37 PM
  */
- 
+
 package ovt.beans;
 
 import java.beans.IndexedPropertyDescriptor;
 
 import java.util.*;
 
-/** 
+/**
  * This class is a hashtable (propertyName, BasicPropertyDescriptor)
  * @author  root
- * @version 
+ * @version
  */
 public class Descriptors extends Hashtable {
 
   private Hashtable indexedPropertyDescriptors = new Hashtable();
-    
+
   /** Creates new PropertyDescriptors */
   public Descriptors() {
   }
-  
-  public void put(BasicPropertyDescriptor pd) 
+
+  public void put(BasicPropertyDescriptor pd)
     { put(pd.getName(), pd); }
-  
-  public BasicPropertyDescriptor getDescriptor(String propertyName) 
+
+  public BasicPropertyDescriptor getDescriptor(String propertyName)
     { return (BasicPropertyDescriptor)get(propertyName); }
-  
-  public void put(IndexedPropertyDescriptor pd) 
+
+  public void put(IndexedPropertyDescriptor pd)
     { indexedPropertyDescriptors.put(pd.getName(), pd); }
-    
-  public IndexedPropertyDescriptor getIndexedPropertyDescriptor(String propertyName) 
-    { return (IndexedPropertyDescriptor)indexedPropertyDescriptors.get(propertyName); }  
-  
-  public Enumeration getIndexedPropertyDescriptors() 
+
+  public IndexedPropertyDescriptor getIndexedPropertyDescriptor(String propertyName)
+    { return (IndexedPropertyDescriptor)indexedPropertyDescriptors.get(propertyName); }
+
+  public Enumeration getIndexedPropertyDescriptors()
     {  return indexedPropertyDescriptors.elements(); }
-  
-    
+
+
   /** Removes descriptor index or not indexed */
   public void removeDescriptor(String propertyName) {
       remove(propertyName);
       indexedPropertyDescriptors.remove(propertyName);
   }
-  
+
   public String toString() {
     String res = "";
     Enumeration e = elements();

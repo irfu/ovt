@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,36 +35,36 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 5:40 PM
  */
- 
+
 package ovt.event;
 
 import java.beans.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class CoordinateSystemEvent extends PropertyChangeEvent {
 
   protected int window;
-  
+
   /** Creates new CoordinateSystemEvent */
   public CoordinateSystemEvent(Object source, int window, int old_cs, int new_cs) {
     super(source, "coordinateSystem", new Integer(old_cs), new Integer(new_cs));
     this.window = window;
   }
-  
+
   public int getOldCS() {
     return ((Integer)getOldValue()).intValue();
   }
-  
+
   public int getNewCS() {
     return ((Integer)getNewValue()).intValue();
   }
-  
+
   public int getWindow() {
     return window;
   }
-  
+
 }

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -44,12 +44,12 @@ import java.util.*;
 /**
  *
  * @author  oleg
- * @version 
+ * @version
  */
 public class Degrees {
 
     private double value;
-    
+
     /** Creates new Degrees from degrees double value*/
     public Degrees(double val) {
         this.value = value;
@@ -70,15 +70,15 @@ public class Degrees {
     public void setValue(double val) {
         this.value = val;
     }
-    
+
     public void setValue(String svalue) throws IllegalArgumentException {
         setValue(Degrees.todouble(svalue));
     }
-        
+
     public String toString() {
         return Degrees.fromdouble(this.value);
     }
-        
+
     static private int reminder(double val, int divisor)
     {
         val -= (int) val;
@@ -96,7 +96,7 @@ public class Degrees {
         sb.append(reminder(val, 60)).append("\"");
         return sb.toString();
     }
-    
+
     /** Converts String representation of degrees (123m 45' 67") to double */
     static public double todouble(String svalue) throws IllegalArgumentException {
         double val;
@@ -108,7 +108,7 @@ public class Degrees {
                 System.out.println("Degrees::todouble: token = " + s);
                 return s;
             }
-        }*/; 
+        }*/;
         try {
             String tok = st.nextToken("d ");
             val = Integer.parseInt(tok);
@@ -116,24 +116,24 @@ public class Degrees {
                 sign = -1;
                 val  = -val;
             }
-            if (!st.nextToken(" 0123456789").equals("d")) 
+            if (!st.nextToken(" 0123456789").equals("d"))
                 throw new IllegalArgumentException("\"d\" expected");
 
             try {
-                tok = st.nextToken("' "); 
+                tok = st.nextToken("' ");
                 int parsed = Integer.parseInt(tok);
                 if (parsed < 0)
                     throw new IllegalArgumentException("minutes value must be > 0");
-                val +=  (double)parsed / 60; 
+                val +=  (double)parsed / 60;
             } catch (NoSuchElementException e) {
                 return val * sign;
             }
-            
-            if (!st.nextToken(" 0123456789").equals("'")) 
+
+            if (!st.nextToken(" 0123456789").equals("'"))
                 throw new IllegalArgumentException("' expected");
-            
+
             try {
-                tok = st.nextToken("\" "); 
+                tok = st.nextToken("\" ");
                 int parsed = Integer.parseInt(tok);
                 if (parsed < 0)
                     throw new IllegalArgumentException("seconds value must be > 0");
@@ -141,10 +141,10 @@ public class Degrees {
             } catch (NoSuchElementException e) {
                 return val * sign;
             }
-            
-            if (!st.nextToken(" 0123456789").equals("\"")) 
+
+            if (!st.nextToken(" 0123456789").equals("\""))
                 throw new IllegalArgumentException("\" expected");
-            
+
             return val * sign;
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException(e.getMessage());

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,15 +35,15 @@ Khotyaintsev
  *
  * Created on March 24, 2000, 6:05 PM
  */
- 
+
 package ovt.mag.model;
 
 import ovt.mag.*;
 
-/** 
+/**
  * The class is used to return zero field
  * @author  root
- * @version 
+ * @version
  */
 public class NullModel extends AbstractMagModel {
 
@@ -51,10 +51,10 @@ public class NullModel extends AbstractMagModel {
   public NullModel(MagProps magProps) {
     super(magProps);
   }
-  
+
   /** Returns vector {0, 0, 0} */
   public double[] bv(double[] gsm, double mjd) {
     return new double[]{0, 0, 0};
   }
-  
+
 }
