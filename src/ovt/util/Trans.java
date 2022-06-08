@@ -139,14 +139,14 @@ public class Trans {
 
     /* Coordinate conversion matrices between coordinate systems.
     
-     * NOTE: Technically over-determined since there are
-     * enough conversion matrices to represent a loop of transformations
-     * GEO->GEI->GSM->GEO (there is one matrix too many).
+     * NOTE: One of these coordinate transformation is technically redundant
+     * since there are enough conversion matrices to represent a loop of
+     * transformations GEO->GEI->GSM->GEO (there is one matrix too many).
      */
     sm_gsm  = sm_gsm_trans_matrix(mjd, Eccdz);
-    geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);
-    geo_gei = geo_gei_trans_matrix(mjd);
-    gei_gsm = gei_gsm_trans_matrix(mjd, Eccdz);
+    geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);   // Part of loop.
+    geo_gei = geo_gei_trans_matrix(mjd);          // Part of loop.
+    gei_gsm = gei_gsm_trans_matrix(mjd, Eccdz);   // Part of loop.
     geid_gse = geid_gse_trans_matrix(mjd);
     gei_geid = gei_geid_trans_matrix(mjd);
 
@@ -268,7 +268,8 @@ public class Trans {
   */
 
   /* ***************************************************************************
-  * Methods that convert from (1) a method-dependent coordinate system, to
+  * Methods that return coordinate transformation matrices for conversion from
+  * (1) a method-dependent coordinate system, to
   * (2) an arbitrary coordinate system (not all such methods).
   *************************************************************************** */
   
@@ -345,8 +346,8 @@ public class Trans {
   }
 
   /**
-   * Convert from an (almost) arbitrary coordinate system (CS) to an (almost)
-   * arbitrary coordinate system.
+   * Return coordinate transformation matrix between any two arbitrary
+   * coordinate systems (CS).
    * 
    * @param fromCS
    * @param toCS
@@ -520,7 +521,11 @@ public class Trans {
 
   /* ************************************
    * Miscellaneous methods, mostly static
-   ************************************** */
+   **************************************
+   NOTE: These are the hardcoded formulas for converting between specific pairs
+   if coordinate systems. All other coordinate transformations are obtained
+   through matrix multiplication.
+  */
 
   //   ------     GEO  ->  GEI    ------
 
@@ -570,8 +575,8 @@ public class Trans {
 
   /**
    * NOTE: This function was originally intended to convert from GEI to GSE,
-   * back when OVT only supported one GEI cordinate system (GEI J2000.0; not GEI
-   * epoch-of-date). This function has been redefined (function name change)
+   * back when OVT only supported one GEI coordinate system (GEI J2000.0; not
+   * GEI epoch-of-date). This function has been redefined (function name change)
    * since then to convert from GEI epoch-of-date to GSE after ~bug reports
    * (Patrick Daly, MPS). However, the implementation implies that this might
    * not be entirely correct. The implementation uses Utils.sunmjd() which is
@@ -605,7 +610,7 @@ public class Trans {
     */
     geid_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
     geid_gse[1] = Vect.crossn(eqlipt, geid_gse[0]);      // In the ecliptic.
-    geid_gse[2] = Vect.crossn(geid_gse[0], geid_gse[1]);  // Ecliptic north (again?!), but more normalized?!
+    geid_gse[2] = Vect.crossn(geid_gse[0], geid_gse[1]);  // Ecliptic north (again?!), but better normalized?!
     final Matrix3x3 m = new Matrix3x3(geid_gse);
     return m;
   }
@@ -693,8 +698,9 @@ public class Trans {
   protected static Matrix3x3 gei_geid_trans_matrix(double mjd)
   {
     /*
+    ===================================
     Fortran code from file "PR2000.FOR"
-    -----------------------------------
+    ===================================
         SUBROUTINE PR2000(DAY,P)
     CP  COMPUTES THE PRECESSION MATRIX P(3,3) FOR CONVERTING A VECTOR
     C IN MEAN GEOCENTRIC EQUATORIAL SYSTEM OF 2000.0 TO MEAN-OF-DATE.
@@ -740,13 +746,9 @@ public class Trans {
         RETURN
         END
     */
-    /*
-      Below is the translation of above Fortran code to Java.
-
-      TODO-NI: Inverted matrix?
-      TODO-NI: Reduces to unit matrix?
-      TODO-NI: Correct epoch
-    */
+    /*======================================================
+      Below is the translation of above Fortran code to Java
+      ======================================================*/
     /* NOTE: OVT uses mjd with epoch 1950. The Fortran code above requires
       epoch 2000 and specifices this conversion.
     */

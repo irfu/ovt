@@ -58,7 +58,7 @@ public class CoordinateSystem extends BasicObject {
 
   /** <B>Geocentric Equatorial Inertial (J2000.0)</B><BR>
    * <B>X</B> - axis points from the Earth toward the first
-   *            point of Aries (the position of Sun at the vernal equinox)<BR>
+   *            point of Aries (the position of Sun at the vernal equinox) at J2000.0<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
    * <B>Y</B> - axis completes the right-handed orthogonal set
    *            <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
@@ -116,12 +116,12 @@ public class CoordinateSystem extends BasicObject {
 
   /** <B>Geocentric Equatorial Inertial (epoch-of-date/mean-of-date)</B><BR>
    * <B>X</B> - axis points from the Earth toward the first
-   *            point of Aries (the position of Sun at the vernal equinox)<BR>
+   *            point of Aries (the position of Sun at the vernal equinox) at epoch-of-date<BR>
    * <B>Z</B> - axis is parallel to the rotation axis of the Earth and points northward<BR>
    * <B>Y</B> - axis completes the right-handed orthogonal set
    *            <CODE><B>Y</B> = <B>Z</B> x <B>X</B></CODE>.
    *
-   * Note: Not to be confused with GEI epoch-of-date/mean-of-date.
+   * Note: Not to be confused with GEI J2000.0.
    */
   public static final int GEID = 9;
 
@@ -236,8 +236,64 @@ public class CoordinateSystem extends BasicObject {
   public int[] getPolarCoordinateSystemsList() {
     return new int[]{ SM, GEO};
   }
-  
+
+  /**
+   * Return human-readable string that describes a coordinate system. The string
+   * will be used in OVT's coordinate system selector drop-down menu at the
+   * lower left.
+   *
+   * @param n
+   * @return
+   */
   public static String getCoordSystem(int n) {
+      /*
+      E-mail from Erik Johansson <erjo@irfu.se> to
+      Daly Dr., Patrick <daly@mps.mpg.de> 2022-06-07
+      """"""""
+      A more trivial and formal question: For the purpose of the OVT, both for
+      the user interface but also for the documentation (including the source
+      code), what are the best names/terms to use for these coordinate systems,
+      e.g. in the drop down menu inside OVT? I want to try to be consistent to
+      avoid confusion for technical things like this (it usually pays off when
+      writing software) and I don't want to confuse the regular user. Since
+      these two coordinate systems are basically two close variants of the same
+      idea for a coordinate system, I figure that not everyone is aware of the
+      distinction between them (and as your original e-mail implies). Therefore
+      I am tempted to list them them both as "GEI" and then indicate the exact 
+      "variant" within brackets as below. This would indicate/hint to a novice
+      that they are closely related and similar coordinate systems.
+
+      "GEI (J2000.0)"
+      "GEI (epoch-of-date)"
+
+      However, I have seen multiple names for in particular the latter: GEI TOD,
+      GEI true-of-date, GEI mean-of-date, GEI epoch-of-date, and possibly other
+      terms too.
+
+      Do you have any opinion on this? Is there a natural or most common naming
+      convention?
+      """"""""
+
+      E-mail reply from
+      Mike Hapgood - STFC UKRI <mike.hapgood@stfc.ac.uk> to
+      Erik Johansson <erjo@irfu.se> 2022-06-09
+      """"""""
+      Many thanks to Pat for copying me into this discussion. I think Erik's
+      proposal to put the GEI variant in brackets is a good one - as he notes it
+      makes it clear that these are variants of the same concept. I think
+      "epoch-of-date" is the best name in that it reflects that astronomers use
+      "epoch" as a term for reference points in time. So epoch J2000 is now the
+      standard reference now in use by astronomers, e.g. to specify positions in
+      the sky of stars and other astronomical objects. (The astronomical
+      coordinates of right ascension and declination are GEI expressed in polar
+      rather than cartesian form.) Previously astronomers used an epoch termed
+      B1950 for this purpose, changing to J2000 late in the last century.
+
+      The other terms used in place of "epoch-of-date" probably indicate fine
+      details that I doubt that we need to worry about, e.g. differences between
+      what astronomers term true and mean time.
+      """"""""
+      */
     switch (n) {
       case GEI:  return "GEI (J2000.0)";
       case GSM:  return "GSM";
@@ -249,7 +305,7 @@ public class CoordinateSystem extends BasicObject {
       case ECC:  return "ECC";
       case GEID: return "GEI (epoch-of-date)";
     }
-    throw new IllegalArgumentException("Invalid coordinate system index");
+    throw new IllegalArgumentException("Invalid coordinate system index.");
   }
 
   public Descriptors getDescriptors() {

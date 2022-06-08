@@ -143,7 +143,7 @@ public static double absv(double vec[]) {
  *
  * @param pos1
  * @param pos2
- * @return Distance between cordinates pos1 and pos2.
+ * @return Distance between coordinates pos1 and pos2.
  */
 public static double distance(double[] pos1, double[] pos2) {
     double s = 0;

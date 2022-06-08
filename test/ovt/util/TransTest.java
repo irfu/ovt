@@ -56,8 +56,8 @@ import ovt.XYZWindow;
  */
 public class TransTest {
 
-
-    // Help function
+    /** Help function for tests. Derive absolute max difference between elements
+     *  in any two matrices.*/
     public double matricesMaxDiff(Matrix3x3 M1, Matrix3x3 M2) {
         final int[] MATRIX_INDICES = {0, 1, 2};
 
@@ -74,8 +74,8 @@ public class TransTest {
     };
 
 
-
-    // Help function
+    /** Help function for tests. Determine whether two matrices can regarded as
+     * numerically equal. */
     public boolean matricesEqual(Matrix3x3 M1, Matrix3x3 M2, double epsilon) {
         double diff = matricesMaxDiff(M1, M2);
         return diff <= epsilon;
@@ -83,7 +83,8 @@ public class TransTest {
 
 
 
-    // Test method trans_matrix().
+    /** Tests for method ovt.util.Trans.trans_matrix() which obtains the
+     *  coordinate transformation matrix between any two coordinate systems. */
     @Test
     public void test_trans_matrix() {
         final double EPSILON = 1.0e-15;
@@ -174,7 +175,8 @@ public class TransTest {
                     // NOTE: Order of matrix multiplication.
                     Matrix3x3 M = M31.multiply(M23).multiply(M12);
 
-                    // ASSERT: "Circle" of transformations should yield unity matrix.
+                    // ASSERT: "Circle" of transformations should yield the
+                    //         unity matrix.
                     boolean success = matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON);
                     if (!success) {
                         System.out.println("Too large diff: ("+cs1+", "+cs2+", "+cs3+")");
