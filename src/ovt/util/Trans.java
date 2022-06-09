@@ -230,6 +230,22 @@ public class Trans {
     return gei_geid_trans_matrix().multiply(gei);
   }
 
+  /** Transform coordinates between any two arbitrary coordinate systems.
+   *
+   * @param fromCS
+   * @param toCS
+   * @param x
+   * @return
+   */
+  public double[] trans_coordinates(int fromCS, int toCS, double x[]) {
+      /*
+      Method name is formed in analogy with trans_matrix().
+      PROPOSAL: Implement custom coordinate transformation methods using this method.
+        Ex: geo2gsm(), gei2geid().
+      */
+      return trans_matrix(fromCS, toCS).multiply(x);
+  }
+
   /* ------------------------------------------------------
   FUNCTION:
   transforms gei to geo when ic=+1
