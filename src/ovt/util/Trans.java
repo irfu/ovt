@@ -196,10 +196,11 @@ public class Trans {
   /* ***********************************************************
    * Methods for converting 1D vector between coordinate systems
    * (except methods geo2gma, gma2geo, geo_gma)
-   ************************************************************* */
+   *************************************************************
+  */
 
   public double[] gei2geo(double gei[]) {
-    return gei_geo_trans_matrix().multiply(gei);
+    return trans_coordinates(CoordinateSystem.GEI, CoordinateSystem.GEO, gei);
   }
 
   public static double[] gei2geo(double gei[], double mjd) {
@@ -207,27 +208,27 @@ public class Trans {
   }
 
   public double[] geo2gei(double geo[]) {
-    return geo_gei_trans_matrix().multiply(geo);
+    return trans_coordinates(CoordinateSystem.GEO, CoordinateSystem.GEI, geo);
   }
 
   public double[] geo2gsm(double geo[]) {
-    return geo_gsm_trans_matrix().multiply(geo);
+    return trans_coordinates(CoordinateSystem.GEO, CoordinateSystem.GSM, geo);
   }
 
   public double[] gsm2geo(double gsm[]) {
-    return gsm_geo_trans_matrix().multiply(gsm);
+    return trans_coordinates(CoordinateSystem.GSM, CoordinateSystem.GEO, gsm);
   }
 
   public double[] gsm2sm(double gsm[]) {
-    return gsm_sm_trans_matrix().multiply(gsm);
+    return trans_coordinates(CoordinateSystem.GSM, CoordinateSystem.SM, gsm);
   }
 
   public double[] gei2gse(double gei[]) {
-    return gei_gse_trans_matrix().multiply(gei);
+    return trans_coordinates(CoordinateSystem.GEI, CoordinateSystem.GSE, gei);
   }
 
   public double[] gei2geid(double gei[]) {
-    return gei_geid_trans_matrix().multiply(gei);
+    return trans_coordinates(CoordinateSystem.GEI, CoordinateSystem.GEID, gei);
   }
 
   /** Transform coordinates between any two arbitrary coordinate systems.
