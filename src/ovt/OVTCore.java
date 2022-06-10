@@ -89,12 +89,13 @@ public final class OVTCore extends OVTObject implements GUIPropertyEditorListene
     public static final String SIMPLE_APPLICATION_NAME = "Orbit Visualization Tool";
     public static final String VERSION = "3.0";
     public static final String RELEASE_DAY = "June 2022";
-    // BUILD incremented to "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
-    // BUILD incremented to "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
-    // BUILD incremented to "7" (from "6") 2016-04-14. Intended for the final release version.
-    // BUILD incremented to "8" (from "7") 2022-05-10. Intended for SSC-WS "bugfixes".
-    // BUILD incremented to "9" (from "8") 2022-06-07. Beta version for adding GEI epoch-of-date.
-    public static final int BUILD = 9;
+    // BUILD incremented to  "5" (from "4") 2015-09-14 on request from Yuri Khotyaintsev (for beta version to beta testers?)
+    // BUILD incremented to  "6" (from "5") 2015-11-11 for Yuri Khotyaintsev's demo version and new beta versions.
+    // BUILD incremented to  "7" (from "6") 2016-04-14. Intended for the final release version.
+    // BUILD incremented to  "8" (from "7") 2022-05-10. Intended for SSC-WS "bugfixes".
+    // BUILD incremented to  "9" (from "8") 2022-06-07. Beta version for adding GEI epoch-of-date.
+    // BUILD incremented to "10" (from "9") 2022-06-10. Beta version for adding GEI epoch-of-date.
+    public static final int BUILD = 10;
     public static final String OVT_HOMEPAGE = "https://ovt.irfu.se/";
 
     private static final String GLOBAL_SETTINGS_FILE_NAME = "ovt.conf";
