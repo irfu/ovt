@@ -98,13 +98,13 @@ public class Trans {
   protected Matrix3x3 sm_gsm;
 
   /** Transformation matrix from geo to gsm. */
-  protected Matrix3x3 geo_gsm;
+  //protected Matrix3x3 geo_gsm;
 
-  /** Transformation matrix from geo to gei. */
-  protected Matrix3x3 geo_gei;
+  /** Transformation matrix from geo to geid. */
+  protected Matrix3x3 geo_geid;
 
-  /** Transformation matrix from gei to gsm. */
-  protected Matrix3x3 gei_gsm;
+  /** Transformation matrix from geid to gsm. */
+  protected Matrix3x3 geid_gsm;
 
   /** Transformation matrix from geid to gse. */
   protected Matrix3x3 geid_gse;
@@ -141,12 +141,12 @@ public class Trans {
     
      * NOTE: One of these coordinate transformation is technically redundant
      * since there are enough conversion matrices to represent a loop of
-     * transformations GEO->GEI->GSM->GEO (there is one matrix too many).
+     * transformations GEO->GEID->GSM->GEO (there is one matrix too many).
      */
     sm_gsm  = sm_gsm_trans_matrix(mjd, Eccdz);
-    geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);   // Part of loop.
-    geo_gei = geo_gei_trans_matrix(mjd);          // Part of loop.
-    gei_gsm = gei_gsm_trans_matrix(mjd, Eccdz);   // Part of loop.
+    //geo_gsm = geo_gsm_trans_matrix(mjd, Eccdz);     // Part of loop.
+    geo_geid = geo_geid_trans_matrix(mjd);          // Part of loop.
+    geid_gsm = geid_gsm_trans_matrix(mjd, Eccdz);   // Part of loop.
     geid_gse = geid_gse_trans_matrix(mjd);
     gei_geid = gei_geid_trans_matrix(mjd);
 
@@ -390,11 +390,11 @@ public class Trans {
    * ******************************* */
 
   public Matrix3x3 geo_gsm_trans_matrix() {
-    return geo_gsm;
+    return geid_gsm_trans_matrix().multiply(geo_geid_trans_matrix());
   }
 
   public Matrix3x3 geo_gei_trans_matrix() {
-    return geo_gei;
+    return geid_gei_trans_matrix().multiply(geo_geid_trans_matrix());
   }
 
   public Matrix3x3 geo_gse_trans_matrix() {
@@ -406,7 +406,7 @@ public class Trans {
   }
 
   public Matrix3x3 geo_geid_trans_matrix() {
-    return gei_geid_trans_matrix().multiply(geo_gei_trans_matrix());
+    return geo_geid;
   }
 
 
@@ -448,7 +448,7 @@ public class Trans {
   }
 
   public Matrix3x3 gei_gsm_trans_matrix() {
-    return gei_gsm;
+    return geid_gsm_trans_matrix().multiply(gei_geid_trans_matrix());
   }
 
   public Matrix3x3 gei_gse_trans_matrix() {
@@ -498,7 +498,7 @@ public class Trans {
   }
 
   public Matrix3x3 gsm_gei_trans_matrix() {
-    return gei_gsm_trans_matrix().getInverse();
+    return geid_gei_trans_matrix().multiply(gsm_geid_trans_matrix());
   }
 
   public Matrix3x3 gsm_gse_trans_matrix() {
@@ -506,7 +506,7 @@ public class Trans {
   }
 
   public Matrix3x3 gsm_geid_trans_matrix() {
-    return gei_geid_trans_matrix().multiply(gsm_gei_trans_matrix());
+    return geid_gsm_trans_matrix().getInverse();
   }
 
 
@@ -531,7 +531,7 @@ public class Trans {
   }
 
   public Matrix3x3 geid_gsm_trans_matrix() {
-    return gsm_geid_trans_matrix().getInverse();
+    return geid_gsm;
   }
 
 
@@ -544,9 +544,9 @@ public class Trans {
    through matrix multiplication.
   */
 
-  //   ------     GEO  ->  GEI    ------
+  //   ------     GEO  ->  GEID    ------
 
-  public static Matrix3x3 geo_gei_trans_matrix(double mjd) {
+  public static Matrix3x3 geo_geid_trans_matrix(double mjd) {
     double[][] m = new double[3][3];
     double  theta, ct, st;
     //  changed SEP 94 theta = fmod(mjd, 1.0) * TPI + gmstime(mjd);
@@ -568,8 +568,10 @@ public class Trans {
     return new Matrix3x3(m);
   }
 
+  //   ------     GEI  ->  GEO    ------
+
   public static Matrix3x3 gei_geo_trans_matrix(double mjd) {
-    return geo_gei_trans_matrix(mjd).getInverse();
+    return geo_geid_trans_matrix(mjd).getInverse().multiply(gei_geid_trans_matrix(mjd));
   }
 
 
@@ -578,6 +580,13 @@ public class Trans {
   /** @param mjd time
    *  @param Eccdz eccentric dipole coordinates???
    */
+  /*
+  Disabled since static methods
+    protected static Matrix3x3 geo_gsm_trans_matrix(double mjd, double[] Eccdz)
+    public    static Matrix3x3 geo_geid_trans_matrix(double mjd)
+    public    static Matrix3x3 geid_gsm_trans_matrix(double mjd, double[] Eccdz)
+  form a loop, implying that one of them is redundant and can be removed.
+
   protected static Matrix3x3 geo_gsm_trans_matrix(double mjd, double[] Eccdz) {
     final double sunv[] = Utils.sunmjd(mjd);
     final double[][] temp = new double[3][];
@@ -587,6 +596,7 @@ public class Trans {
     Matrix3x3 m = new Matrix3x3(temp);
     return m;
   }
+  */
 
   // -------- GEID  ->  GSE  ---------
 
@@ -632,9 +642,16 @@ public class Trans {
     return m;
   }
 
-  // -------- GEI  ->  GSM  ---------
+  // -------- GEID  ->  GSM  ---------
 
-  public static Matrix3x3 gei_gsm_trans_matrix(double mjd, double[] Eccdz) {
+  /**
+   * NOTE: This function was originally intended to convert from GEI to GSM,
+   * back when OVT only supported one GEI coordinate system (GEI J2000.0; not
+   * GEI epoch-of-date). This function has been redefined (function name change)
+   * since then to convert from GEI epoch-of-date to GSE after ~bug reports
+   * (Patrick Daly, MPS).
+   */
+  public static Matrix3x3 geid_gsm_trans_matrix(double mjd, double[] Eccdz) {
     double[][] geigsm = new double[3][];
     double[] sunv = Utils.sunmjd(mjd);
     // find  dipole axis in GEI  changed SEP 94
