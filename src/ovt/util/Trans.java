@@ -617,7 +617,7 @@ public class Trans {
   public static Matrix3x3 geid_gse_trans_matrix(double mjd) {
     final double[][] geid_gse = new double[3][];
     
-    /* Normal vector to the ecliptic (in GEI).
+    /* Normal vector to the ecliptic (in GEID).
      *
      * ==> Earth's axial tilt: epsilon_OVT = arctan(0.398/0.917)) = 23.4620 degrees 
      * Compare, Hapgood 1992 (complete reference above), eq (3) & eq between (4) and (5):
@@ -629,15 +629,35 @@ public class Trans {
      * and only assumes a 1-to-1 correspondence between Earth's axial tilt and time.
      * Erik P G Johansson 2019-11-07
      */
-    final double eqlipt[] = {   0.0, -0.398, 0.917 };
+    //final double eqlipt[] = {   0.0, -0.398, 0.917 };
+
+    /* Formula for the Earth's axial tilt, i.e. angle between
+       (1) the Earth's rotation axis, and
+       (2) the ecliptic north,
+       according to Hapgood 1992.
+       ------------------------------------------------------------------------
+       IMPLEMENTATION NOTE: This appears to be a minor improvement compared to 
+       {   0.0, -0.398, 0.917 } when converting between GSE+GSM test coordinates
+       (0.17 km better agreement).
+       /Erik P G Johansson, 2022-06-10
+    */
+    double mjd2000 = mjd - Time.Y2000;
+    double T_0 = (mjd2000 - 51544.5) / 36525;
+    double epsilon_deg = (23.439 - 0.013 * T_0);
+    double epsilon_rad = epsilon_deg * Math.PI / 180.0;
+    // Ecliptic north in GEI epoch-of-date.
+    final double ecliptic_north_geid[] = {0.0, -Math.sin(epsilon_rad), Math.cos(epsilon_rad)};
     
     /* Can be interpreted as the three (orthonormal) coordinate vectors that
        define the GSE coordinate system, expressed in GEI.
        ==> geid_gse * v_geid = v_gse
     */
-    geid_gse[0] = Utils.sunmjd(mjd);                    // Time-dependent vector from Earth pointing toward the Sun.
-    geid_gse[1] = Vect.crossn(eqlipt, geid_gse[0]);      // In the ecliptic.
-    geid_gse[2] = Vect.crossn(geid_gse[0], geid_gse[1]);  // Ecliptic north (again?!), but better normalized?!
+    // Time-dependent vector from Earth pointing toward the Sun.
+    geid_gse[0] = Utils.sunmjd(mjd);
+    // In the ecliptic.
+    geid_gse[1] = Vect.crossn(ecliptic_north_geid, geid_gse[0]);
+    // Ecliptic north (again?!), but better normalized?!
+    geid_gse[2] = Vect.crossn(geid_gse[0], geid_gse[1]);
     final Matrix3x3 m = new Matrix3x3(geid_gse);
     return m;
   }
