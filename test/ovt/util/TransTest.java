@@ -159,8 +159,8 @@ public class TransTest {
      *  coordinate transformation matrix between any two coordinate systems. */
     @Test
     public void test_trans_matrix() {
-        final double EPSILON_ERROR = 1.3e-15;
-        final double EPSILON_PRINT = 1.0e-15;
+        final double EPSILON_ERROR = 1.6e-15;
+        final double EPSILON_PRINT = 1.6e-15;
         System.out.println("test_trans_matrix(): EPSILON_ERROR = " + EPSILON_ERROR);
         System.out.println("test_trans_matrix(): EPSILON_PRINT = " + EPSILON_PRINT);
 
@@ -250,18 +250,24 @@ public class TransTest {
      */
     // NOTE: Not JUnit test function.
     public void test_coordinates(double mjd, Map<Integer, double[]> coordinates) {
-
-        final double EPSILON_ERROR = 31.0;   // Too large, but that is what OVT seems to manage right now.
-        final double EPSILON_PRINT = 0.0;
-        System.out.println("test_coordinates(): EPSILON_ERROR = " + EPSILON_ERROR);
-        System.out.println("test_coordinates(): EPSILON_PRINT = " + EPSILON_PRINT);
+        //final double EPSILON_KM_ERROR = 141.0;   // Too large, but that is what OVT seems to manage right now.
+        //final double EPSILON_KM_PRINT = 100.0;
+        final double EPSILON_RAD_ERROR = 0.001343;   // Too large, but that is what OVT seems to manage right now.
+        final double EPSILON_RAD_PRINT = 0.0012;
+        //System.out.println("test_coordinates(): EPSILON_ERROR = " + EPSILON_ERROR);
+        //System.out.println("test_coordinates(): EPSILON_PRINT = " + EPSILON_PRINT);
 
         for (int cs1: coordinates.keySet()) {
             for (int cs2: coordinates.keySet()) {
+                //if (cs1 == cs2) {
                 if (cs1 >= cs2) {
-                    // Skip (1) identity transformations, and (2) reverse
-                    // transformations. Other tests test for these cases
-                    // indirectly.
+                    /* Skip (1) identity transformations, and (2) reverse
+                    *  transformations. Other tests test for these cases
+                    *  indirectly.
+                    *  NOTE: It can be useful to enable reverse transformations
+                    *  when debugging in case the actual-expected difference is
+                    *  easier to understand in one transformation direction.
+                    */
                     continue;
                 }
                 Trans T = new ovt.util.Trans(mjd, igrf);
@@ -269,11 +275,28 @@ public class TransTest {
                 double[] expX2 = coordinates.get(cs2);
                 double[] actX2 = T.trans_coordinates(cs1, cs2, x1);
 
-                double distance = Vect.distance(expX2, actX2);
-                if (distance >= EPSILON_PRINT) {
-                    System.out.println("test_coordinates(): Large distance="+distance+" for coordinate systems: ("+cs1+", "+cs2+")");
+                final double[] diff = Vect.sub(actX2, expX2);
+                final double diffAngle = Vect.angleOf2vect(actX2, expX2);
+
+                //if (Vect.absv(diff) >= EPSILON_KM_PRINT) {
+                if (diffAngle >= EPSILON_RAD_PRINT) {
+                    TimeFormat tf = new TimeFormat();
+                    tf.setDateFormat(TimeFormat.ISO);
+
+                    System.out.printf("test_coordinates(): Large difference for%n");
+                    System.out.printf("    transformation cs1=%d (%s) to cs2=%d (%s).%n",
+                            cs1, CoordinateSystem.getCoordSystem(cs1),
+                            cs2, CoordinateSystem.getCoordSystem(cs2));
+                    System.out.printf("    mjd=%f (%s)%n", mjd, tf.format(mjd));
+                    System.out.printf("    actX2      =(%10.2f, %10.2f, %10.2f), abs=%10.2f%n", actX2[0], actX2[1], actX2[2], Vect.absv(actX2));
+                    System.out.printf("    expX2      =(%10.2f, %10.2f, %10.2f), abs=%10.2f%n", expX2[0], expX2[1], expX2[2], Vect.absv(expX2));
+                    System.out.printf("    actX2-expX2=(%10.2f, %10.2f, %10.2f), abs=%10.2f%n", diff[0],  diff[1],  diff[2],  Vect.absv(diff ));
+                    System.out.printf("    angle(actX2,expX2)=%f [rad]%n", diffAngle);
+                    /* IMPLEMENTATION NOTE: Can be useful(?) to print explicit
+                       vectors for analyzing the difference (debugging).*/
                 }
-                assertTrue(distance <= EPSILON_ERROR);
+                //assertTrue(Vect.absv(diff) <= EPSILON_KM_ERROR);
+                assertTrue(diffAngle <= EPSILON_RAD_ERROR);
             }
         }
     }
@@ -282,14 +305,19 @@ public class TransTest {
     /**
       * Test explicit coordinate transformations.
       *
+      *
+      *
       * NOTE: Method is built to be extended with more hardcoded data which is
       * not yet available. /Erik P G Johansson, 2022-06-10.
     */
     @Test
     public void test_trans_coordinates() {
+
+        Map<Integer, double[]> c = new HashMap();
+
         /*
-        Test data points from Patrick Daly, MPS, 2022-06-09.
-        ====================================================
+        Test data points from Patrick Daly, MPS, e-mail 2022-06-09.
+        ===========================================================
         Requested Day 2015-12-23, Spacecraft 4
         File: c:\\users\daly\.ovt\3.0\odata\\cluster4.ltof
         --------------------------------------------------------
@@ -310,11 +338,50 @@ public class TransTest {
         02:30:00 2427.68 |  43646.3  90777.2   6987.1 100966.9 |
         --------------------------------------------------------
         */
+        c.clear();
+        c.put(CoordinateSystem.GSE, new double[] {43646.3, 90965.2, -3828.7});
+        c.put(CoordinateSystem.GSM, new double[] {43646.3, 90777.2,  6987.1});
+        test_coordinates(ovt.datatype.Time.getMjd(2015,12,23, 2,30,0), c);
 
-        Map<Integer, double[]> coordinates = new HashMap();
-        coordinates.put(CoordinateSystem.GSE, new double[] {43646.3, 90965.2, -3828.7});
-        coordinates.put(CoordinateSystem.GSM, new double[] {43646.3, 90777.2,  6987.1});
-        test_coordinates(ovt.datatype.Time.getMjd(2015,12,23, 2,30,0), coordinates);
+        // 2022-06-16_____Patrick_Daly_MPS_test_coordinates/check_2005-12-23_C1.lis
+        // Patrick W Daly, MPS, 2022-06-16
+        c.clear();
+        c.put(CoordinateSystem.GEI,  new double[] {113963.0, -15439.8, -24170.4});
+        c.put(CoordinateSystem.GEID, new double[] {113997.6, -15287.4, -24104.2});
+        c.put(CoordinateSystem.GSE,  new double[] {27436.4,  113138.4, -16034.6});
+        c.put(CoordinateSystem.GSM,  new double[] {27436.4,  112752.6, -18554.3});
+        c.put(CoordinateSystem.SM,   new double[] {22379.7,  112752.6, -24416.5});
+        test_coordinates(ovt.datatype.Time.getMjd(2005,12,23, 16,0,0), c);
+
+        // 2022-06-16_____Patrick_Daly_MPS_test_coordinates/check_2010-10-15_C2.lis
+        // Patrick W Daly, MPS, 2022-06-16
+        c.clear();
+        c.put(CoordinateSystem.GEI,  new double[] { 27514.9, -19991.0, -41825.3});
+        c.put(CoordinateSystem.GEID, new double[] { 27606.9, -19924.5, -41796.4});
+        c.put(CoordinateSystem.GSE,  new double[] {-12442.3,  42728.1, -30423.0});
+        c.put(CoordinateSystem.GSM,  new double[] {-12442.3,  23378.3, -46954.3});
+        c.put(CoordinateSystem.SM,   new double[] {-13112.9,  23378.3, -46771.5});
+        test_coordinates(ovt.datatype.Time.getMjd(2010,10,15, 14,0,0), c);
+
+        // 2022-06-16_____Patrick_Daly_MPS_test_coordinates/check_2015-08-17_C4.lis
+        // Patrick W Daly, MPS, 2022-06-16
+        c.clear();
+        c.put(CoordinateSystem.GEI,  new double[] {14316.4,  46385.4, -50613.8});
+        c.put(CoordinateSystem.GEID, new double[] {14231.1,  46435.3, -50592.1});
+        c.put(CoordinateSystem.GSE,  new double[] { 1682.8, -26554.1, -64887.3});
+        c.put(CoordinateSystem.GSM,  new double[] { 1682.8, -48967.4, -50176.5});
+        c.put(CoordinateSystem.SM,   new double[] { 5380.9, -48967.4, -49915.5});
+        test_coordinates(ovt.datatype.Time.getMjd(2015,8,17, 6,0,0), c);
+
+        // 2022-06-16_____Patrick_Daly_MPS_test_coordinates/check_2020-05-22_C3.lis
+        // Patrick W Daly, MPS, 2022-06-16
+        c.clear();
+        c.put(CoordinateSystem.GEI,  new double[] {98287.1,  -35975.1,  2455.4});
+        c.put(CoordinateSystem.GEID, new double[] {98445.1,  -35526.6,  2650.3});
+        c.put(CoordinateSystem.GSE,  new double[] {18910.0, -101630.3, 16561.7});
+        c.put(CoordinateSystem.GSM,  new double[] {18910.0, -102603.8,  8687.0});
+        c.put(CoordinateSystem.SM,   new double[] {16225.5, -102603.8, 13030.2});
+        test_coordinates(ovt.datatype.Time.getMjd(2020,5,22, 8,0,0), c);
     }    // test_trans_coordinates()
 
 
