@@ -1,13 +1,15 @@
 /*=========================================================================
 
 Program:   Orbit Visualization Tool
+
 Source:    $Source: /stor/devel/ovt2g/ovt/util/Trans.java,v $
 Date:      $Date: 2003/09/28 17:52:57 $
 Version:   $Revision: 2.9 $
 
-
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
-Yuri Khotyaintsev)
+Copyright (c) 2022 OVT Team
+(Erik Johansson, Yuri Khotyaintsev)
+Copyright (c) 2000-2003 OVT Team
+(Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -26,7 +28,7 @@ IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
-Khotyaintsev
+Khotyaintsev, E. P. G. Johansson
 
 =========================================================================*/
 
@@ -607,9 +609,7 @@ public class Trans {
    * since then to convert from GEI epoch-of-date to GSE after ~bug reports
    * (Patrick Daly, MPS). However, the implementation implies that this might
    * not be entirely correct. The implementation uses Utils.sunmjd() which is
-   * (or was previously) assumed to return a value in GEI J2000.0. It uses a
-   * hardcoded vector to represent the ecliptic normal, but the ecliptic normal
-   * is only a constant in GEI J2000.0, not GEI epoch-of-date. It is also
+   * (or was previously) assumed to return a value in GEI J2000.0. It is also
    * possible that Utils.sunmjd() actually does return a vector in GEI
    * epoch-of-date and that all other calls to it (which assume GEI J2000.0) are
    * wrong.
@@ -668,7 +668,7 @@ public class Trans {
    * NOTE: This function was originally intended to convert from GEI to GSM,
    * back when OVT only supported one GEI coordinate system (GEI J2000.0; not
    * GEI epoch-of-date). This function has been redefined (function name change)
-   * since then to convert from GEI epoch-of-date to GSE after ~bug reports
+   * since then to convert from GEI epoch-of-date to GSM after ~bug reports
    * (Patrick Daly, MPS).
    */
   public static Matrix3x3 geid_gsm_trans_matrix(double mjd, double[] Eccdz) {
@@ -678,11 +678,13 @@ public class Trans {
     double theta =  Time.getGSMTime(mjd);
     double st = Math.sin(theta);
     double ct = Math.cos(theta);
+
     // dipole vector in GEI
     double[] dipgei = new double[3];
     dipgei[0] = ct * Eccdz[0] - st * Eccdz[1];
     dipgei[1] = st * Eccdz[0] + ct * Eccdz[1];
     dipgei[2] = Eccdz[2];
+
     geigsm[1] = Vect.crossn(dipgei, sunv);
     geigsm[2] = Vect.crossn(sunv, geigsm[1]);
     geigsm[0] = Vect.crossn(geigsm[1], geigsm[2]);

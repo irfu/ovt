@@ -56,7 +56,7 @@ public class Vect {
     return res;
   }
   
-  /** Returns the angle between two vectors in the range of 0 to pi.
+  /** Returns the angle (radians) between two vectors in the range of 0 to pi.
    * Returns pi/2 if any of vectors has a zero size.
    */
   public static double angleOf2vect(double[] v1, double[] v2){
@@ -77,7 +77,8 @@ public class Vect {
    * @param v1 first vector [3]
    * @param v2 second vector [3]
    * @param rotationAxis the rotational vector omega [3]
-   * @return the angle between two vectors v1 and v2 in the range of -pi to pi.
+   * @return the angle (radians) between two vectors v1 and v2 in the range of
+   *         -pi to pi.
    */
   public static double angleOf2vect(double[] v1, double[] v2, 
                                double[] rotationAxis){
@@ -125,7 +126,7 @@ public class Vect {
   }
   
   
-/** Absolute value of 3-vector. */
+/** Absolute value (magnitude) of 3-vector. */
 public static double absv(double vec[]) {
     double sum = 0;
 

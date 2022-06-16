@@ -80,7 +80,7 @@ public class TransTest {
         CoordinateSystem.GEID,
     };
 
-
+    final int[] VECTOR_INDICES = {0, 1, 2};
 
     /** Array of test vectors, that should be used as coordinates in arbitrary
      *  coordinate system.
@@ -107,11 +107,9 @@ public class TransTest {
     /** Help function for tests. Derive absolute max difference between elements
      *  in any two matrices.*/
     public double matricesMaxDiff(Matrix3x3 M1, Matrix3x3 M2) {
-        final int[] MATRIX_INDICES = {0, 1, 2};
-
         double diff = 0;
-        for (int i: MATRIX_INDICES) {
-            for (int j: MATRIX_INDICES) {
+        for (int i: VECTOR_INDICES) {
+            for (int j: VECTOR_INDICES) {
                 double compDiff = Math.abs(M1.get(i,j) - M2.get(i,j));
 
                 diff = Math.max(diff, compDiff);
@@ -166,29 +164,12 @@ public class TransTest {
 
         for (double mjd: MJD_ARRAY) {
 
-            Trans T = new ovt.util.Trans(mjd, igrf);
-
-            // MANUAL TEST
-            // For testing a specific case, e.g. to debug failed tests.
-            if (false) {
-                int cs1 = 0;
-                int cs2 = 1;
-                int cs3 = 4;
-                Matrix3x3 M12 = T.trans_matrix(cs1, cs2);
-                Matrix3x3 M23 = T.trans_matrix(cs2, cs3);
-                Matrix3x3 M31 = T.trans_matrix(cs3, cs1);
-                Matrix3x3 M = M31.multiply(M23).multiply(M12);
-
-                boolean success = matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON_ERROR);
-                if (!success) {
-                    System.out.println("test_trans_matrix(): Too large diff: ("+cs1+", "+cs2+", "+cs3+")");
-                }
-            }
+            Trans t = new ovt.util.Trans(mjd, igrf);
 
             /* Transform CS_x --> CS_x (identity transformation)
              */
             for (int cs1: CS_ARRAY) {
-                Matrix3x3 M = T.trans_matrix(cs1, cs1);
+                Matrix3x3 M = t.trans_matrix(cs1, cs1);
 
                 // ASSERT: Always return identity.
                 assertTrue(matricesEqual(M, Matrix3x3.IDENTITY_MATRIX, EPSILON_ERROR));
@@ -198,8 +179,8 @@ public class TransTest {
              */
             for (int cs1: CS_ARRAY) {
                 for (int cs2: CS_ARRAY) {
-                    Matrix3x3 M12 = T.trans_matrix(cs1, cs2);
-                    Matrix3x3 M21 = T.trans_matrix(cs2, cs1);
+                    Matrix3x3 M12 = t.trans_matrix(cs1, cs2);
+                    Matrix3x3 M21 = t.trans_matrix(cs2, cs1);
                     Matrix3x3 M = M12.multiply(M21);
 
                     // ASSERT: Inverse = Transpose
@@ -216,9 +197,9 @@ public class TransTest {
             for (int cs1: CS_ARRAY) {
                 for (int cs2: CS_ARRAY) {
                     for (int cs3: CS_ARRAY) {
-                        Matrix3x3 M12 = T.trans_matrix(cs1, cs2);
-                        Matrix3x3 M23 = T.trans_matrix(cs2, cs3);
-                        Matrix3x3 M31 = T.trans_matrix(cs3, cs1);
+                        Matrix3x3 M12 = t.trans_matrix(cs1, cs2);
+                        Matrix3x3 M23 = t.trans_matrix(cs2, cs3);
+                        Matrix3x3 M31 = t.trans_matrix(cs3, cs1);
 
                         // NOTE: Order of matrix multiplication.
                         Matrix3x3 M = M31.multiply(M23).multiply(M12);
@@ -240,7 +221,7 @@ public class TransTest {
 
 
     /**
-     * Help function for tests. Tests if set of coordinates in multiple
+     * Help function for tests. Tests if a set of coordinates in multiple
      * coordinate systems correspond to the same point in space. Calculates the
      * distance between stored values and values calculated from other
      * coordinate systems.
@@ -270,10 +251,10 @@ public class TransTest {
                     */
                     continue;
                 }
-                Trans T = new ovt.util.Trans(mjd, igrf);
+                Trans t = new ovt.util.Trans(mjd, igrf);
                 double[] x1 = coordinates.get(cs1);
                 double[] expX2 = coordinates.get(cs2);
-                double[] actX2 = T.trans_coordinates(cs1, cs2, x1);
+                double[] actX2 = t.trans_coordinates(cs1, cs2, x1);
 
                 final double[] diff = Vect.sub(actX2, expX2);
                 final double diffAngle = Vect.angleOf2vect(actX2, expX2);
@@ -400,7 +381,7 @@ public class TransTest {
         double EPSILON_PRINT = 0.000001;
 
         for (double mjd: MJD_ARRAY) {
-            Trans T = new ovt.util.Trans(mjd, igrf);
+            Trans t = new ovt.util.Trans(mjd, igrf);
             for (double[] v1: VECTOR_ARRAY) {
                 for (int iFunc=0; iFunc<8; iFunc++) {
 
@@ -409,42 +390,42 @@ public class TransTest {
 
                     switch(iFunc) {
                         case 0:
-                            actV2 = T.gei2geo(v1);
+                            actV2 = t.gei2geo(v1);
                             cs1 = CoordinateSystem.GEI;
                             cs2 = CoordinateSystem.GEO;
                             break;
                         case 1:
-                            actV2 = T.gei2geo(v1, mjd);
+                            actV2 = t.gei2geo(v1, mjd);
                             cs1 = CoordinateSystem.GEI;
                             cs2 = CoordinateSystem.GEO;
                             break;
                         case 2:
-                            actV2 = T.geo2gei(v1);
+                            actV2 = t.geo2gei(v1);
                             cs1 = CoordinateSystem.GEO;
                             cs2 = CoordinateSystem.GEI;
                             break;
                         case 3:
-                            actV2 = T.geo2gsm(v1);
+                            actV2 = t.geo2gsm(v1);
                             cs1 = CoordinateSystem.GEO;
                             cs2 = CoordinateSystem.GSM;
                             break;
                         case 4:
-                            actV2 = T.gsm2geo(v1);
+                            actV2 = t.gsm2geo(v1);
                             cs1 = CoordinateSystem.GSM;
                             cs2 = CoordinateSystem.GEO;
                             break;
                         case 5:
-                            actV2 = T.gsm2sm(v1);
+                            actV2 = t.gsm2sm(v1);
                             cs1 = CoordinateSystem.GSM;
                             cs2 = CoordinateSystem.SM;
                             break;
                         case 6:
-                            actV2 = T.gei2gse(v1);
+                            actV2 = t.gei2gse(v1);
                             cs1 = CoordinateSystem.GEI;
                             cs2 = CoordinateSystem.GSE;
                             break;
                         case 7:
-                            actV2 = T.gei2geid(v1);
+                            actV2 = t.gei2geid(v1);
                             cs1 = CoordinateSystem.GEI;
                             cs2 = CoordinateSystem.GEID;
                             break;
@@ -452,7 +433,7 @@ public class TransTest {
                             assert false;
                     }
 
-                    double[] expV2 = T.trans_coordinates(cs1, cs2, v1);
+                    double[] expV2 = t.trans_coordinates(cs1, cs2, v1);
                     double distance = Vect.distance(actV2, expV2);
                     if (distance >= EPSILON_PRINT) {
                         System.out.println("test_xxx2yyy(): Large distance="+distance+" for cs1="+cs1+", cs2="+cs2+", iFunc="+iFunc+", mjd="+mjd+", v1=("+v1[0]+", "+v1[1]+", "+v1[2]+").");
