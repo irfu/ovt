@@ -7,7 +7,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -38,7 +38,7 @@ Khotyaintsev
  */
 
 
-
+ 
 package ovt.datatype;
 
 import ovt.object.*;
@@ -49,24 +49,24 @@ import ovt.interfaces.*;
 import java.beans.*;
 import ovt.Const;
 
-/**
+/** 
  * Represents a sequence of equidistant points in time (mjd = modified Julian day),
  * including one such point that is the "current" one.
- *
+ * 
  * @author  mykola
- * @version
+ * @version 
  */
 public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
-
+    
   private double startMjd;
   private double intervalMjd;
   private double stepMjd;
   private double currentMjd = -1;
   private int currentMjdIndex = 0;
-
+  
   /** Creates new TimeSet */
   public TimeSet() {}
-
+  
   /** Creates new TimeSet */
   public TimeSet(double startMjd, double intervalMjd, double stepMjd) {
     this.startMjd = startMjd;
@@ -75,7 +75,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     this.currentMjd = startMjd;
     this.currentMjdIndex = 0;
   }
-
+  
   public TimeSet(double startMjd, double intervalMjd, double stepMjd, double currentMjd) {
     this.startMjd = startMjd;
     this.intervalMjd = intervalMjd;
@@ -83,12 +83,12 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     this.currentMjd = currentMjd;
     this.currentMjdIndex = indexOf(currentMjd);
   }
-
+  
   /** Creates new TimeSet */
   public TimeSet(TimeSetSource timeSet) {
     set(timeSet);
   }
-
+  
   public void set(TimeSetSource timeSet) {
     setStartMjd(timeSet.getStartMjd());
     setIntervalMjd(timeSet.getIntervalMjd());
@@ -102,7 +102,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   public double getStartMjd() {
     return startMjd;
   }
-
+  
   /** Setter for property startMjd.
    * @param startMjd New value of property startMjd.
    *
@@ -119,11 +119,11 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       this.startMjd = startMjd;
       firePropertyChange("startMjd", new Double(oldStartMjd), new Double(startMjd));
   }
-
+  
   public double getIntervalMjd() {
     return intervalMjd;
   }
-
+  
   public void setIntervalMjd(double intervalMjd) throws IllegalArgumentException {
       double oldIntervalMjd = this.intervalMjd;
       if (intervalMjd == oldIntervalMjd) return;
@@ -131,7 +131,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       this.intervalMjd = intervalMjd;
       firePropertyChange("intervalMjd", new Double(oldIntervalMjd), new Double(intervalMjd));
   }
-
+  
   /** Getter for property stopMjd.
    * @return Value of property stopMjd.
    */
@@ -146,7 +146,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
   public void setStopMjd(double stopMjd) throws IllegalArgumentException {
         setIntervalMjd(stopMjd - startMjd);
   }
-
+  
   /** Getter for property stepMjd.
    * @return Value of property stepMjd.
    */
@@ -163,28 +163,28 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       this.stepMjd = stepMjd;
       firePropertyChange("stepMjd", new Double(oldStepMjd), new Double(stepMjd));
   }
-
+  
   public void setCurrentMjdIndex(int index) {
     this.currentMjdIndex = index;
     this.currentMjd = -1; // it means it will be calculated when getCurrentMjd() is executed
     firePropertyChange("currentMjd", null, null);
     firePropertyChange("currentMjdIndex", null, null);
   }
-
+  
   public int getCurrentMjdIndex() {
     return currentMjdIndex;
   }
-
+  
   public int getMaxCurrentMjdIndex() {
     return (int)(intervalMjd/stepMjd);
   }
 
-
+  
   /** Getter for property currentMjd.
    * @return Value of property currentMjd.
    */
   public double getCurrentMjd() {
-      if (currentMjd == -1)
+      if (currentMjd == -1) 
           currentMjd = get(currentMjdIndex);
     return currentMjd;
   }
@@ -198,26 +198,26 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     /*
     if (currentMjd > getStopMjd() + 2e-10 ) {
         String reason = "Time is greater, than stop time\n(" +
-                  Time.toString(currentMjd)+" > " +
+                  Time.toString(currentMjd)+" > " + 
                   Time.toString(getStopMjd())+") ";// +currentMjd+" "+getStopMjd();
         throw new IllegalArgumentException(reason);
       }
-
+      
       if (currentMjd < getStartMjd()) {
         String reason = "Time is less, than start time\n(" +
-                  Time.toString(currentMjd)+" > " +
+                  Time.toString(currentMjd)+" > " + 
                   Time.toString(getStartMjd())+")";
         throw new IllegalArgumentException(reason);
       } */
-
+    
     this.currentMjd = currentMjd;//getClosestFor(currentMjd);
     this.currentMjdIndex = indexOf(currentMjd);
-
+    
     firePropertyChange("currentMjd", new Double (oldCurrentMjd), new Double (currentMjd));
     firePropertyChange("currentMjdIndex", null, null);
   }
-
-
+  
+  
   public void adjustCurrentMjd() {
     double oldCurrentMjd = getCurrentMjd();
     this.currentMjd = getClosestFor(oldCurrentMjd);
@@ -225,8 +225,8 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     firePropertyChange("currentMjd", new Double (oldCurrentMjd), new Double (currentMjd));
     firePropertyChange("currentMjdIndex", null, null);
   }
-
-  /** Returns time, from which it is possible to start
+  
+  /** Returns time, from which it is possible to start 
    *
    */
   public double getStartFor(double mjd) {
@@ -239,9 +239,9 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       return start + step * (n + 1);
     }
   }
-
-
-  /** Get the time of point i in the interval.
+ 
+  
+  /** Get the time of point i in the interval. 
    * @param i Index representing a point in the interval, separated by getStepMjd().
    * i=0 is the first point, i=getNumberOfValues()-1 is the last point.
    */
@@ -257,12 +257,12 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
     if (!contains(mjd)) throw new IndexOutOfBoundsException(""+new Time(mjd)+" is not between start and stop time.");
     return (int)Math.round((mjd - startMjd)/stepMjd);
   }
-
+  
   /** @return values of time (mjd) from start to stop */
   public double[] getValues() {
     int nOfValues = getNumberOfValues();
     double[] res = new double[nOfValues];
-    for (int i=0; i<nOfValues; i++)
+    for (int i=0; i<nOfValues; i++) 
       res[i] = get(i);
     return res;
   }
@@ -276,51 +276,51 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       double newInterval = get(getNumberOfValues() - 1) - startMjd;
       // check if interval is a little bit less, then the last posible point
       // enlarge it in this case.
-      if (newInterval + stepMjd < getStopMjd() + 2e-10)
+      if (newInterval + stepMjd < getStopMjd() + 2e-10) 
           intervalMjd = newInterval + 2e-10;
       else
           intervalMjd = newInterval;
   }
-
+  
   public boolean contains(double mjd) {
     return ((mjd >= startMjd) && (mjd <= getStopMjd()));
   }
-
+  
   public boolean contains(TimeSet ts) {
     return ((ts.getStartMjd() >= startMjd) && (ts.getStopMjd() <= getStopMjd()));
   }
-
+  
   public boolean overlaps(TimeSet ts) {
     return (ts.getStartMjd() < getStopMjd());
   }
-
+  
 
   public double getClosestFor(double mjd) throws IllegalArgumentException {
-    if (contains(mjd))
+    if (contains(mjd)) 
         return get(indexOf(mjd));
     else return startMjd;
   }
-
+  
   public Object clone() {
-    // is buggy.. later, later...
+    // is buggy.. later, later... 
     TimeSet ts = new TimeSet(startMjd, intervalMjd, stepMjd, currentMjd);
     return ts;
   }
-
+  
   public String toString() {
     return "start="+Time.toString(startMjd)+
            ", interval="+new Interval(intervalMjd)+
            ", step=" + new Interval(stepMjd)+
            ", current=" + new Time(currentMjd);
   }
-
+  
   public void print(){
     System.out.println("start="+startMjd+
            ", interval="+intervalMjd+
            ", step=" + stepMjd+
            ", current=" + currentMjd);
   }
-
+  
   /** Equals function. Doesn't care about currentMjd. */
   public boolean equals(Object obj) {
       double eps = 1.e-9;
@@ -331,7 +331,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
               Math.abs(ts.getStepMjd() - getStepMjd()) < eps) {
                   return true;
           }
-      }
+      } 
       return false;
   }
 
@@ -344,7 +344,7 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
       if ( start2 < stop1  && stop2 > start1) return true;
       return false;
   }
-
+  
   /**
    * Test code.
    */
@@ -355,6 +355,6 @@ public class TimeSet extends OVTObject implements ovt.interfaces.TimeSetSource {
         }
         System.out.println("Y2000"+new Time(Time.Y2000));
   }
-
-
+  
+  
 }

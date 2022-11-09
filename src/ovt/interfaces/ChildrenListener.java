@@ -42,18 +42,18 @@ import ovt.event.ChildrenEvent;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public interface ChildrenListener {
 
     /** fired when child was added */
     public void childAdded(ChildrenEvent evt);
-
+    
     /** fired when child was removed */
     public void childRemoved(ChildrenEvent evt);
-
+    
     /** fired when children/children number was changed */
     public void childrenChanged(ChildrenEvent evt);
-
+    
 
 }

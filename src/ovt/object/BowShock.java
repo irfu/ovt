@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -56,31 +56,31 @@ import javax.swing.*;
  * SWP and Mach Number.
  */
 
-public class BowShock extends SingleActorObject implements
-  TimeChangeListener, CoordinateSystemChangeListener,
+public class BowShock extends SingleActorObject implements 
+  TimeChangeListener, CoordinateSystemChangeListener, 
   MagPropsChangeListener, MenuItemsSource
 {
-
+    
   private static final int DEBUG = 20;
 
-
+  
   /** Holds value of property representation. */
   private int representation = RepresentationEditor.WIREFRAME;
   /** Holds value of property opacity. */
   private double opacity = 0.1;
-
+  
   /** Those MagProps values ("indexes") on which this object depends. */
   private final int[] activityDependsOn = { MagProps.SWP, MagProps.MACHNUMBER };
   /** Holds Characteristics of this object */
   private final Characteristics characteristics = new Characteristics(-1);
-
+  
   /** Holds value of property customizerVisible. */
   private final boolean customizerVisible = false;
 
-public BowShock(OVTCore core) {
+public BowShock(OVTCore core) { 
   super(core, "Bow Shock", "images/bowshock.gif");
   // set the color
-  setColor(Color.green);
+  setColor(Color.green); 
   Log.log("BowShock :: init ...", DEBUG);
 }
 
@@ -88,7 +88,7 @@ public BowShock(OVTCore core) {
   @Override
   protected void show() {
     super.show();
-    setRepresentation(getRepresentation());
+    setRepresentation(getRepresentation()); 
     rotate();
   }
 
@@ -101,34 +101,34 @@ public BowShock(OVTCore core) {
 
 	double[] gsm = new double[3];
 	double[] rv = new double[3];
-
+	
 	double thetaMax = 140*Const.D_TO_R;
-
+	
 	double phi, theta, dPhi, dTheta, r;
         int phiResolution = 50, thetaResolution = 60;
 	double x, y, z;
-
+	
 	dPhi   = 2.*Math.PI/(phiResolution );
 	dTheta = thetaMax/(thetaResolution );
-
+	
 	final vtkPoints points = new vtkPoints();
-
-        final double swp = getMagProps().getSWP(getMjd());
+        
+        final double swp = getMagProps().getSWP(getMjd());        
         final double machNumber = getMagProps().getMachNumber(getMjd());
         Log.log("   Calculating bow shock using: swp="+swp+", machNumber="+machNumber, DEBUG);
-
+        
         // save characteristics
         characteristics.setMjd(getMjd());
         characteristics.put(MagProps.SWP, swp);
         characteristics.put(MagProps.MACHNUMBER, machNumber);
-
+        
         //System.out.println("MachNumber = "+machNumber);
         double cosTheta, sinTheta, cosPhi, sinPhi;
-
+        
 	int i, j;
         int sizex = phiResolution + 1;
         int sizey = thetaResolution + 1;
-
+        
 //        System.out.println("Bowshock99Model.getR(0, swp="+swp+", machNumber="+machNumber+") = "
 //                +Bowshock99Model.getR(0, swp, machNumber));   // DEBUG
 	for (theta=0, i=0; i<sizey; theta+=dTheta, i++) {
@@ -144,30 +144,30 @@ public BowShock(OVTCore core) {
             points.InsertNextPoint(x, y, z);
 	  }
 	}
-
+        
 	vtkStructuredGrid sgrid = new vtkStructuredGrid();
 			sgrid.SetDimensions(sizex, sizey,1);
 			sgrid.SetPoints(points);
-
+		
 	vtkStructuredGridGeometryFilter gfilter = new vtkStructuredGridGeometryFilter();
 			gfilter.SetInputData(sgrid);
-			gfilter.SetExtent(0,sizex,0,sizey,0,0);
+			gfilter.SetExtent(0,sizex,0,sizey,0,0);                
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
 			mapper.SetInputConnection(gfilter.GetOutputPort());
-
+		
         actor = new vtkActor();
         	actor.SetMapper(mapper);
                 float[] rgb = ovt.util.Utils.getRGB(getColor());
                 actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
                 actor.GetProperty().SetOpacity(this.opacity);
-
+       
        super.validate();
 }
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).gsm_trans_matrix(getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix());
+    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
 }
 
 
@@ -233,7 +233,7 @@ public void setOpacity(double opacity) {
     final Characteristics newCh = getMagProps().getCharacteristics(activityDependsOn, getMjd());
     //System.out.println("this.characteristics = "+this.characteristics);
     //System.out.println("newCh                = "+newCh);
-
+    
     if (!characteristics.equals(newCh)) {
         invalidate();
         if (isVisible()) {
@@ -270,12 +270,12 @@ public void setOpacity(double opacity) {
     if (descriptors == null) {
         descriptors = super.getDescriptors();
         try {
-
-            // representation property descriptor
+            
+            // representation property descriptor 
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("representation", this);
             pd.setDisplayName("Representation:");
-            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd,
-                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE},
+            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd, 
+                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE}, 
                 new String[]{ "Wireframe", "Surface"}
             );
             // Render each time user changes time by means of gui
@@ -284,14 +284,14 @@ public void setOpacity(double opacity) {
             });
             pd.setPropertyEditor(representationEditor);
             descriptors.put(pd);
-            addPropertyChangeListener("representation", representationEditor);
-
+            addPropertyChangeListener("representation", representationEditor); 
+            
             // opacity
-
+            
             pd = new BasicPropertyDescriptor("opacity", this);
             pd.setLabel("Opacity");
             pd.setDisplayName("BowShock opacity");
-            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05,
+            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05, 
                 new double[]{0,.25,.5,.75,1}, new String[]{"0%","25%","50%","75%","100%"});
             addPropertyChangeListener("opacity", sliderEditor);
             sliderEditor.addGUIPropertyEditorListener((GUIPropertyEditorEvent evt) -> {
@@ -299,7 +299,7 @@ public void setOpacity(double opacity) {
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
-
+            
         } catch (IntrospectionException e2) {
             System.exit(-1);
         }

@@ -17,7 +17,7 @@ import vtk.vtkRenderer;
  * @author yuri
  */
 public class JOGLVisPanel extends vtkJoglCanvasComponent implements ovt.interfaces.RenPanel {
-
+  
   private final ovt.CameraChangeSupport cameraChangeSupport;
   public JOGLVisPanel() {
     super();
@@ -43,7 +43,7 @@ public class JOGLVisPanel extends vtkJoglCanvasComponent implements ovt.interfac
     return this.getComponent().getSize();
   }
 
-
+  
   public void fireCameraChange(CameraEvent evt) {
     cameraChangeSupport.fireCameraChange(evt);
   }
@@ -57,13 +57,13 @@ public class JOGLVisPanel extends vtkJoglCanvasComponent implements ovt.interfac
     cameraChangeSupport.removeCameraChangeListener(l);
   }
 
-  public Rectangle getBounds() {
+  public Rectangle getBounds() {  
     return this.getComponent().getBounds();
 }
-
+  
   @Override
   public Image getImage() {
     throw new UnsupportedOperationException("Not supported yet. "+getClass().getSimpleName()+"#getImage() not implemented.");
   }
-
+  
 }

@@ -56,15 +56,15 @@ import java.awt.event.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
-public class CurrentMjdToolbarComponents implements
+public class CurrentMjdToolbarComponents implements 
         TimeChangeListener, ActionListener {
 
     private TimeSettings timeSettings;
     private JButton rewind, back, play, forward, fastForward;
     private JComboBox timeBox;
-
+    
 /** Creates new CurrentMjdToolbarComponents */
 public CurrentMjdToolbarComponents(TimeSettings ts) {
     this.timeSettings = ts;
@@ -72,7 +72,7 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
 
     try {
         rewind = new JButton(new ImageIcon(Utils.findResource("images/VCRRewind.gif")));
-    } catch (java.io.FileNotFoundException e2) {
+    } catch (java.io.FileNotFoundException e2) { 
         e2.printStackTrace(System.err);
         rewind = new JButton();
     }
@@ -86,10 +86,10 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
     });
     rewind.setAlignmentY(0.5f);
     rewind.setToolTipText("Start");
-
+    
     try {
         back = new JButton(new ImageIcon(Utils.findResource("images/VCRBack.gif")));
-    } catch (java.io.FileNotFoundException e2) {
+    } catch (java.io.FileNotFoundException e2) { 
         e2.printStackTrace(System.err);
         back = new JButton();
     }
@@ -103,14 +103,14 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
     });
     back.setAlignmentY(0.5f);
     back.setToolTipText("Step back");
-
+        
     timeBox = new JComboBox();
     //timeBox.setFont(Style.getMenuFont());
     timeBox.setToolTipText("Time");
-
+    
     try {
         forward = new JButton(new ImageIcon(Utils.findResource("images/VCRForward.gif")));
-    } catch (java.io.FileNotFoundException e2) {
+    } catch (java.io.FileNotFoundException e2) { 
         e2.printStackTrace(System.err);
         forward = new JButton();
     }
@@ -124,10 +124,10 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
     });
     forward.setAlignmentY(0.5f);
     forward.setToolTipText("Step forward");
-
+    
     try {
         fastForward = new JButton(new ImageIcon(Utils.findResource("images/VCRFastForward.gif")));
-    } catch (java.io.FileNotFoundException e2) {
+    } catch (java.io.FileNotFoundException e2) { 
         e2.printStackTrace(System.err);
         fastForward = new JButton();
     }
@@ -141,36 +141,36 @@ public CurrentMjdToolbarComponents(TimeSettings ts) {
     });
     fastForward.setAlignmentY(0.5f);
     fastForward.setToolTipText("End");
-
-
+        
+    
     updateComboBoxDataModel();
     refresh();
   }
-
+  
   private TimeSet getTimeSet() {
     return timeSettings.getTimeSet();
   }
-
+  
   public Component[] getComponents() {
     return new Component[]{rewind, back, timeBox, forward, fastForward};
   }
-
+  
 private void updateComboBoxDataModel() {
 //    if (OVTCore.DEBUG > 3) {
 //        System.out.print("CurrentMjdVCRComponents.updateCombobox ");
 //    }
     timeBox.removeActionListener(this);
-
+    
     double[] values = getTimeSet().getValues();
     Object[] tags = new Object[values.length];
     for (int i=0; i<tags.length; i++) {
       tags[i] = new Time(values[i]).toString();
 //      if (OVTCore.DEBUG > 3) System.out.print(" "+i);
     }
-
+    
     timeBox.setModel(new DefaultComboBoxModel(tags));
     //timeBox.setremoveAllItems();
-
+    
     timeBox.setMaximumSize(timeBox.getPreferredSize());
     timeBox.addActionListener(this);
 //    if (OVTCore.DEBUG > 3) System.out.println("done.");
@@ -178,15 +178,15 @@ private void updateComboBoxDataModel() {
 
 private void refresh() {
     int currentMjdIndex = getTimeSet().getCurrentMjdIndex();
-
+    
     // adjust timeBox
     timeBox.removeActionListener(this);
     //System.out.println("adjust textBox by '" + editor.getAsText() +"'");
     //timeBox.setSelectedItem(editor.getAsText());
     timeBox.setSelectedIndex(currentMjdIndex);
     timeBox.addActionListener(this);
-
-
+    
+    
     // adjust buttons
     if (currentMjdIndex == 0) { // isStart()
       //System.out.println("Start!!!!!!!!");
@@ -208,7 +208,7 @@ private void refresh() {
       fastForward.setEnabled(true);
     }
 }
-
+  
 public void timeChanged(TimeEvent evt) {
     if (evt.timeSetChanged()) {
         updateComboBoxDataModel();

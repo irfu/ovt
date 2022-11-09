@@ -45,8 +45,8 @@ import java.beans.*;
 import java.util.*;
 import javax.swing.*;
 
-import javax.xml.parsers.*;
-import org.xml.sax.*;
+import javax.xml.parsers.*;  
+import org.xml.sax.*;  
 import com.sun.xml.tree.*;
 
 import org.w3c.dom.*;
@@ -58,17 +58,17 @@ import org.w3c.dom.*;
  * @version
  */
 public class GroundStations extends VisualObject implements MenuItemsSource {
-
-
+   
+   
 
     /** If <CODE>true</CODE> it is not possible to rename, remove. */
     private boolean isRootNode = false;
-
+    
     /** File in which ground stations are found, including whether to display
      * them or not (checked/unchecked). */
     private static final String GROUND_STATIONS_XML_FILE = OVTCore.getUserdataSubdir()+"gb_stations.xml";
     private final File gbStationsFile;
-
+    
     public GroundStations(OVTCore core) {
         super(core, "Ground-based stations", "images/gb_stations.gif", true); // VisualObject constructor
                     // ^-> to OVTObject::setName();
@@ -82,24 +82,24 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         catch (IOException e) {
             getCore().sendErrorMessage("Error loading ground stations config", e);
         }
-
+        
     }
-
-    /**
+    
+    /** 
      */
     public GroundStations(GroundStations groundStations) {
         super(groundStations.getCore(), "Ground-based stations", "images/gb_stations.gif", true); // VisualObject constructor
         setParent(groundStations);
         gbStationsFile = Utils.findFile(GROUND_STATIONS_XML_FILE);
     }
-
+    
     public GroundStations(OVTCore core, String name) {
         super(core, name, "images/gb_stations.gif", true); // VisualObject constructor
         setParent(core);
         gbStationsFile = Utils.findFile(GROUND_STATIONS_XML_FILE);
     }
 
-
+    
 /** Source of menu items available in this object
  * @return array of <CODE>JMenuItem</CODE>
  */
@@ -129,7 +129,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
                 getChildren().fireChildAdded(gs);
             }
         });
-
+        
         if (isRootNode) {
             return new JMenuItem[] {item, item2};
         }
@@ -137,7 +137,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         JMenuItem item3 = new JMenuItem("Remove");
         item3.setFont(Style.getMenuFont());
         item3.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) {       
                 if (isVisible()) setVisible(false);
                 /*if (customizer != null) {
                     customizer.dispose();
@@ -160,28 +160,28 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         parent.getChildren().remove(this);
         parent.getChildren().fireChildRemoved(this);
     }
-
+    
     /** Saves ground stations properties to config
      * @throws IOException
-     */
+     */    
     public void save() throws IOException {
         GroundbasedStationsDOM.save(this, gbStationsFile.toString());
     }
 
     /** Loads ground stations properties from config
      * @throws IOException
-     */
+     */    
    public void load() throws IOException {
         GroundbasedStationsDOM.load(gbStationsFile.toString(), this);
    }
-
+    
     public Descriptors getDescriptors() {
-
+        
         if (descriptors == null) {
             try {
                 TextFieldEditor editor;
                 descriptors = super.getDescriptors();
-
+                
                 if (isRootNode) return descriptors; // do not have any descriptors!
 
         /* add property descriptor for name*/
@@ -193,7 +193,7 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
                 addPropertyChangeListener("name", editor);
                 pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "OK", true));
                 descriptors.put(pd);
-
+                
             } catch (IntrospectionException e2) {
                 System.out.println(getClass().getName() + " -> " + e2.toString());
                 System.exit(0);
@@ -201,14 +201,14 @@ public class GroundStations extends VisualObject implements MenuItemsSource {
         }
         return descriptors;
     }
-
-
-
+    
+    
+    
     /** for XML */
     public Object[] getGroundStations() {
         return getChildren().toArray();
     }
-
+    
     /** for XML */
     public void setGroundStations(Object[] stations) {
         // remove all children
@@ -237,28 +237,28 @@ class GroundbasedStationsDOM {
     private static final String GROUND_BASED_STATION = "GroundBasedStation";
     private static final String GROUND_BASED_STATIONS = "GroundBasedStations";
     private static final int DEBUG = 10;
-
+    
     private static XmlDocument buildDom (GroundStations stations) throws ParserConfigurationException {
         DocumentBuilderFactory factory = new com.sun.xml.parser.DocumentBuilderFactoryImpl();
         DocumentBuilder builder = factory.newDocumentBuilder();
         XmlDocument document = (XmlDocument)builder.newDocument();  // Create from whole cloth
 
-        Element root = (Element)getNode( stations, document);
+        Element root = (Element)getNode( stations, document); 
         document.appendChild (root);
         return document;
 }
-
+    
 private static Node getNode(OVTObject obj, Document document) {
     String nodeName = null;
     if (obj instanceof GroundStations) nodeName = GROUND_BASED_STATIONS;
     else if (obj instanceof GroundStation) nodeName = GROUND_BASED_STATION;
-
+    
     Log.log("object='"+nodeName+"'", DEBUG);
     Element root = (Element) document.createElement(nodeName);
-
+     
     // set name attribute
     root.setAttribute(Settings.NAME, obj.getName());
-
+        
      // set other attributes
      Descriptors desc = ((DescriptorsSource)obj).getDescriptors();
         if (desc != null) {
@@ -267,14 +267,14 @@ private static Node getNode(OVTObject obj, Document document) {
             String value;
             while (e.hasMoreElements()) {
                 pd = (BasicPropertyDescriptor)e.nextElement();
-
+                
                 if (pd.isDerived()) continue; // skip derived properties
-
+                
                 try {
                     Log.log(pd.getName() + "=" + pd.getPropertyEditor().getAsText() + "', ", DEBUG);
                     value = pd.getPropertyEditor().getAsText();
                     if (value != null) root.setAttribute(pd.getName(), value);
-                } catch (NullPointerException e2) {
+                } catch (NullPointerException e2) { 
                     //Log.err("Property descriptor '"+ pd.getName() +"' has no editor", 0);
                 }
             }
@@ -284,14 +284,14 @@ private static Node getNode(OVTObject obj, Document document) {
         Children children = obj.getChildren();
         if (children != null) {
             Enumeration e = children.elements();
-            while (e.hasMoreElements())
+            while (e.hasMoreElements()) 
                 root.appendChild(getNode((OVTObject)e.nextElement(), document));
         }
-
+    
     return root;
 }
 
-
+    
     public static void save(GroundStations stations, String xml_file) throws IOException {
         FileOutputStream out = new FileOutputStream(xml_file);
         try {
@@ -303,9 +303,9 @@ private static Node getNode(OVTObject obj, Document document) {
         }
         out.close();
     }
-
-
-
+    
+    
+    
 
 public static void load(String xml_file, GroundStations stations) throws IOException {
     DocumentBuilderFactory factory = new com.sun.xml.parser.DocumentBuilderFactoryImpl();
@@ -316,11 +316,11 @@ public static void load(String xml_file, GroundStations stations) throws IOExcep
            // (Not defined until DOM Level 3.)
 	   //Log.log("document="+document);
            XmlDocument xdoc = (XmlDocument) document;
-           set(xdoc.getDocumentElement(), stations); // first child
-
+           set(xdoc.getDocumentElement(), stations); // first child 
+           
          } catch (SAXParseException spe) {
            // Error generated by the parser
-           System.out.println ("\n** Parsing error"
+           System.out.println ("\n** Parsing error" 
               + ", line " + spe.getLineNumber ()
               + ", uri " + spe.getSystemId ());
            System.out.println("   " + spe.getMessage() );
@@ -344,32 +344,32 @@ public static void load(String xml_file, GroundStations stations) throws IOExcep
             pce.printStackTrace();
             throw new IOException("Bad File Format : " + pce.getMessage());
         }
+            
+    }    
 
-    }
-
-
+    
 private static void setAttributes(NamedNodeMap map, OVTObject obj) {
-
+    
         Descriptors desc = ((DescriptorsSource)obj).getDescriptors();
         if (desc != null) {
             for (int i=0; i<map.getLength(); i++) {
                 Attr attr = (Attr)map.item(i);
                 String propertyName = attr.getNodeName();
                 String value = attr.getValue();
-
+                
                 if (propertyName.equals(Settings.NAME)) continue; //map.removeNamedItem(nodeName);
                 Log.log("Setting '"+propertyName+"' to '"+value+"'", DEBUG);
-
+                
                 BasicPropertyDescriptor pd = desc.getDescriptor(propertyName);
                 if (pd != null) {
                     if (value != null  || value != "null") {
                         try {
                             pd.getPropertyEditor().setAsText(value);
-                        } catch (PropertyVetoException e2) {
+                        } catch (PropertyVetoException e2) { 
                             Log.err("Error setting " + propertyName + " in " + obj.getName() +
                                 " : " + e2.getMessage(), 0);
                         }
-                    } else
+                    } else 
                     Log.err("Property '" + propertyName + "' doesnt exist in " + obj.getName(), 0);
                 }
             }
@@ -377,30 +377,30 @@ private static void setAttributes(NamedNodeMap map, OVTObject obj) {
 }
 
 private static void set(Node node, BasicObject obj) {
-
+    
     setAttributes(node.getAttributes(), obj);
-
+    
         NodeList nodeList = node.getChildNodes();
-        BasicObject childObj = null;
+        BasicObject childObj = null; 
         ChildrenSource mama = obj;
         for (int i=0; i<nodeList.getLength(); i++) {
             try {
                 Element childNode = (Element)nodeList.item(i);
-
-                String nodeName = childNode.getNodeName();
+            
+                String nodeName = childNode.getNodeName(); 
                     Log.log("Node["+i+"] : '"+nodeName+"'", DEBUG);
                     if (nodeName.equals("#text")) {
                         continue;
                     }
-                if (nodeName.equals(GROUND_BASED_STATIONS))
+                if (nodeName.equals(GROUND_BASED_STATIONS)) 
                         childObj = new GroundStations(obj.getCore(), getAttribute(Settings.NAME, childNode));
-                else if (nodeName.equals(GROUND_BASED_STATION))
+                else if (nodeName.equals(GROUND_BASED_STATION)) 
                         childObj = new GroundStation((GroundStations)obj, getAttribute(Settings.NAME, childNode));
                 obj.addChild(childObj);
                 set(childNode, childObj);
              } catch (ClassCastException ignore) { }
         }
-
+    
 }
 
 public static String getAttribute(String attrName, Node node) {

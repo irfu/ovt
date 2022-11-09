@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/beans/TextAreaEditorPanel.java,v $
   Date:      $Date: 2003/09/28 17:52:35 $
   Version:   $Revision: 2.3 $
-
-
+ 
+ 
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 /*
  * TextAreaEditorPanel.java
@@ -51,10 +51,10 @@ import javax.swing.event.*;
  * @version
  */
 public class TextAreaEditorPanel extends JTextArea implements FocusListener, PropertyChangeListener, KeyListener {
-
+    
     ComponentPropertyEditor editor;
     String lastValue;
-
+    
    /** Creates new TextAreaEditorPanel */
     TextAreaEditorPanel(ComponentPropertyEditor editor, int rows, int cols) {
         super(editor.getAsText(), rows, cols);
@@ -62,12 +62,12 @@ public class TextAreaEditorPanel extends JTextArea implements FocusListener, Pro
 
         String toolTip = editor.getPropertyDescriptor().getToolTipText();
         if (toolTip != null) setToolTipText(toolTip);
-
+        
         lastValue = editor.getAsText();
         addFocusListener(this);
         addKeyListener(this);
     }
-
+    
     public void editComplete() {
         //System.out.println("Edit complete");
         try {
@@ -82,7 +82,7 @@ public class TextAreaEditorPanel extends JTextArea implements FocusListener, Pro
             requestFocus();
         }
     }
-
+    
     protected void refresh() {
         lastValue = editor.getAsText();
         //removeFocusListener(this);
@@ -91,22 +91,22 @@ public class TextAreaEditorPanel extends JTextArea implements FocusListener, Pro
         //addFocusListener(this);
         //addKeyListener(this);
     }
-
+    
     public void propertyChange(PropertyChangeEvent evt) {
         refresh();
     }
-
+    
     public void focusGained(final java.awt.event.FocusEvent p1) {
     }
-
+    
     public void focusLost(FocusEvent event) {
         if (!event.isTemporary()) {
             editComplete();
         } else System.out.println("The focus lost event temporary");
     }
-
+    
     private String textWhenPressed = "";
-
+    
     public void keyReleased(KeyEvent ke) {
         if (ke.isActionKey()) return;
         String text = getText();
@@ -121,11 +121,11 @@ public class TextAreaEditorPanel extends JTextArea implements FocusListener, Pro
             setCaretPosition(pos);          // restore position
         } catch (IllegalArgumentException e3) {}
     }
-
+    
     public void keyPressed(KeyEvent p1) {
         textWhenPressed = getText();
     }
-
+    
     public void keyTyped(KeyEvent p1) {}
-
+    
 }

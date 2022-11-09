@@ -6,7 +6,7 @@
   Version:   $Revision: 2.6 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,15 +35,15 @@ Khotyaintsev
  *
  * Created on April 1, 2000, 2:31 PM
  */
-
+ 
 package ovt.object.vtk;
 
 import vtk.*;
 
-/**
+/** 
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class ProgrammableEarthSource {
 
@@ -59,30 +59,30 @@ public class ProgrammableEarthSource {
   private double radius = 1;
   /** Creates new ProgramableEarthSource */
   vtkPolyData polyData = new vtkPolyData();
-
+  
   public ProgrammableEarthSource() {
     super();
   }
-
+  
   protected void Execute() {
-
+    
     vtkPoints points = new vtkPoints();
     vtkFloatArray scalars = new vtkFloatArray();
     double dPhi = 2.*Math.PI/getMeridians();
     double dTheta = Math.PI/getParallels();
     double ddPhi = dPhi/getPhiResolution();
     double ddTheta = dTheta/getThetaResolution();
-
+    
     double phi, theta, x, y, z;
     int meridian, parallel, mm, pp;
     boolean visible;
-
+    
     for (parallel=0; parallel<getParallels(); parallel++) {
        for (pp=0; pp<getThetaResolution(); pp++) {
-
+        
         theta = parallel * dTheta + pp*ddTheta;
         z = getRadius() * Math.cos(theta);
-
+      
         for (meridian=0; meridian<getMeridians(); meridian++) {
            for (mm=0; mm<getPhiResolution(); mm++) {
             phi = meridian * dPhi + mm*ddPhi;
@@ -95,37 +95,37 @@ public class ProgrammableEarthSource {
         }
       }
     }
-
+    
     vtkCellArray cells = new vtkCellArray();
     cells.InsertNextCell(points.GetNumberOfPoints());
-    for(int j=0; j<points.GetNumberOfPoints(); j++)
+    for(int j=0; j<points.GetNumberOfPoints(); j++) 
       cells.InsertCellPoint(j);
-
+    
     int phiRes = getPhiResolution()*getMeridians();
     int thetaRes = getThetaResolution()*getParallels();
-
+    
     vtkStructuredGrid sgrid = new vtkStructuredGrid();
       sgrid.SetDimensions(thetaRes, phiRes ,1);
       sgrid.SetPoints(points);
       sgrid.GetPointData().SetScalars(scalars);
-
+		
     vtkStructuredGridGeometryFilter gfilter = new vtkStructuredGridGeometryFilter();
       gfilter.SetInputData(sgrid);
       gfilter.SetExtent(0, thetaRes, 0, phiRes, 0, 0);
-
+    
     polyData = gfilter.GetOutput();
-
-
+    
+    
     /*polyData.GetPolyDataOutput().SetPoints(points);
     polyData.GetPolyDataOutput().SetLines(cells);*/
   }
-
+  
   public vtkPolyData GetOutput() {
     Execute();
     return polyData;
   }
-
-
+  
+  
   /** Getter for property meridians.
    * @return Value of property meridians.
    */

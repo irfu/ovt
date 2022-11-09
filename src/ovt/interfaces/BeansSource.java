@@ -13,11 +13,11 @@ import ovt.beans.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public interface BeansSource {
 
     public BeansCollection getBeanDesriptors();
-
+    
 }
 

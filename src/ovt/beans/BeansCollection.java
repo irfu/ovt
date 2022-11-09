@@ -42,18 +42,18 @@ package ovt.beans;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class BeansCollection extends java.util.Hashtable {
 
   /** Creates new PropertyDescriptors */
   public BeansCollection() {
   }
-
-  public void put(BasicBeanDescriptor pd)
+  
+  public void put(BasicBeanDescriptor pd) 
     { put(pd.getName(), pd); }
-
-  public BasicBeanDescriptor getDescriptor(String name)
+  
+  public BasicBeanDescriptor getDescriptor(String name) 
     { return (BasicBeanDescriptor)get(name); }
-
+  
  }

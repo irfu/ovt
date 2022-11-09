@@ -6,7 +6,7 @@
   Version:   $Revision: 2.2 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 15, 2000, 9:45 AM
  */
-
+ 
 package ovt.gui;
 
 import ovt.datatype.*;
@@ -50,23 +50,23 @@ import javax.swing.*;
 import javax.swing.tree.*;
 import java.util.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
-public class OVTNode extends DefaultMutableTreeNode
+public class OVTNode extends DefaultMutableTreeNode 
         implements ChildrenListener, PropertyChangeListener {
-
+    
   protected TreePanel treePanel;
-
+  
   /** Creates new OVTNode */
   public OVTNode(Object obj, TreePanel treePanel) {
     this.treePanel = treePanel;
     setUserObject(obj);
-
+    
     //if (Object implements OVTTreeNode)
-
+    
     try {
       OVTObject ovtObj = ((OVTObject)getUserObject());
       if (!ovtObj.showInTree()) return;
@@ -76,10 +76,10 @@ public class OVTNode extends DefaultMutableTreeNode
     } catch (ClassCastException e2) {
       System.out.println(e2.toString() + " -> OVTObject");
     }
-
+    
     try {
       Children children = ((ChildrenSource)getUserObject()).getChildren();
-
+      
       if (children != null) {
           children.addChildrenListener(this);
           addChildren(children);
@@ -87,8 +87,8 @@ public class OVTNode extends DefaultMutableTreeNode
     } catch (ClassCastException e2) {  e2.printStackTrace();
     }
 
-
-
+    
+    
   }
 
   private void addChildren(Children children) {
@@ -111,27 +111,27 @@ public class OVTNode extends DefaultMutableTreeNode
     } catch (ClassCastException e2) {  e2.printStackTrace();
     }
   }
-
-
+  
+  
   public boolean getAllowsChildren() {
     boolean result = false;
-    try {
-      Children children = ((OVTTreeNode)getUserObject()).getChildren();
+    try { 
+      Children children = ((OVTTreeNode)getUserObject()).getChildren();  
       if (children != null) return false;
       if (children.size() == 0) return false;
     } catch (ClassCastException e2) {}
     return false;
   }
-
+  
   public String toString() {
-    try {
+    try { 
       return ((OVTTreeNode)getUserObject()).getName();
     } catch (ClassCastException e2) {}
     // else
     return getUserObject().toString();
   }
-
-
+  
+  
   public void propertyChange(PropertyChangeEvent evt) {
     //System.out.println("OVTNode received event - " + evt.getPropertyName());
 
@@ -139,7 +139,7 @@ public class OVTNode extends DefaultMutableTreeNode
       treePanel.nodeChanged(this);
       return;
     }
-
+    
     if (evt.getPropertyName().equals("enabled")) {
       treePanel.nodeChanged(this);
       return;
@@ -150,15 +150,15 @@ public class OVTNode extends DefaultMutableTreeNode
       treePanel.nodeChanged(this);
       return;
     }
-
-
+    
+    
   }
-
+ 
     /** sets user object of this node visible or not */
     public void userObjectSetVisible(boolean visible) {
         try {
            ((VisualObject) getUserObject()).setVisible(visible);
-        }
+        } 
         catch(ClassCastException e) {
             System.err.println("Error: not a VisualObject. " + e);
         }
@@ -168,14 +168,14 @@ public class OVTNode extends DefaultMutableTreeNode
     public boolean userObjectIsVisible() {
         try {
            return ((VisualObject) getUserObject()).isVisible();
-        }
+        } 
         catch(ClassCastException e) {
             System.err.println("Error: not a VisualObject. " + e);
             return false;
         }
     }
-
-
+    
+    
     public void childAdded(ChildrenEvent evt) {
         //DBG*/ System.out.println("OVTNode::propertyChange() -> adding child");
                 treePanel.getTreeModel().insertNodeInto(
@@ -184,7 +184,7 @@ public class OVTNode extends DefaultMutableTreeNode
                     this.getChildCount()                  // insert position
                 );
     }
-
+    
     public void childRemoved(ChildrenEvent evt) {
         //DBG* System.out.println("OVTNode::propertyChange() -> removing node");
                 //if (getParent() != null) treePanel.getTreeModel().removeNodeFromParent(this);
@@ -192,8 +192,8 @@ public class OVTNode extends DefaultMutableTreeNode
                 OVTNode node = findChildNode(evt.getChild());
                 treePanel.getTreeModel().removeNodeFromParent(node);
     }
-
-
+    
+    
     public void childrenChanged(ChildrenEvent evt) {
         removeAllChildren();
         Children children = ((ChildrenSource)getUserObject()).getChildren();
@@ -209,10 +209,10 @@ public class OVTNode extends DefaultMutableTreeNode
             } catch (ClassCastException ignore) {
             }
         } */
-        addChildren(children);
+        addChildren(children); 
         treePanel.getTreeModel().nodeStructureChanged(this);
     }
-
+    
     /** Searches for the child node with the user object obj */
     private OVTNode findChildNode(OVTObject obj) {
         Enumeration e = children();
@@ -223,6 +223,6 @@ public class OVTNode extends DefaultMutableTreeNode
         }
         return null;
     }
-
-
+    
+    
 }

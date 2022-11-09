@@ -3,17 +3,17 @@ package ovt.object;
 import java.beans.*;
 
 public class TLESatBeanInfo extends SimpleBeanInfo {
-
+    
     // Bean descriptor//GEN-FIRST:BeanDescriptor
     /*lazy BeanDescriptor*/
     private static BeanDescriptor getBdescriptor(){
         BeanDescriptor beanDescriptor = new BeanDescriptor  ( ovt.object.TLESat.class , null ); // NOI18N//GEN-HEADEREND:BeanDescriptor
-
+        
         // Here you can add code for customizing the BeanDescriptor.
-
+        
         return beanDescriptor;     }//GEN-LAST:BeanDescriptor
-
-
+    
+    
     // Property identifiers//GEN-FIRST:Properties
     private static final int PROPERTY_dataModules = 0;
     private static final int PROPERTY_labelsModule = 1;
@@ -26,11 +26,11 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_orbitMonitorModule = 8;
     private static final int PROPERTY_satelliteModule = 9;
 
-    // Property array
+    // Property array 
     /*lazy PropertyDescriptor*/
     private static PropertyDescriptor[] getPdescriptor(){
         PropertyDescriptor[] properties = new PropertyDescriptor[10];
-
+    
         try {
             properties[PROPERTY_dataModules] = new PropertyDescriptor ( "dataModules", ovt.object.TLESat.class, "getDataModules", "setDataModules" ); // NOI18N
             properties[PROPERTY_labelsModule] = new PropertyDescriptor ( "labelsModule", ovt.object.TLESat.class, "getLabelsModule", null ); // NOI18N
@@ -46,44 +46,44 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
         catch(IntrospectionException e) {
             e.printStackTrace();
         }//GEN-HEADEREND:Properties
-
+        
         // Here you can add code for customizing the properties array.
-
+        
         return properties;     }//GEN-LAST:Properties
-
+    
     // EventSet identifiers//GEN-FIRST:Events
 
     // EventSet array
     /*lazy EventSetDescriptor*/
     private static EventSetDescriptor[] getEdescriptor(){
         EventSetDescriptor[] eventSets = new EventSetDescriptor[0];//GEN-HEADEREND:Events
-
+        
         // Here you can add code for customizing the event sets array.
-
+        
         return eventSets;     }//GEN-LAST:Events
-
+    
     // Method identifiers//GEN-FIRST:Methods
 
-    // Method array
+    // Method array 
     /*lazy MethodDescriptor*/
     private static MethodDescriptor[] getMdescriptor(){
         MethodDescriptor[] methods = new MethodDescriptor[0];//GEN-HEADEREND:Methods
-
+        
         // Here you can add code for customizing the methods array.
-
+        
         return methods;     }//GEN-LAST:Methods
-
-
+    
+    
     private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
     private static final int defaultEventIndex = -1;//GEN-END:Idx
-
-
+    
+    
 //GEN-FIRST:Superclass
-
+    
     // Here you can add code for customizing the Superclass BeanInfo.
-
+    
 //GEN-LAST:Superclass
-
+    
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *
@@ -94,7 +94,7 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     public BeanDescriptor getBeanDescriptor() {
         return getBdescriptor();
     }
-
+    
     /**
      * Gets the bean's <code>PropertyDescriptor</code>s.
      *
@@ -110,7 +110,7 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     public PropertyDescriptor[] getPropertyDescriptors() {
         return getPdescriptor();
     }
-
+    
     /**
      * Gets the bean's <code>EventSetDescriptor</code>s.
      *
@@ -121,7 +121,7 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     public EventSetDescriptor[] getEventSetDescriptors() {
         return getEdescriptor();
     }
-
+    
     /**
      * Gets the bean's <code>MethodDescriptor</code>s.
      *
@@ -132,7 +132,7 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     public MethodDescriptor[] getMethodDescriptors() {
         return getMdescriptor();
     }
-
+    
     /**
      * A bean may have a "default" property that is the property that will
      * mostly commonly be initially chosen for update by human's who are
@@ -144,7 +144,7 @@ public class TLESatBeanInfo extends SimpleBeanInfo {
     public int getDefaultPropertyIndex() {
         return defaultPropertyIndex;
     }
-
+    
     /**
      * A bean may have a "default" event that is the event that will
      * mostly commonly be used by human's when using the bean.

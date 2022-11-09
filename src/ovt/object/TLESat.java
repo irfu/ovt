@@ -6,7 +6,7 @@
   Version:   $Revision: 1.2 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -48,16 +48,16 @@ import java.io.*;
  * @author  ko
  */
 public class TLESat extends Sat  {
-
+ 
   /** Contructor. Also used by xml */
   public TLESat(OVTCore core) {
     super(core);
   }
-
-   /**
+    
+   /** 
     *  Implementation of the parents abstract method.
     * Reads the orbitFile and returns the time for the first and last orbital data in the orbit data file, period of the satellite revolution.
-    *
+    * 
     *  @return res[0] - firstMjd, res[1] - lastMjd, res[2] - periodDays
     */
 
@@ -65,7 +65,7 @@ protected double[] getFirstLastMjdPeriodSatNumber() throws java.io.IOException {
     return ovt.util.Tle.getFirstLastMjdPeriodSatNumber(orbitFile);
 }
 
-/**
+/** 
  * Implementation of the parent's abstract method. Reads the orbitFile, computes... returns...
  */
 protected  void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][] vei_arr) throws IOException {
@@ -74,7 +74,7 @@ protected  void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][]
 
 
 /**
- * JNI interface to a c routine Java_ovt_object_TLESat_getSatPosJNI(env,obj,jfilename,jmjd,jgei,jvei,jn)
+ * JNI interface to a c routine Java_ovt_object_TLESat_getSatPosJNI(env,obj,jfilename,jmjd,jgei,jvei,jn) 
  * defined at getsatpos.c
  * Returns S/C position and velocity
  * @param filename Orbit Data File
@@ -83,5 +83,5 @@ protected  void fill_GEI_VEI(double[] timeMjdMap, double[][] gei_arr, double[][]
  */
 public static native int getSatPosJNI(String filename, double[] mjd, double[][] gei, double[][] vei, int N);
 
-
+  
 }

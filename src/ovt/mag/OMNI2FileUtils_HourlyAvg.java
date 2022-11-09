@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
  Program:   Orbit Visualization Tool
  Source:    $Source: /ovt/mag/OMNI2FileUtils_HourlyAvg.java $
  Date:      $Date: 2015/09/15 12:10:00 $
  Version:   $Revision: 1.0 $
-
-
+ 
+ 
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
-
+ 
  =========================================================================*/
 package ovt.mag;
 
@@ -56,28 +56,28 @@ import ovt.util.Utils;
 //    CON: Fits bad with testing code?
 //
 /*
- Excerpt from column descriptions:
+ Excerpt from column descriptions: 
  Source, 2015-09-04: ftp://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2.text
  -------------------------------------------------------------------------------
- OMNI2_YYYY.DAT FORMAT DESCRIPTION
-
-
+ OMNI2_YYYY.DAT FORMAT DESCRIPTION     
+                                                   
+         
  WORD  FORMAT  Fill Value         MEANING                  UNITS/COMMENTS
-
+                               
  1      I4              Year                              1963, 1964, etc.
  2      I4              Decimal Day                       January 1 = Day 1
- 3      I3              Hour                              0, 1,...,23
+ 3      I3              Hour                              0, 1,...,23   
  4      I5   9999      Bartels rotation number
  5      I3    0        ID for IMF spacecraft             See table
  6      I3    0        ID for SW plasma spacecraft       See table
- 7      I4   999       # of points in the IMF averages
- 8      I4   999       # of points in the plasma averages
+ 7      I4   999       # of points in the IMF averages 
+ 8      I4   999       # of points in the plasma averages 
  9      F6.1  999.9     Field Magnitude Average |B|       1/N SUM |B|, nT
- 10     F6.1  999.9     Magnitude of Average Field Vector sqrt(Bx^2+By^2+Bz^2)
- 11     F6.1  999.9     Lat.Angle of Aver. Field Vector   Degrees (GSE coords)
- 12     F6.1  999.9     Long.Angle of Aver.Field Vector   Degrees (GSE coords)
- 13     F6.1  999.9     Bx GSE, GSM                       nT
- 14     F6.1  999.9     By GSE                            nT
+ 10     F6.1  999.9     Magnitude of Average Field Vector sqrt(Bx^2+By^2+Bz^2) 
+ 11     F6.1  999.9     Lat.Angle of Aver. Field Vector   Degrees (GSE coords) 
+ 12     F6.1  999.9     Long.Angle of Aver.Field Vector   Degrees (GSE coords) 
+ 13     F6.1  999.9     Bx GSE, GSM                       nT 
+ 14     F6.1  999.9     By GSE                            nT 
  15     F6.1  999.9     Bz GSE                            nT
  16     F6.1  999.9     By GSM                            nT
  17     F6 1  999.9     Bz GSM                            nT
@@ -85,21 +85,21 @@ import ovt.util.Utils;
  magnitude (word 10), nT
  19     F6.1  999.9     sigma B             RMS Standard Deviation in field
  vector, nT (**)
- 20     F6.1  999.9     sigma Bx            RMS Standard Deviation in GSE
- X-component average, nT
+ 20     F6.1  999.9     sigma Bx            RMS Standard Deviation in GSE 
+ X-component average, nT 
  21     F6.1  999.9     sigma By            RMS Standard Deviation in GSE
- Y-component average, nT
- 22     F6.1  999.9     sigma Bz            RMS Standard Deviation in GSE
- Z-component average, nT
+ Y-component average, nT 
+ 22     F6.1  999.9     sigma Bz            RMS Standard Deviation in GSE 
+ Z-component average, nT 
 
  23     F9.0  9999999.  Proton temperature                Degrees, K
- 24     F6.1  999.9     Proton Density                    N/cm^3
+ 24     F6.1  999.9     Proton Density                    N/cm^3 
 
  25     F6.0  9999.     Plasma (Flow) speed               km/s
  26     F6.1  999.9     Plasma Flow Long. Angle    Degrees, quasi-GSE*
- 27     F6.1  999.9     Plasma  Flow Lat. Angle     Degrees, GSE*
+ 27     F6.1  999.9     Plasma  Flow Lat. Angle     Degrees, GSE* 
 
- 28     F6.3  9.999     Na/Np                    Alpha/Proton ratio
+ 28     F6.3  9.999     Na/Np                    Alpha/Proton ratio 
  29     F6.2  99.99     Flow Pressure            P (nPa) = (1.67/10**6) * Np*V**2 * (1+ 4*Na/Np)
  for hours with non-fill Na/Np ratios and
  P (nPa) = (2.0/10**6) * Np*V**2
@@ -110,7 +110,7 @@ import ovt.util.Utils;
  32     F6.0  9999.     sigma V                           km/s
  33     F6.1  999.9     sigma phi V                       Degrees
  34     F6.1  999.9     sigma theta V                     Degrees
- 35     F6.3  9.999     sigma-Na/Np
+ 35     F6.3  9.999     sigma-Na/Np   
 
  36     F7.2  999.99    Electric field         -[V(km/s) * Bz (nT; GSM)] * 10**-3. (mV/m)
  37     F7.2  999.99    Plasma beta            Beta = [(T*4.16/10**5) + 5.34] * Np / B**2
@@ -122,23 +122,23 @@ import ovt.util.Utils;
  40      I4   999        R                          Sunspot number
  41      I6   99999     DST Index                         nT
  42      I5   9999      AE-index                    from NGDC
- 43     F10.2 999999.99 Proton flux                 number/cmsq sec sr >1 Mev
+ 43     F10.2 999999.99 Proton flux                 number/cmsq sec sr >1 Mev 
  44     F9.2  99999.99  Proton flux                 number/cmsq sec sr >2 Mev
  45     F9.2  99999.99  Proton flux                 number/cmsq sec sr >4 Mev
  46     F9.2  99999.99  Proton flux                 number/cmsq sec sr >10 Mev
  47     F9.2  99999.99  Proton flux                 number/cmsq sec sr >30 Mev
  48     F9.2  99999.99  Proton flux                 number/cmsq sec sr >60 Mev
- 49      I3   0         Flag(***)                       (-1,0,1,2,3,4,5,6)
-
+ 49      I3   0         Flag(***)                       (-1,0,1,2,3,4,5,6)     
+ 
  50      I4                                       ap-index, nT, from NGDC
  51       F6.1                                    f10.7_index, from NGDC
  52       F6.1                                    PC(N) index, from NGDC
- 53       I6                                      AL-index, nT, from Kyoto
+ 53       I6                                      AL-index, nT, from Kyoto                     
  54       I6                                     AU-index, nT, from Kyoto
  55       F5.1  99.9   Magnetosonic mach number= = V/Magnetosonic_speed
  Magnetosonic speed = [(sound speed)**2 + (Alfv speed)**2]**0.5
- The Alfven speed = 20. * B / N**0.5
- The sound speed = 0.12 * [T + 1.28*10**5]**0.5
+ The Alfven speed = 20. * B / N**0.5 
+ The sound speed = 0.12 * [T + 1.28*10**5]**0.5 
  */
 public class OMNI2FileUtils_HourlyAvg {
 
@@ -156,7 +156,7 @@ public class OMNI2FileUtils_HourlyAvg {
      */
     private final String localFileNamePattern;
     private final String urlPattern;
-
+    
 
     // Choose buffer sizes based on expected number of data points (approximate, does not have to be exact).
     // NOTE: Some years are leap years and are longer.
@@ -200,8 +200,8 @@ public class OMNI2FileUtils_HourlyAvg {
     public OMNI2FileUtils_HourlyAvg(double mDoubleFillValue/*, int mIntFillValue*/, String mUrlPattern, String mLocalFileNamePattern) {
         doubleFillValue = mDoubleFillValue;
         //intFillValue = mIntFillValue;
-
-        urlPattern = mUrlPattern;
+        
+        urlPattern = mUrlPattern;        
         localFileNamePattern = mLocalFileNamePattern;
     }
 
@@ -284,7 +284,7 @@ public class OMNI2FileUtils_HourlyAvg {
         final int[] hod = hod_FCR.getBuffer();
         final double[] times_mjd = new double[year.length];
         for (int i = 0; i < year.length; i++) {
-            final double time_mjd = Time.getMjd(year[i], 1, 1, hod[i], 0, 0) + (doy[i] - 1); // Technically cheating with leap seconds, maybe, since differences in mjd are not proportional to physical  time.
+            final double time_mjd = Time.getMjd(year[i], 1, 1, hod[i], 0, 0) + (doy[i] - 1); // Technically cheating with leap seconds, maybe, since differences in mjd are not proportional to physical  time. 
 
             /* // Check assertion. Check is now made in OMNI2Data constructor.
              if ((time_mjd < beginIncl_mjd) || (endExcl_mjd <= time_mjd)) {

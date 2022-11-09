@@ -59,51 +59,51 @@ import javax.swing.*;
 /**
  * This object belongs to ovt.object.Earth
  * @author  ko
- * @version
+ * @version 
  */
-public class CoastLine extends ovt.object.SingleActorObject implements TimeChangeListener,
+public class CoastLine extends ovt.object.SingleActorObject implements TimeChangeListener, 
                       CoordinateSystemChangeListener {
 
 /** Holds value of property prefferedVisibility. */
 private boolean prefferedVisibility = false;
 private  BasicPropertyEditor prefferedVisibilityEditor;
-
+                         
 /** Creates new EarthGrid */
 public CoastLine(Earth earth) {
     super(earth.getCore(), "CoastLine");
     setParent(earth);
-
+    
     showInTree(false);
-
+    
     setColor(new java.awt.Color(-7763575));
     Descriptors descriptors = super.getDescriptors();
     descriptors.remove("visible"); // remove "Show/Hide" descriptor
     try {
-
+      
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("prefferedVisibility", this);
         pd.setDisplayName(getName());
-
+        
         prefferedVisibilityEditor = new MenuPropertyEditor(pd, MenuPropertyEditor.SWITCH);
             prefferedVisibilityEditor.setTags(new String[]{"On", "Off"});
             prefferedVisibilityEditor.setValues(new Object[]{new Boolean(true), new Boolean(false)});
         addPropertyChangeListener("prefferedVisibility", prefferedVisibilityEditor);
         pd.setPropertyEditor(prefferedVisibilityEditor);
         descriptors.put(pd);
-
+        
     } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
     }
-
+        
 }
-
+   
 protected void show() {
   super.show();
   rotate();
 }
 
 public void setVisible(boolean visible) {
-
+    
     if (visible) { // to show one must look at a parent's "visibility" state
         if (isPrefferedVisibility()) super.setVisible(visible);
     } else super.setVisible(visible); // no questions if someone whants to hide us
@@ -123,13 +123,13 @@ protected void validate() {
         ContinentsReader cr = new ContinentsReader(f);
         vtkPolyDataMapper mapper = new vtkPolyDataMapper();
             mapper.SetInputData(cr.GetOutput());
-
+    
         actor = new vtkActor();
             actor.SetMapper(mapper);
             float[] rgb = ovt.util.Utils.getRGB(getColor());
             actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
 
-
+        
     } catch (IOException e) {
         Log.err("Error loading coastline from "+OVTCore.getMdataSubdir()+"coastline.dat", 0);
     }
@@ -138,7 +138,7 @@ protected void validate() {
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).geo_trans_matrix(getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix());
+    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
 }
 
 public void timeChanged(TimeEvent evt) {
@@ -147,9 +147,9 @@ public void timeChanged(TimeEvent evt) {
 
 public void coordinateSystemChanged(CoordinateSystemEvent evt) {
     if (isVisible()) rotate();
-
+          
     if (evt.getWindow() == Const.POLAR) {
-      // it is not possible to show earth with continents
+      // it is not possible to show earth with continents 
       // if CS is not GEO
       if (evt.getNewCS() == CoordinateSystem.GEO) {
         prefferedVisibilityEditor.setEnabled(true);
@@ -181,7 +181,7 @@ public void setPrefferedVisibility(boolean prefferedVisibility) throws IllegalAr
         throw new IllegalArgumentException("Coastline can be only shown in GEO coordinate system");
 
     this.prefferedVisibility = prefferedVisibility;
-
+    
     if (prefferedVisibility == true) {
         if (parentIsVisible()) setVisible(true); // show only if the parent is visible
     } else {
@@ -199,15 +199,15 @@ class ContinentsReader {
 
 ContinentsReader(File file) throws IOException {
     this.file = file;
-    Log.log("Loading continents from " + file + " ...");
+    Log.log("Loading continents from " + file + " ...");  
     vtkCellArray lines = new vtkCellArray();
     vtkPoints points = new vtkPoints();
-
+      
     double i = 0;
-
-
+    
+    
     String str;
-
+      
     try {
       //DataInputStream inData = new DataInputStream(new FileInputStream(file));
       BufferedReader inData = new BufferedReader(new FileReader(file));
@@ -217,13 +217,13 @@ ContinentsReader(File file) throws IOException {
       double[] r;
       int n_points = 0;
       int n_lines = 0;
-
+    
       int line_start = 0;
       StringTokenizer st;
       String line;
       String s1, s2;
       while((line = inData.readLine()) != null) {
-
+        
         if (!line.equals("nan nan")) {
             st = new StringTokenizer(line, "\t");
             s1 = st.nextToken();
@@ -237,13 +237,13 @@ ContinentsReader(File file) throws IOException {
             points.InsertNextPoint(r[0], r[1], r[2]);
         } else {
             lines.InsertNextCell(points.GetNumberOfPoints() - line_start);
-            for(int j=line_start; j<points.GetNumberOfPoints(); j++)
+            for(int j=line_start; j<points.GetNumberOfPoints(); j++) 
             lines.InsertCellPoint(j);
-
+            
             line_start = points.GetNumberOfPoints();
         }
     }
-
+        
     profile.SetPoints(points);
     profile.SetLines(lines);
     inData.close();
@@ -252,12 +252,12 @@ ContinentsReader(File file) throws IOException {
    } catch (IOException e){
          throw new IOException("IO error with "+file+" datafile.");
    } // try - catch wrong!!
-   System.out.println(" done.");
+   System.out.println(" done.");  
 }
-
+    
     vtkPolyData GetOutput () {
         return profile;
     }
-
+    
 }
 

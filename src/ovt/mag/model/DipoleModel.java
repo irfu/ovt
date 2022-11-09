@@ -17,39 +17,39 @@ package ovt.mag.model;
 
 import ovt.mag.*;
 
-/**
+/** 
  *
  * @author  Mykola Khotyaintsev
- * @version
+ * @version 
  */
 public class DipoleModel extends AbstractMagModel {
 
   public DipoleModel(MagProps magProps) {
     super(magProps);
   }
-
+  
   public double[] bv(double[] gsm, double mjd){
-    return dipol(gsm, getSint(mjd), getCost(mjd));
+    return dipol(gsm, getSint(mjd), getCost(mjd));  
   }
 
 
-/* ------------------------------------------------------------
-   FUNCTION:
-      compute dipole field (nt) in gsm coordinates
-   input:
-      sint, cost: sine and cosine of the tilt angle
-      gsm(3)      position vector (earth radii, re)
+/* ------------------------------------------------------------ 
+   FUNCTION: 
+      compute dipole field (nt) in gsm coordinates 
+   input: 
+      sint, cost: sine and cosine of the tilt angle 
+      gsm(3)      position vector (earth radii, re) 
    output:
-      bv(3)     : field vector (nanotesla)
-   ------------------------------------------------------------
+      bv(3)     : field vector (nanotesla) 
+   ------------------------------------------------------------ 
    dipmom = magnetic moment of the earth for igrf1985 model */
 
 
 protected static double[] dipol(double gsm[], double sint, double cost) {
-
+    
     double  b, x, y, z, r2, bx, by, bz;
     double bv[] = new double[3];
-
+	
     /* Function Body */
 
     x = gsm[0] * cost - gsm[2] * sint;

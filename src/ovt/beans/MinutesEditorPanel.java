@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on February 25, 2000, 10:03 AM
  */
-
+ 
 package ovt.beans;
 
 import ovt.datatype.*;
@@ -47,7 +47,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-/**
+/** 
  * This class is used to manipulate time values less, than 1 hour.
  * @author  mykola
  * @version 1.0
@@ -55,20 +55,20 @@ import java.awt.event.*;
 public class MinutesEditorPanel extends JTextField implements PropertyChangeListener, FocusListener {
 
   private String lastValue = Time.toString(0);
-
+  
   private MinutesEditor ed = null;
-
+  
   /** Creates new MjdEditorPanel */
   public MinutesEditorPanel(MinutesEditor ed) {
     super(ed.getAsText(), 16);
     this.ed = ed;
     lastValue = ed.getAsText();
-
+    
     //System.out.println("Init! "+ed.getAsText());
-
+    
     addFocusListener(this);
   }
-
+  
   public void editComplete() {
     try {
       ed.setAsText(getText());
@@ -81,23 +81,23 @@ public class MinutesEditorPanel extends JTextField implements PropertyChangeList
       requestFocus();
     }
   }
-
-  /*public Dimension getPrefferedSize()
+  
+  /*public Dimension getPrefferedSize() 
     { return new Dimension(XMINSIZE, YMINSIZE);}
-
-  protected Document createDefaultModel()
+  
+  protected Document createDefaultModel() 
     { return new MjdDocument(); }
-
-
+  
+   
 }
 
 class MjdDocument extends PlainDocument {
-  public void insertString(int offs, String str, AttributeSet a)
+  public void insertString(int offs, String str, AttributeSet a) 
     throws BadLocationException {
     if (str == null) return;
-
+    
   }*/
-
+  
   public void focusGained(FocusEvent event) {
         if (!event.isTemporary()) {
           //lastValue = getText();
@@ -109,7 +109,7 @@ class MjdDocument extends PlainDocument {
           editComplete();
         }
   }
-
+  
   public void propertyChange(PropertyChangeEvent pche) {
     //if (pche.getPropertyName().equals(ed.getPropertyName()))
     refresh();
@@ -121,8 +121,8 @@ class MjdDocument extends PlainDocument {
     setText(lastValue);
     addFocusListener(this);
   }
+  
+  
 
-
-
-
+  
 }

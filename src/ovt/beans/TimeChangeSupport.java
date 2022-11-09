@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 13, 2000, 4:09 PM
  */
-
+ 
 package ovt.beans;
 
 import ovt.*;
@@ -45,16 +45,16 @@ import ovt.interfaces.*;
 import java.util.*;
 import ovt.util.Log;
 
-/**
+/** 
  * @author  root
- * @version
+ * @version 
  */
 
 public class TimeChangeSupport {
 
   private final Vector timeChangeListeners = new Vector();
   private static TimeEvent currentEvent = null;
-
+  
   public TimeChangeSupport() {
 //    this.source = source;
   }
@@ -71,7 +71,7 @@ public class TimeChangeSupport {
     Enumeration e = timeChangeListeners.elements();
     fireTimeChange(evt, e);
   }
-
+  
   /** Deliver eventd evt to all elements of enumeration e. */
   public static void fireTimeChange(TimeEvent evt, Enumeration e) {
 //    Log.log("fireTimeChange BEGIN : currentEvent = ...", 2);
@@ -90,19 +90,19 @@ public class TimeChangeSupport {
     currentEvent = null;
 //    Log.log("fireTimeChange END   : currentEvent = null", 2);
   }
-
+  
   /*public void fireTimeChange(String property, Object oldValue, Object newValue) {
     TimeEvent evt = new TimeEvent(source, property, oldValue, newValue);
     fireTimeChange(evt);
   }*/
-
+  
   public boolean hasListener(TimeChangeListener listener) {
     return timeChangeListeners.contains(listener);
   }
-
+  
   /** Get the TimeEvent that is being "fired" at the time this function is called.
    * Otherwise return null.
-   *
+   * 
    * NOTE: This is used by other code to avoid triggering multiple identical error
    * messages triggered by the same event. (Yes, it is a hack, but there seems
    * to be no other option with a reasonable amount of code changes.)<BR
@@ -111,5 +111,5 @@ public class TimeChangeSupport {
   public static TimeEvent getCurrentEvent() {
       return currentEvent;
   }
-
+    
 }

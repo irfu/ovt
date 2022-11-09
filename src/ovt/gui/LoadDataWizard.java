@@ -64,12 +64,12 @@ import javax.swing.border.*;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public class LoadDataWizard extends JDialog {
 
     public static final String LAST_DATA_FILE = "LastDataFile";
-
+    
     private JPanel buttonsPanel = null;
     private JButton backButton, forwardButton, cancelButton;
     private IntHashtable pages = new IntHashtable();
@@ -82,36 +82,36 @@ public class LoadDataWizard extends JDialog {
     private LastPage lastPage;
     private JLabel label;
     private JPanel pageContainer;
-
-
+    
+    
     /** Creates new LoadDataWizard */
     public LoadDataWizard(Sat sat, Frame owner) {
         super(owner, "Load Data Wizard", true);
         this.sat = sat;
         data = new DataModule(sat);
-
+        
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
-
+        
         filenamePage = new FilenamePage();
         timeFormatPage = new TimeFormatPage(filenamePage);
         lastPage = new LastPage();
-
+        
         // set Layout
         getContentPane().setLayout(new BorderLayout(0,0));
-
+        
         label = new JLabel();
             label.setBorder(new EmptyBorder(10, 10, 10, 10));
             label.setAlignmentX(CENTER_ALIGNMENT);
-
+            
         JLabel imageLabel ;
         try {
             imageLabel = new JLabel(new ImageIcon(Utils.findResource("images/data_wizard.gif")));
-
-        } catch (FileNotFoundException e2) {
-            e2.printStackTrace(System.err);
+            
+        } catch (FileNotFoundException e2) { 
+            e2.printStackTrace(System.err); 
             imageLabel = new JLabel();
         }
-
+        
         pageContainer = new JPanel();
             pageContainer.setMinimumSize( new Dimension(400, imageLabel.getHeight()));
             pageContainer.setPreferredSize( new Dimension(400, imageLabel.getHeight()));
@@ -120,11 +120,11 @@ public class LoadDataWizard extends JDialog {
         getContentPane().add(imageLabel, BorderLayout.WEST);
         getContentPane().add(pageContainer, BorderLayout.CENTER);
         getContentPane().add(getButtonsPanel(), BorderLayout.SOUTH);
-
-
+        
+        
         setPage(filenamePage);
         pack();
-
+        
         Utils.setInitialWindowPosition(this, null);
     }
 
@@ -132,11 +132,11 @@ public class LoadDataWizard extends JDialog {
         setVisible(true);
         return data;
     }
-
+    
     private void setPage(WizardPage page) {
         if (currentPage != null) pageContainer.remove(currentPage);
         currentPage = page;
-
+        
         if (page.isFirstPage()) backButton.setEnabled(false);
         else backButton.setEnabled(true);
         if (page.isLastPage()) {
@@ -145,20 +145,20 @@ public class LoadDataWizard extends JDialog {
             backButton.setEnabled(false);
         } //else forwardButton.setText(" Next > ");
         label.setText(page.getTitle());
-
+        
         pageContainer.add(page, BorderLayout.CENTER);
-
+        
         //page.invalidate();
         getContentPane().repaint();
         pack();
     }
-
+    
     private JPanel getButtonsPanel() {
         if (buttonsPanel == null) {
             buttonsPanel = new JPanel();
             buttonsPanel.setLayout(new BoxLayout(buttonsPanel, BoxLayout.X_AXIS));
             buttonsPanel.setBorder( BorderFactory.createEmptyBorder(0, 10, 10, 10));
-
+            
             backButton = new JButton(" < Back ");
             backButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
@@ -166,7 +166,7 @@ public class LoadDataWizard extends JDialog {
                     setPage(prevPage);
                 }
             });
-
+            
             forwardButton = new JButton(" Next > ");
             getRootPane().setDefaultButton(forwardButton);
             forwardButton.addActionListener(new ActionListener(){
@@ -176,7 +176,7 @@ public class LoadDataWizard extends JDialog {
                     if (nextPage != null) setPage(nextPage);
                 }
             });
-
+            
             cancelButton = new JButton(" Cancel ");
             cancelButton.addActionListener(new ActionListener(){
                 public void actionPerformed(ActionEvent evt) {
@@ -184,34 +184,34 @@ public class LoadDataWizard extends JDialog {
                     setVisible(false);
                 }
             });
-
+            
             buttonsPanel.add(Box.createHorizontalGlue());
             buttonsPanel.add(backButton);
             buttonsPanel.add(Box.createRigidArea( new Dimension(10, 0)));
             buttonsPanel.add(forwardButton);
             buttonsPanel.add(Box.createRigidArea( new Dimension(10, 0)));
             buttonsPanel.add(cancelButton);
-
+            
         }
         return buttonsPanel;
     }
-
+    
 // ------------------ FilenamePage --------------
-
+    
     class FilenamePage extends WizardPage {
         JTextField fileTF;
-
+                
         public FilenamePage() {
             super("Set file name");
             isFirstPage(true);
             setLayout(new FlowLayout ());
             setBorder(new TitledBorder("File"));
-
+            
             fileTF = new JTextField("", 15);
             String startFile = OVTCore.getGlobalSetting(LAST_DATA_FILE);
             fileTF.setText(startFile);
             add(fileTF);
-
+            
             JButton button = new JButton("Browse...");
             button.setMaximumSize(button.getMinimumSize());
             button.addActionListener(new ActionListener(){
@@ -220,23 +220,23 @@ public class LoadDataWizard extends JDialog {
                 }
             });
             add(button);
-
+            
         }
 
         private File getFile() {
             return new File(fileTF.getText());
         }
-
+        
         private void setFile(File file) {
             fileTF.setText(file.getAbsolutePath());
         }
-
+        
         private void chooseFile() {
-
+            
             //File file = getFile();
             String startDir = OVTCore.getGlobalSetting(LAST_DATA_FILE);
             JFileChooser chooser = new JFileChooser(startDir);
-
+            
             int returnVal = chooser.showDialog(this, "OK");
             if (returnVal == JFileChooser.APPROVE_OPTION) {
                 File tmpFile = chooser.getSelectedFile();
@@ -263,12 +263,12 @@ public class LoadDataWizard extends JDialog {
                 // fileTF.setText(file.toString()); - in setFIle
             }
         }
-
-
+        
+        
         public WizardPage getNextPage() {
             return timeFormatPage;
         }
-
+        
         public WizardPage nextButtonPressed() {
             try {
                 data.setFile(getFile());
@@ -285,11 +285,11 @@ public class LoadDataWizard extends JDialog {
                 return getNextPage();
             }
         }
-
+    
     }
 
 // ------------------ TimeFormatPage --------------
-
+    
     class TimeFormatPage extends WizardPage {
         JRadioButton useNormalRB = new JRadioButton("Normal");
         JRadioButton useExtendedRB = new JRadioButton("Extended");
@@ -297,23 +297,23 @@ public class LoadDataWizard extends JDialog {
         // removed hoursCB, since I think dataCB has been redesigned to envelope hours EDIT FKJN 15Sept2015
         //JComboBox dateCB, hoursCB, timeUnitsCB;
         JTextField startTimeTF;
-
+                
         public TimeFormatPage(WizardPage prevPage) {
             super("Time format", prevPage);
             setLayout(new GridLayout (4, 1, 5, 5));
             setBorder(new TitledBorder("Time format"));
-
+            
             Descriptors descriptors = data.getDescriptors();
             dateCB = (JComboBox)((ComponentPropertyEditor)descriptors.getDescriptor("dateFormat").getPropertyEditor()).getComponent();
             //hoursCB = (JComboBox)((ComponentPropertyEditor)data.getTimeFormat().getDescriptors().getDescriptor("hoursFormat").getPropertyEditor()).getComponent();
-
+            
             timeUnitsCB = (JComboBox)((ComponentPropertyEditor)descriptors.getDescriptor("unit").getPropertyEditor()).getComponent();
             startTimeTF = (JTextField)((ComponentPropertyEditor)descriptors.getDescriptor("offsetMjd").getPropertyEditor()).getComponent();
-
+            
             JRadioButton[] rbtns = ((RadioButtonPropertyEditor)descriptors.getDescriptor("timeFormatType").getPropertyEditor()).getButtons();
             useNormalRB = rbtns[0];
             useExtendedRB = rbtns[1];
-
+            
             data.addPropertyChangeListener( "timeFormatType",  new PropertyChangeListener() {
                 public void propertyChange(PropertyChangeEvent evt) {
                     if (data.getTimeFormatType() == DataModule.TIME_FORMAT_NORMAL) {
@@ -329,31 +329,31 @@ public class LoadDataWizard extends JDialog {
                     }
                 }
             });
-
+            
             //YOU GONNA DIG THIS!!!!!!!!!
-
+            
             JPanel normalPanel = new JPanel();
             normalPanel.setLayout(new FlowLayout());
             normalPanel.add(dateCB);
             //normalPanel.add(hoursCB);
-
+            
             JPanel extendedPanel = new JPanel();
             extendedPanel.setLayout(new FlowLayout());
             extendedPanel.add(new JLabel("Offset:"));
             extendedPanel.add(startTimeTF);
             extendedPanel.add(new JLabel("Unit:"));
             extendedPanel.add(timeUnitsCB);
-
+            
             add(useNormalRB);
             add(normalPanel);
             add(useExtendedRB);
             add(extendedPanel);
         }
-
+        
         public WizardPage getNextPage() {
             return lastPage;
         }
-
+        
         public WizardPage nextButtonPressed() {
             try {
                 data.loadData();
@@ -362,40 +362,40 @@ public class LoadDataWizard extends JDialog {
             } catch (IOException e2) {
                 sat.getCore().sendErrorMessage("Error", e2);
                 return null;
-            }
-
+            } 
+            
         }
     }
 
-
+        
 // ------------------ LastPage --------------
-
+    
     class LastPage extends WizardPage {
         private JLabel loaded = new JLabel("Loaded 0 records");
         private JLabel interval = new JLabel("start -- stop");
         private JCheckBox changeGlobalTime = new JCheckBox("Set global time period to data time period");
-
+                
         public LastPage() {
             super("Done!");
             isLastPage(true);
             setLayout(new BoxLayout (LastPage.this, BoxLayout.Y_AXIS));
             setBorder( BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
+            
             add(Box.createRigidArea(new Dimension(0,15)));
             add(loaded);
             add(Box.createRigidArea(new Dimension(0,15)));
             add(interval);
             add(Box.createRigidArea(new Dimension(0,15)));
             add(changeGlobalTime);
-
+            
         }
-
+        
         public void refresh() {
             loaded.setText("Loaded "+data.getData().length+" records");
             interval.setText(""+new Time(data.getDataTimePeriod().getStartMjd())+" - " +
                               new Time(data.getDataTimePeriod().getStopMjd()));
         }
-
+        
         public WizardPage nextButtonPressed() {
             setVisible(false);
             if (changeGlobalTime.isSelected()) {
@@ -410,10 +410,10 @@ public class LoadDataWizard extends JDialog {
             data.setEnabled(sat.getTimeSet().intersectsWith(data.getDataTimePeriod()));
             return null;
         }
-
+    
     }
 
-
+    
 }
 
 

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 5, 2000, 9:18 PM
  */
-
+ 
 package ovt.beans;
 
 import ovt.gui.Style;
@@ -44,10 +44,10 @@ import java.beans.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class SwitchMenuItemEditor extends MenuItemEditor {
   protected JMenuItem menuItem = null;
@@ -55,11 +55,11 @@ public class SwitchMenuItemEditor extends MenuItemEditor {
   public SwitchMenuItemEditor(MenuPropertyEditor editor) {
     super(editor);
   }
-
+  
     public JMenuItem[] getMenuItems() {
     if (menuItem == null) {
       // create menu items
-
+      
       String[] tags = getEditor().getTags();
       String value = getEditor().getAsText();
       menuItem = new JMenuItem((tags[0].equals(value) ? tags[1] : tags[0]));
@@ -69,7 +69,7 @@ public class SwitchMenuItemEditor extends MenuItemEditor {
     }
     return new JMenuItem[]{menuItem};
   }
-
+  
   public void actionPerformed(ActionEvent ae) {
     //System.out.println("Action Event...");
     try {
@@ -79,7 +79,7 @@ public class SwitchMenuItemEditor extends MenuItemEditor {
       System.out.println(getClass().getName() + "->" + e2);
     }
   }
-
+  
   public void propertyChange(PropertyChangeEvent event) {
     //System.out.println("BBBBBBBBB...........");
     if (event.getPropertyName().equals(getEditor().getPropertyName())) {
@@ -88,12 +88,12 @@ public class SwitchMenuItemEditor extends MenuItemEditor {
       String[] tags = getEditor().getTags();
       String value = getEditor().getAsText();
       menuItem = getMenuItems()[0];
-
-      menuItem.setText((tags[0].equals(value) ? tags[1] : tags[0]));
+      
+      menuItem.setText((tags[0].equals(value) ? tags[1] : tags[0])); 
     }
     super.propertyChange(event);
   }
-
-
-
+  
+  
+  
 }

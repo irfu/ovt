@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 17, 2000, 2:56 PM
  */
-
+ 
 package ovt.util;
 
 import ovt.mag.*;
@@ -44,10 +44,10 @@ import ovt.datatype.*;
 import vtk.*;
 
 import java.util.*;
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class ActorUtils extends Object {
 
@@ -75,7 +75,7 @@ public class ActorUtils extends Object {
       vtkCardinalSpline splineS = new vtkCardinalSpline();
       int resolution = 3; //for splining
       double i = 0;
-
+      
       Enumeration e = fl.elements();
       MagPoint magPoint;
       double[] a;
@@ -93,35 +93,35 @@ public class ActorUtils extends Object {
 		//k++;
 		//System.out.println(k+" "+a[0]+"\t"+a[1]+"\t"+a[2]);
       }
-
+      
       for(i=0;i<fl.size();i+=1.0/resolution){
         points.InsertNextPoint(splineX.Evaluate(i),splineY.Evaluate(i),splineZ.Evaluate(i));
 	scalars.InsertNextValue(splineS.Evaluate(i));
       }
-
+      
       //System.out.println("fl.size = "+fl.size());
       vtkCellArray lines = new vtkCellArray();
       lines.InsertNextCell(fl.size()*resolution);
-
+		
       for(i=0; i<fl.size()*resolution; i++)
 		lines.InsertCellPoint((int)i);
-
+      
       profile.SetPoints(points);
       profile.SetLines(lines);
       profile.GetPointData().SetScalars(scalars);
 
       vtkLogLookupTable lut  = new vtkLogLookupTable();
       lut.SetHueRange(0.6667, 0);
-
+	
       vtkPolyDataMapper mapper = new vtkPolyDataMapper();
       mapper.SetInputData(profile);
       mapper.SetScalarModeToUsePointData();
       mapper.ScalarVisibilityOn();
       mapper.SetScalarRange(MagProps.BMIN, MagProps.BMAX);
       mapper.SetLookupTable(lut);
-
+      
       actor.SetMapper(mapper);
     return actor;
   }
-
+  
 }

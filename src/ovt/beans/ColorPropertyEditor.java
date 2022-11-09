@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -43,7 +43,7 @@ import javax.swing.colorchooser.*;
 /**
  *
  * @author  Oleg
- * @version
+ * @version 
  */
 public class ColorPropertyEditor extends ComponentPropertyEditor {
 
@@ -51,7 +51,7 @@ public class ColorPropertyEditor extends ComponentPropertyEditor {
     public ColorPropertyEditor(BasicPropertyDescriptor pd) {
         super(pd);
     }
-
+    
     public Component getComponent() {
         if (component == null) {
             component = new JColorChooser();
@@ -69,7 +69,7 @@ public class ColorPropertyEditor extends ComponentPropertyEditor {
         }
         return component;
     }
-
+    
     public String getAsText() {
         Color c = (Color) getValue();
         return new Integer(c.getRGB()).toString();

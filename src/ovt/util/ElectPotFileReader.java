@@ -50,8 +50,8 @@ public class ElectPotFileReader {
   public ElectPotFileReader(){ isopen = false; }
 
   public ElectPotFileReader(File fn) throws IOException {
-    isopen = false;
-    Open(fn);
+    isopen = false; 
+    Open(fn); 
   }
 
   protected void finalize(){ Close(); }
@@ -108,7 +108,7 @@ public class ElectPotFileReader {
     if( tok.ttype == tok.TT_NUMBER ) return tok.nval;
     try {
       return new Double(tok.sval).doubleValue();
-    }catch(NumberFormatException e){
+    }catch(NumberFormatException e){      
       throw new IOException("ElectPotFileReader: wrong numerical format \"" + tok.sval + "\"");
     }
   }

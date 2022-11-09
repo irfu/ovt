@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/gui/CameraToolBar.java,v $
   Date:      $Date: 2009/10/27 12:14:36 $
   Version:   $Revision: 2.4 $
-
-
+ 
+ 
 Copyright (c) 2000-2003 OVT Team
 (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 
 package ovt.gui;
@@ -60,7 +60,7 @@ public class CameraToolBar extends JToolBar {
     this.XYZwin = XYZwin;
     this.core = core;
     setMargin(new Insets(1, 1, 1, 1));
-
+    
     // View Control
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/camera.gif")));
@@ -72,12 +72,12 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }     
+    
     addSeparator();
-
-    // Look at northern hemisphere
-
+    
+    // Look at northern hemisphere    
+        
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/north_hem.gif")));
     	button.setToolTipText("Look at northern hemisphere");
@@ -89,8 +89,8 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+        
     // Look at southern hemisphere
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/south_hem.gif")));
@@ -103,10 +103,10 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }     
+    
     addSeparator();
-
+    
     // view from x
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/x.gif")));
@@ -119,8 +119,8 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
     // view from -x
 
     try {
@@ -134,9 +134,9 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
+    
     // view from y
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/y.gif")));
@@ -149,8 +149,8 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
     // view from -x
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/minusy.gif")));
@@ -163,9 +163,9 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
+    
     // view from z
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/z.gif")));
@@ -178,8 +178,8 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
     // view from -Z
     try {
         JButton button = new JButton(new ImageIcon(Utils.findResource("images/minusz.gif")));
@@ -192,8 +192,8 @@ public class CameraToolBar extends JToolBar {
         });
         button.setAlignmentY(0.5f);
 	add(button);
-    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); } 
+    
   }
 
   private OVTCore getCore() {

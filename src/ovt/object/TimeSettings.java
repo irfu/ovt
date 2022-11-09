@@ -6,7 +6,7 @@
   Version:   $Revision: 2.9 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -36,7 +36,7 @@ Khotyaintsev
  * Created on February 28, 2000, 11:00 AM
  *
  */
-
+ 
 package ovt.object;
 
 import ovt.*;
@@ -47,19 +47,19 @@ import ovt.interfaces.*;
 
 
 
-/**
+/** 
  * Presumably the class that keeps track of the current time (one instance of
  * TimeSet) for the entire OVT.
  * (Note that is is the only class which uses TimeChangeSupport, i.e. the only
  * one that HAS/sends messages to TimeChangeListeners. Note that only one
  * instance is created in all of OVT, and that is in OVTCore.)
  * /Erik P G Johansson, 2015-10-22
- *
+ * 
  *
  * @author  mykola
- * @version
+ * @version 
  */
-public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource, TimeSettingsInterface { // implements java.io.Serializable
+public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetSource, TimeSettingsInterface { // implements java.io.Serializable 
 
   private final int NBR_OF_STEPS_BEFORE_WARNING = 24*60+100; // Set to the number of minutes per day (plus some for rounding errors).
   private final double INITIAL_START_MJD = Time.getMjd("2012-12-30 00:00:00");   // Initial value used in constructor.
@@ -69,25 +69,25 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
 
   /** Holds value of property customizerVisible. */
 //  private boolean customizerVisible = false;
-
+    
 //  public static final String PROP_TIME = "time";
 //  public static final String PROP_CURRENT_MJD = "currentMjd";
 
   private final TimeChangeSupport timeChangeSupport = new TimeChangeSupport();
 
   private TimeSet timeSet;
-
+  
   private TimeSettingsCustomizer customizer;
-
+  
   /** Creates new TimeSettings */
   public TimeSettings(OVTCore core) {
     super(core, "TimeSettings");
     showInTree(false);
     setParent(core); // to have a full name "OVT.TimeSettings"
-
+    
     timeSet = new TimeSet(INITIAL_START_MJD, INITIAL_INTERVAL_MJD, INITIAL_STEP_MJD, INITIAL_CURRENT_MJD);
 
-    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);
+    if (!OVTCore.isServer()) customizer = new TimeSettingsCustomizer(this);    
   }
 
   @Override
@@ -103,18 +103,18 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     timeChangeSupport.fireTimeChange(new TimeEvent(this, TimeEvent.TIME_SET, timeSet));
     //firePropertyChange("time", null, null);
   }
-
+  
   public void fireCurrentMjdChange() {
     timeChangeSupport.fireTimeChange(new TimeEvent(this, TimeEvent.CURRENT_MJD, timeSet));
   }
-
+  
   /** Sets time and fires time change... hmmm.. may be it is not needed (fire)?... */
   public void setTimeSet(TimeSet ts) throws IllegalArgumentException {
     //Log.log("->setTimeSet("+ts+")");
     if (ts.getStepMjd() > ts.getIntervalMjd()/2.) {
         throw new IllegalArgumentException("Step is greater than half the specified time interval.");
     }
-
+    
     final int nbrOfSteps = ts.getNumberOfValues();
     if (nbrOfSteps > NBR_OF_STEPS_BEFORE_WARNING)
         getCore().sendWarningMessage(
@@ -122,22 +122,22 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
                 + " This may slow down the application."
                 //+ " (Warning triggered when exceeding "+NBR_OF_STEPS_BEFORE_WARNING+" steps.)"
         );
-
+    
     ts.adjustInterval();
     ts.adjustCurrentMjd();
-
+    
     this.timeSet = ts;
     fireTimeSetChange();
     firePropertyChange("time", null, null);
   }
-
-  /** Should be used instead of get*Mjd methods.
-   * @return actual TimeSet of OVT including currentMjd
+  
+  /** Should be used instead of get*Mjd methods. 
+   * @return actual TimeSet of OVT including currentMjd 
    */
-  public TimeSet getTimeSet() {
-      return timeSet;
+  public TimeSet getTimeSet() { 
+      return timeSet; 
   }
-
+  
   /** Getter for property startMjd.
    * @return Value of property startMjd.
    */
@@ -145,31 +145,31 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
     return timeSet.getStartMjd();
   }
 
-
+  
   public double getIntervalMjd() {
     return timeSet.getIntervalMjd();
   }
-
-
+  
+  
   /** Getter for property stopMjd.
    * @return Value of property stopMjd.
    */
   public double getStopMjd() {
     return getStartMjd() + getIntervalMjd();
   }
-
+  
   /** Getter for property stepMjd.
    * @return Value of property stepMjd.
    */
   public double getStepMjd() {
     return timeSet.getStepMjd();
   }
-
-
+    
+  
   /** Setter for property stepMjd.
    * @param stepMjd New value of property stepMjd.
    *
-   * @throws PropertyVetoException
+   * @throws PropertyVetoException   
    */
   /*public void setStepMjd(double stepMjd) throws IllegalArgumentException {
       double oldStepMjd = this.stepMjd;
@@ -179,7 +179,7 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
       this.stepMjd = stepMjd;
       firePropertyChange("stepMjd", new Double(oldStepMjd), new Double(stepMjd));
   }//*/
-
+  
   /** Getter for property currentMjd.
    * @return Value of property currentMjd.
    */
@@ -188,9 +188,9 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
   }
 
 
-
-
-  /** returns time, from wich is possible to start
+  
+  
+  /** returns time, from wich is possible to start 
    *
    *
   public double getStartFor(double mjd) {
@@ -203,13 +203,13 @@ public class TimeSettings extends BasicObject implements ovt.interfaces.TimeSetS
       return start + step * (n + 1);
     }
   }*/
-
+  
   /** Getter for property customizerVisible.
  * @return Value of property customizerVisible.
  */
 public boolean isCustomizerVisible() {
-    if (!OVTCore.isServer()) return customizer.isVisible();
-    else return false;
+    if (!OVTCore.isServer()) return customizer.isVisible();  
+    else return false; 
 }
 
 /** Setter for property customizerVisible.
@@ -220,7 +220,7 @@ public void setCustomizerVisible(boolean customizerVisible) {
   if (oldCustomizerVisible && customizerVisible) {
       if (!OVTCore.isServer()) customizer.toFront();
   }
-  if (!OVTCore.isServer()) {
+  if (!OVTCore.isServer()) { 
         customizer.setVisible(customizerVisible);
         propertyChangeSupport.firePropertyChange ("customizerVisible", new Boolean (oldCustomizerVisible), new Boolean (customizerVisible));
   }

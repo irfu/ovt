@@ -9,22 +9,22 @@
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
 
@@ -62,7 +62,7 @@ import java.util.Calendar;
  * 0 - No (non-error) log messages (?!)<BR>
  * 1 - Some essential log messages<BR>
  * 2 or greater - More esoteric/detailed log messages the higher the level.<BR>
- *
+ * 
  * NOTE: The code permits (no IllegalArgumentException) log messages with
  * level=0 since it is useful while debugging (?!). (Uncertain whether it is
  * advisable to throw IllegalArgumentException in any commonly used log method.)
@@ -145,16 +145,16 @@ public class Log extends Object {
     public static void err(String msg) {
         err(msg, DEFAULT_ERROR_MSG_LEVEL);
     }
-
-
+    
+    
     // PROPOSAL: Remove and use e.printStackTrace(Log.getPrintStream()) instead?
     public static void logStackTrace(Exception e) {
         // NOTE: Throwable#printStackTrace prints both (1) the contents of
         // the exception (message, toString()) and (2) the stack trace.
         e.printStackTrace(printStream);
     }
-
-
+    
+    
     private static String getMsgPrefix() {
         final Calendar currentCalendar = Calendar.getInstance();   // Incorporates the current time.
         return MSG_PREFIX_FORMAT.format(currentCalendar.getTime());

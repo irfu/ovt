@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,18 +35,18 @@ Khotyaintsev
  *
  * Created on April 5, 2000, 6:28 PM
  */
-
+ 
 package ovt.interfaces;
 
 import ovt.event.*;
 
-/**
+/** 
  *
  * @author  ko
- * @version
+ * @version 
  */
 public interface MagPropsChangeListener {
 
   public void magPropsChanged(MagPropsEvent evt);
-
+  
 }

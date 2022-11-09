@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on den 2 juni 2000, 19:58
  */
-
+ 
 package ovt.gui;
 
 import ovt.util.Utils;
@@ -52,7 +52,7 @@ import javax.swing.event.*;
 public class HTMLBrowser extends javax.swing.JFrame {
 
   private final UrlHistory history;
-
+  
   /** Creates new  HTMLBrowser
    * @param core {@link ovt.OVTCore}
    */
@@ -65,7 +65,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
         if (e.getEventType().toString().compareTo("ACTIVATED")==0) {
           try {
             final String uurl = e.getURL().toString();
-
+            
             /** The Java API documentaion leads one to believe that JEditorPane#setPage will throw
              * IOException when encountering a bad URL. This does not happen in practice
              * however so there is no way of giving an error message for bad links. */
@@ -74,7 +74,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
             backBtn.setEnabled( !history.isAtStart());
             forwardBtn.setEnabled( !history.isAtEnd());
           }
-          catch(IOException ex) {
+          catch(IOException ex) {            
             ex.printStackTrace();
           }
         } else {
@@ -83,8 +83,8 @@ public class HTMLBrowser extends javax.swing.JFrame {
           else if (e.getEventType().toString().compareTo("EXITED")==0)
           browserPane.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         }
-      }
-
+      } 
+      
     });
     /*try {
       browserPane.setPage(url);
@@ -94,10 +94,10 @@ public class HTMLBrowser extends javax.swing.JFrame {
     }*/
     pack ();
     setSize(new Dimension(600, 600));
-
+    
     Utils.setInitialWindowPosition(this, null);
   }
-
+  
   /** sets URL
    * @param url {@link java.net.URL}
    * @throws IOException
@@ -107,7 +107,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
     history.putUrl(url.toString());
     browserPane.setPage(url);
   }
-
+  
   /** sets URL
    * @param url
    * @throws IOException
@@ -117,7 +117,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
     history.putUrl(url);
     browserPane.setPage(url);
   }
-
+  
   /** This method is called from within the constructor to
    * initialize the form.
    * WARNING: Do NOT modify this code. The content of this method is
@@ -140,19 +140,19 @@ public class HTMLBrowser extends javax.swing.JFrame {
           }
         }
       );
-
+      
       scrollPane.setMinimumSize(new java.awt.Dimension(200, 200));
-
+      
       scrollPane.setViewportView(browserPane);
-
-
+        
+        
       getContentPane().add(scrollPane, java.awt.BorderLayout.CENTER);
-
-
+      
+      
       try {
           backBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/VCRBack.gif")));
       } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+      
         backBtn.setMaximumSize(new java.awt.Dimension(120, 50));
         backBtn.setMinimumSize(new java.awt.Dimension(120, 50));
         backBtn.setText("Back");
@@ -165,8 +165,8 @@ public class HTMLBrowser extends javax.swing.JFrame {
         }
         );
         toolBar.add(backBtn);
-
-      try {
+        
+      try { 
           forwardBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/VCRForward.gif")));
       } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
         forwardBtn.setMaximumSize(new java.awt.Dimension(120, 50));
@@ -181,11 +181,11 @@ public class HTMLBrowser extends javax.swing.JFrame {
         }
         );
         toolBar.add(forwardBtn);
-
-      try {
+        
+      try {   
         homeBtn.setIcon(new javax.swing.ImageIcon(Utils.findResource("images/ovt.gif")));
       } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+       
         homeBtn.setMaximumSize(new java.awt.Dimension(120, 50));
 	try {
           homeBtn.setPressedIcon(new javax.swing.ImageIcon(Utils.findResource("images/ovt.gif")));
@@ -200,10 +200,10 @@ public class HTMLBrowser extends javax.swing.JFrame {
         }
         );
         toolBar.add(homeBtn);
-
-
+        
+        
       getContentPane().add(toolBar, java.awt.BorderLayout.NORTH);
-
+      
   }//GEN-END:initComponents
 
   private void forwardBtnPressed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_forwardBtnPressed
@@ -227,7 +227,7 @@ public class HTMLBrowser extends javax.swing.JFrame {
   }//GEN-LAST:event_backBtnPressed
 
   private void homeBtnPressed (java.awt.event.ActionEvent evt) {//GEN-FIRST:event_homeBtnPressed
-    String url = ovt.OVTCore.OVT_HOMEPAGE;
+    String url = ovt.OVTCore.OVT_HOMEPAGE; 
     try {
       browserPane.setPage(url);
       history.putUrl(url);

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.7 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -61,20 +61,20 @@ public class XYZToolBar extends JToolBar implements ActionListener {
     this.core = core;
     JPopupMenu.setDefaultLightWeightPopupEnabled(false);
     setMargin(new Insets(1, 1, 1, 1));
-
+  
     addCoordinateSystemComboBox();
     addPolarCoordinateSystemComboBox();
     addSeparator();
     addButtons();
     addSeparator();
     addVCRButtons();
-
-
+    
+    
     // insert spacer which will expand if needed??? let's try
     //add(new JComponent());
-
+    	
     enableEvents(AWTEvent.WINDOW_EVENT_MASK);
-
+	
   }
 
 public OVTCore getCore()
@@ -88,29 +88,29 @@ public XYZWindow getVW()
 	JButton button = null;
 
         //String imgDir = OVTCore.getImagesSubdir();  // Not used?!
-
+        
 	/*button = new JButton(new ImageIcon(imgDir+"Save.gif"));
 	button.setName("Export");
 	button.setToolTipText("Export image");
 	button.addActionListener(this);
 	button.setAlignmentY(0.5f);
         add(button);
-
-
+        
+        
 	button = new JButton(new ImageIcon(imgDir+"Print.gif"));
 	button.setName("Print");
 	button.setToolTipText("Print");
 	button.addActionListener(this);
         button.setAlignmentY(0.5f);
-        if ( !XYZwin.windowResizable ){
+        if ( !XYZwin.windowResizable ){ 
           button.setEnabled(false);
         }
 	add(button);
-
+        
 	addSeparator();*/
         try {
             button = new JButton(new ImageIcon(Utils.findResource("images/Clock.gif")));
-        } catch (java.io.FileNotFoundException e2) {
+        } catch (java.io.FileNotFoundException e2) { 
             e2.printStackTrace(System.err);
             button = new JButton();
         }
@@ -122,15 +122,15 @@ public XYZWindow getVW()
         });
         button.setAlignmentY(0.5f);
 	add(button);
-
-
+        
+        
         /*button = new UpdateManetosphereButton(new ImageIcon(imgDir+"magnetopause.gif"), getCore().getMagnetosphere());
 	button.setEnabled(false);
         button.setAlignmentY(0.5f);
 	add(button);*/
   }
 
-
+  
   protected void addCoordinateSystemComboBox() {
     BasicPropertyDescriptor  pd = getCore().getCoordinateSystem().getDescriptors().getDescriptor("coordinateSystem");
     JComboBox comp = (JComboBox)((ComponentPropertyEditor)pd.getPropertyEditor()).getComponent();
@@ -145,9 +145,9 @@ public XYZWindow getVW()
     add(comp);
   }
 
-
+  
 protected void addVCRButtons() {
-
+  
   Component[] comps = new CurrentMjdToolbarComponents(core.getTimeSettings()).getComponents();
   for (int i=0; i<comps.length; i++) {
     add(comps[i]);
@@ -158,16 +158,16 @@ protected void addVCRButtons() {
 	Component  comp = (Component)e.getSource();
 	String compName = comp.getName();
 	if (compName.equals("Export")) ImageOperations.exportImageDialog(getCore());
-
+	
 	if (compName.equals("Print"))  ImageOperations.print(getCore());
   }
 
 }
 
 class UpdateManetosphereButton extends JButton implements PropertyChangeListener {
-
+    
     Magnetosphere mps;
-
+    
     UpdateManetosphereButton(ImageIcon icon, Magnetosphere amps) {
         super(icon);
         this.mps = amps;
@@ -180,7 +180,7 @@ class UpdateManetosphereButton extends JButton implements PropertyChangeListener
         mps.addPropertyChangeListener("updated", this);
         mps.addPropertyChangeListener("visible", this);
     }
-
+    
     /** Listen to magnetosphere changes. */
     public void propertyChange(PropertyChangeEvent evt) {
             boolean visible = mps.isVisible();
@@ -189,5 +189,5 @@ class UpdateManetosphereButton extends JButton implements PropertyChangeListener
                 if (isEnabled() != !updated) setEnabled(!updated);
             } else if (isEnabled()) setEnabled(false);
     }
-
+    
 }

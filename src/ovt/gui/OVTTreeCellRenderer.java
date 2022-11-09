@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/gui/OVTTreeCellRenderer.java,v $
   Date:      $Date: 2003/09/28 17:52:41 $
   Version:   $Revision: 2.3 $
-
-
+ 
+ 
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 
 /*
@@ -57,7 +57,7 @@ import javax.swing.plaf.ColorUIResource;
 public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
     protected JCheckBox check;
     protected TreeLabel label;
-
+    
     public OVTTreeCellRenderer() {
         setLayout(null);
         check = new JCheckBox();
@@ -65,7 +65,7 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         add(label = new TreeLabel());
         label.setForeground(UIManager.getColor("Tree.textForeground"));
     }
-
+    
     public boolean isCheckBoxClicked(JTree tree, MouseEvent e)
     {
         if (getComponentCount() < 2) return false;
@@ -89,17 +89,17 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         setEnabled(tree.isEnabled());
         OVTNode node = (OVTNode) value;
         OVTTreeNode userObject = (OVTTreeNode) node.getUserObject();
-
+        
         boolean isVisual = userObject instanceof VisualObject;
         boolean enabled = userObject.isEnabled();
 
         check.setEnabled(enabled);
         if (isVisual) add(check); else remove(check);
-
+        
         if (isVisual) {
             check.setSelected(((VisualObject)userObject).isVisible());
         }
-
+        
         label.setFont(new Font("SansSerif", enabled ? Font.PLAIN : Font.ITALIC, 10));
         label.setText(stringValue);
         label.setSelected(isSelected);
@@ -107,14 +107,14 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         label.setIcon(userObject.getIcon());
         return this;
     }
-
+    
     public Dimension getPreferredSize() {
         Dimension d_check = check.getPreferredSize();
         Dimension d_label = label.getPreferredSize();
         return new Dimension(d_check.width  + d_label.width,
             (d_check.height > d_label.height ? d_check.height : d_label.height));
     }
-
+    
     public void doLayout() {
         Dimension d_check = check.getPreferredSize();
         if (getComponentCount() == 1) {
@@ -134,26 +134,26 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         label.setLocation(d_check.width,y_label);
         label.setBounds(d_check.width,y_label,d_label.width,d_label.height);
     }
-
+    
     public void setBackground(Color color) {
         if (color instanceof ColorUIResource)
             color = null;
         super.setBackground(color);
     }
-
+    
     public class TreeLabel extends JLabel {
         boolean isSelected;
         boolean hasFocus;
-
+        
         public TreeLabel() {
         }
-
+        
         public void setBackground(Color color) {
             if(color instanceof ColorUIResource)
                 color = null;
             super.setBackground(color);
         }
-
+        
         public void paint(Graphics g) {
             String str;
             if ((str = getText()) != null) {
@@ -182,7 +182,7 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
         public void setSelected(boolean isSelected) {
             this.isSelected = isSelected;
         }
-
+        
         public void setFocus(boolean hasFocus) {
             this.hasFocus = hasFocus;
         }
@@ -198,13 +198,13 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
 /*
  public class OVTTreeCellRenderer extends DefaultTreeCellRenderer {
 //public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
-
+ 
     public Component getTreeCellRendererComponent(JTree tree, Object value,
     boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus)
     {
         Component comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
         try {
-
+ 
             OVTNode node = (OVTNode)value;
             OVTTreeNode userObject = (OVTTreeNode)node.getUserObject();
             // set enabled
@@ -215,7 +215,7 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
             // set icon
             Icon icon = userObject.getIcon();
             if (icon != null) setIcon(icon);
-
+ 
             if (userObject instanceof VisualObject) {
                 JPanel panel = new JPanel();
                 JCheckBox chBox = new JCheckBox();
@@ -223,13 +223,13 @@ public class OVTTreeCellRenderer extends JPanel implements TreeCellRenderer {
                 chBox.setEnabled(true);
                 panel.add(chBox);
                 panel.add(this);
-
+ 
                 //this.setLayout(new FlowLayout());
                 //this.add(chBox);
-
+ 
                 //JLabel ll = new JLabel("Hello world");
                 //ll.setEnabled(true);
-
+ 
                 //chBox.set
                 //JPanel panel = new JPanel();
                 //panel.setLayout(new FlowLayout());

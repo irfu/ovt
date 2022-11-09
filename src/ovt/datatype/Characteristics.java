@@ -46,32 +46,32 @@ import java.util.*;
  * Stores data for an arbitrary set of "MagProps" values (SW pressure=swp,
  * Mach number, IMF etc) as key+value for a specified point in time.
  * We store all data in double[].
- *
+ * 
  * NOTE: Wild guess: This class should probably use composition rather than
  * inheritance for IntHashTable. /Erik P G Johansson 2015-10-15
- *
+ * 
  * @author  ko
- * @version
+ * @version 
  */
 public class Characteristics extends IntHashtable {
-
+    
     /** Holds value of property mjd. */
     private double mjd = -1;
-
+    
     /** Creates new Characteristics.
      * We store all data in double[].
      */
     public Characteristics() {
     }
-
+    
     public Characteristics(double mjd) {
         this.mjd = mjd;
     }
-
+    
     public void put (int index, double value) {
         put( index, new double[]{value});
     }
-
+    
     public boolean equals(Characteristics obj) {
         // check the size
         if (obj.size() != size()) return false;
@@ -89,10 +89,10 @@ public class Characteristics extends IntHashtable {
         if ((obj1 instanceof double[] ) && (obj2 instanceof double[] )) {
             return doubleArraysEqual((double[])obj1, (double[])obj2);
         } else {
-            return obj1.equals(obj2);
+            return obj1.equals(obj2); 
         }
     }
-
+    
     // NOTE: Won't work for NaN due to how comparisons work, and maybe not for Inf either.
     private static boolean doubleArraysEqual(double[] a, double[] b) {
         if (a.length != b.length) return false;
@@ -103,32 +103,32 @@ public class Characteristics extends IntHashtable {
         }
         return true;
     }
-
-
+    
+    
     /** Getter for property mjd.
      * @return Value of property mjd.
     */
     public double getMjd() {
         return mjd;
     }
-
+    
     /** Setter for property mjd.
      * @param mjd New value of property mjd.
      */
     public void setMjd(double mjd) {
         this.mjd = mjd;
     }
-
+    
     public void list() {
         list(System.out);
     }
-
+    
     public void list(PrintStream out) {
         out.println("Time : " + new Time(mjd));
         Enumeration e = elements();
         while (e.hasMoreElements()) {
             double[] values = (double[])e.nextElement();
-            for (int i=0; i<values.length; i++)
+            for (int i=0; i<values.length; i++) 
                 out.print(values[i] + "\t");
             out.println();
         }
@@ -147,18 +147,18 @@ public class Characteristics extends IntHashtable {
         }
         return res;
     }
-
-
+    
+    
     /** Return string representation for debugging. Assumes that the values are
      * arrays, which they should in OVT.
-     *
+     * 
      * IMPLEMENTATION NOTE: The superclass' implementation of toString() only
      * prints references if the values are arrays. Therefore better to implement oneself.
      */
     @Override
     public String toString() {
         String s = "mjd="+mjd;
-
+        
         final Enumeration e = keys();
         while (e.hasMoreElements()) {
             final Object key = e.nextElement();
@@ -168,12 +168,12 @@ public class Characteristics extends IntHashtable {
         }
         return s;
     }
-
+    
     /** Informal test code. */
     public static void main(String[] args) {
         double[] a = {1, 2, 3, 4};
         double[] b = {1, 2, 2, 4};
         System.out.println(""+Characteristics.equal(a, b));
     }
-
+    
 }

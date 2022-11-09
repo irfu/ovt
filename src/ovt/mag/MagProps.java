@@ -6,7 +6,7 @@
  Version:   $Revision: 2.10 $
 
 
- Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 
@@ -67,11 +67,11 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
     private static final int DEBUG = 2;
 
     private final String SETTING_OMNI2_HOURLY_AVG_URL_PATTERN = "OMNI2.hourlyAveraged.urlPattern";
-
+    
     // Default value used if the corresponding value can not be found in the properties/config file.
     // Appears that there are OMNI2 URLs for both "http" and "ftp".
     private final String DEFAULT_OMNI2_HOURLY_AVG_URL_PATTERN = "http://spdf.gsfc.nasa.gov/pub/data/omni/low_res_omni/omni2_%4d.dat";
-
+    
     private final String SETTING_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "OMNI2.hourlyAveraged.localCacheFileNamePattern";
     // Default value used if the corresponding value can not be found in the properties/config file.
     private final String DEFAULT_OMNI2_HOURLY_AVG_LOCAL_CACHE_FILE_NAME_PATTERN = "omni2_%4d.dat";
@@ -746,7 +746,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
     public Descriptors getDescriptors() {
         if (descriptors == null) {
-            // Add default property descriptor for visible property.
+            // Add default property descriptor for visible property.    
             // each visual object can be hidden or shown.
             try {
 
@@ -1090,14 +1090,14 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
 
         } catch (OMNI2DataSource.ValueNotFoundException | IOException e) {
 
-            // CASE: Tried to obtain value from the data source but failed.
+            // CASE: Tried to obtain value from the data source but failed.            
             // ==> Use default value(s) instead.
-
+            
             returnValue = ACTIVITY_DEFAULTS.get(key);
                     // NOTE: The return value is an array, in particular for IMF, and must
                     //       be prepared to print several values.
             final String displayDefaultValueStr = Arrays.toString(ACTIVITY_DEFAULTS.get(index));
-
+            
             if (returnValue == null) {
                 Log.err(getClass().getName() + "#getActivity: Can not find default value (key=" + key + ").");
             }
@@ -1116,7 +1116,7 @@ public class MagProps extends OVTObject implements MagModel, MagPropsInterface {
                     Log.log(title + "\n" + msg, DEBUG);
                 }
             } else if (e instanceof IOException) {
-
+                
                 // "index+1000" is quite arbitrary. The only thing that is important
                 // is to submit a value that is unique for every error/warning we
                 // want to be able to display (once).

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,16 +35,16 @@ Khotyaintsev
  *
  * Created on March 16, 2000, 3:05 PM
  */
-
+ 
 package ovt.event;
 
 import ovt.beans.*;
 
 import java.util.EventObject;
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class GUIPropertyEditorEvent extends EventObject {
 
@@ -52,5 +52,5 @@ public class GUIPropertyEditorEvent extends EventObject {
   public GUIPropertyEditorEvent(GUIPropertyEditor source) {
     super(source);
   }
-
+  
 }

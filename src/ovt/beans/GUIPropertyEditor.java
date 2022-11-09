@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 3:37 PM
  */
-
+ 
 package ovt.beans;
 
 import ovt.event.*;
@@ -44,17 +44,17 @@ import ovt.interfaces.*;
 import javax.swing.*;
 import java.util.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class GUIPropertyEditor extends BasicPropertyEditor {
-
+  
     /** Holds value of property frameOwner. */
   private JFrame frameOwner = null;
   protected GUIPropertyEditorSupport editorSupport = new GUIPropertyEditorSupport(this);
-
+  
   /** Creates new GUIPropertyEditor */
   public GUIPropertyEditor(BasicPropertyDescriptor pd) {
     super(pd);
@@ -99,20 +99,20 @@ public class GUIPropertyEditor extends BasicPropertyEditor {
   /** fires propertyChangeEvent
    *
    */
-
+  
   public void fireEditingFinished() {
     editorSupport.fireEditingFinished();
   }
 
   // ??? public abstract JMenuItem[] getMenuItems();
-
+  
 }
 
 class GUIPropertyEditorSupport {
 
   private Vector editorListeners = new Vector();
   private GUIPropertyEditor source = null;
-
+  
   /** Creates new ActionSupport */
   GUIPropertyEditorSupport(GUIPropertyEditor source) {
     this.source = source;
@@ -126,7 +126,7 @@ class GUIPropertyEditorSupport {
     editorListeners.removeElement(listener);
   }
 
-  /**
+  /** 
    * Fires <CODE>GUIPropertyEditorEvent</CODE> to all GUIPropertyEditorListeners.
    * It is widely used for excecuting <CODE>Render()</CODE> method:
    * <PRE>editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -138,10 +138,10 @@ class GUIPropertyEditorSupport {
   public void fireEditingFinished() {
     GUIPropertyEditorEvent evt = new GUIPropertyEditorEvent(source);
     Enumeration e = editorListeners.elements();
-    while (e.hasMoreElements())
+    while (e.hasMoreElements()) 
       ((GUIPropertyEditorListener)(e.nextElement())).editingFinished(evt);
   }
-
+  
   public boolean hasListener(GUIPropertyEditorListener listener) {
     return editorListeners.contains(listener);
   }

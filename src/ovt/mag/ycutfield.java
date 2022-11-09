@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -38,7 +38,7 @@ package ovt.mag;
  * /Erik P G Johansson 2015-10-14
  */
 public class ycutfield       //  ycut
-{
+{  
    public static final int NPF = 120;     /* max number of points along a field line */
    public static final int NPY = 7;     /* number of y-plane field lines */
 
@@ -49,12 +49,12 @@ public class ycutfield       //  ycut
    public double imf[] = new double[3];       /* interplanetary magnetic field */
    public int method;         /* method=0 no imf, 1=linear, 2=liner vanishing
 			   3= normal vanishing */
-   public int cusp_index[] = new int[4];    /* index such that edges with index
+   public int cusp_index[] = new int[4];    /* index such that edges with index 
                           		gives position of the exterior cusp    */
    public int nedge[] = new int[4];	/* number of points in edges */
    public float edges[][] = new float[4][NPF*3]; /* field lines at edges */
    public int npy[][] = new int[2][NPY];       /* number of points in yplane lines */
-   public float yplane[][][] = new float[2][NPY][NPF*3];  /*field lines at 70,75,80,85,90,85,80,75,70
+   public float yplane[][][] = new float[2][NPY][NPF*3];  /*field lines at 70,75,80,85,90,85,80,75,70 
 			 				first 2 lines in NPY mark the cusp  */
    public double cccusp[][] = new double[4][3]; /* corrected coordinates of cusp field lines */
    public double smcusp[][] = new double[4][3]; /* dipole (SMC) coordinates of cusp field lines */

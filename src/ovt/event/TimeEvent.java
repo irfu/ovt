@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,43 +35,43 @@ Khotyaintsev
  *
  * Created on March 8, 2000, 1:39 PM
  */
-
+ 
 package ovt.event;
 
 import ovt.datatype.*;
 
 import java.beans.*;
 import java.util.*;
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class TimeEvent extends java.util.EventObject {
-
+  
   public final static int TIME_SET    = 0;
   public final static int CURRENT_MJD = 1;
-
+  
   private final int whatChanged;
   private final TimeSet timeSet;
-
+  
   /** Creates new TimeEvent */
   public TimeEvent(Object source, int whatChanged, TimeSet newTimeSet) {
       super(source);
       this.whatChanged = whatChanged;
       this.timeSet = newTimeSet;
   }
-
+  
   public boolean timeSetChanged() {
     return (whatChanged == TIME_SET);
   }
-
+  
   public boolean currentMjdChanged() {
     return (whatChanged == TIME_SET || whatChanged == CURRENT_MJD);
   }
-
+  
   public TimeSet getTimeSet() {
     return timeSet;
   }
-
+  
 }

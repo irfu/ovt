@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
  Program:   Orbit Visualization Tool
  Source:    $Source: /stor/devel/ovt2g/ovt/util/Utils.java,v $
  Date:      $Date: 2006/03/21 12:21:15 $
  Version:   $Revision: 2.9 $
-
-
+ 
+ 
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
-
+ 
  =========================================================================*/
 /**
  * Utils.java
@@ -134,7 +134,7 @@ public class Utils extends Object {
          if (debug_flag > 0) {
          printf (" gha day = %10.2lf  %15.5lf\n",
          jday -> integer, jday -> fraction);
-
+   
          deg2hms (gmst * 15., &ah, &am, &as);
          printf (" gmst = %02d:%02d:%02d\n", ah, am, as);
          deg2hms (interval * 15., &ah, &am, &as);
@@ -428,7 +428,7 @@ public class Utils extends Object {
         for (j = 0; j < 3; j++) {
             min[j] = pos[0][j]; // take position of 1-static sat as initial min value.
             max[j] = pos[0][j]; // take position of 1-static sat as initial max value.
-            for (i = 1; i < 4; i++) { // Iterate over the remaining satellites to find the true min & max values.
+            for (i = 1; i < 4; i++) { // Iterate over the remaining satellites to find the true min & max values. 
                 max[j] = Math.max(pos[i][j], max[j]);
                 min[j] = Math.min(pos[i][j], min[j]);
             }

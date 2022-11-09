@@ -6,7 +6,7 @@
   Version:   $Revision: 2.6 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -49,48 +49,48 @@ import javax.swing.*;
 
 /**
  * This is the base class for all SatModules, that should be added
- * to { @link ovt.datatypes.Sat }.
+ * to { @link ovt.datatypes.Sat }. 
  * @author Mykola Khotyaintsev
  * @see ovt.datatypes.Sat#addModule(AbstractSatModule)
  */
 
 public class AbstractSatModule extends VisualObject
-  implements CoordinateSystemChangeListener, TimeChangeListener,
+  implements CoordinateSystemChangeListener, TimeChangeListener, 
               MagPropsChangeListener {
 
 protected Sat sat;
-
+	
   /** Creates AbstractSatModule with name*/
-  public AbstractSatModule(Sat sat, String name){
+  public AbstractSatModule(Sat sat, String name){ 
 	super(sat.getCore(), name);
 	this.sat = sat;
         setParent(sat);
   }
 
     /** Creates AbstractSatModule with name*/
-  public AbstractSatModule(Sat sat, String name, String iconFileName){
+  public AbstractSatModule(Sat sat, String name, String iconFileName){ 
 	super(sat.getCore(), name, iconFileName);
 	this.sat = sat;
         setParent(sat);
   }
 
     /** Creates AbstractSatModule with name*/
-  public AbstractSatModule(Sat sat, String name, String iconFileName, boolean containsVisualChildren){
+  public AbstractSatModule(Sat sat, String name, String iconFileName, boolean containsVisualChildren){ 
 	super(sat.getCore(), name, iconFileName, containsVisualChildren);
 	this.sat = sat;
         setParent(sat);
   }
 
-
+  
   public Sat getSat() {
     return sat;
   }
-
+  
   public TimeSet getTimeSet() {
     return sat.getTimeSet();
   }
 
-
+  
   /** Returns current Sat's location */
   public TrajectoryPoint getTrajectoryPoint() {
     return sat.getTrajectoryPoint();
@@ -100,45 +100,45 @@ protected Sat sat;
   public double[] getPosition() {
     return sat.getPosition();
   }
-
+  
   /** Returns Sat's position in GSM CS */
   public double[] getPositionGSM() {
     return sat.getPositionGSM();
   }
-
+  
   /** Returns current Sat's location */
   public double[] getPosition(double mjd) throws IllegalArgumentException {
     return sat.getPosition(mjd);
   }
-
+  
   public FootprintCollection[] getMagFootprintCollection() {
     return sat.getMagFootprintCollection();
   }
-
+  
   /** Returns <CODE>sat.getMagFootprints(mjd)</CODE> */
   public MagPoint[] getMagFootprints(double mjd) {
     return sat.getMagFootprints(mjd);
   }
-
+  
   /** Returns true if the sat is in solar wind
    */
   public boolean isInSolarWind() {
     return sat.isInSolarWind();
   }
-
+  
   /** Returns Sat's Trajectory */
   public Trajectory getTrajectory() {
       return sat.getTrajectory();
   }
-
+        
   public boolean canBeVisible()
         { return sat.canBeVisible(); }
-
-
+      
+  
   /** Tell children about CS change */
   public void coordinateSystemChanged(CoordinateSystemEvent evt) {
     Children children = getChildren();
-
+    
     if (children != null) {
       Enumeration e = children.elements();
       while (e.hasMoreElements()) {
@@ -168,8 +168,8 @@ protected Sat sat;
     }
   }
 
-
-
+ 
+  
   public void magPropsChanged(MagPropsEvent evt) {
     // Tell children about time change
     Children children = getChildren();

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -42,11 +42,11 @@ import java.util.*;
  * @author kono
  */
 public class StringToFileWriter {
-
+  
   private String fileName = "";
   private BufferedWriter writer;
   private boolean MODE = true; //append
-
+  
   /**
    * -1 - output not initialized or IO error
    * 0 - output file is opened
@@ -60,19 +60,19 @@ public class StringToFileWriter {
   public StringToFileWriter(String fn, boolean mode){
     initialize(fn,mode);
   }
-
+  
   //Open, save and close
   public StringToFileWriter(String fn, String data, boolean modeX){
     initialize(fn,modeX);
     writeString(data);
     close();
   }
-
+  
   /*public Dumper(String fn,boolean pos,boolean fp,boolean mp,boolean spin){
     initialize(fn);
     this.setupDump(pos,fp,mp,spin);
   }*/
-
+  
   public void initialize(String filename, boolean modex){
     if(getStatus()!=-1)
       close();
@@ -87,11 +87,11 @@ public class StringToFileWriter {
       status = -1;
     }
   }
-
-
+  
+  
   /*
    *
-   *
+   * 
    */
   public void writeString(String data){
     if(data==null || getStatus()==-1)
@@ -104,7 +104,7 @@ public class StringToFileWriter {
       status = -1;
     }
   }
-
+  
   public void close(){
     try {
       if(getStatus()!=-1)
@@ -113,19 +113,19 @@ public class StringToFileWriter {
     }
     status = -1;
   }
-
+  
   public int getStatus(){
     return this.status;
   }
-
+  
   public boolean getMode(){
     return this.MODE;
   }
-
+  
   public void setMode(boolean md){
     this.MODE = md;
   }
-
+  
   /*public static void main(String[] ee){
     //StringToFileWriter sfw = new StringToFileWriter("data.tmp", "&&&&",true);
     StringToFileWriter sfw = new StringToFileWriter("data.tmp",true);

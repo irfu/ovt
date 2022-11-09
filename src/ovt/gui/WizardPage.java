@@ -48,7 +48,7 @@ import javax.swing.border.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class WizardPage extends JPanel {
     private String title = "No Title";
@@ -56,62 +56,62 @@ public class WizardPage extends JPanel {
     private boolean finishPage = false;
     private WizardPage previousPage = null;
     private WizardPage nextPage = null;
-
-
+    
+    
     public WizardPage(String title) {
         super();
         this.title = title;
     }
-
+    
     public WizardPage(String title, WizardPage previousPage) {
         super();
         this.title = title;
         this.previousPage = previousPage;
         previousPage.setNextPage(this);
     }
-
+    
     public String getTitle() {
         return title;
     }
-
+    
     public void setTitle(String title) {
         this.title = title;
     }
-
+    
     public boolean isFirstPage() {
         return startPage;
     }
-
+    
     public void isFirstPage(boolean startPage) {
         this.startPage = startPage;
     }
-
+    
     public boolean isLastPage() {
         return finishPage;
     }
-
+    
     public void isLastPage(boolean finishPage) {
         this.finishPage = finishPage;
     }
-
+    
     public WizardPage getPreviousPage() {
         return previousPage;
     }
-
+    
     public void setPreviousPage(WizardPage previousPage) {
         this.previousPage = previousPage;
     }
-
+    
     public WizardPage getNextPage() {
         return nextPage;
     }
-
+    
     public void setNextPage(WizardPage nextPage) {
         this.nextPage = nextPage;
     }
-
+    
     public WizardPage nextButtonPressed() {
         return nextPage;
     }
-
+    
 }

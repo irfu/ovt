@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 3:53 PM
  */
-
+ 
 package ovt.beans;
 
 
@@ -45,14 +45,14 @@ import javax.swing.*;
 import ovt.util.Utils;
 
 
-/**
+/** 
  * @author  root
- * @version
+ * @version 
  */
 public class DefaultPropertyEditorWindow extends JDialog implements PropertyChangeListener {
 
   WindowPropertyEditor editor = null;
-
+  
   /** Creates new DefaultComponentPropertyEditorWindow */
   public DefaultPropertyEditorWindow(JFrame owner, WindowPropertyEditor editor, boolean modal) {
     super(owner, modal);
@@ -61,7 +61,7 @@ public class DefaultPropertyEditorWindow extends JDialog implements PropertyChan
     setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     getContentPane().add(editor.getComponent());
     pack();
-
+    
 
     if (owner != null) {
         Point loc = owner.getLocationOnScreen();
@@ -74,17 +74,17 @@ public class DefaultPropertyEditorWindow extends JDialog implements PropertyChan
         Utils.setInitialWindowPosition(this, null);
     }
   }
-
-
+ 
+  
   public void propertyChange(PropertyChangeEvent pce) {
     if (pce.getPropertyName().equals("enabled")) setVisible(false);
   }
 
   protected void refresh() {}
-
+  
   public void setVisible(boolean visible) {
     editor.setWindowVisible(visible);
     super.setVisible(visible);
   }
-
+  
 }

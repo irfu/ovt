@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 24, 2000, 5:58 PM
  */
-
+ 
 package ovt.mag.editor;
 
 import ovt.util.*;
@@ -47,10 +47,10 @@ import java.beans.*;
 import javax.swing.*;
 import java.awt.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class ModelTypesEditor extends WindowPropertyEditor {
 
@@ -58,8 +58,8 @@ public class ModelTypesEditor extends WindowPropertyEditor {
   public ModelTypesEditor(BasicPropertyDescriptor pd) {
     super(pd);
   }
-
-
+  
+  
   public Component getComponent() {
     return null;
   }

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 6:49 PM
  */
-
+ 
 package ovt.object.editor;
 
 import ovt.*;
@@ -52,15 +52,15 @@ import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.border.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class CoordinateSystemEditorPanel extends JComboBox implements PropertyChangeListener {
 
   CoordinateSystemEditor editor;
-
+  
   /** Creates new CoordinateSystemEditorPanel */
   public CoordinateSystemEditorPanel(CoordinateSystemEditor editor) {
     super(editor.getTags());
@@ -80,7 +80,7 @@ public class CoordinateSystemEditorPanel extends JComboBox implements PropertyCh
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() instanceof JComboBox) {
       JComboBox cb = (JComboBox)e.getSource();
-
+		
       String csName = (String)cb.getSelectedItem();
       try {
         editor.setAsText(csName);
@@ -90,7 +90,7 @@ public class CoordinateSystemEditorPanel extends JComboBox implements PropertyCh
       }
     }
   }
-
+  
   public void propertyChange(PropertyChangeEvent evt) {
     refresh();
   }

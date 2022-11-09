@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on den 9 april 2000, 17:53
  */
-
+ 
 package ovt.beans;
 
 import ovt.util.Log;
@@ -44,14 +44,14 @@ import ovt.interfaces.*;
 
 import java.util.*;
 
-/**
+/** 
  * IMPORTANT NOTE: This class appears to be unused (or possible used by Java
  * Beans for save/load settings).
  * MagProps#MagPropsChangeSupport is almost identical.
  * /Erik P G Johansson 2015-10-09
  *
  * @author  mykola
- * @version
+ * @version 
  */
 public class MagPropsChangeSupport {
 
@@ -86,7 +86,7 @@ public class MagPropsChangeSupport {
       } catch (ClassCastException e2) {}
     }
   }
-
+  
   public void fireMagPropsChange() {
     //Log.log("<fireMagPropsChange: does nothing>");
     /*MagPropsEvent evt = new MagPropsEvent(source, );

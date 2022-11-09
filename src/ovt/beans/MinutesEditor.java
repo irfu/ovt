@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on February 25, 2000, 9:28 AM
  */
-
+ 
 package ovt.beans;
 
 import ovt.datatype.*;
@@ -44,35 +44,35 @@ import java.beans.*;
 
 import java.awt.*;
 
-/**
+/** 
  *
  * @author  mykola
- * @version
+ * @version 
  */
 public class MinutesEditor extends WindowPropertyEditor {
 
   protected MinutesEditorPanel comp = null;
-
-
-
+  
+  
+  
   /** Creates new Editor */
  public MinutesEditor(BasicPropertyDescriptor pd) {
     super(pd);
   }
-
+  
   public String getAsText() {
     return MinutesAndSeconds.toString(((Double)getValue()).doubleValue());
   }
-
+  
   public void setAsText(String value) throws PropertyVetoException {
-
+    
     try {
       setValue(new Double(new MinutesAndSeconds(value).getInDays()));
     } catch (IllegalArgumentException e2) {
       throw new PropertyVetoException(e2.getMessage(), null);
     }
   }
-
+  
   public Component getComponent() {
     if (comp == null) {
       comp = new  MinutesEditorPanel(this);

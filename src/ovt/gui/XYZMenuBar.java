@@ -1,31 +1,31 @@
 /*=========================================================================
-
+ 
  Program:   Orbit Visualization Tool
-
- Copyright (c) 2016 OVT Team
+ 
+ Copyright (c) 2016 OVT Team 
  (Erik Johansson, Fredrik Johansson, Yuri Khotyaintsev)
- Copyright (c) 2000-2003 OVT Team
+ Copyright (c) 2000-2003 OVT Team 
  (Kristof Stasiewicz, Mykola Khotyaintsev, Yuri Khotyaintsev)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
-
+ 
  =========================================================================*/
 package ovt.gui;
 
@@ -204,7 +204,7 @@ public class XYZMenuBar extends JMenuBar {
 
         menu.addSeparator();
 
-        // Magnetic Field
+        // Magnetic Field 
         menuItem = new JMenuItem("Magnetic Field...");
         menuItem.setFont(font);
         menuItem.setMnemonic(KeyEvent.VK_V);
@@ -333,7 +333,7 @@ public class XYZMenuBar extends JMenuBar {
             public void actionPerformed(ActionEvent evt) {
                 final ImportSatelliteWizard wizard = new ImportSatelliteWizard(core.getSats(), xyzWin);
                 final Sat sat = wizard.start();
-
+                
                 if (sat != null) {
                     if (sat instanceof TLESat) {
                         // Only show warning message if (1) the file was successfully
@@ -536,7 +536,7 @@ public class XYZMenuBar extends JMenuBar {
         {
             /**
              * Filter files in directory based on file suffix.
-             *
+             * 
              * NOTE: Explicitly excludes files "Cluster[1-4].ltof" since they
              * are automatically opened by ClusterSats (or some code in the
              * neighbourhood) and are therefore treated specially somewhere
@@ -576,7 +576,7 @@ public class XYZMenuBar extends JMenuBar {
         final ActionListener actionListener = (ActionEvent evt) -> {
             final JCheckBoxMenuItem item = (JCheckBoxMenuItem) evt.getSource();
             final String satName = item.getText();    // Figure out which Sat is referred to.
-
+            
             if (item.isSelected()) {
                 // CASE: Menu item has been selected.
                 // Create Sat and ADD it to OVTCore.Sats.
@@ -622,7 +622,7 @@ public class XYZMenuBar extends JMenuBar {
             menuItem.setSelected(core.getSats().getChildren().containsChild(satName));   // Select if sat is already added to OVT.
             // NOTE: Use previously constructed ActionListener. Same ActionListener for ALL menu items.
             menuItem.addActionListener(actionListener);
-
+            
             menuItems[i] = menuItem;
         }
 

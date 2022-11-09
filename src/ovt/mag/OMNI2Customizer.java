@@ -6,7 +6,7 @@
  Version:   $Revision: 1.00 $
 
 
- Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 
@@ -63,7 +63,7 @@ import ovt.util.Utils;
  */
 // PROPOSAL: Add text field for viewing & modifying a variable for how far away
 //           (in time) an OMNI2 value may be without receiving a warning.
-//    NOTE: Should probably reuse
+//    NOTE: Should probably reuse 
 //          ovt.beans.editor.IntervalEditor, ovt.beans.editor.IntervalEditorPanel,
 //          and ovt.datatype.Interval for this.
 //

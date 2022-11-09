@@ -46,7 +46,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import javax.swing.text.*;
+import javax.swing.text.*; 
 import javax.swing.plaf.*;
 
 import java.awt.Toolkit;
@@ -55,24 +55,24 @@ import java.awt.Toolkit;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class MjdEditorPanel extends JTextField implements PropertyChangeListener, Syncer {
-
+    
     private MjdEditor editor;
     private Object oldPropertyValue = null;
     private DocumentListener documentListener;
     private int oldCaretPosition = 0;
-
+    
 /** Creates new MjdEditorPanel */
 public MjdEditorPanel(MjdEditor ed) {
     this.editor = ed;
     editor.addPropertyChangeListener(this);
-
+    
     oldPropertyValue = editor.getValue();
-
+    
     setDocument( new TimeDocument() );
-
+    
     documentListener = new DocumentListener() {
         public void changedUpdate(DocumentEvent evt) {
             //ovt.util.Log.log("changedUpdate");
@@ -81,7 +81,7 @@ public MjdEditorPanel(MjdEditor ed) {
         /** New WRONG property value is equal to oldPropertyValue :
          * Whenever the user specifies wrong string the editors
          * property value is rolled back to the original.
-         * The original one is the value which was specified from outsede.
+         * The original one is the value which was specified from outsede. 
          * Not from this editor.
          */
         public void insertUpdate(DocumentEvent evt) {
@@ -100,11 +100,11 @@ public MjdEditorPanel(MjdEditor ed) {
             // do not implement this
         }
     };
-
-
-
+    
+    
+    
     getDocument().addDocumentListener( documentListener );
-
+    
    /*addFocusListener( new FocusListener() {
         public void focusGained(FocusEvent e) {}
         public void focusLost(FocusEvent e) {
@@ -119,12 +119,12 @@ public MjdEditorPanel(MjdEditor ed) {
                 if (oldPropertyValue != null)
                     editor.setValue(oldPropertyValue);
             }
-
+            
         }
     }); */
-
+    
     setCaret(new OvertypeCaret());
-
+    
     // prevent user from placing caret on "-", ":", " " places
     // adjust the carret so, that this places will be skiipped
     // when user moves the carret
@@ -132,7 +132,7 @@ public MjdEditorPanel(MjdEditor ed) {
         public void caretUpdate(CaretEvent evt) {
             int newPos = evt.getDot();
             if (newPos != oldCaretPosition) {
-                if ((newPos == 4 ) || (newPos == 7) || (newPos == 10) ||
+                if ((newPos == 4 ) || (newPos == 7) || (newPos == 10) || 
                     (newPos == 13) || (newPos == 16)) {
                         int movingDirection = (newPos - oldCaretPosition > 0) ? 1 : -1 ;
                         oldCaretPosition = newPos + movingDirection;
@@ -172,24 +172,24 @@ public void sync() throws SyncException {
 
 class TimeDocument extends DefaultStyledDocument {
 
-    public void insertString(int offs, String str, AttributeSet a)
+    public void insertString(int offs, String str, AttributeSet a) 
         throws BadLocationException {
         //ovt.util.Log.log("insertStr("+offs+","+str+")");
         int p1 = Math.min(getLength(), offs + str.length());
         //String newString = getText(0, offs) + str + getText( p1, getLength());
         //ovt.util.Log.log("newstr = '"+newString+"'");
         if ( isValidStr(str,offs)) {
-
+            
             super.remove(offs, p1 - offs);
             super.insertString(offs, str, a);
         } else
             Toolkit.getDefaultToolkit().beep();
     }
-
+    
     /** Ovverride the method to do nothing ;-) */
     public void remove(int offs, int len) {
     }
-
+    
     private static boolean isValidStr(String str, int offs){
       if (str != null ) {
         for (int i=0; i<str.length(); i++)
@@ -197,50 +197,50 @@ class TimeDocument extends DefaultStyledDocument {
       }
       return true;
     }
-
+    
     private static boolean isValidChar(char ch, int offs) {
         //ovt.util.Log.log("isValidChar(char="+ch+",offs="+offs+")");
         switch (offs) {
-                case 0  : return (ch == '1' || ch == '2'); // year
-
+                case 0  : return (ch == '1' || ch == '2'); // year 
+                          
                 case 1  : return (ch == '0' || ch == '9');
-
+                          
                 case 2  : return Character.isDigit(ch);
-
+                          
                 case 3  : return Character.isDigit(ch);
-
+                          
                 case 4  : return (ch == '-');
-
+                          
                 case 5  : return (ch == '0' || ch == '1'); // month
-
+                          
                 case 6  : return Character.isDigit(ch);
-
+                          
                 case 7  : return (ch == '-');
-
-                case 8  : return (ch == '0' || ch == '1' || ch == '2' || ch == '3'); // day
-
+                          
+                case 8  : return (ch == '0' || ch == '1' || ch == '2' || ch == '3'); // day 
+                          
                 case 9  : return Character.isDigit(ch);
-
+                          
                 case 10 : return (ch == ' ');
-
+                          
                 case 11 : return (ch == '0' || ch == '1' || ch == '2'); // hour
-
+                          
                 case 12 : return Character.isDigit(ch);
-
+                          
                 case 13 : return (ch == ':');
-
+                          
                 case 14 : return (ch == '0' || ch == '1' || ch == '2' || ch == '3' ||
                                   ch == '4' || ch == '5'); // minute
-
+                          
                 case 15 : return Character.isDigit(ch);
-
+                          
                 case 16 : return (ch == ':');
-
+                          
                 case 17 : return (ch == '0' || ch == '1' || ch == '2' || ch == '3' ||
                                   ch == '4' || ch == '5'); // sec
-
+                          
                 case 18 : return Character.isDigit(ch);
-
+                             
         }
         return false;
         //throw new IllegalArgumentException("Invalid offset ("+offs+")");

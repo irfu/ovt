@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,22 +35,22 @@ Khotyaintsev
  *
  * Created on March 24, 2000, 7:39 PM
  */
-
+ 
 package ovt.util;
 
 import ovt.mag.*;
 import ovt.mag.model.*;
 import java.util.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public class TransCollection extends Hashtable {
 
   protected IgrfModel igrfModel;
-
+  
   /** Creates new TransCollection */
   public TransCollection(IgrfModel igrfModel) {
     this.igrfModel = igrfModel;
@@ -67,5 +67,5 @@ public class TransCollection extends Hashtable {
     }
     return trans;
   }
-
+  
 }

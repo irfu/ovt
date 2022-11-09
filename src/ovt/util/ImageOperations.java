@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/util/ImageOperations.java,v $
   Date:      $Date: 2003/09/28 17:52:55 $
   Version:   $Revision: 2.4 $
-
-
+ 
+ 
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 
 /*
@@ -56,7 +56,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.awt.image.RenderedImage;
-import java.io.File;
+import java.io.File; 
 import javax.imageio.ImageIO;
 import org.apache.commons.io.FilenameUtils;
 import ovt.graphics.BmpDecoder;
@@ -70,16 +70,16 @@ import ovt.graphics.BmpDecoder;
 public class ImageOperations {
     public static final String COPYRIGHT = "Produced by OVT ("+ovt.OVTCore.OVT_HOMEPAGE+")";
     public static final String PRINT_JOB_NAME = "OVT printing";
-
+    
     private static final String DEFAULT_IMAGE_FILE = "Image.File";
-
+    
     /**
      * BUG: Takes screenshot, including the export dialog window if it overlaps!!
      */
     public static void exportImage(OVTCore core, String filename) throws Exception {
         final String ext = FilenameUtils.getExtension(filename);
         final XYZWindow frameOwner = core.getXYZWin();
-
+        
         /* method 1*/
         //whole screenshot
         final Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
@@ -87,47 +87,47 @@ public class ImageOperations {
         final Rectangle vtkRect = frameOwner.getRenpanel().getComponent().getBounds();
         // Program window
         final Rectangle OVTscreenRect = frameOwner.getBounds();
-
+            
             //frameOwner.getRootPane().getBounds().y;
             //frameOwner.getRenpanel().getBounds();
                        // Rectangle OVTscreenRect2 = frameOwner.getCore().getXYZWin().getMenuBar();
 
             //frameOwner.getJMenuBar().getBounds();
             // Get virtualisation screen
-
+            
         screenRect.x = OVTscreenRect.x+vtkRect.x+frameOwner.getRootPane().getBounds().x;
         screenRect.y = (OVTscreenRect.y+vtkRect.y+frameOwner.getXYZMenuBar().getHeight()) + frameOwner.getRootPane().getBounds().y; //two menu bars, OVT's and the native OS Jmenubar
         screenRect.width = vtkRect.width;
         screenRect.height = vtkRect.height;
 
-
+         
         final BufferedImage capture = new Robot().createScreenCapture(screenRect);
         //File file = new File(filename);
         ImageIO.write(capture, ext, new File(filename));
-
-
-
-
-
+        
+            
+            
+        
+        
     //capture frame
-//    BufferedImage image = new Robot().createScreenCapture(
-//        new Rectangle( myframe.getX(), myframe.getY(),
+//    BufferedImage image = new Robot().createScreenCapture( 
+//        new Rectangle( myframe.getX(), myframe.getY(), 
  //           myframe.getWidth(), myframe.getHeight() ) );
-
-
-        /*
+    
+    
+        /* 
         //whole screen
          Rectangle screenRect = new Rectangle(Toolkit.getDefaultToolkit().getScreenSize());
         //VTK window
          screenRect = frameOwner.getRenpanel().getComponent().getBounds();
-
+         
         // Program window
         screenRect = frameOwner.getCore().getXYZWin().getBounds();
-
+         
          BufferedImage capture = new Robot().createScreenCapture(screenRect);
         //ImageIO.write(capture, ext, new File(filename));
         */
-
+        
 
        //WIDTH, HEIGHT = 1920, 1080
 
@@ -140,7 +140,7 @@ public class ImageOperations {
 
         vtkPolyDataMapper mapper = new vtkPolyDataMapper();
 
-
+        
         //core.getXYZWin().getVisualizationPanel().getRenderer().GetVTKWindow()
         //mapper = vtk.vtkPolyDataMapper()
         mapper.SetInputConnection(source.GetOutputPort());
@@ -193,9 +193,9 @@ public class ImageOperations {
 
         writer2.SetFileName("frame.png");
         writer2.Write();
+         
 
-
-
+         
     vtkRenderer renderer = frameOwner.getRenpanel().getRenderer();
     renderer.ResetCamera();
 
@@ -203,15 +203,15 @@ public class ImageOperations {
     //vtkRenderWindow renwin = frameOwner.getRenderWindow();
     //renwin = vtk.vtkRenderWindow()
     renwin.OffScreenRenderingOn();
-    renwin.SetSize(1920, 1080);
+    renwin.SetSize(1920, 1080); 
     renwin.AddRenderer(renderer);
 
     vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
 
 //    vtkRenderWindowInteractor interactor = new vtkRenderWindowInteractor();
     //vtkRenderWindowInteractor interactor=frameOwner.getRenpanel().getRenderWindowInteractor();
-
-
+    
+    
     interactor.SetRenderWindow(renwin);
     renwin.Render();
     vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
@@ -234,29 +234,29 @@ public class ImageOperations {
 
     writer2.SetFileName(filename);
     writer2.Write();
-
+    
     //frameOwner.getRenpanel().getComponent().requestFocus();
     //renderer.ResetCamera();
 
-
-
-
+        
+        
+        
     //capture frame
-//    BufferedImage image = new Robot().createScreenCapture(
-//        new Rectangle( myframe.getX(), myframe.getY(),
+//    BufferedImage image = new Robot().createScreenCapture( 
+//        new Rectangle( myframe.getX(), myframe.getY(), 
  //           myframe.getWidth(), myframe.getHeight() ) );
-
-
-
-
-
-
+    
+    
+        
+        
+         
+         
          //java.awt.Robot.
-
+         
 //        Lock();
 /* should have worked
     vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
-
+    
     w2if.ReadFrontBufferOff();
     w2if.SetInput(renderWindow);
 
@@ -268,33 +268,33 @@ public class ImageOperations {
     writer.SetFileName(filename);
     writer.Write();
 */
-
+                      
     }
     public static void exportImage2(OVTCore core, String filename) throws Exception {
-
-
+        
+        
 
          vtkImageWriter writer;
         //renderWindow.
         if (filename.endsWith(".bmp"))
             writer = new vtkBMPWriter();
-
+        
         else if (filename.endsWith(".tif")  || filename.endsWith(".tiff"))
             writer = new vtkTIFFWriter();
-
+        
         else if (filename.endsWith(".jpg") || filename.endsWith(".jpeg"))
             writer = new vtkJPEGWriter();
-
+        
         else if (filename.endsWith(".png"))
-
+       
             writer = new vtkPNGWriter();
-
+      
         else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
-
-
-
+       
+        
+        
     String ext = FilenameUtils.getExtension(filename);
-
+    
 
 
     XYZWindow frameOwner = core.getXYZWin();
@@ -310,7 +310,7 @@ public class ImageOperations {
     renderWindow.GetSize();
     //vtkRenderer renderer = frameOwner.getRenderer();
     vtkRenderer rendbackup = core.getRenderer();
-
+    
     vtkRenderer renderer = rendbackup;
 
 //renderer.ResetCamera();
@@ -321,39 +321,39 @@ public class ImageOperations {
     //vtkRenderWindow renwin = frameOwner.getRenderWindow();
     //renwin = vtk.vtkRenderWindow()
     renwin.OffScreenRenderingOn();
-    //renwin.SetSize(1920, 1080);
+    //renwin.SetSize(1920, 1080); 
     renwin.SetSize(renderWindow.GetSize());
-
-
+    
+    
     /*
     vtkRenderer rend2 = new vtkRenderer();
 
     vtkActorCollection collActs = renderer.GetActors();
     vtkMapper map = new vtkMapper();
-
+    
       for (int i=0; i<collActs.GetNumberOfItems(); i++)
       {
           rend2.AddActor(collActs.GetNextActor());
-
+          
       }
-
+      
       */
     //  rend2.SetActiveCamera(renderer.GetActiveCamera());
-
+    
     vtkRendererCollection collection = renderWindow.GetRenderers();
 //      assemblyGetActors(collection);
 
     //collection.InitTraversal();
    // collection->InitTraversal();
     //vtkIdType i = new vtkIdType();
-
+    
     //for(vtkIdType i = 0;i < collection.GetNumberOfItems(); i++)
     //for (int i=0; i<collection.GetNumberOfItems(); i++)renwin.AddRenderer(collection.GetNextItem());
-
+    
   //for(i = 0; i < collection->GetNumberOfItems(); i++){    vtkActor::SafeDownCast(collection->GetNextProp())->GetProperty()->SetOpacity(0.5);}
-
-
-
+    
+    
+    
     renderer.SetRenderWindow(renwin);
     renderer.Render();
 
@@ -364,7 +364,7 @@ public class ImageOperations {
     //renwin.AddRenderer(renderer);
 
     vtkRenderWindowInteractor interactor = new vtkGenericRenderWindowInteractor();
-
+ 
     interactor.SetRenderWindow(renwin);
     renwin.Render();
     vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
@@ -387,14 +387,14 @@ public class ImageOperations {
 
     writer.SetFileName(filename);
     writer.Write();
-
-
+    
+       
     //try to change everything back
     renwin.OffScreenRenderingOff();
     //renwin.RemoveRenderer(renderer);
     //renwin.Delete();
     //renderWindow.MakeCurrent();
-
+    
     /*****
     collection.InitTraversal();
         for (int i=0; i<collection.GetNumberOfItems(); i++) {
@@ -402,7 +402,7 @@ public class ImageOperations {
             collection.Render();
         };
 *////
-
+    
     rendbackup.SetRenderWindow(renderWindow);
     rendbackup.Render();
     renderWindow.Render();
@@ -416,35 +416,35 @@ public class ImageOperations {
     //interactor.Delete();
 //    frameOwner.Render();
 //    frameOwner.getRenpanel().resetCamera();
-//    frameOwner.toFront();
+//    frameOwner.toFront(); 
     /*******/
           }
-
+    
       // Seems unused.
       public static void exportImageold(vtkRenderWindow renderWindow, String filename) {
         vtkImageWriter writer;
         //renderWindow.
         if (filename.endsWith(".bmp"))
             writer = new vtkBMPWriter();
-
+        
         else if (filename.endsWith(".tif")  || filename.endsWith(".tiff"))
             writer = new vtkTIFFWriter();
-
+        
         else if (filename.endsWith(".pnm"))
             writer = new vtkPNMWriter();
-
+        
         else if (filename.endsWith(".png"))
-
+        
            writer = new vtkPNGWriter();
-
+      
 
         else throw new IllegalArgumentException("The graphics format is not supported"); // No known formats were selected.
-
+        
         //toFront(); // Places this window at the top of the stacking order and
         //shows it in front of any other windows.
-
+        
         vtkWindowToImageFilter windowToImageFilter = new vtkWindowToImageFilter();
-        // ---- Experimental code below /EJ ---------------------------------------------------------------
+        // ---- Experimental code below /EJ ---------------------------------------------------------------        
         // The original code never produces a file, never produces any error message.
         // This is experimental code to try and fix that.  /Erik P G Johansson
         //renderWindow.Render();
@@ -452,7 +452,7 @@ public class ImageOperations {
         //windowToImageFilter.Update();
         //windowToImageFilter.SetInputConnection(renderWindow.);
             vtkWindowToImageFilter w2if = new vtkWindowToImageFilter();
-
+    
             //w2if.ReadFrontBufferOff();
             w2if.SetInput(renderWindow);
 
@@ -463,9 +463,9 @@ public class ImageOperations {
             writer2.SetInputConnection(w2if.GetOutputPort());
             //writer2.SetFileName(filename);
             //writer2.Write();
+            
 
-
-
+   
         //windowToImageFilter.ReadFrontBufferOn();
         //windowToImageFilter.ReadFrontBufferOff();
         //windowToImageFilter.SetInputBufferTypeToRGB();
@@ -479,14 +479,14 @@ public class ImageOperations {
         //renderWindow.Render();
         //windowToImageFilter.Modified();
         // ---- Experimental code above ---------------------------------------------------------------
-
+        
         writer.Write();
-
+        
     }
       // Seems unused
       public static final void makeScreenshot(JOGLVisPanel renPanel) {
-
-
+        
+                        
     Rectangle rec = renPanel.getBounds();
     BufferedImage bufferedImage = new BufferedImage(rec.width, rec.height,
             BufferedImage.TYPE_INT_ARGB);
@@ -499,34 +499,34 @@ public class ImageOperations {
         // Use the ImageIO API to write the bufferedImage to a temporary file
         ImageIO.write(bufferedImage, "png", temp);
 
-        //BufferedImage image = new Robot().createScreenCapture(
+        //BufferedImage image = new Robot().createScreenCapture( 
         //new Rectangle( renPanel.getBounds() ) );
-
-
+        
+        
         // Delete temp file when program exits.
         temp.deleteOnExit();
     } catch (IOException ioe) {
         System.out.println(ioe.getMessage());
     } // catch
 } // makeScreenshot method
-
-
+      
+      
      // Seems unused.
      public static void screenCapture(String filename) throws
            AWTException, IOException {
      // capture the whole screen
-
+        
     String ext = FilenameUtils.getExtension(filename);
-    //capture whole screen
+    //capture whole screen  
     BufferedImage screencapture = new Robot().createScreenCapture(
     new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()) );
 
     //capture frame
-//    BufferedImage image = new Robot().createScreenCapture(
-//        new Rectangle( myframe.getX(), myframe.getY(),
+//    BufferedImage image = new Robot().createScreenCapture( 
+//        new Rectangle( myframe.getX(), myframe.getY(), 
  //           myframe.getWidth(), myframe.getHeight() ) );
-
-
+    
+    
      File file = new File(filename);
      ImageIO.write(screencapture, ext, file);
 
@@ -534,40 +534,40 @@ public class ImageOperations {
    public static void exportImageDialog(OVTCore core) {
         XYZWindow frameOwner = core.getXYZWin();
         vtkRenderWindow renderWindow = frameOwner.getRenderWindow();
-
+        
         String defaultFile = OVTCore.getGlobalSetting(DEFAULT_IMAGE_FILE, core.getUserDir());
-
+                
         JFileChooser chooser = new JFileChooser(new File(defaultFile));
         chooser.setDialogTitle("Export image");
         OvtExtensionFileFilter filter = new OvtExtensionFileFilter();
         filter.addExtension(".png");
         filter.setDescription("PNG file (*.png)");
         chooser.setFileFilter(filter);
-
+        
         filter = new OvtExtensionFileFilter();
         filter.addExtension(".bmp");
         filter.setDescription("Windows Bitmap (*.bmp)");
         //chooser.setLocation(frameOwner.getLocation().x+frameOwner.getSize().width,frameOwner.getLocation().y);
         chooser.addChoosableFileFilter(filter);
-
+      
         filter = new OvtExtensionFileFilter();
         filter.addExtension(".tiff");
         filter.addExtension(".tif");
         filter.setDescription("Tiff (*.tif)");
         chooser.addChoosableFileFilter(filter);
-
+        
         filter = new OvtExtensionFileFilter();
         filter.addExtension(".jpg");
         filter.setDescription("JPG (*.jpg)");
         //chooser.setLocation(frameOwner.getLocation().x+frameOwner.getSize().width,frameOwner.getLocation().y);
         chooser.addChoosableFileFilter(filter);
-
+        
         frameOwner.toFront(); // Places this window at the top of the stacking order and
         //shows it in front of any other windows.
-
-
+        
+        
         int returnVal = chooser.showSaveDialog(frameOwner);
-
+        
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             String fname = chooser.getSelectedFile().getAbsolutePath();
             javax.swing.filechooser.FileFilter fileFilter = chooser.getFileFilter();
@@ -586,11 +586,11 @@ public class ImageOperations {
             else outputLabel.setLabelText(COPYRIGHT);
             outputLabel.setVisible(true);
             /* ********/
-            //exportImage(renderWindow, fname);
+            //exportImage(renderWindow, fname);           
             //makeScreenshot(frameOwner.getRenpanel());
-
+            
             try{
-                exportImage(core, fname); //this kinda works, but makes window unusable.
+                exportImage(core, fname); //this kinda works, but makes window unusable.                        
             } catch (Exception ex) {
                 System.out.println(ex.getMessage());
             }
@@ -599,10 +599,10 @@ public class ImageOperations {
             outputLabel.setVisible(oldVisible);
             outputLabel.setLabelText(oldText);
         }
-
+        
     }
-
-
+      
+   
     public static BufferedImage toBufferedImage(Image img)
     {
         if (img instanceof BufferedImage)
@@ -621,8 +621,8 @@ public class ImageOperations {
         // Return the buffered image
         return bimage;
     }
-
-
+    
+  
     // NOTE: Relies on unfinished code which throws UnsupportedOperationException.
     // /Erik P G Johansson 2016-02-25
     public static void print(OVTCore core) {
@@ -636,7 +636,7 @@ public class ImageOperations {
         }
         outputLabel.setVisible(true);
         /*********/
-
+        
         ovt.interfaces.RenPanel visualPanel = core.getXYZWin().getVisualizationPanel();
 
         try {
@@ -685,18 +685,18 @@ public class ImageOperations {
             }
             else System.err.println("ToolKit or Image is null");
         }
-
+        
         /*********/
         outputLabel.setVisible(oldVisible);
         outputLabel.setLabelText(oldText);
     }
-
+    
     public static void scaleGraphics(Graphics gr, Dimension image, Dimension page) {
         System.out.println("Scaling graphics:\nimage_size="+image+"\n page_size="+page);
-
+        
         // Move left corner to center, than have to move back
         gr.translate(page.width / 2, page.height / 2);
-
+        
         // scale to fit page
         double s = Math.min(page.width/image.width, page.height/image.height);
         if (s < 1.0) {
@@ -725,16 +725,16 @@ public class ImageOperations {
 /* Temporary print window. Do not think we need it
 class TmpWindow extends Frame {
     protected Image image;
-
+    
     TmpWindow(Image image, Dimension imageSize) {
         this.image = image;
-        setSize(new Dimension(image.getWidth(this), image.getHeight(this)));
+        setSize(new Dimension(image.getWidth(this), image.getHeight(this))); 
         //setSize(imageSize);
         setTitle("Print Preview");
         setLocation(0,0);
         setVisible(true);
     }
-
+    
     public void paint(Graphics g) {
         g.drawImage(image, 0, 0, null);
     }

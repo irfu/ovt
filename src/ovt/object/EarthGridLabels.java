@@ -122,10 +122,10 @@ protected void validate() {
             else dPhi = 0;
             //vtkPolyData label = getLabelPolyData(Utils.toRadians(lat), Utils.toRadians(lon) - dPhi, ""+Math.abs(90-lat));
             //appendPolyData.AddInputData(label);
-
+            
             appendPolyData.AddInputConnection(getLabelPolyData(Utils.toRadians(lat), Utils.toRadians(lon) - dPhi, ""+Math.abs(90-lat)));
 
-
+            
         }
     }
 
@@ -134,11 +134,11 @@ protected void validate() {
     for (int i=0; i<lat.length; i++) {
         for (int lon=0; lon<360; lon+=15) {
             //vtkPolyData label = getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon);
-            //appendPolyData.AddInputData(label);
+            //appendPolyData.AddInputData(label);   
             appendPolyData.AddInputConnection(getLabelPolyData(Utils.toRadians(lat[i]), Utils.toRadians(lon), ""+lon));
 
 
-
+            
 
         }
     }
@@ -148,7 +148,7 @@ protected void validate() {
 
     vtkPolyDataMapper mapper = new vtkPolyDataMapper();
     //mapper.SetInputData(appendPolyData.GetOutput());//FKJN 8/5 2015 changed all AddInputData & SetInputData to ***InputConnection
-
+    
     mapper.SetInputConnection(appendPolyData.GetOutputPort());
     actor = new vtkActor();
     actor.SetMapper(mapper);

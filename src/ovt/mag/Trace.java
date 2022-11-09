@@ -6,7 +6,7 @@
  Version:   $Revision: 2.6 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -173,7 +173,7 @@ public class Trace extends Object {
 // is 0 - automatic (optimal) step size; 1 - step size = step * sqrt(r) (enforced)
 // xlim maximum distance in the tail
 // mx maximum number of points
-// IM - internal(igrf or dipol) EM - external(T87,89,96) model
+// IM - internal(igrf or dipol) EM - external(T87,89,96) model 
 // Factor - Model Factor
 // isMPClip = 1 if Magn.Paus Clipping is performed else isMPClip = 0;
 // datTs[] - data array for Tsyganenko's models 87,89,96 years
@@ -203,7 +203,7 @@ public class Trace extends Object {
      */
     public static void lastline(MagProps magProps, double mjd, double rv[], double dir[], double xlim,
             double alt, int idir, double epst) {
-        // Local variables
+        // Local variables 
 
         int ExternalModel = magProps.getExternalModelType();
         int InternalModel = magProps.getInternalModelType();
@@ -228,7 +228,7 @@ public class Trace extends Object {
             Trans tr = magProps.getTrans(mjd);
             dataTsxx[TILT] = tr.getDipoleTilt();
             if (ExternalModel == magProps.T2001) {
-                //  G1 and G2
+                //  G1 and G2 
                 dataTsxx[G1] = magProps.getG1(mjd);
                 dataTsxx[G2] = magProps.getG2(mjd);
             }
@@ -243,7 +243,7 @@ public class Trace extends Object {
     }
 
 
-// was : returns -1 outside mag 0= not enough steps (mx) 1=ok
+// was : returns -1 outside mag 0= not enough steps (mx) 1=ok  
     public static Fieldline traceline(MagProps magProps, double mjd, double[] rv, double step, int is) {
         return traceline(magProps, mjd, rv, magProps.getAlt(), step, is, magProps.getXlim(), Const.NPF);
     }
@@ -291,7 +291,7 @@ public class Trace extends Object {
      */
     public static Fieldline traceline(MagProps magProps, double mjd, double[] rv,
             double alt, double step, int is, double xlim, int mx) {
-        // Local variables
+        // Local variables 
 
         MagModel magModel = (MagModel) magProps;
 
@@ -373,7 +373,7 @@ public class Trace extends Object {
      */
     public static MagPoint foot_ns(MagProps magProps, double mjd, double[] rv, double xlim, double alt, int idir) {
 
-        // Function Body
+        // Function Body 
         if (Vect.absv(rv) < 1) {
             System.err.println("foot_ns: Input vector below the surf");
             System.exit(-1);
@@ -421,7 +421,7 @@ public class Trace extends Object {
 
         tracelineJNI(mjd, rv, alt, step, 0, xlim, MXX, xx, yy, zz, ss, bx, by, bz, InternalModel, ExternalModel, Factor, isMPClip, n, dataTsxx);
 
-// get last field line point from xx,yy,zz,ss,bx,by,bz ... and transform it into MagPoint
+// get last field line point from xx,yy,zz,ss,bx,by,bz ... and transform it into MagPoint 
         if (n[0] > 0) {
             double[] r = new double[3];
             double[] b = new double[3];

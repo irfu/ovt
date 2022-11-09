@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,16 +35,16 @@ Khotyaintsev
  *
  * Created on February 22, 2000, 2:17 PM
  */
-
+ 
 package ovt.interfaces;
 
-/**
+/** 
  *
  * @author  mykola
- * @version 1.0
+ * @version 1.0 
  */
 public interface Renderable {
-
+  
   public void Render();
-
+  
 }

@@ -42,14 +42,14 @@ package ovt.util;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public class StringUtils extends Object {
 
     /** Creates new StringUtils */
     public StringUtils() {
     }
-
+    
     /** cut's double from string
     public static double firstDouble(String str, int beginindex) {
         int startIndex = doubleStartsAt(str, beginindex);
@@ -63,7 +63,7 @@ public class StringUtils extends Object {
         for ( i = beginindex; i<str.length(); i++) {
             char ch = str.charAt(i);
             // if this char is not a digit or "." - return index of previous char
-            if (!isDecimalDigitNumber(ch) && ch != '.' && ch != 'e' && ch != '-' && ch != '+') {
+            if (!isDecimalDigitNumber(ch) && ch != '.' && ch != 'e' && ch != '-' && ch != '+') { 
                 if (i>0) {
                     char c = str.charAt(i-1);
                     if (isDecimalDigitNumber(c) || c == '.') return i-1;
@@ -82,11 +82,11 @@ public class StringUtils extends Object {
         for ( i = fromIndex; i<str.length(); i++) {
             char ch = str.charAt(i);
             // if this char is not a digit or "." - return index of previous char
-            if (isDecimalDigitNumber(ch)) {
+            if (isDecimalDigitNumber(ch)) { 
                 //Log.log("DIGIT='"+ch+"'");
                 return i;
             }
-            if (ch == '.' || ch == '-') {
+            if (ch == '.' || ch == '-') { 
                 // check if the next char is digit - ok
                 if (i+1 < str.length()) {
                     if (isDecimalDigitNumber(str.charAt(i+1))) return i;
@@ -98,12 +98,12 @@ public class StringUtils extends Object {
     public static int doubleStartsAt(String text, int fromIndex) {
         return doubleStartsAt(new StringBuffer(text), fromIndex);
     }
-
+    
     /** cut's double from string*/
     public static boolean isDecimalDigitNumber(char ch) {
         int type = Character.getType(ch);
         return (type == Character.DECIMAL_DIGIT_NUMBER);
     }
-
-
+    
+    
 }

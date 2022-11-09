@@ -9,15 +9,15 @@ package ovt.interfaces;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public interface TimeSetSource extends TimePeriodSource {
 
 //  public double getIntervalMjd();
-
+  
   public double getStepMjd();
-
+  
   public double getCurrentMjd();
-
+    
 }
 

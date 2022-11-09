@@ -56,25 +56,25 @@ import javax.swing.event.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class LabelsModuleCustomizer extends JFrame {
-
+    
     protected LabelsModule bean;
     private Descriptors desc;
-
+    
     public LabelsModuleCustomizer(LabelsModule labelsModule) {
         super();
         this.bean = labelsModule;
-
+        
         setTitle(labelsModule.getSat().getName() + "'s labels properties");
         desc = labelsModule.getDescriptors();
-
+        
         JComboBox gapField = (JComboBox)((ComponentPropertyEditor)(desc.getDescriptor("gap").getPropertyEditor())).getComponent();
-
+        
         Container cont = getContentPane();
-        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
-
+        cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));       
+        
         //cont.add(new OVTFontEditorPanel(bean.getFont()));
 
         cont.add(propertyEditor("gap"));
@@ -82,7 +82,7 @@ public class LabelsModuleCustomizer extends JFrame {
 
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout());
-
+        
         JButton closeButton = new JButton("Close");
         closeButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -97,13 +97,13 @@ public class LabelsModuleCustomizer extends JFrame {
                 bean.setCustomizerVisible(false);
             }
         });
-
+        
         pack();
         setResizable(false);
 
         Utils.setInitialWindowPosition(this, null);
     }
-
+    
     private void addPropertyEditor(Container cont, String propertyName) {
         BasicPropertyDescriptor desc = bean.getDescriptors().getDescriptor(propertyName);
         Component propeptyEditField = ((ComponentPropertyEditor)(desc.getPropertyEditor())).getComponent();
@@ -114,11 +114,11 @@ public class LabelsModuleCustomizer extends JFrame {
         cont.add(panel);
 
         panel = new JPanel(false);
-        panel.setLayout(new FlowLayout(FlowLayout.CENTER));
+        panel.setLayout(new FlowLayout(FlowLayout.CENTER));        
         panel.add(propeptyEditField);
         cont.add(panel);
     }
-
+    
     private JPanel propertyEditor(String propertyName) {
         JPanel panel = new JPanel(false);   // doublebuffered = false
         panel.setLayout(new FlowLayout(FlowLayout.CENTER));

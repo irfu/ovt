@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 2, 2000, 12:18 PM
  */
-
+ 
 package ovt.interfaces;
 
 import ovt.datatype.*;
@@ -44,25 +44,25 @@ import javax.swing.*;
 import java.beans.*;
 import java.util.*;
 
-/**
+/** 
  *
  * @author  mykola
- * @version
+ * @version 
  */
 public interface OVTTreeNode extends ChildrenSource {
 
   //public String toString();
-
+  
   public String getName();
-
+  
   //public Object getParent();
-
+  
   public Children getChildren();
-
+  
   public ImageIcon getIcon();
-
+ 
   public boolean isEnabled();
 
   public boolean showInTree();
-
+  
 }

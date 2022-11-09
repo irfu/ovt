@@ -42,14 +42,14 @@ package ovt.datatype;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public class DoubleAndInteger extends Object {
 
     public double d;
     public int i;
-
-
+    
+    
     /** Creates new DoubleAndInt */
     public DoubleAndInteger(double doub, int integer) {
         this.d = doub;

@@ -6,7 +6,7 @@
   Version:   $Revision: 1.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -40,65 +40,65 @@ import ovt.util.Sgp4Sdp4;
  */
 
 public class TLERecord {
-
+    
    //Math.toRadians appeared only since JDK 1.2
    public static double toRad=0.017453293F;
    // 0th line (name), length<=24, all other lines <=69
    public String satName = "";
-
+   
    // Line 1
-
+   
    /**  Line No. Identification <CODE>Line 1 : char 01 </CODE>*/
-   public final byte lineNum1=1;
+   public final byte lineNum1=1;         
    /** Catalog No. <CODE>Line 1 : char 03-07 </CODE>*/
-   public int satNumber1;
+   public int satNumber1;               
    /** Security Classification <CODE>Line 1 : char 08</CODE>*/
-   public char type;
+   public char type;                     
    /**  <CODE>Line 1 : char 10-11 </CODE>*/
-   public int launchYear;
+   public int launchYear;               
    /** <CODE> Line 1 :char 12-14 </CODE>*/
-   public int launchNumOfYear;
+   public int launchNumOfYear;          
    /** <CODE> Line 1 :char 15-17 </CODE>*/
    public char[] pieceLaunch=new char[3];
    /** <CODE> Line 1 :char 19-20 </CODE>*/
-   public int epochYear;
+   public int epochYear;                
    /** <CODE> Line 1 :char 21-32 </CODE>*/
-   public double epochDay;
+   public double epochDay;                
    /** 1st Time Derative <CODE>Line 1 : char 34-43 </CODE>*/
    public double fstTimeDerivOfMeanMotion;
    /** 2nd Time Derivative <CODE>Line 1 : char 45-52 </CODE>*/
    public double sndTimeDerivOfMeanMotion;
    /** Bstar/Drag Term <CODE>Line 1 : char 54-61 </CODE>*/
-   public double bstar;
+   public double bstar;                   
    /** Ephemeris Type <CODE>1-SGP,2-SGP4,3-SDP4,4-SGP8,5-SDP8. Line 1 :char 63 </CODE>*/
-   public byte ephemerisType;
+   public byte ephemerisType;          
    /** Element Number <CODE>Line 1 : char 65-68 </CODE>*/
-   public int elemNumber;
+   public int elemNumber;              
    /** Check Sum, Modulo 10 <CODE>Line 1 : char 69 </CODE>*/
-   public byte checkSum1;
-
+   public byte checkSum1;              
+   
    // Line 2
-
+   
    /**  Line No. Identification <CODE>Line 2 : char 01 </CODE>*/
-   public final byte lineNum2=2;
+   public final byte lineNum2=2;       
    /** Catalog No. <CODE>Line 1 : char 03-07 </CODE>*/
-   public int satNumber2;
+   public int satNumber2;                
    /** Inclination <CODE>[radians] Line 2 : char 09-16 [deg]</CODE> */
-   public double incl;
+   public double incl; 
    /** Right Ascension of Ascending Node <CODE>[radians] Line 2 : char 18-25 [deg]</CODE> */
-   public double ascenOfNode;
+   public double ascenOfNode;            
    /**  Eccentricity with assumed leading decimal [after 0..] <CODE> Line 2 : char 27-33</CODE> */
-   public double eccentricity;
+   public double eccentricity;            
    /**  Argument of the Perigee [radians] <CODE> Line 2 : char 35-42 [deg]</CODE> */
-   public double argOfPerigee;
+   public double argOfPerigee;            
    /**  Mean Anomaly [radians] <CODE> Line 2 : char 44-51 [deg]</CODE> */
-   public double meanAnomaly;
+   public double meanAnomaly;             
    /** Revolutions per Day (Mean Motion)  [rev/day] <CODE> Line 2 : char 53-63</CODE> */
-   public double meanMotion;
+   public double meanMotion;              
    /**  Revolution Number at Epoch <CODE> Line 2 : char 64-68 </CODE> */
-   public int revNum;
+   public int revNum;                    
    /** Check Sum Modulo 10 <CODE> Line 2 : char 69</CODE> */
-   public byte checkSum2;
+   public byte checkSum2;                
 
    public TLERecord(){
    }
@@ -106,7 +106,7 @@ public class TLERecord {
    public TLERecord(String ss){
       setLine(ss);
    }
-
+   
    public TLERecord(String l1, String l2){ //set data records (both lines)
       setLine(l1);
       setLine(l2);
@@ -208,7 +208,7 @@ public class TLERecord {
          default: return -1;
       }
    }
-
+   
    /** Converts moified exponential format: 102034-01 -> 0.102034e-01
     * @param String ss - Input string
     * @return double value
@@ -219,7 +219,7 @@ public class TLERecord {
 
       for(int i=0;i<6;++i){
          cc=ss.charAt(i);
-         if(cc=='0' || cc=='1' || cc=='2' || cc=='3' || cc=='4' ||
+         if(cc=='0' || cc=='1' || cc=='2' || cc=='3' || cc=='4' || 
          cc=='5' || cc=='6' || cc=='7' || cc=='8' || cc=='9'){
             pow*=0.1;
             mantissa+=pow*(cc-'0');
@@ -233,19 +233,19 @@ public class TLERecord {
       exp=Math.pow(10.0,exp);
       return sign*mantissa*exp;
    }
-
+   
    public static String numSubstring(String str,int beg, int end){
       String res=new String(str.substring(beg,end));
       return res.replace(' ','0');
    }
-
+   
    public static int Y2K(int yy){
       int xx=yy>50?1900:2000; //Y2K :-)
       return (yy<1950)?yy+xx:yy;
    }
-
-   /** Computes and returns the revolution period of the satellite in days on the basis of meanMotion, incl, and eccentricity..
-     * Can be used to choose the deep-space or near-space model for orbit calculation.
+   
+   /** Computes and returns the revolution period of the satellite in days on the basis of meanMotion, incl, and eccentricity.. 
+     * Can be used to choose the deep-space or near-space model for orbit calculation. 
     *  <code>periodDays = 1./ meanMotion </code>
     */
    public double getPeriodDays()  {
@@ -266,7 +266,7 @@ public class TLERecord {
      double delo = temp / (eccentricity * eccentricity);
      System.out.println("delo="+delo);
      double xnodp = meanMotion / (delo + 1.);
-
+     
      System.out.println("xnodp="+xnodp);
 
      return 2.*Math.PI / (xnodp * MINUTES_IN_DAY); */
@@ -278,7 +278,7 @@ public class TLERecord {
 
    public TLERecord cloneMe() {
       TLERecord tmp=new TLERecord();
-
+      
       if(satName.length()>0)
          tmp.satName=new String(satName);
       tmp.satNumber1=satNumber1;
@@ -306,12 +306,12 @@ public class TLERecord {
       tmp.checkSum2=checkSum2;
       return tmp;
    }
-
+   
    public void printAll(){
       print1stLine();
       print2ndLine();
    }
-
+   
    public void print1stLine(){
       System.out.print(new Byte(lineNum1).toString()+',');
       System.out.print(satNumber1+",");

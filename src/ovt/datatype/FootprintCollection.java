@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,28 +35,28 @@ Khotyaintsev
  *
  * Created on March 30, 2000, 6:27 PM
  */
-
+ 
 package ovt.datatype;
 
 import ovt.mag.*;
 
-/**
+/** 
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class FootprintCollection extends Timetable {
 
   /** Creates new FootprintCollection */
   public FootprintCollection() {
   }
-
+  
   public void put(MagPoint mp) {
     put(mp.mjd, mp);
   }
-
+  
   public MagPoint get(double mjd) {
     return (MagPoint)getElement(mjd);
   }
-
+  
 }

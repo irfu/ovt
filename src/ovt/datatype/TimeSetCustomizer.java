@@ -53,27 +53,27 @@ import javax.swing.*;
  * fields (start time, interval length, step size), and two buttons (go back/forth in time).
  *
  * @author  ko
- * @version
+ * @version 
  */
-public class TimeSetCustomizer extends JPanel
+public class TimeSetCustomizer extends JPanel 
     implements Customizer, Syncer
 {
   private TimeSet timeSet;
-  private static final int START = 0;
-  private static final int INTERVAL=1;
+  private static final int START = 0; 
+  private static final int INTERVAL=1; 
   private static final int STEP=2;
   private static final String prop[] = { "startMjd", "intervalMjd", "stepMjd" };
-
+  
   private PropertyEditor[] editor = new PropertyEditor[3];
   private MjdEditorPanel startTextField;
   private IntervalEditorPanel intervalTextField;
   private IntervalEditorPanel stepTextField;
-
-
+  
+  
   /** Creates new TimeSettingsCustomizer */
 public TimeSetCustomizer() {
     // create editors
-
+    
     // start editor
     editor[START] = new ovt.beans.editor.MjdEditor();
     editor[START].addPropertyChangeListener( new PropertyChangeListener() {
@@ -85,7 +85,7 @@ public TimeSetCustomizer() {
         }
     });
     // interval editor
-    editor[INTERVAL] = new ovt.beans.editor.IntervalEditor();
+    editor[INTERVAL] = new ovt.beans.editor.IntervalEditor(); 
     editor[INTERVAL].addPropertyChangeListener( new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
             double mjd = ((Double)editor[INTERVAL].getValue()).doubleValue();
@@ -95,7 +95,7 @@ public TimeSetCustomizer() {
         }
     });
     // step editor
-    editor[STEP] = new ovt.beans.editor.IntervalEditor();
+    editor[STEP] = new ovt.beans.editor.IntervalEditor(); 
     editor[STEP].addPropertyChangeListener( new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
             double mjd = ((Double)editor[STEP].getValue()).doubleValue();
@@ -104,14 +104,14 @@ public TimeSetCustomizer() {
             firePropertyChange(prop[STEP], oldMjd, mjd);
         }
     });
-
+    
     // make interior
-
+    
     JPanel mainPanel = createMainPanel();
-
+    
     JPanel panel = new JPanel();
     panel.setLayout(new FlowLayout());
-
+    
     {
         JButton button = new JButton("<<");
         button.addActionListener(new ActionListener() {
@@ -123,12 +123,12 @@ public TimeSetCustomizer() {
         });
         button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
         // Enable shortcut modifier+left (non-numpad arrow; Modifier depends on look & feel)
-        button.setMnemonic(java.awt.event.KeyEvent.VK_LEFT);
+        button.setMnemonic(java.awt.event.KeyEvent.VK_LEFT);    
         panel.add(button);
-    }
-
+    }    
+    
     panel.add(mainPanel);
-
+    
     {
         JButton button = new JButton(">>");
         button.addActionListener(new ActionListener() {
@@ -143,53 +143,53 @@ public TimeSetCustomizer() {
         button.setMnemonic(java.awt.event.KeyEvent.VK_RIGHT);
         panel.add(button);
     }
-
+    
     add(panel);
-
-
+    
+    
 }
 
-
+    
 private JPanel createMainPanel() {
     JPanel comp = new JPanel(false);
     comp.setLayout(new BoxLayout(comp, BoxLayout.Y_AXIS));
-
+    
     // ------------------- close, reset buttons ----------------
-
+    
     //PropertyDescriptors desc = new PropertyDescriptors(timeSet.getClass());
-
+    
     /*for (int i=0; i<tf.length; i++) {
         //PropertyDescriptor pd = desc.get(props[i]);
         //PropertyEditor pe = Settings.findEditor(pd);
         //tf[i] = (JTextField)pe.getCustomEditor();
         tf[i] = new JTextField();
     }*/
-
+    
     //start.setEditCompleteOnKey(true);
-
+    
     startTextField = (MjdEditorPanel)editor[START].getCustomEditor();
     startTextField.requestDefaultFocus();
     intervalTextField = (IntervalEditorPanel)editor[INTERVAL].getCustomEditor();
     stepTextField = (IntervalEditorPanel)editor[STEP].getCustomEditor();
-
+    
     JLabel label = new JLabel("Start");
     label.setAlignmentX(CENTER_ALIGNMENT);
     comp.add(label);
     comp.add(startTextField);
-
+    
     label = new JLabel("Interval");
     label.setAlignmentX(CENTER_ALIGNMENT);
     comp.add(label);
     comp.add(intervalTextField);
-
+    
     label = new JLabel("Tracing Step");
     label.setAlignmentX(CENTER_ALIGNMENT);
     comp.add(label);
     comp.add(stepTextField);
-
+    
     return comp;
 }
-
+    
 
 public void setObject(final java.lang.Object obj) {
     this.timeSet = (TimeSet) obj;

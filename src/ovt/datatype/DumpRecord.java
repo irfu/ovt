@@ -6,7 +6,7 @@
   Version:   $Revision: 2.8 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,15 +35,15 @@ package ovt.datatype;
 import java.lang.*;
 import java.io.*;
 
-/**
+/** 
  *
  * @author  kono, ko
- * @version
+ * @version 
  */
 public class DumpRecord extends Object{
-
+  
   public static final byte numOfFields = 30;
-
+  
   public static final byte NONE		= 0;
   public static final byte TIME		= 1;
   public static final byte POS_X	= 2;
@@ -62,7 +62,7 @@ public class DumpRecord extends Object{
   public static final byte FP2_LON	= 14;
   public static final byte[][] FP = { {FP1_LAT, FP1_LON}, {FP2_LAT, FP2_LON}};
   public static final byte DIST_TO_MP	= 15;
-  public static final byte DIST_TO_BS	= 16;
+  public static final byte DIST_TO_BS	= 16;  
   public static final byte B   		= 17;
   public static final byte B_X		= 18;
   public static final byte B_Y		= 19;
@@ -72,20 +72,20 @@ public class DumpRecord extends Object{
   public static final byte B_FL_MIN_POS_Y	= 23;
   public static final byte B_FL_MIN_POS_Z	= 24;
   public static final byte B_FL_MAX	= 25;
-
+  
   public static final byte SPIN_B	= 26;
   public static final byte SPIN_V	= 27;
   public static final byte SPIN_S	= 28;
   public static final byte[] SPIN = { SPIN_B, SPIN_V, SPIN_S };
   public static final byte DIP_TILT	= 29;
-
-
+  
+  
   public static final byte SPIN_LABEL = 30;
   public static final byte POS_LABEL = 31;
   public static final byte FOOT_LABEL= 32;
   public static final byte MP_DIST_LABEL = 33;
-
-
+  
+  
   public static final String[] tags = {
   	"None",
         "Time",
@@ -117,8 +117,8 @@ public class DumpRecord extends Object{
         "SPIN V",
         "SPIN S",
         "Dipole tilt"
-        };
-
+        }; 
+        
  public static final String[] recDescr = {
  	"None",
         "Time",
@@ -150,12 +150,12 @@ public class DumpRecord extends Object{
         "Angle (deg) between the spin axis and velocity vector V",
         "Angle (deg) between the spin axis and the direction towards the Sun",
         "Dipole tilt angle"
-        };
+        };  
   public static final String strMP_DIST_LABEL = "Distance to magnetopause";
   public static final String strSPIN_LABEL = "Spin axis angles (degrees)";
-
+  
   private String[] fields = new String[numOfFields];
-
+  
   public DumpRecord(){
     for(int i=0; i<numOfFields; ++i)
       switch(i) {
@@ -164,34 +164,34 @@ public class DumpRecord extends Object{
         default: setField(i, " ");
       }
   }
-
+  
   public DumpRecord(DumpRecord source){
     for(byte i=0;i<numOfFields;++i)
       this.fields[i] = new String(source.fields[i]);
   }
-
+  
   public String getField(int id){
     if(id<0 || id>=numOfFields)
       return "";
     else
       return new String(this.fields[id]);
   }
-
+  
   public void setField(int id,String value){
     if(id>=0 && id<numOfFields && value.length()!=0)
       fields[id] = new String(value);
   }
-
+  
   public Object clone(){
     return new DumpRecord(this);
   }
-
+  
   public void print(){
     System.out.println("Printing DumpRecord:");
     for(int i=0;i<this.numOfFields;++i)
       System.out.println(getField(i));
   }
-
+  
   public static String getName(int type) {
       try {
           return tags[type];
@@ -199,7 +199,7 @@ public class DumpRecord extends Object{
         throw new IllegalArgumentException("No such record type : '"+type+"'");
       }
   }
-
+  
   public static int getType(String name) {
       for (int i=0; i<numOfFields; i++)
           if (name.equals(tags[i])) return i;

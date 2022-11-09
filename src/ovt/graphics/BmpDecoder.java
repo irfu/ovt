@@ -16,21 +16,21 @@ import java.awt.image.*;
  * @version
  */
 public class BmpDecoder extends Object {
-
+    
     /** Creates new BmpDecoder */
     public BmpDecoder() {
     }
-
+    
     /** Returns Image from .bmp file */
     public static Image getImage(String filename) throws IOException {
-
+        
         byte buf[] = new byte[64];
         int pixcol;
         int i,j, xres, yres, temp, temp1, temp2, xlength, offset;
         byte [] color16 = new byte[4];
         Color [] colors = new Color[256];
-
-
+        
+        
         RandomAccessFile in = new RandomAccessFile(filename,"r");
         in.read(buf, 0, 54);
         xres = (buf[18] >= 0) ? buf[18] : buf[18] + 256;
@@ -43,9 +43,9 @@ public class BmpDecoder extends Object {
         temp = (buf[11] >= 0) ? buf[11] : buf[11] + 256;
         offset |= temp<<8;
         int pixels[] = new int[xres*(yres+1)];
-
+        
         //g.drawString("Generating Picture " + s,20,20);
-
+        
         switch (buf[28])
         {
             case 4:
@@ -69,7 +69,7 @@ public class BmpDecoder extends Object {
                 {
                     //if (i%10 == 0)
                         //System.out.print(".");
-
+                    
                     in.read(pixel, 0, xlength);
                     for (j=0; j<xres; j+=2)                                        {
                         pixcol = (pixel[j/2] >> 4) & 0x0F;
@@ -110,7 +110,7 @@ public class BmpDecoder extends Object {
                     }
                 }
                 break;
-
+                
             case 24:
                 in.seek(offset);
                 xlength = 3*xres;
@@ -139,5 +139,5 @@ public class BmpDecoder extends Object {
         in.close();
         return Toolkit.getDefaultToolkit().createImage(new MemoryImageSource(xres, yres, pixels, 0, xres));
     }
-
+    
 }

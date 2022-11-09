@@ -60,7 +60,7 @@ import javax.swing.*;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public class DataScalarBar extends SingleActor2DObject {
 
@@ -69,27 +69,27 @@ public class DataScalarBar extends SingleActor2DObject {
     private double x = 0.5;
     /** Y position of scalar bar */
     private double y = 0.01;
-
+    
     public static final int HORIZONTAL_ORIENTATION = 0;
     public static final int VERTICAL_ORIENTATION   = 1;
-
+    
     /** Holds value of property customizerVisible. */
     private boolean customizerVisible = false;
     private DataScalarBarCustomizer customizer = null;
-
+    
     /** Holds value of property orientation. */
     private int orientation = HORIZONTAL_ORIENTATION;
-
+    
     /** Holds value of property width. */
     private double width = 0.8;
-
+    
     /** Holds value of property height. */
     private double height = 0.12;
-
+    
     /** Creates new DataScalarBar */
     public DataScalarBar(DataModule dataModule) {
         super(dataModule.getCore(), "ScalarBar", "images/scalarbar.gif");
-
+        
         this.dataModule = dataModule;
         // listen to parent's "endabled" state
         dataModule.addPropertyChangeListener("enabled", this);
@@ -97,8 +97,8 @@ public class DataScalarBar extends SingleActor2DObject {
             descriptors = super.getDescriptors();
             BasicPropertyDescriptor pd;
             GUIPropertyEditor editor;
-
-            // x property descriptor
+            
+            // x property descriptor 
             pd = new BasicPropertyDescriptor("x", this);
             pd.setMenuAccessible(false);
             pd.setLabel("Horizontal");
@@ -111,8 +111,8 @@ public class DataScalarBar extends SingleActor2DObject {
                 }
             });
             descriptors.put(pd);
-
-            // y property descriptor
+            
+            // y property descriptor 
             pd = new BasicPropertyDescriptor("y", this);
             pd.setMenuAccessible(false);
             pd.setLabel("Vertical");
@@ -125,7 +125,7 @@ public class DataScalarBar extends SingleActor2DObject {
                 }
             });
             descriptors.put(pd);
-
+            
             // width
             pd = new BasicPropertyDescriptor("width", this);
             pd.setMenuAccessible(false);
@@ -139,7 +139,7 @@ public class DataScalarBar extends SingleActor2DObject {
                 }
             });
             descriptors.put(pd);
-
+            
             // height
             pd = new BasicPropertyDescriptor("height", this);
             pd.setMenuAccessible(false);
@@ -153,14 +153,14 @@ public class DataScalarBar extends SingleActor2DObject {
                 }
             });
             descriptors.put(pd);
-
+            
             pd = new BasicPropertyDescriptor("orientation", this);
             String[] tags = {"Horizontal", "Vertical"};
             editor = new MenuPropertyEditor(pd, tags);
             addPropertyChangeListener("orientation", editor);
             pd.setPropertyEditor(editor);
             descriptors.put(pd);
-
+            
             // customizerVisible
             pd = new BasicPropertyDescriptor("customizerVisible", this);
             editor = new VisibilityEditor(pd);
@@ -169,10 +169,10 @@ public class DataScalarBar extends SingleActor2DObject {
             addPropertyChangeListener("customizerVisible", editor);
             pd.setPropertyEditor(editor);
             descriptors.put(pd);
-
+            
             pd = descriptors.getDescriptor("color");
             pd.setLabel("Text color...");
-
+            
         } catch (IntrospectionException e2) {
             System.out.println(getClass().getName() + " -> " + e2.toString());
             System.exit(0);
@@ -183,7 +183,7 @@ public class DataScalarBar extends SingleActor2DObject {
     public vtkScalarBarActor getScalarBarActor() {
         return (vtkScalarBarActor)actor;
     }
-
+    
     protected void validate() {
         vtkScalarBarActor scalarBar = new vtkScalarBarActor();
         actor = scalarBar;
@@ -198,33 +198,33 @@ public class DataScalarBar extends SingleActor2DObject {
         setColor(getColor());
         super.validate();
     }
-
+    
     /** updates position of output label, called if label or window size changes ocures
- */
+ */    
     public void updatePosition() {
-
+        
         if (actor != null) {
-
+            
             double x1 =  getX()  * (1 - width); // x position
             double y1 =  getY()  * (1 - height); // y position
             //Log.log("Position=["+x+":"+y+"], Size=["+width+":"+height+"], RealSize=["+actor.GetWidth()+":"+actor.GetHeight()+"]");
             //Log.log("New position ["+x+":"+y+"]");
             actor.GetPositionCoordinate().SetValue(x1,y1);
-
+        
         }
     }
-
+    
     private vtkMapper2D getMapper() {
         return actor.GetMapper();
     }
-
+    
         /** Getter for property x.
      * @return Value of property x.
      */
     public double getX() {
         return x;
     }
-
+    
     /** Setter for property x.
      * @param x New value of property x.
      */
@@ -234,14 +234,14 @@ public class DataScalarBar extends SingleActor2DObject {
         updatePosition();
         propertyChangeSupport.firePropertyChange ("x", new Double (oldX), new Double (x));
     }
-
+    
     /** Getter for property y.
      * @return Value of property y.
      */
     public double getY() {
         return y;
     }
-
+    
     /** Setter for property y.
      * @param y New value of property y.
      */
@@ -257,7 +257,7 @@ public class DataScalarBar extends SingleActor2DObject {
     public boolean isCustomizerVisible() {
         return customizerVisible;
     }
-
+    
     /** Setter for property customizerVisible.
      * @param customizerVisible New value of property customizerVisible.
  */
@@ -273,14 +273,14 @@ public class DataScalarBar extends SingleActor2DObject {
         }
         propertyChangeSupport.firePropertyChange ("customizerVisible", new Boolean (oldCustomizerVisible), new Boolean (customizerVisible));
     }
-
+    
     /** Getter for property orientation.
      * @return Value of property orientation.
  */
     public int getOrientation() {
         return orientation;
     }
-
+    
     /** Setter for property orientation.
      * @param orientation New value of property orientation.
  */
@@ -288,13 +288,13 @@ public class DataScalarBar extends SingleActor2DObject {
         int oldOrientation = this.orientation;
         if (actor != null) {
             switch (orientation) {
-                case HORIZONTAL_ORIENTATION :
-                    getScalarBarActor().SetOrientationToHorizontal();
-                    if (oldOrientation == VERTICAL_ORIENTATION) reorderHeightAndWidth();
+                case HORIZONTAL_ORIENTATION : 
+                    getScalarBarActor().SetOrientationToHorizontal(); 
+                    if (oldOrientation == VERTICAL_ORIENTATION) reorderHeightAndWidth(); 
                     break;
-                case VERTICAL_ORIENTATION   :
-                    getScalarBarActor().SetOrientationToVertical();
-                    if (oldOrientation == HORIZONTAL_ORIENTATION) reorderHeightAndWidth();
+                case VERTICAL_ORIENTATION   : 
+                    getScalarBarActor().SetOrientationToVertical(); 
+                    if (oldOrientation == HORIZONTAL_ORIENTATION) reorderHeightAndWidth(); 
                     break;
                 default: throw new IllegalArgumentException("Wrong orientation ("+orientation+")");
             }
@@ -303,7 +303,7 @@ public class DataScalarBar extends SingleActor2DObject {
         this.orientation = orientation;
         propertyChangeSupport.firePropertyChange ("orientation", new Integer (oldOrientation), new Integer (orientation));
     }
-
+    
     /** Change height <-> width */
     private void reorderHeightAndWidth() {
         double oldHeight = getHeight();
@@ -311,14 +311,14 @@ public class DataScalarBar extends SingleActor2DObject {
         setHeight(oldWidth);
         setWidth(oldHeight);
     }
-
+    
 /** Getter for property width.
  * @return Value of property width.
  */
     public double getWidth() {
         return width;
     }
-
+    
     /** Setter for property width.
      * @param width New value of property width.
  */
@@ -331,14 +331,14 @@ public class DataScalarBar extends SingleActor2DObject {
         }
         propertyChangeSupport.firePropertyChange ("width", new Double (oldWidth), new Double (width));
     }
-
+    
     /** Getter for property height.
      * @return Value of property height.
  */
     public double getHeight() {
         return height;
     }
-
+    
     /** Setter for property height.
      * @param height New value of property height.
  */
@@ -351,7 +351,7 @@ public class DataScalarBar extends SingleActor2DObject {
         }
         propertyChangeSupport.firePropertyChange ("height", new Double (oldHeight), new Double (height));
     }
-
+    
     public void dispose() {
         setVisible(false);
         if (customizer != null) customizer.dispose();

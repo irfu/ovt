@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,30 +35,30 @@ Khotyaintsev
  *
  * Created on March 24, 2000, 3:41 PM
  */
-
+ 
 package ovt.datatype;
 
 import java.util.*;
 
-/**
+/** 
  * This is a class for storing mjd - object pairs
  * @author  mykola
- * @version
+ * @version 
  */
 public class Timetable {
 
   protected Vector keys;
   protected Vector values;
-
+  
   /** Creates new TimeTable */
   public Timetable() {
     keys   = new Vector();
     values = new Vector();
   }
-
+  
   public void put(double mjd, Object obj) {
     keys.addElement(mjd);
-    values.addElement(obj);
+    values.addElement(obj); 
   }
 
   /**
@@ -74,11 +74,11 @@ public class Timetable {
       }
       return null;
   }
-
+  
   /**
    * Return an element corresponding (almost exactly) to a time mjd.
    */
-  public Object getElement(double mjd) {
+  public Object getElement(double mjd) { 
     int index = keys.indexOf(new Double(mjd));
     //System.out.println("index=" + index);
     if (index == -1) {
@@ -87,35 +87,35 @@ public class Timetable {
         //dump();
         return getElement(mjd, 0.0000001);
     }
-    else
+    else 
         return values.elementAt(index);
   }
 
   public Object firstElement() {
     return values.firstElement();
   }
-
+  
   public Object lastElement() {
     return values.lastElement();
   }
-
+  
   public Enumeration elements() {
     return values.elements();
-  }
-
+  } 
+  
   public void clear() {
     keys.removeAllElements();
     values.removeAllElements();
   }
-
+  
   public int size() {
     return values.size();
   }
-
+  
   public Enumeration keys() {
     return keys.elements();
   }
-
+  
   public void dump() {
       System.out.println("--------------------- Dumping Timetable --------------------");
       Enumeration e = keys();

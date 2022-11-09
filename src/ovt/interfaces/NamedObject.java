@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,16 +35,16 @@ Khotyaintsev
  *
  * Created on March 26, 2000, 6:04 PM
  */
-
+ 
 package ovt.interfaces;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public interface NamedObject {
 
   public String getName();
-
+  
 }

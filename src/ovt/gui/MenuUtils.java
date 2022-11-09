@@ -48,30 +48,30 @@ import java.util.*;
 
 /**
  * Class for only static method and no variables.
- *
+ * 
  * @author  root
- * @version
+ * @version 
  */
 public class MenuUtils extends Object {
 
     /** Creates new MenuUtils. */
     private MenuUtils() {
     }
-
+    
     public static void addMenuItemsFromDescriptors(JMenu menu, DescriptorsSource source, OVTCore core) {
         Descriptors descriptors = source.getDescriptors();
         if (descriptors == null) return;
-
+        
         //System.out.println("Descriptors: " + descriptors);
-
+        
         Enumeration e = descriptors.elements();
 
         while (e.hasMoreElements()) {
             BasicPropertyDescriptor pd = (BasicPropertyDescriptor) e.nextElement();
             //System.out.println("Property=" + pd.getName());
-
+            
             if (pd.isMenuAccessible()) {
-
+                
                 try {
                     addMenuItemsFromSource(menu, (MenuItemsSource) pd.getPropertyEditor(), false);
                     // One should render after user changes any parameter by means of editor
@@ -81,14 +81,14 @@ public class MenuUtils extends Object {
                         if (!guiEd.hasListener((GUIPropertyEditorListener)core))
                             guiEd.addGUIPropertyEditorListener((GUIPropertyEditorListener)core);
                     } catch (ClassCastException ignore) {}
-
+                    
                 } catch (ClassCastException e2) {
                     System.out.println("Property " + pd.getName() + " editor has no menu items." + e2);
                 }
             }
         }
     }
-
+    
     public static void addMenuItemsFromSource(JMenu menu, MenuItemsSource source, boolean multiple_sep) {
         JMenuItem [] mItem = source.getMenuItems();
         if (menu == null) menu = new JMenu();
@@ -109,8 +109,8 @@ public class MenuUtils extends Object {
             //ovt.util.Log.log("item:"+mItem[i].getText());
         }
     }
-
-
+    
+    
     public static void addSeparator(JMenu menu) {
         if (menu.getComponentCount() > 0) menu.add(new JSeparator());
     }

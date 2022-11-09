@@ -9,15 +9,15 @@ package ovt.interfaces;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public interface TimePeriodSource {
 
   public double getStartMjd();
-
+  
   public double getIntervalMjd();
-
+  
   public double getStopMjd();
-
+  
 }
 

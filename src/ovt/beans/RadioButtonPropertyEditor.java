@@ -50,7 +50,7 @@ import javax.swing.border.*;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 
 public class RadioButtonPropertyEditor extends GUIPropertyEditor
@@ -66,7 +66,7 @@ public class RadioButtonPropertyEditor extends GUIPropertyEditor
   public RadioButtonPropertyEditor(BasicPropertyDescriptor pd, int[] values, String[] tags) {
     super(pd, values, tags);
   }
-
+  
   public JRadioButton[] getButtons() {
       if (buttons == null) {
         int size = getTags().length;
@@ -83,14 +83,14 @@ public class RadioButtonPropertyEditor extends GUIPropertyEditor
       }
       return buttons;
   }
-
+  
   public void actionPerformed(ActionEvent evt) {
       OVTRadioButton rb = (OVTRadioButton)evt.getSource();
       try {
           setValue(rb.getUserObject());
-      } catch (PropertyVetoException e2) {e2.printStackTrace(); }
+      } catch (PropertyVetoException e2) {e2.printStackTrace(); } 
   }
-
+  
   //public JRadioButton getButton(Object value) {  }
   public void propertyChange(PropertyChangeEvent evt) {
       //System.out.println("Received change of : " + evt.getPropertyName());
@@ -104,21 +104,21 @@ public class RadioButtonPropertyEditor extends GUIPropertyEditor
                 rb.setSelected(true);
                 return;
             }
-        }
+        } 
       }
-
+     
   }
 }
 
 class OVTRadioButton extends JRadioButton {
 
     private Object userObject;
-
+    
     public OVTRadioButton(String text, Object userObject) {
         super(text);
         this.userObject = userObject;
     }
-
+    
     public Object getUserObject() {
         return userObject;
     }

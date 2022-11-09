@@ -6,7 +6,7 @@
  Version:   $Revision: 2.3 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -50,7 +50,7 @@ import vtk.*;
  */
 public class Matrix3x3 {
     /*
-     public static final double[][] SINGLE_MATRIX = { {1, 0, 0},
+     public static final double[][] SINGLE_MATRIX = { {1, 0, 0}, 
      {0, 1, 0},
      {0, 0, 1} };*/
 
@@ -271,7 +271,7 @@ public class Matrix3x3 {
             // C_1 = (C_0)^2 = Matrix after first iteration
             // C_2 = (C_0)^(2*2)
             // C_3 = (C_0)^(2*2*2)
-            // And so on ==>
+            // And so on ==> 
             // C_i = ... = (C_0)^(2^i) = Matrix after i iterations.
             C = C.multiply(C);
         }

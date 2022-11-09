@@ -6,7 +6,7 @@
   Version:   $Revision: 2.6 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -49,17 +49,17 @@ import javax.swing.*;
 
 /**
  * Visualizes satellites orbit.
- * { @see ovt.datatypes.Sat#getOrbitModule }.
+ * { @see ovt.datatypes.Sat#getOrbitModule }. 
  * @author Mykola Khotyaintsev
  * @see ovt.datatypes.AbstractSatModule
  */
 public class OrbitModule extends SingleActorSatModule {
 
-  public OrbitModule(Sat satellite) {
+  public OrbitModule(Sat satellite) { 
     super(satellite, "Orbit", "images/orbit.gif");
     setColor(Color.red);
   }
-
+  
   public void timeChanged(TimeEvent evt) {
     if (evt.timeSetChanged()) {
       invalidate();
@@ -69,7 +69,7 @@ public class OrbitModule extends SingleActorSatModule {
       }
     }
   }
-
+  
   public void coordinateSystemChanged(CoordinateSystemEvent evt) {
     invalidate();
     if (isVisible()) {
@@ -78,9 +78,9 @@ public class OrbitModule extends SingleActorSatModule {
     }
   }
 
-
+  
   public void validate() {
-
+    
       final int resolution = 10; // Number of interpolated points between 2 normal points.
       vtkPolyData profile = new vtkPolyData();
       vtkCellArray lines = new vtkCellArray();
@@ -100,9 +100,9 @@ public class OrbitModule extends SingleActorSatModule {
         aSplineZ.AddPoint(i, a[2]);
         i++;
       }
-
+      
       vtkPoints points = new vtkPoints();
-
+      
       double x,y,z;
       for (i=0; i<numberOfPoints; i+=1.0/resolution) {
         x = aSplineX.Evaluate(i);
@@ -110,27 +110,27 @@ public class OrbitModule extends SingleActorSatModule {
         z = aSplineZ.Evaluate(i);
         points.InsertNextPoint(x, y, z);
       }
-
+      
       lines.InsertNextCell(points.GetNumberOfPoints());
-
-      for(int j=0; j<points.GetNumberOfPoints(); j++)
+		
+      for(int j=0; j<points.GetNumberOfPoints(); j++) 
 		lines.InsertCellPoint(j);
 
-
+	
 	profile.SetPoints(points);
 	profile.SetLines(lines);
 	//profile.GetPointData().SetScalars(scalars);
 
 	//vtkLookupTable lut  = new vtkLookupTable();
 	//lut.SetHueRange(0.6667, 0);
-
+	
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
 	mapper.SetInputData(profile);
 	//mapper.SetScalarModeToUsePointData();
     //mapper.ScalarVisibilityOn();
 	//mapper.SetScalarRange(minVelocity, maxVelocity);
 	//mapper.SetLookupTable(lut);
-
+	
       actor = new vtkActor();
         actor.SetMapper(mapper);
         float[] rgb = Utils.getRGB(getColor());

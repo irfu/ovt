@@ -6,7 +6,7 @@
   Version:   $Revision: 2.2 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -60,18 +60,18 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
   /** Creates new form MagPropsEditor */
   public MagPropsCustomizer(MagProps magProps) {
     super("Magnetic Field");
-
+    
     Log.log("MagPropsEditor :: init ...", 3);
     this.magProps = magProps;
-
-
+    
+    
     //getContentPane().setLayout(new FlowLayout(FlowLayout.TRAILING)); */
     getContentPane().setLayout(new BoxLayout(getContentPane(), BoxLayout.Y_AXIS));
     initComponents ();
     refresh();
     pack();
     setResizable(false);
-
+    
     Utils.setInitialWindowPosition(this, null);
   }
 
@@ -84,7 +84,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     try {
         setIconImage(java.awt.Toolkit.getDefaultToolkit().getImage(Utils.findResource("images/magnet.gif")));
     } catch (java.io.FileNotFoundException e2) { e2.printStackTrace(System.err); }
-
+    
     activityPanel = new javax.swing.JPanel ();
     kpindexLabel = new javax.swing.JLabel ();
     kpindexEditBtn = new javax.swing.JButton ();
@@ -101,7 +101,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     modelsPanel = new javax.swing.JPanel ();
     internalPanel = new javax.swing.JPanel ();
     externalPanel = new javax.swing.JPanel ();
-
+    
     addWindowListener (new java.awt.event.WindowAdapter () {
       public void windowClosing (java.awt.event.WindowEvent evt) {
         exitForm (evt);
@@ -118,9 +118,9 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       kpindexLabel.setAlignmentX (10.0F);
       kpindexLabel.setText (ovt.mag.MagProps.KPINDEX_STR);
       kpindexLabel.setHorizontalAlignment (javax.swing.SwingConstants.LEFT);
-
+  
       activityPanel.add (kpindexLabel);
-
+  
       kpindexEditBtn.setPreferredSize (kpindexEditBtn.getMinimumSize ());
       kpindexEditBtn.setMaximumSize (kpindexEditBtn.getPreferredSize ());
       kpindexEditBtn.setText ("Edit ...");
@@ -130,14 +130,14 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       activityPanel.add (kpindexEditBtn);
-
+  
       imfLabel.setText (ovt.mag.MagProps.IMF_STR);
       imfLabel.setHorizontalAlignment (javax.swing.SwingConstants.LEFT);
-
+  
       activityPanel.add (imfLabel);
-
+  
       imfEditBtn.setText ("Edit ...");
       imfEditBtn.setEnabled (false);
       imfEditBtn.addActionListener (new java.awt.event.ActionListener () {
@@ -146,14 +146,14 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       activityPanel.add (imfEditBtn);
-
+  
       swpLabel.setText (ovt.mag.MagProps.SWP_STR);
       swpLabel.setHorizontalAlignment (javax.swing.SwingConstants.LEFT);
-
+  
       activityPanel.add (swpLabel);
-
+  
       swpEditBtn.setText ("Edit ...");
       swpEditBtn.setEnabled (false);
       swpEditBtn.addActionListener (new java.awt.event.ActionListener () {
@@ -162,14 +162,14 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       activityPanel.add (swpEditBtn);
-
+  
       dstindexLabel.setText (ovt.mag.MagProps.DSTINDEX_STR);
       dstindexLabel.setHorizontalAlignment (javax.swing.SwingConstants.LEFT);
-
+  
       activityPanel.add (dstindexLabel);
-
+  
       dstindexEditBtn.setText ("Edit ...");
       dstindexEditBtn.setEnabled (false);
       dstindexEditBtn.addActionListener (new java.awt.event.ActionListener () {
@@ -177,13 +177,13 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
           dstindexEditBtnActionPerformed (evt);
         }
       } );
-
+  
       activityPanel.add (dstindexEditBtn);
-
+  
       // G1
-
+      
       activityPanel.add (new JLabel("G1"));
-
+  
       G1EditBtn = new JButton("Edit ...");
       G1EditBtn.setEnabled (false);
       G1EditBtn.addActionListener (new java.awt.event.ActionListener () {
@@ -195,13 +195,13 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
             magProps.setActivityEditorVisible(MagProps.G1, true);
         }
       } );
-
+  
       activityPanel.add (G1EditBtn);
-
+      
       // G1
-
+      
       activityPanel.add (new JLabel("G2"));
-
+  
       G2EditBtn = new JButton("Edit ...");
       G2EditBtn.setEnabled (false);
       G2EditBtn.addActionListener (new java.awt.event.ActionListener () {
@@ -213,11 +213,11 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
             magProps.setActivityEditorVisible(MagProps.G2, true);
         }
       } );
-
+  
       activityPanel.add (G2EditBtn);
-
-
-
+  
+    
+    
     buttonPanel.setLayout (new java.awt.GridLayout (1, 3));
 
       OKBtn.setText ("OK");
@@ -228,9 +228,9 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       buttonPanel.add (OKBtn);
-
+  
       cancelBtn.setText ("Cancel");
       cancelBtn.addActionListener (new java.awt.event.ActionListener () {
         public void actionPerformed (java.awt.event.ActionEvent evt) {
@@ -238,9 +238,9 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       buttonPanel.add (cancelBtn);
-
+  
       applyBtn.setText ("Apply");
       applyBtn.addActionListener (new java.awt.event.ActionListener () {
         public void actionPerformed (java.awt.event.ActionEvent evt) {
@@ -248,14 +248,14 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
         }
       }
       );
-
+  
       buttonPanel.add (applyBtn);
-
+  
 
     modelsPanel.setLayout (new java.awt.GridLayout (1, 2));
         modelsPanel.add (getInternalModelPanel());
         modelsPanel.add (getExternalModelPanel());
-
+  
     getContentPane ().add (modelsPanel);
     getContentPane ().add (activityPanel);
     getContentPane ().add(getMPClippingPanel());
@@ -268,25 +268,25 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       panel.setBorder (new javax.swing.border.TitledBorder(
       new javax.swing.border.EtchedBorder(java.awt.Color.white, new java.awt.Color (134, 134, 134)),
       "Internal Model", 1, 2, new java.awt.Font ("Dialog", 0, 11), java.awt.Color.black));
-
+      
       /*Component intModelComp = ((ComponentPropertyEditor)magProps.getDescriptors().getDescriptor("internalModelType").getPropertyEditor()).getComponent();
       panel.add(intModelComp);*/
-
+      
       ButtonGroup group = new ButtonGroup();
-
+      
       igrfRButton = new JRadioButton ("IGRF");
       igrfRButton.addChangeListener ( this );
       group.add(igrfRButton);
-
+      
       dipoleRButton = new JRadioButton ("Dipole");
       dipoleRButton.addChangeListener ( this );
       group.add(dipoleRButton);
-
+      
       panel.add (igrfRButton);
       panel.add (dipoleRButton);
       return panel;
   }
-
+  
   private JPanel getExternalModelPanel() {
       JPanel panel = new JPanel();
       panel.setLayout (new java.awt.GridLayout (4, 1));
@@ -296,43 +296,43 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       /*Component comp = ((ComponentPropertyEditor)magProps.getDescriptors().getDescriptor("externalModelType").getPropertyEditor()).getComponent();
       panel.add(comp);*/
       ButtonGroup group = new ButtonGroup();
-
+      
         t87RButton = new JRadioButton ("Tsyganenko 87");
         group.add(t87RButton);
         t87RButton.addChangeListener ( this );
         panel.add (t87RButton);
-
+        
         t89RButton = new JRadioButton ("Tsyganenko 89");
         group.add(t89RButton);
         t89RButton.addChangeListener (this);
         panel.add (t89RButton);
-
+        
         t96RButton = new JRadioButton ("Tsyganenko 96");
         group.add(t96RButton);
         t96RButton.addChangeListener ( this );
-        panel.add (t96RButton);
-
+        panel.add (t96RButton); 
+        
         t2001RButton = new JRadioButton ("Tsyganenko 2001");
         group.add(t2001RButton);
         t2001RButton.addChangeListener ( this );
-        panel.add (t2001RButton);
-
+        panel.add (t2001RButton); 
+        
       return panel;
   }
-
+  
   private JPanel getMPClippingPanel() {
      JPanel panel = new JPanel();
      panel.setBorder(new javax.swing.border.TitledBorder(
         new javax.swing.border.EtchedBorder(java.awt.Color.white, new java.awt.Color (134, 134, 134)),
         "Clipping", 1, 2, new java.awt.Font ("Dialog", 0, 11), java.awt.Color.black));
      //mpClippingChB = (JCheckBox)((ComponentPropertyEditor)magProps.getDescriptors().getDescriptor("mPClipping").getPropertyEditor()).getComponent();
-
+     
      mpClippingChB = new JCheckBox("Clip on magnetopause");
-
+     
      panel.add(mpClippingChB);
      return panel;
   }
-
+  
   private void doCancel() {
     setVisible(false);
     refresh();
@@ -396,8 +396,8 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       refreshApplyButtonState();
   }
 
-
-
+  
+  
 
   /** Exit the Application */
   private void exitForm(java.awt.event.WindowEvent evt) {
@@ -407,17 +407,17 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
     @Override
   public void magPropsChanged(MagPropsEvent evt) {
       refresh();
-  }
+  }  
 
 
 
-
+  
   private boolean valuesChanged() {
     return ( getIntModel() != magProps.getInternalModelType() ||
                 getExtModel() != magProps.getExternalModelType() ||
                 isMPClipping() != magProps.isMPClipping() );
   }
-
+  
   // Variables declaration - do not modify
   private javax.swing.JPanel activityPanel;
   private javax.swing.JLabel kpindexLabel;
@@ -454,7 +454,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       igrfRButton.removeChangeListener(this);
       dipoleRButton.removeChangeListener(this);
       mpClippingChB.removeChangeListener(this);
-
+      
       t87RButton.setSelected (magProps.getExternalModelType()== MagProps.T87);
       t89RButton.setSelected (magProps.getExternalModelType()== MagProps.T89);
       t96RButton.setSelected (magProps.getExternalModelType()== MagProps.T96);
@@ -462,7 +462,7 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       igrfRButton.setSelected (magProps.getInternalModelType()== MagProps.IGRF);
       dipoleRButton.setSelected (magProps.getInternalModelType()== MagProps.DIPOLE);
       mpClippingChB.setSelected(magProps.isMPClipping());
-
+      
       t87RButton.addChangeListener(this);
       t89RButton.addChangeListener(this);
       t96RButton.addChangeListener(this);
@@ -470,20 +470,20 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
       igrfRButton.addChangeListener(this);
       dipoleRButton.addChangeListener(this);
       mpClippingChB.addChangeListener(this);
-
+      
       refreshActivityButtons();
       refreshApplyButtonState();
   }
-
+  
   private void refreshApplyButtonState() {
     applyBtn.setEnabled(valuesChanged());
   }
-
+  
   /** Disable/enable buttonts depending on the chosen external model. */
   private void refreshActivityButtons() {
       final int extModel = getExtModel();
       switch (extModel) {
-          case MagProps.T87 :
+          case MagProps.T87 : 
               kpindexEditBtn.setEnabled (true);
               imfEditBtn.setEnabled (false);
               swpEditBtn.setEnabled (false);
@@ -491,15 +491,15 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
               G1EditBtn.setEnabled (false);
               G2EditBtn.setEnabled (false);
               break;
-          case MagProps.T89 :
+          case MagProps.T89 : 
               kpindexEditBtn.setEnabled (true);
               imfEditBtn.setEnabled (false);
               swpEditBtn.setEnabled (false);
               dstindexEditBtn.setEnabled (false);
               G1EditBtn.setEnabled (false);
               G2EditBtn.setEnabled (false);
-              break;
-          case MagProps.T96 :
+              break;    
+          case MagProps.T96 : 
               kpindexEditBtn.setEnabled (false);
               imfEditBtn.setEnabled (true);
               swpEditBtn.setEnabled (true);
@@ -507,35 +507,35 @@ public class MagPropsCustomizer extends JFrame implements MagPropsChangeListener
               G1EditBtn.setEnabled (false);
               G2EditBtn.setEnabled (false);
               break;
-          case MagProps.T2001 :
+          case MagProps.T2001 : 
               kpindexEditBtn.setEnabled (false);
               imfEditBtn.setEnabled (true);
               swpEditBtn.setEnabled (true);
               dstindexEditBtn.setEnabled (true);
               G1EditBtn.setEnabled (true);
               G2EditBtn.setEnabled (true);
-              break;
+              break;    
       }
   }
-
+  
   private int getIntModel() {
     if ( igrfRButton.isSelected() ) return MagProps.IGRF;
     else return MagProps.DIPOLE;
   }
-
+  
   private int getExtModel() {
     if ( t87RButton.isSelected() ) return MagProps.T87;
     else if ( t89RButton.isSelected() )  return MagProps.T89;
     else if ( t96RButton.isSelected() )  return MagProps.T96;
     else return MagProps.T2001;
   }
-
+  
   private boolean isMPClipping() {
     return mpClippingChB.isSelected();
   }
-
-
-
+  
+ 
+  
 }
 
 

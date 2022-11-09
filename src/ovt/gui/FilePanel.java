@@ -56,7 +56,7 @@ import javax.swing.border.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class FilePanel extends JPanel {
 
@@ -75,7 +75,7 @@ public FilePanel(String title, boolean allowOnlyExistingFile) {
     this.title = title;
     this.allowOnlyExistingFile = allowOnlyExistingFile;
     setLayout(new BoxLayout (this, BoxLayout.X_AXIS));
-
+    
     fileTF = new JTextField("", 20);
    // fileTF.setInputVerifier(new FilenameVerifier());
     add(fileTF);
@@ -108,10 +108,10 @@ private void chooseFile() {
 
     //String startDir = getFile();
     JFileChooser chooser = new JFileChooser(getFile());
-
+    
     chooser.setDialogTitle(title);
     chooser.setAcceptAllFileFilterUsed(acceptAllFileFilterUsed);
-
+    
     Enumeration e = fileFilters.elements();
     OvtExtensionFileFilter filter;
     while (e.hasMoreElements()) {
@@ -119,10 +119,10 @@ private void chooseFile() {
          chooser.setFileFilter(filter);
          chooser.addChoosableFileFilter(filter);
     }
+    
+    
 
-
-
-
+    
     int returnVal = chooser.showDialog(this, "OK");
     if (returnVal == JFileChooser.APPROVE_OPTION) {
         File tmpFile = chooser.getSelectedFile();
@@ -173,7 +173,7 @@ public void setAcceptAllFileFilterUsed(boolean acceptAllFileFilterUsed) {
 }
 
 /* can be used for  fileTF
-
+ 
 class FilenameVerifier extends InputVerifier {
     public boolean verify(JComponent input) {
                JTextField tf = (JTextField) input;

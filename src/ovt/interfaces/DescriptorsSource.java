@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,18 +35,18 @@ Khotyaintsev
  *
  * Created on March 8, 2000, 10:05 PM
  */
-
+ 
 package ovt.interfaces;
 
 import ovt.beans.*;
 
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public interface DescriptorsSource {
 
   public Descriptors getDescriptors();
-
+  
 }

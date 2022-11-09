@@ -6,7 +6,7 @@
  Version:   $Revision: 2.7 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -240,7 +240,7 @@ public class Time {
         hour = (int) temp;
         temp = (temp - hour) * 60.;
         mins = (int) temp;
-        sec = (temp - mins) * 60. - 2.0954757928848267E-7;// - 1.2665987e-7;
+        sec = (temp - mins) * 60. - 2.0954757928848267E-7;// - 1.2665987e-7; 
         if (sec < 0) {
             sec = 0;
         }
@@ -249,7 +249,7 @@ public class Time {
 
         //this.sec = (int) temp;
         //temp = (temp - sec) * 1000.;
-        //this.msec = (int)(temp + .5);
+        //this.msec = (int)(temp + .5); 
     }
 
 
@@ -594,7 +594,7 @@ public class Time {
         //final ovt.util.TimeFormat tf = new ovt.util.TimeFormat();
 
         System.out.println("mjd=0   : " + new Time(0.0));   // Determine epoch (back conversion not checked here).
-        System.out.println("--");
+        System.out.println("--");      
 
 
         {

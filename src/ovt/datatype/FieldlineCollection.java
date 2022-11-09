@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,30 +35,30 @@ Khotyaintsev
  *
  * Created on March 30, 2000, 6:30 PM
  */
-
+ 
 package ovt.datatype;
 
-/**
+/** 
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class FieldlineCollection extends Timetable {
 
   /** Creates new FieldlineCollection */
   public FieldlineCollection() {
   }
-
+  
   public Fieldline get(double mjd) {
     return (Fieldline)getElement(mjd);
   }
-
+  
   public Fieldline first() {
     return (Fieldline)firstElement();
   }
-
+  
   public Fieldline last() {
     return (Fieldline)lastElement();
   }
-
+  
 }

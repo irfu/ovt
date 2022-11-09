@@ -52,14 +52,14 @@ import java.util.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class FileEditor extends GUIPropertyEditor implements MenuItemsSource {
   MenuPropertyEditor visibilityEditor;
   String title = "Choose File";
   String approveButtonText = "OK";
   Vector filters = new Vector();
-
+    
   /** Creates new FileEditor */
   public FileEditor(BasicPropertyDescriptor pd) {
     super(pd);
@@ -72,39 +72,39 @@ public class FileEditor extends GUIPropertyEditor implements MenuItemsSource {
       visibilityEditor.setValues(new Object[]{new Boolean(true), new Boolean(false)});
       //prop_descr.setPropertyEditor(visibilityEditor);
       addPropertyChangeListener(visibilityEditor);
-
+      
     } catch (IntrospectionException e2) {System.out.println(""+e2);}
   }
-
+  
   public void addExtensionFilter(OvtExtensionFileFilter filter) {
     filters.addElement(filter);
   }
-
+  
   public void setApproveButtonText(String approveButtonText) {
     this.approveButtonText = approveButtonText;
   }
-
+  
   public void setTitle(String title) {
     this.title = title;
   }
-
+  
   public void setAsText(String text) throws PropertyVetoException {
     setValue(new File(text));
   }
-
+  
   public String getAsText() {
     File file = getFile();
     if (file != null) return file.getPath(); // or absolutPath() ?
     else return null;
   }
-
+  
   /** Getter for property file.
  * @return Value of property file.
  */
 private File getFile() {
   return (File)getValue();
 }
-
+  
   /** Setter for property file.
  * @param file New value of property file.
  */
@@ -112,15 +112,15 @@ private void setFile(File file) throws PropertyVetoException {
   File oldFile = getFile();
   setValue(file);
 }
-
+  
 public void setOpenDialogVisible(boolean value) {
   if (value == true) {
-
-    JFileChooser chooser = new JFileChooser();
-
+    
+    JFileChooser chooser = new JFileChooser(); 
+    
     File file = getFile();
     if (file != null) chooser.setCurrentDirectory(file);
-
+    
     chooser.setDialogTitle(title);
 
     Enumeration e = filters.elements();
@@ -130,14 +130,14 @@ public void setOpenDialogVisible(boolean value) {
          chooser.setFileFilter(filter);
          chooser.addChoosableFileFilter(filter);
     }
-
+    
     JFrame frameOwner = getFrameOwner();
     if (frameOwner != null)
         chooser.setLocation(frameOwner.getLocation().x+frameOwner.getSize().width, frameOwner.getLocation().y);
-
+        
 
     int returnVal = chooser.showDialog(frameOwner, approveButtonText);
-
+	
     if(returnVal == JFileChooser.APPROVE_OPTION) {
         try {
             setFile(chooser.getSelectedFile());// .getAbsoluteFile()
@@ -146,11 +146,11 @@ public void setOpenDialogVisible(boolean value) {
     }
   // ? propertySupport.firePropertyChange("openDialogVisible", new Boolean(oldvalue), new Boolean(windowVisible));
 }
-
+  
   public boolean isOpenDialogVisible() {
     return false;
   }
-
+  
 public JMenuItem[] getMenuItems() {
   return visibilityEditor.getMenuItems();
 }

@@ -184,7 +184,7 @@ public class SSCWSOrbitCacheTest {
     /**
      * Utility function to be used by other test code. Serializes and
      * deserializes the cache via a RAM buffer.
-     *
+     * 
      * PROPOSAL: Implement comparison of the two caches with a special equals function.
      */
     public SSCWSOrbitCache saveToLoadFromStream(
@@ -251,7 +251,7 @@ public class SSCWSOrbitCacheTest {
                                         reqResolution_s));
                         SSCWSOrbitCache cache = new SSCWSOrbitCache(lib, SAT_ID, cacheSlotSizeMjd, proactiveFillMargin);
 
-
+                        
                         final List<Object[]> callList = new ArrayList();
                         callList.add(new Object[]{4.5, 5.5, RoundingMode.CEILING, RoundingMode.FLOOR, 0, 0, reqResolution_s});
                         callList.add(new Object[]{5.0, 7.0, RoundingMode.CEILING, RoundingMode.FLOOR, 0, 0, reqResolution_s});
@@ -262,7 +262,7 @@ public class SSCWSOrbitCacheTest {
                         callList.add(new Object[]{9.8, 9.8, RoundingMode.CEILING, RoundingMode.FLOOR, 5, 5, reqResolution_s});
                         callList.add(new Object[]{0.2, 0.2, RoundingMode.CEILING, RoundingMode.FLOOR, 5, 5, reqResolution_s});;
                         callList.add(new Object[]{-3.1, -2.9, RoundingMode.CEILING, RoundingMode.FLOOR, 5, 5, reqResolution_s});
-                        callList.add(new Object[]{15.2, 16.2, RoundingMode.CEILING, RoundingMode.FLOOR, 5, 5, reqResolution_s});
+                        callList.add(new Object[]{15.2, 16.2, RoundingMode.CEILING, RoundingMode.FLOOR, 5, 5, reqResolution_s});                        
                         for (Object[] argumentList : callList) {
                             cache = saveToLoadFromStream(cache, lib, SAT_ID, proactiveFillMargin * cacheSlotSizeMjd);
                             assertCallEqualsExpected(actualMethod, cache, resultsMethod, lib, argumentList);

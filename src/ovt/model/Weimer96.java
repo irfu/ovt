@@ -1,4 +1,4 @@
-/* This is Java version translated from Fortan
+/* This is Java version translated from Fortan 
    (translation by Grzegorz Juchnikowski/SRC)
 
 ************************ Copyright 1996, Dan Weimer/MRC ***********************
@@ -83,7 +83,7 @@ the desired values of Bt, IMF clock angle, Dipole tilt angle, and SW Vel.
         limit = (l < MM) ? l : MM;
         for( m=1; m<=limit; m++ ){
           Phim = Phi*m;
-          Z += Coef[0][l][m]*Plm[l][m]*Math.cos(Phim)
+          Z += Coef[0][l][m]*Plm[l][m]*Math.cos(Phim) 
              + Coef[1][l][m]*Plm[l][m]*Math.sin(Phim);
         }
       }
@@ -120,7 +120,7 @@ the desired values of Bt, IMF clock angle, Dipole tilt angle, and SW Vel.
 	    DO m=1,limit
 	      phim=phi*m
 	      Z=Z + Coef(0,l,m)*Plm(l,m)*COS(phim) +
-     $		   Coef(1,l,m)*Plm(l,m)*SIN(phim)
+     $		   Coef(1,l,m)*Plm(l,m)*SIN(phim) 
 	    ENDDO
 	  ENDDO
 	ELSE
@@ -275,7 +275,7 @@ at angle omega, given the coeficients in FSC
 /*
 Calculate the complete set of spherical harmonic coeficients,
 given an aribitrary IMF angle (degrees from northward toward +Y),
-magnitude Bt (nT), dipole tilt angle (degrees),
+magnitude Bt (nT), dipole tilt angle (degrees), 
 and solar wind velocity (km/sec).
 Returns the Coef in the common block SetCoef.
 */
@@ -449,5 +449,5 @@ if X is out of range ( abs(x)>1 ) then value is returns as if x=1.
     }
   }
 
-
+    
 }

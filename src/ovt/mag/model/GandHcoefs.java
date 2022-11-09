@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -40,7 +40,7 @@ class GandHcoefs extends Object{
    private final int Nmaxi;
    private final float Gcoefs[][];
    private final float Hcoefs[][];
-
+   
    public GandHcoefs(int nmaxi){
       Nmaxi=nmaxi+1;
       Gcoefs=new float[Nmaxi][Nmaxi];
@@ -51,7 +51,7 @@ class GandHcoefs extends Object{
          }
       }
    }
-
+   
    // NOTE: Does not appear to be used.
    public GandHcoefs(GandHcoefs srcGH){
       Nmaxi=srcGH.getNmaxi();
@@ -59,7 +59,7 @@ class GandHcoefs extends Object{
       Hcoefs=new float[Nmaxi][Nmaxi];
       this.init(srcGH);
    }
-
+   
    public void init(GandHcoefs srcGH){
       int maxN=this.Nmaxi,srcNmaxi=srcGH.getNmaxi();
       if(this.Nmaxi!=srcNmaxi){  // cheking for Nmaxi
@@ -71,32 +71,32 @@ class GandHcoefs extends Object{
             Hcoefs[i][j]=srcGH.getHcoefs(i,j);
          }
    }
-
+   
    public int getNmaxi(){
       return Nmaxi;
    }
-
+   
    public static void chkIdx(int ii,int jj) /*throws IOException*/ {
 /*      if(jj<0 || jj>=Nmaxi)
          throw new IOException("GandHcoefs: incorrect index.");*/
    }
-
+   
    public void setGcoefs(int i,int j,float x){
       chkIdx(i,j);
       Gcoefs[i][j]=x;
    }
-
+   
    public void setHcoefs(int i,int j,float x){
       chkIdx(i,j);
       Hcoefs[i][j]=x;
    }
-
+   
    public void setGHcoefs(int i,int j,float gx,float hx){
       chkIdx(i,j);
       Gcoefs[i][j]=gx;
       Hcoefs[i][j]=hx;
    }
-
+   
    public float getGcoefs(int i,int j){
       chkIdx(i,j);
       return Gcoefs[i][j];
@@ -106,7 +106,7 @@ class GandHcoefs extends Object{
       chkIdx(i,j);
       return Hcoefs[i][j];
    }
-
+   
 /*   public void print(int y){     // Just for cheking !
      int i,j;
      System.out.println("Year: "+y);

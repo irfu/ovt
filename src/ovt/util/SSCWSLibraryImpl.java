@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
  Program:   Orbit Visualization Tool
  Source:    $Source: /ovt/util/SSCWSLibraryImpl.java $
  Date:      $Date: 2015/09/15 11:54: $
  Version:   $Revision: 1.0 $
-
-
+ 
+ 
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
-
+ 
  =========================================================================*/
 package ovt.util;
 
@@ -141,7 +141,7 @@ import ovt.datatype.Time;
 // PROPOSAL: Display GUI message when downloading (modal info window?).
 //    CON: Should be done by caller.
 //    CON: Want to be as independent of OVT code (in particular GUI code) as possible.
-//
+// 
 // PROPOSAL: Reorganize SSC Web Services exceptions somehow?
 //    PROPOSAL: MalformedURLException seems to originate from "new SatelliteSituationCenterService(...)". Capture somehow? Rethrow as other exception?
 // QUESTION: Which types of exception should be caught and rethrown as something else? Rethrown as what?
@@ -166,7 +166,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
     /* NOTE: Requires http (not https!) to work. /Erik P G Johansson 2022-05-02. */
     public static final String DEFAULT_QNAME_NAMESPACE_URI = "http://ssc.spdf.gsfc.nasa.gov/";
     public static final String DEFAULT_QNAME_LOCAL_PART = "SatelliteSituationCenterService";
-
+    
     /* Data used for connecting to SSC Web Services. */
     private final String wsdlUrlString;
     private final String qnameNamespaceUri;
@@ -186,10 +186,10 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
      The SSC Web Services API lists, among others, two different "GEI" coordinate systems.
      "GEI_J2000 : Geocentric Equatorial Inertial coordinate system with a Julian 2000 equinox epoch."
      "GEI_TOD : Geocentric Equatorial Inertial coordinate system with a true-of-date equinox epoch."
-     As it appears from comparisons of trajectories from LTOF files, none of these is
+     As it appears from comparisons of trajectories from LTOF files, none of these is 
      exactly the same coordinate system.
      /Erik P G Johansson 2015-06-16.
-
+        
      1) GEI_J_2000 (compared to GEI_TOD) combined with a constant time difference
      decreases the difference between Cluster1-4 trajectories
      (LTOF files vs SSC Web Services) to ~1 km.
@@ -219,7 +219,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
                 SSCWSLibraryImpl.DEFAULT_QNAME_LOCAL_PART
         );
     }
-
+    
     public SSCWSLibraryImpl(
             double mNoSatellitesBeforeTime_mjd,
             String wsdlUrlString,
@@ -243,12 +243,12 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          session (unless it expires somehow), i.e. over multiple requests and
          multiple class method calls but without being exposed outside the class
          (since it unnecessary).
-
+        
          NOTE: I can not find the documentation (API) for neither
          gov.nasa.gsfc.spdf.ssc.client.SatelliteSituationCenterService
          nor its ancestor/superclass javax.xml.ws.Service.
          /Erik P G Johansson, IRFU 2015-06-05.
-
+        
          QUESTION: Can/should/must one have exactly one service running at
          the same time for an application session? Can one shut it down when
          it is no longer needed?
@@ -516,7 +516,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          NOTE: The SSC Web Services API documentation claims that
          Request#setBeginTime and Request#setEndTime uses
          java.util.Calendar but in practice they only accept XMLGregorianCalendar.
-         This difference is mentioned under "Important Notes:" in the API documentation for
+         This difference is mentioned under "Important Notes:" in the API documentation for 
          "Interface SatelliteSituationCenterInterface"
          =================================================================*/
         dataFileReq.setBeginTime(beginInclusive);
@@ -551,7 +551,7 @@ public class SSCWSLibraryImpl extends SSCWSLibrary {
          ===================================
          NOTE: SatelliteSituationServiceInterface#getData throws
          SSCExternalException, SSCResourceLimitExceededException, and
-         SSCDatabaseLockedException.
+         SSCDatabaseLockedException.        
          NOTE: One could also check dataResult.getStatusCode(), dataResult.getStatusSubCode() for error codes (strings?).
          NOTE: Requesting data for a time interval for which there is only partly data counts a ResultStatusCode.SUCCESS (not .CONDITIONAL_SUCCESS).
          ======================================================================*/

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -72,18 +72,18 @@ public Fieldline(double mjd, int initialCapacity) {
 }
 
 
-/** Returns x, y, z and scalar
+/** Returns x, y, z and scalar 
  * @see #getPoint(int) #get
  */
-public void add(MagPoint point, double len) {
-	points.addElement(point);
+public void add(MagPoint point, double len) { 
+	points.addElement(point); 
 	lengthCollection.addElement(new Double(len));
 }
 
-/** Returns x, y, z and scalar
+/** Returns x, y, z and scalar 
  * @see #point(int) #length(int)
  */
-public void add(MagPoint point) {
+public void add(MagPoint point) { 
 	points.addElement(point);
         lengthCollection.addElement(new Double(-1));
 }
@@ -91,12 +91,12 @@ public void add(MagPoint point) {
 /** Adds All fl points to this fieldline. Doesn't clone them!
  * @see #point(int) #length(int)
  */
-public void add(Fieldline fl) {
+public void add(Fieldline fl) { 
 	points.addAll(fl.points);
         lengthCollection.addAll(fl.lengthCollection);
 }
 
-/*public void addPoint(double x, double y, double z)
+/*public void addPoint(double x, double y, double z) 
 	{ addPoint(x, y, z, 0); }
 
 public void addPoint(double x, double y, double z, double scalar) {
@@ -109,7 +109,7 @@ public void addPoint(double x, double y, double z, double scalar) {
 }
 
 
-public void insertPoint(int index, double point[])
+public void insertPoint(int index, double point[]) 
 	{ insertElementAt(point, index); }
 
 public void insertPoint(int index, double x, double y, double z, double scalar) {
@@ -120,9 +120,9 @@ public void insertPoint(int index, double x, double y, double z, double scalar) 
 	point[3] = scalar;
 	insertPoint(index, point);
 }
-*/
+*/	
 
-public MagPoint point(int index)
+public MagPoint point(int index) 
 	{ return (MagPoint)(points.elementAt(index)); }
 
 public MagPoint firstPoint()
@@ -139,9 +139,9 @@ public MagPoint getBMinPoint() {
 		MagPoint mp = (MagPoint)e.nextElement();
 		if (res == null) res = mp;
 		if (Vect.absv2(mp.bv) < Vect.absv2(res.bv)) res = mp;
-
+		
 	}
-	return res;
+	return res; 
 }
 
 /** Returns mag point of a maximum magnetic field of the field line or null. */
@@ -152,15 +152,15 @@ public MagPoint getBMaxPoint() {
 		MagPoint mp = (MagPoint)e.nextElement();
 		if (res == null) res = mp;
 		if (Vect.absv2(mp.bv) > Vect.absv2(res.bv)) res = mp;
-
+		
 	}
-	return res;
+	return res; 
 }
 
-public double [] bv(int index)
+public double [] bv(int index) 
 	{ return point(index).bv; }
 
-public double length(int index)
+public double length(int index) 
 	{ return ((Double)(lengthCollection.elementAt(index))).doubleValue(); }
 
 public double length()
@@ -186,7 +186,7 @@ public vtkPolyData getVTKPolyData() {
 	vtkPolyData profile = new vtkPolyData();
 	vtkCellArray lines = new vtkCellArray();
 	lines.InsertNextCell(size());
-	for(int i=0; i<size(); i++)
+	for(int i=0; i<size(); i++) 
 		lines.InsertCellPoint(i);
 	profile.SetPoints(getVTKPoints());
 	profile.SetLines(lines);
@@ -229,17 +229,17 @@ public void symetrize(int i, int j, int k, MagProps magProps) {
   /** returns point. First point index=0*/
   public MagPoint get(int index) {
     return (MagPoint)points.get(index);
-  }
+  }      
 
   /** Cloning, you know, MAN :) */
   public Object clone() {
     Fieldline fl = new Fieldline(getMjd());
-
+	
     Object[] newPoints = Vect.toArray(points);
     Object[] newLengthCollection = Vect.toArray(lengthCollection);
     // just for sure
     int size = (newPoints.length > newLengthCollection.length) ? newLengthCollection.length : newPoints.length;
-
+    
     MagPoint mp;
     double len;
     for (int i=0; i<size; i++) {
@@ -258,20 +258,20 @@ public static void main(String arg[]) {
 		p = new double[3];
 		p[0] = i; p[1] = 2*i; p[2] = 3*i;
 		fl.addPoint(p, (double)i);
-
+		
 	}
-
+	
 	FieldLine newfl = (FieldLine)fl.clone();
 	newfl.symetrize(1, -1, 1);
-
+	
 	for (int i=0; i<newfl.size(); i++)
 		System.out.println("new: ["+i+"] "+
 			newfl.point(i)[0]+"\t"+newfl.point(i)[1]+"\t"+newfl.point(i)[2]);
-
+	
 	for (int i=0; i<fl.size(); i++)
 		System.out.println("old: ["+i+"] "+
 			fl.point(i)[0]+"\t"+fl.point(i)[1]+"\t"+fl.point(i)[2]);
-
+	
 	for (int i=0; i<fl.size(); i++)
 		System.out.println("fp: ["+i+"] "+
 			fl.point(i)[0]+"\t"+fl.point(i)[1]+"\t"+fl.point(i)[2]);*/

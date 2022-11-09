@@ -54,21 +54,21 @@ import javax.swing.*;
 /**
  *
  * @author  root
- * @version
+ * @version 
  */
 public class SingleActor2DObject extends VisualObject {
 
 /** Holds value of property color. */
   private Color color = Color.black;
-
+  
   protected vtkActor2D actor = null;
 
-
+    
 /** Creates new SingleActorObject with name*/
   public SingleActor2DObject(OVTCore core, String name) {
     super(core, name);
   }
-
+  
   /** Creates new SingleActorObject with name and Icon*/
   public SingleActor2DObject(OVTCore core, String name, String iconFilename) {
     super(core, name, iconFilename);
@@ -80,7 +80,7 @@ public class SingleActor2DObject extends VisualObject {
   public Color getColor() {
     return color;
   }
-
+  
 /** Setter for property color.
  * @param color New value of property color.
  *
@@ -96,14 +96,14 @@ public class SingleActor2DObject extends VisualObject {
     propertyChangeSupport.firePropertyChange ("color", oldColor, color);
   }
 
-
+  
 public void update() {
     if (isVisible()) {
         hide();
         show();
     }
 }
-
+  
 protected void show() {
   if (!isValid()) validate();
   if (actor != null)  getRenderer().AddActor(actor);
@@ -112,7 +112,7 @@ protected void show() {
 protected void hide() {
   if (actor != null)  getRenderer().RemoveActor(actor);
 }
-
+  
 
 public void setVisible(boolean visible) {
     if (isVisible() != visible) {
@@ -126,7 +126,7 @@ public void setVisible(boolean visible) {
 protected void validate() {
   valid = true;
 }
-
+  
 public Descriptors getDescriptors() {
     if (descriptors == null) {
       try {
@@ -134,7 +134,7 @@ public Descriptors getDescriptors() {
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("color", this);
         pd.setLabel("Color");
         pd.setDisplayName(getName()+" color");
-
+        
         ComponentPropertyEditor editor = new ColorPropertyEditor(pd);
         editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
             public void editingFinished(GUIPropertyEditorEvent evt) {
@@ -144,7 +144,7 @@ public Descriptors getDescriptors() {
         addPropertyChangeListener("color", editor);
         pd.setPropertyEditor(new WindowedPropertyEditor(editor, getCore().getXYZWin(), "Close"));
         descriptors.put(pd);
-
+        
       } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);

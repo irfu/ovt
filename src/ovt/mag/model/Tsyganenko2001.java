@@ -22,18 +22,18 @@ import ovt.interfaces.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class Tsyganenko2001 extends AbstractMagModel {
 
-  protected static native void tsyganenko2001JNI(double[] gsm,double ps,
+  protected static native void tsyganenko2001JNI(double[] gsm,double ps, 
     double pdyn, double dst, double byimf, double bzimf,
     double G1, double G2, double[] bv);
 
   public Tsyganenko2001(MagProps magProps) {
     super(magProps);
   }
-
+  
   @Override   // interface MagModel
   public double[] bv(double[] gsm, double mjd) {
     double[] bv = new double[3];
@@ -42,13 +42,13 @@ public class Tsyganenko2001 extends AbstractMagModel {
     double bYimf = imf[1];
     double bZimf = imf[2];
     double dst = magProps.getDSTIndex(mjd);
-
+    
     Trans tr = magProps.getTrans(mjd);
     double tilt = tr.getDipoleTilt();
     double G1 = magProps.getG1(mjd);
     double G2 = magProps.getG2(mjd);
     // call gni to get bv
-    tsyganenko2001JNI(gsm, tilt, swp, dst, bYimf, bZimf, G1, G2, bv);
+    tsyganenko2001JNI(gsm, tilt, swp, dst, bYimf, bZimf, G1, G2, bv); 
     return bv;
   }
 }

@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/beans/WindowedPropertyEditor.java,v $
   Date:      $Date: 2003/09/28 17:52:36 $
   Version:   $Revision: 2.6 $
-
-
+ 
+ 
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 
 
@@ -62,22 +62,22 @@ import java.lang.reflect.*;
  * @version
  */
 public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSource {
-
+    
     protected ComponentPropertyEditor editor;
     private MenuPropertyEditor visibilityEditor;
     private PropertyEditorWindow window = null;
     protected OVTPropertyChangeSupport propertySupport = new OVTPropertyChangeSupport ( this );
-
+    
     /** Holds value of property modal. */
     private boolean modal = false;
-
+    
     /** Holds value of property buttonText. */
     private String buttonText = null;
     private JFrame owner = null;
    /** Holds value of property showLabel. By default <CODE>false</CODE>. */
     private boolean showLabel = false;
 
-
+    
     public WindowedPropertyEditor(ComponentPropertyEditor editor, JFrame owner) {
         this.editor = editor;
         this.owner = owner;
@@ -91,7 +91,7 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
             }
         });
     }
-
+    
     public WindowedPropertyEditor(ComponentPropertyEditor editor, JFrame owner, String buttonText) {
         this.editor = editor;
         this.buttonText = buttonText;
@@ -107,7 +107,7 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
         });
 
     }
-
+    
     public WindowedPropertyEditor(ComponentPropertyEditor editor, JFrame owner, String buttonText, boolean showLabel) {
         this.editor = editor;
         this.buttonText = buttonText;
@@ -124,7 +124,7 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
         });
 
     }
-
+    
     public WindowedPropertyEditor(ComponentPropertyEditor editor, JFrame owner, String[] showHideTags) {
         this.editor = editor;
         this.owner = owner;
@@ -138,11 +138,11 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
         });
 
     }
-
+    
     public JFrame getOwner() {
         return owner;
     }
-
+    
     protected void initialize(int type, String[] showHideTags, boolean[] values) {
         if (showHideTags[0].equals(showHideTags[1]) && !showHideTags[0].endsWith("...")) {
             showHideTags[0] += "...";
@@ -155,16 +155,16 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
             visibilityEditor.setValues(new Object[]{new Boolean(values[0]), new Boolean(values[1])});
             //prop_descr.setPropertyEditor(visibilityEditor);
             addPropertyChangeListener("visible", visibilityEditor);
-
+            
         } catch (IntrospectionException e2) {System.out.println(""+e2);}
         //addGUIPropertyEditorListener(this);
     }
-
+  
     public ComponentPropertyEditor getInnerPropertyEditor() {
         return editor;
     }
-
-
+    
+    
   /** By default makes
    *
    * @return GUI Editor
@@ -177,7 +177,7 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
         }
         return window;
     }
-
+    
     public void setVisible(boolean value) {
         /*if (value == true  &&  isVisible() == true) {
             window.toFront(); // popup window
@@ -185,42 +185,42 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
         }*/
         getWindow().setVisible(value);
     }
-
+    
     public boolean isVisible() {
         if (window == null) return false;
         else return window.isVisible();
     }
-
+    
     public void dispose() {
         if (window != null) window.dispose();
     }
-
+    
     public JMenuItem[] getMenuItems() {
         return visibilityEditor.getMenuItems();
     }
-
+    
     public void addPropertyChangeListener (PropertyChangeListener listener) {
         propertySupport.addPropertyChangeListener (listener);
     }
-
-
+    
+    
     public void addPropertyChangeListener (String property, PropertyChangeListener listener) {
         propertySupport.addPropertyChangeListener (property, listener);
     }
-
+    
     public void removePropertyChangeListener (PropertyChangeListener listener) {
         propertySupport.removePropertyChangeListener (listener);
     }
-
-
+    
+    
     public String getAsText() {
         return editor.getAsText();
     }
-
+    
     public void setAsText(String text) throws PropertyVetoException {
         editor.setAsText(text);
     }
-
+    
     public void propertyChange(PropertyChangeEvent evt) {
         //System.out.println(getClass().getName()+".prpropertyChange event : "+ evt.getPropertyName());
         if (evt.getPropertyName().equals("enabled")) {
@@ -231,69 +231,69 @@ public class WindowedPropertyEditor implements OVTPropertyEditor, MenuItemsSourc
             // Tell all editor, to update itself.
             propertySupport.firePropertyChange(evt);
     }
-
-
+    
+    
     public ComponentPropertyEditor getInnerEditor() {
         return editor;
     }
-
+    
     public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         propertySupport.firePropertyChange(propertyName, oldValue, newValue);
     }
-
+    
   /** Getter for property modal.
    * @return Value of property modal.
    */
     public boolean isModal() {
         return modal;
     }
-
+    
   /** Setter for property modal.
    * @param modal New value of property modal.
    */
     public void setModal(boolean modal) {
         this.modal = modal;
     }
-
+    
   /** Getter for property buttonText.
    * @return Value of property buttonText.
    */
     public String getButtonText() {
         return buttonText;
     }
-
+    
   /** Setter for property buttonText.
    * @param buttonText New value of property buttonText.
    */
     public void setButtonText(String buttonText) {
     }
-
-
+    
+    
     /** Getter for property showLabel.
      * @return Value of property showLabel.
  */
     public boolean showLabel() {
         return showLabel;
     }
-
+    
     /** Setter for property showLabel.
      * @param showLabel New value of property showLabel.
  */
     public void showLabel(boolean showLabel) {
         this.showLabel = showLabel;
     }
-
+    
     public Object getValue() {
         return editor.getValue();
     }
-
+    
 }
 
 class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
-
+    
     WindowedPropertyEditor editor = null;
-
-
+    
+    
   /** Creates new DefaultComponentPropertyEditorWindow */
     public PropertyEditorWindow(JFrame owner, WindowedPropertyEditor editor, boolean modal) {
         super(owner, modal);
@@ -302,11 +302,11 @@ class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
         setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         getContentPane().setLayout(new BorderLayout(5, 5));
         //getContentPane().setB(20, 20, 20, 20);
-
+        
         Component comp = editor.getInnerEditor().getComponent();
         comp.setBounds(20, 20, 20, 20);
         getContentPane().add(comp, BorderLayout.CENTER);
-
+        
         String sLabel = editor.getInnerEditor().getPropertyLabel();
         if (editor.showLabel()  && sLabel != null) {
             if (sLabel != "") {
@@ -324,17 +324,17 @@ class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
             getContentPane().add(button, BorderLayout.SOUTH);
         }
         pack();
-
+        
         Utils.setInitialWindowPosition(this, owner);
     }
-
-
+    
+    
     public void propertyChange(PropertyChangeEvent pce) {
         if (pce.getPropertyName().equals("enabled")) setVisible(false);
     }
-
+    
     protected void refresh() {}
-
+    
     public void setVisible(boolean visible) {
         if (visible  &&  isVisible()) {
             // if (isMinimized - unminimize.
@@ -344,6 +344,6 @@ class PropertyEditorWindow extends JDialog implements PropertyChangeListener {
         super.setVisible(visible);
         editor.firePropertyChange("visible", null, null);
     }
-
-
+    
+    
 }

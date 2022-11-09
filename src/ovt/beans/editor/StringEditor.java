@@ -45,30 +45,30 @@ import java.awt.Component;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class StringEditor extends PropertyEditorSupport {
 
     /** Creates new StringEditor */
     public StringEditor() {
     }
-
+    
     public void setAsText(String text) {
         setValue(text);
     }
-
+    
     public String getAsText() {
         return (String)getValue();
     }
-
+    
     public boolean supportsCustomEditor() {
         return true;
     }
-
+    
     public Component getCustomEditor() {
         return new StringEditorPanel(this);
     }
-
+    
     public StringEditorPanel getStringEditorPanel() {
         return new StringEditorPanel(this);
     }

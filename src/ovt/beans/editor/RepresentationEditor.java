@@ -43,19 +43,19 @@ import java.beans.*;
 /**
  * The PropertyEditor class for the vtkActor representation - POINT, WIREFRAME or SURFACE.
  * @author  ko
- * @version
+ * @version 
  */
 public class RepresentationEditor extends PropertyEditorSupport {
-
+    
     /** Wireframe representation (the same value as VTK_POINT) */
     public static final int POINT = 0;
     /** Wireframe representation (the same value as VTK_WIREFRAME) */
     public static final int WIREFRAME = 1;
     /** Surface representation (the same value as VTK_SURFACE) */
     public static final int SURFACE   = 2;
-
+    
     private static final String[] tags = { "Point", "Wireframe", "Surface" };
-
+    
     /** Creates new RepresentationEditor */
     public RepresentationEditor() {
     }
@@ -63,12 +63,12 @@ public class RepresentationEditor extends PropertyEditorSupport {
     public String[] getTags() {
         return tags;
     }
-
+    
     public String getAsText() {
         int intValue = ((Integer)getValue()).intValue();
         return tags[intValue];
     }
-
+    
     public void setAsText(String text) throws IllegalArgumentException {
         Integer value = null;
         for (int i=0; i<tags.length; i++) {
@@ -79,6 +79,6 @@ public class RepresentationEditor extends PropertyEditorSupport {
         }
         throw new IllegalArgumentException(text);
     }
-
-
+    
+    
 }

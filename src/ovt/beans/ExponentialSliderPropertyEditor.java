@@ -52,28 +52,28 @@ import java.beans.*;
 /**
  * Has JSlider as a component with a exponential scale.
  * @author  ko
- * @version
+ * @version 
  */
 public class ExponentialSliderPropertyEditor extends SliderPropertyEditor {
-
+    
     /** The distance between two big ticks is always 10. */
     private static final int MAJOR_TICK_SPACING = 10;
-
-    /** Creates new ExpotentialSliderPropertyEditor with <CODE>numberOfMinorTicks=100</CODE>
+    
+    /** Creates new ExpotentialSliderPropertyEditor with <CODE>numberOfMinorTicks=100</CODE> 
      * numberOfMinorTicks indicates number of intervals, on which slider is discretized
      */
     public ExponentialSliderPropertyEditor(BasicPropertyDescriptor pd, double minValue, double maxValue, double[] labelValues) {
         super(pd, minValue, maxValue, (maxValue-minValue)/100., labelValues);
     }
 
-
+    
     /** Creates new ExpotentialSliderPropertyEditor
      * numberOfMinorTicks indicates number of intervals, on which slider is discretized.
      */
     public ExponentialSliderPropertyEditor(BasicPropertyDescriptor pd, double minValue, double maxValue, int numberOfMinorTicks, double[] labelValues ) {
         super(pd, minValue, maxValue, (maxValue-minValue)/(double)numberOfMinorTicks, labelValues);
     }
-
+    
     /** Creates new ExpotentialSliderPropertyEditor
      * numberOfMinorTicks indicates number of intervals, on which slider is discretized.
      */
@@ -88,10 +88,10 @@ public class ExponentialSliderPropertyEditor extends SliderPropertyEditor {
     protected double x2value( double x) {
         return Math.exp(x);
     }
-
+    
     /** returns true */
     protected boolean snapToTicks() {
         return false;
     }
-
+    
 }

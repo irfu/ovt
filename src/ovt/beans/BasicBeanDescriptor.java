@@ -48,23 +48,23 @@ import java.lang.reflect.*;
 /**
  * This object is used to know the bean. ;-)
  * @author  ko
- * @version
+ * @version 
  */
 public class BasicBeanDescriptor extends Object {
 
     private Field field;
     private String name;
-
+    
     /** Creates new BasicBeanDescriptor */
     public BasicBeanDescriptor(String beanName, String fieldName, Class beanClass) throws NoSuchFieldException {
         name = beanName;
         field = beanClass.getField(fieldName);
     }
-
+    
     public String getName() {
         return name;
     }
-
+    
     public Object getValue(Object bean) throws IllegalArgumentException, IllegalAccessException {
         return field.get(bean);
     }

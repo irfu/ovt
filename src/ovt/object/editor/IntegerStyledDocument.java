@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -32,20 +32,20 @@ Khotyaintsev
 
 package ovt.object.editor;
 
-import javax.swing.*;
-import javax.swing.text.*;
+import javax.swing.*; 
+import javax.swing.text.*; 
 import java.awt.Toolkit;
 
 public class IntegerStyledDocument extends DefaultStyledDocument {
 
-    public void insertString(int offs, String str, AttributeSet a)
+    public void insertString(int offs, String str, AttributeSet a) 
         throws BadLocationException {
         if ( isDigit(str) )
             super.insertString(offs, str, a);
         else
             Toolkit.getDefaultToolkit().beep();
     }
-
+    
     private static boolean isDigit(String str){
       if (str != null )
       for (int i=0;i<str.length();i++)

@@ -9,25 +9,25 @@
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
-
+ 
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
-
+ 
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
-
+ 
  =========================================================================*/
 /*
  * Interval.java
@@ -114,10 +114,10 @@ public class Interval {
      }
      time = new Time(1950, 01, day + 1, hour, min, sec);   // NOTE: Days plus one.
      }*/
-    /**
+    /** 
      * Parse string. The format is "[XXd] [XXh] [XXm] [XXs]", but with arbitrary
      * spacing, arbitrary ordering and repetition.
-     *
+     * 
      * NOTE: Only parses seconds as an integer (the internal variable is double).
      */
     public Interval(String s) throws NumberFormatException {
@@ -171,14 +171,14 @@ public class Interval {
     /**
      * Prints out length of interval using days-hours-minutes-seconds. Ignores
      * fields that are zero. Optionally rounds number of seconds to an integer.
-     *
+     * 
      * @param roundSeconds Round seconds to integer and print the seconds without
      * decimals, i.e. without "point"/"period" (e.g. "3.0s")
-     *
+     * 
      * NOTE: Rounding to seconds and removing the "period" is important for parsing
      * the produced string and for TimeSettingsCustomizer which forbids using the
      * character. Has caused bugs in the past.
-     *
+     * 
      * IMPLEMENTATION NOTE: Important to round properly.
      * Only rounding up or only rounding down can otherwise make e.g. time settings change by
      * themselves when the user presses "Apply".
@@ -204,7 +204,7 @@ public class Interval {
             str += (i.seconds != 0 ? "" + i.seconds + "s " : "");
         }
         return str.trim();
-        //return res;
+        //return res;        
     }
 
 

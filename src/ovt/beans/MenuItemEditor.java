@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 5, 2000, 6:44 PM
  */
-
+ 
 package ovt.beans;
 
 import ovt.interfaces.*;
@@ -44,34 +44,34 @@ import java.beans.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-/**
+/** 
  * This is a superclass for CheckBoxMenuItemEditor, RadioButtonMenuItemEditor, etc..
  * It is NOT PropertyEditor class!
  * @author  mykola
- * @version
+ * @version 
  */
 public abstract class MenuItemEditor implements MenuItemsSource, ActionListener, PropertyChangeListener {
-
+  
   private GUIPropertyEditor editor = null;
   //private JMenuItem menuItem = null;
-
+  
   /** Creates new OVTMenuItemEditor */
   public MenuItemEditor(GUIPropertyEditor ed) {
     editor = ed;
   }
-
+  
   public abstract JMenuItem[] getMenuItems();
-
-  public GUIPropertyEditor getEditor()
+  
+  public GUIPropertyEditor getEditor() 
     { return editor; }
-
+  
   public void fireEditingFinished() {
     editor.fireEditingFinished();
   }
-
+    
   public void actionPerformed(ActionEvent ae) {
   }
-
+  
   public void propertyChange(PropertyChangeEvent event) {
     if (event.getPropertyName().equals("enabled")) {
       //System.out.println("AAAAAAAAAA...........");
@@ -79,7 +79,7 @@ public abstract class MenuItemEditor implements MenuItemsSource, ActionListener,
       setEnabled(enabled);
     }
   }
-
+  
   public void setEnabled(boolean enabled) {
     JMenuItem[] menuItems = getMenuItems();
     for (int i=0; i<menuItems.length; i++)

@@ -17,7 +17,7 @@ import javax.swing.border.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class ComboBoxPropertyEditor extends ComponentPropertyEditor {
 
@@ -30,7 +30,7 @@ public class ComboBoxPropertyEditor extends ComponentPropertyEditor {
   public ComboBoxPropertyEditor(BasicPropertyDescriptor pd, int[] values, String[] tags) {
     super(pd, values, tags);
   }
-
+  
 
   public Component getComponent() {
     if (component == null) {
@@ -44,7 +44,7 @@ public class ComboBoxPropertyEditor extends ComponentPropertyEditor {
 
 class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
   ComboBoxPropertyEditor editor;
-
+  
   /** Creates new ComboBoxEditorPanel */
   ComboBoxEditorPanel(ComboBoxPropertyEditor editor) {
     super(editor.getTags());
@@ -65,7 +65,7 @@ class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
   public void actionPerformed(ActionEvent e) {
     if (e.getSource() instanceof JComboBox) {
       JComboBox cb = (JComboBox)e.getSource();
-
+		
       String item = (String)cb.getSelectedItem();
       try {
         editor.setAsText(item);
@@ -75,14 +75,14 @@ class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
       }
     }
   }
-
+  
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
     String prName = evt.getPropertyName();
     //System.out.println("Received change of : " + prName);
     //System.out.println("My prName is " + editor.getPropertyName());
     if (prName.equals("tags")) {
-
+        
         // Remove all "tags" (menu alternatives) in ComboBox and replace them
         // with the tags in "editor".
         removeActionListener(this);
@@ -93,7 +93,7 @@ class ComboBoxEditorPanel extends JComboBox implements PropertyChangeListener {
         }
         setSelectedItem(editor.getAsText());
         addActionListener(this);
-    } else if (prName.equals(editor.getPropertyName()))
+    } else if (prName.equals(editor.getPropertyName())) 
         refresh();
   }
 }

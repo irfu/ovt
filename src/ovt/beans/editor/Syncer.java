@@ -41,7 +41,7 @@ package ovt.beans.editor;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public interface Syncer {
 

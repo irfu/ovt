@@ -49,7 +49,7 @@ import java.beans.*;
  * /Erik P G Johansson 2016-02-04
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class IntervalEditor extends TextFieldEditor {
 
@@ -64,7 +64,7 @@ public IntervalEditor(BasicPropertyDescriptor pd) {
     double mjd = ((Double)getValue()).doubleValue();
     return new Interval(mjd).toString();
   }
-
+  
   // may be it is better to throw IllegalArgumentException ?
   // I'm not sure, that Mjd will pass on PropertyVetoException to setValue.
   public void setAsText(String s) throws PropertyVetoException {

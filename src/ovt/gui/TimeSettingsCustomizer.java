@@ -34,7 +34,7 @@ Khotyaintsev
  * TimeSettingsCustomizer.java
  *
  * Created on November 27, 2000, 7:29 PM
- *
+ * 
  * #############################################################################
  * #############################################################################
  * #############################################################################
@@ -68,15 +68,15 @@ import javax.swing.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
-public class TimeSettingsCustomizer extends CustomizerDialog
+public class TimeSettingsCustomizer extends CustomizerDialog 
     implements TimeChangeListener, WindowListener, PropertyChangeListener
 {
   private TimeSettings timeSettings;
   private JButton applyButton, okButton;
   private TimeSet timeSet, oldTimeSet;
-
+  
   /** Creates new TimeSettingsCustomizer */
   public TimeSettingsCustomizer(TimeSettings ts) {
       super();
@@ -88,18 +88,18 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       timeSettings.addTimeChangeListener(this);
       timeSet = new TimeSet(this.timeSettings);
       timeSet.addPropertyChangeListener(this);
-
+      
       // make interior
-
+      
       Container cont = getContentPane();
       //cont.setBorder(BorderFactory.createEmptyBorder(5,10,0,10));
       cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
-
+      
       JPanel mainPanel = mainPanel();
-
+      
       JPanel panel = new JPanel();
       panel.setLayout(new FlowLayout());
-
+      
       JButton button = new JButton("<<");
       button.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -108,10 +108,10 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       });
       button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
       panel.add(button);
-
-
+      
+      
       panel.add(mainPanel);
-
+      
       button = new JButton(">>");
       button.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -120,15 +120,15 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       });
       button.setPreferredSize(new Dimension(button.getPreferredSize().width, mainPanel.getPreferredSize().height));
       panel.add(button);
-
-
+      
+      
       cont.add(panel);
       // ------------------- close, reset buttons ----------------
-
+      
       panel = new JPanel();
       //panel.setAlignmentX(LEFT_ALIGNMENT);
       panel.setLayout(new java.awt.GridLayout (1, 3, 10, 10));
-
+      
       button = new JButton("Cancel");
       button.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -137,7 +137,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
           }
       });
       panel.add(button);
-
+      
       okButton = new JButton("OK");
       okButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -150,7 +150,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
           }
       });
       panel.add(okButton);
-
+      
       applyButton = new JButton("Apply");
       applyButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -163,24 +163,24 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       });
       applyButton.setEnabled(false);
       panel.add(applyButton);
-
+      
       cont.add(panel);
-
+      
       pack();
       setResizable(false);
-
+      
       Utils.setInitialWindowPosition(this, null);
     }
 
-
+    
 private JPanel mainPanel() {
         JPanel comp = new JPanel(false);
         comp.setLayout(new BoxLayout(comp, BoxLayout.Y_AXIS));
-
+        
         // ------------------- close, reset buttons ----------------
-
+        
         Descriptors desc = timeSet.getDescriptors();
-
+        
         TextFieldEditorPanel start = (TextFieldEditorPanel)((ComponentPropertyEditor)(desc.getDescriptor("startMjd").getPropertyEditor())).getComponent();
         start.setEditCompleteOnKey(true);
         TextFieldEditorPanel interval = (TextFieldEditorPanel)((ComponentPropertyEditor)(desc.getDescriptor("intervalMjd").getPropertyEditor())).getComponent();
@@ -188,7 +188,7 @@ private JPanel mainPanel() {
         TextFieldEditorPanel step = (TextFieldEditorPanel)((ComponentPropertyEditor)(desc.getDescriptor("stepMjd").getPropertyEditor())).getComponent();
         //step.showMessageOnEror(false);
         step.setEditCompleteOnKey(true);
-
+        
         JLabel label = new JLabel("Start ");
         label.setAlignmentX(CENTER_ALIGNMENT);
         comp.add(label);
@@ -198,21 +198,21 @@ private JPanel mainPanel() {
         label.setAlignmentX(CENTER_ALIGNMENT);
         comp.add(label);
         comp.add(interval);
-
+        
         label = new JLabel("Tracing Step");
         label.setAlignmentX(CENTER_ALIGNMENT);
         comp.add(label);
-        comp.add(step);
+        comp.add(step);    
         return comp;
 }
-
+    
 
 private boolean valuesChanged() {
     return !(timeSet.equals(timeSettings.getTimeSet()));
 }
 
 
-public void windowClosed(java.awt.event.WindowEvent p1) {
+public void windowClosed(java.awt.event.WindowEvent p1) {    
     //System.out.println("windowClosed");
 }
 
@@ -242,7 +242,7 @@ public void windowDeactivated(WindowEvent evt) {
 }
 
   /** Sets previous values */
-private void revert() {
+private void revert() { 
     timeSet.setStartMjd(timeSettings.getStartMjd());
     timeSet.setIntervalMjd(timeSettings.getIntervalMjd());
     timeSet.setStepMjd(timeSettings.getStepMjd());

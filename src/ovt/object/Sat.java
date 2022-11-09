@@ -6,7 +6,7 @@
  Version:   $Revision: 2.14 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -193,7 +193,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             if (orbitFile.isDirectory()) {
                 throw new IOException("File " + orbitFile + " is a directory");
             }
-            this.orbitFile = orbitFile; // set it first!!
+            this.orbitFile = orbitFile; // set it first!! 
 
             // Set spin data if spin file is available
             String tmps = orbitFile.getAbsolutePath();
@@ -352,11 +352,11 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
 
             // Calculate coordinate values for other coordinate systems than GEI.
             final Trans trans = getTrans(mjd);
-            trp.geo = trans.gei2geo(trp.gei);  // Transform gei to geo
-            trp.gsm = trans.geo2gsm(trp.geo);  // Transform geo to gsm
-            trp.gse = trans.gei2gse(trp.gei);  // Transform gei to gse
+            trp.geo = trans.gei2geo(trp.gei);  // Transform gei to geo        
+            trp.gsm = trans.geo2gsm(trp.geo);  // Transform geo to gsm        
+            trp.gse = trans.gei2gse(trp.gei);  // Transform gei to gse        
             trp.sm = trans.gsm2sm(trp.gsm);    // Transform again.. .-)
-
+            
 
             tra.put(trp);
         }
@@ -504,7 +504,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         valid = true;
     }
 
-// ----------------- Spin stuff -----------------------
+// ----------------- Spin stuff -----------------------  
 
     /**
      * @return spin vector in gei

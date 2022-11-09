@@ -50,7 +50,7 @@ import javax.swing.border.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class CheckBoxPropertyEditor extends ComponentPropertyEditor {
 
@@ -75,10 +75,10 @@ public boolean booleanValue() {
 
 }
 
-class CheckBoxEditorPanel extends JCheckBox
+class CheckBoxEditorPanel extends JCheckBox 
         implements PropertyChangeListener, ActionListener {
   CheckBoxPropertyEditor editor;
-
+  
   /** Creates new CoordinateSystemEditorPanel */
   CheckBoxEditorPanel(CheckBoxPropertyEditor editor) {
     super(editor.getPropertyLabel());
@@ -103,12 +103,12 @@ class CheckBoxEditorPanel extends JCheckBox
         e2.printStackTrace();
     }
   }
-
+  
   public void propertyChange(PropertyChangeEvent evt) {
     String prName = evt.getPropertyName();
     //System.out.println("Received change of : " + prName);
     //System.out.println("My prName is " + editor.getPropertyName());
-    if (prName.equals(editor.getPropertyName()))
+    if (prName.equals(editor.getPropertyName())) 
         refresh();
     }
 }

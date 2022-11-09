@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,19 +35,19 @@ Khotyaintsev
  *
  * Created on March 5, 2000, 7:25 PM
  */
-
+ 
 package ovt.interfaces;
 
 import java.beans.*;
 import javax.swing.*;
 
-/**
+/** 
  *
  * @author  mykola
- * @version
+ * @version 
  */
 public interface MenuItemsSource {
 
   public JMenuItem[] getMenuItems();
-
+  
 }

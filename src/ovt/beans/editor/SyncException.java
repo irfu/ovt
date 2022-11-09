@@ -46,16 +46,16 @@ import java.awt.*;
 /**
  *
  * @author  ko
- * @version
+ * @version 
  */
 public class SyncException extends java.lang.Exception {
 
     private Component source;
     private Exception e;
-
+    
     /**
  * Creates new <code>SyncException</code> without detail message.
-
+     
     public SyncException(Component source) {
         this.source = source;
     }*/
@@ -69,15 +69,15 @@ public class SyncException extends java.lang.Exception {
         super(e.getMessage());
         this.source = source;
     }
-
+    
     public Component getSource() {
         return source;
     }
-
+    
     public Exception getException() {
         return e;
     }
-
+    
     /*public String getMessage() {
         return e.get
     }*/

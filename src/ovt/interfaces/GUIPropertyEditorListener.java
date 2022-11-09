@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,19 +35,19 @@ Khotyaintsev
  *
  * Created on March 16, 2000, 2:53 PM
  */
-
+ 
 package ovt.interfaces;
 
 import ovt.beans.*;
 
 import ovt.event.*;
-/**
+/** 
  *
  * @author  root
- * @version
+ * @version 
  */
 public interface GUIPropertyEditorListener {
 
   public void editingFinished(GUIPropertyEditorEvent evt);
-
+  
 }

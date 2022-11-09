@@ -1,33 +1,33 @@
 /*=========================================================================
-
+ 
 Program:   Orbit Visualization Tool
 Source:    $Source: /stor/devel/ovt2g/ovt/object/Camera.java,v $
 Date:      $Date: 2009/10/29 23:23:43 $
 Version:   $Revision: 2.15 $
-
-
+ 
+ 
 Copyright (c) 2000-2009 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
-
+ 
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
-
+ 
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
-
+ 
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
-
+ 
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
-
+ 
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
-
+ 
 =========================================================================*/
 
 package ovt.object;
@@ -74,9 +74,9 @@ import javax.swing.event.*;
  * @version
  */
 public class Camera extends BasicObject implements CameraChangeListener, TimeChangeListener, CoordinateSystemChangeListener {
-
+    
     public static final int DEBUG = 10;
-
+    
     public static final int VIEW_CUSTOM = 0;
     public static final int VIEW_FROM_X = 1;
     public static final int VIEW_FROM_Y = 2;
@@ -85,30 +85,30 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     public static final int VIEW_FROM_MINUS_Y = 5;
     public static final int VIEW_FROM_MINUS_Z = 6;
     public static final int VIEW_PERPENDICULAR_TO_ORBIT = 7;
-
+    
     public static final String VIEW_TO_NORTH_HEMISPHERE = "North Hem.";
     public static final String VIEW_TO_SOUTH_HEMISPHERE = "South Hem.";
-
+    
     /** Equals to 0. DO NOT CHANGE!*/
     public static final int PARALLEL_PROJECTION    = 0;
     /** Equals to 1. DO NOT CHANGE!*/
     public static final int PERSPECTIVE_PROJECTION = 1;
     /** Maximum camera distance from focal point */
     public static final double R_MAX = 200.;
-
+    
     private static final double CLIPPING_RANGE_NEAR = 0.0001;
     private static final double CLIPPING_RANGE_BACK = 1000.01;
-
-
+    
+    
     protected CameraCustomizer customizer;
     public vtkCamera cam;
-    private vtkLight light;
-
+    private vtkLight light; 
+    
     protected ViewToObjects viewToObjects;
-
+    
     /** Holds value of property customizerVisible. */
     private boolean customizerVisible;
-
+    
     /** Holds value of property "viewFrom".
      * The value represents "from where" the camera should at the focal point i.e. from a specific
      * direction, or from something else. Assigned using constants.
@@ -116,74 +116,74 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     protected int viewFrom;
     protected String[] viewNames           = {"Custom", "X", "Y", "Z", "-X", "-Y", "-Z"};
     protected String[] viewWithSatNames    = {"Custom", "X", "Y", "Z", "-X", "-Y", "-Z", "p. to Orbit"};
-
+    
     static final double[][] views = {{0, 0, 0},
     { 1, 0, 0}, {0,  1, 0}, {0, 0,  0.99},
     {-1, 0, 0}, {0, -1, 0}, {0, 0, -0.99} };
-
+    
     /** Holds value of property viewTo. */
     protected PositionSource viewTo;
-
+    
     protected ComboBoxPropertyEditor viewToEditor;
     protected ComboBoxPropertyEditor viewFromEditor;
     protected ExponentialSliderPropertyEditor rEditor;
-
+            
     /** Holds value of property projection.
-     *
+     * 
      * Set to either PARALLEL_PROJECTION or PERSPECTIVE_PROJECTION.
      */
     private int projection;
-
+    
     /** Holds value of property viewAngle. */
     private double viewAngle;
-
+    
     PositionSource focalPoint = new PositionSource() {
         public double[] getPosition() {
             return getFocalPoint();
         }
     };
-
+    
     /** Creates new Camera */
     public Camera(OVTCore core) {
         super(core, "Camera");
         showInTree(false);
         Log.log("Camera :: init ...", 3);
         cam = getRenderer().GetActiveCamera();
-
+                
         light = getCore().getRenPanel().getCameraLight();
-
-        // set initial viewUp and position
+        
+        // set initial viewUp and position 
 //        System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         cam.SetViewUp(0,0,1);
         cam.SetPosition(0, R_MAX, 0);
         cam.SetFocalPoint(0, 0, 0);
         cam.SetParallelScale(8.);
-
+        
          // Set parallel project. Seems to produce clipping problems until first projection change in the GUI. Unknown why.
         cam.SetParallelProjection(1);
         projection = PARALLEL_PROJECTION;
-
+        
 //        Set perspective projection initially. Seems to "solve" clipping problems for unknown reason. Bad "bugfix".
-//
+//                
 //        cam.SetParallelProjection(0);
 //        projection = PERSPECTIVE_PROJECTION;
-
+        
 //        System.out.println("Camera : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
-
+        
         viewTo = core.getEarth();
-
+        
         setViewFrom(VIEW_FROM_Y);
-
+        
         // Should be specified after viewTo = core.getEarth()
         viewToObjects = new ViewToObjects(this);
-
+        
         final Descriptors propertyDescriptors = new Descriptors();
         try {
         /* r property descriptor */
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("r", this);
             pd.setDisplayName("R");
-
-            rEditor = new ExponentialSliderPropertyEditor(pd,
+            
+            rEditor = new ExponentialSliderPropertyEditor(pd, 
                 1.2, 150., 100, new double[]{2,10,50,150});
             // Render each time user changes time by means of gui
             rEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -195,11 +195,11 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             propertyDescriptors.put(pd);
             addPropertyChangeListener(pd.getName(), rEditor);
             addPropertyChangeListener("position", rEditor);
-
-        // delta property descriptor
+        
+        // delta property descriptor 
             pd = new BasicPropertyDescriptor("parallelScale", this);
             pd.setDisplayName("Scale");
-            ExponentialSliderPropertyEditor expSEditor = new ExponentialSliderPropertyEditor(pd,
+            ExponentialSliderPropertyEditor expSEditor = new ExponentialSliderPropertyEditor(pd, 
                 0.04, 50., 101, new double[]{0.04,1,5,10,50});
             // Render each time user changes time by means of gui
             expSEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -209,10 +209,10 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             });
             pd.setPropertyEditor(expSEditor);
             propertyDescriptors.put(pd);
-            addPropertyChangeListener(pd.getName(), expSEditor);
+            addPropertyChangeListener(pd.getName(), expSEditor);    
             addPropertyChangeListener("position", expSEditor);
-
-        // delta property descriptor
+            
+        // delta property descriptor 
             pd = new BasicPropertyDescriptor("delta", this);
             pd.setDisplayName("Delta");
             SliderPropertyEditor seditor = new SliderPropertyEditor(pd, -90., 90., 1., 45.);
@@ -226,8 +226,8 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             propertyDescriptors.put(pd);
             addPropertyChangeListener(pd.getName(), seditor);
             addPropertyChangeListener("position", seditor);
-
-        // phi property descriptor
+            
+        // phi property descriptor 
             pd = new BasicPropertyDescriptor("phi", this);
             pd.setDisplayName("Phi");
             seditor = new SliderPropertyEditor(pd, 0., 360., 1., 90.);
@@ -241,8 +241,8 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             propertyDescriptors.put(pd);
             addPropertyChangeListener(pd.getName(), seditor);
             addPropertyChangeListener("position", seditor);
-
-        // viewUpAngle property descriptor
+            
+        // viewUpAngle property descriptor 
             pd = new BasicPropertyDescriptor("viewUpAngle", this);
             pd.setDisplayName("ViewUp");
             pd.setToolTipText("The angle between the camera ViewUp vector and Z axis");
@@ -253,13 +253,13 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
                     Render();
                 }
             });
-
+            
             pd.setPropertyEditor(seditor);
             propertyDescriptors.put(pd);
             addPropertyChangeListener(pd.getName(), seditor);
             addPropertyChangeListener("viewUpAngle", seditor);
             addPropertyChangeListener("position", seditor);
-
+            
         /* viewFrom property descriptor */
             pd = new BasicPropertyDescriptor("viewFrom", this);
             pd.setDisplayName("View From:");
@@ -273,7 +273,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             pd.setPropertyEditor(viewFromEditor);
             propertyDescriptors.put(pd);
             addPropertyChangeListener("viewFrom", viewFromEditor);
-
+            
         /* viewTo property descriptor */
             pd = new BasicPropertyDescriptor("viewTo", this);
             pd.setDisplayName("View To:");
@@ -288,12 +288,12 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             pd.setPropertyEditor(viewToEditor);
             propertyDescriptors.put(pd);
             addPropertyChangeListener("viewTo", viewToEditor);
-
+            
            /* viewTo property descriptor */
             pd = new BasicPropertyDescriptor("projection", this);
             pd.setDisplayName("Projection:");
-            ComboBoxPropertyEditor projectionEditor = new ComboBoxPropertyEditor(pd,
-                new int[]{PARALLEL_PROJECTION ,PERSPECTIVE_PROJECTION},
+            ComboBoxPropertyEditor projectionEditor = new ComboBoxPropertyEditor(pd, 
+                new int[]{PARALLEL_PROJECTION ,PERSPECTIVE_PROJECTION}, 
                 new String[]{ "Parallel", "Perspective"}
             );
             // Render each time user changes time by means of gui
@@ -304,12 +304,12 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             });
             pd.setPropertyEditor(projectionEditor);
             propertyDescriptors.put(pd);
-            addPropertyChangeListener("projection", projectionEditor);
-
+            addPropertyChangeListener("projection", projectionEditor); 
+            
             // camera light intensity
             pd = new BasicPropertyDescriptor("lightIntensity", this);
             pd.setDisplayName("Light Intensity:");
-
+            
             SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.01, 0.2);
             addPropertyChangeListener("lightIntensity", sliderEditor);
                 sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -319,7 +319,7 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
             });
             pd.setPropertyEditor(sliderEditor);
             propertyDescriptors.put(pd);
-
+            
             if (!OVTCore.isServer()) {
             /* customizerVisible property descriptor */
                 pd = new BasicPropertyDescriptor("customizerVisible", this);
@@ -329,33 +329,33 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
                 pd.setPropertyEditor(ed);
                 propertyDescriptors.put(pd);
             }
-
+            
         } catch (IntrospectionException e2) {
             System.out.println(getClass().getName() + " -> " + e2.toString());
             System.exit(0);
         }
         setDescriptors(propertyDescriptors);
-
+        
         if (!OVTCore.isServer()) {
             customizer = new CameraCustomizer(this, getCore().getXYZWin());
             // customizer will listen to changes of visibility, etc.
             addPropertyChangeListener(customizer);
-
+            
             // listen to VisualizationPanel camera change
             RenPanel vp =  getCore().getXYZWin().getVisualizationPanel();
             vp.addCameraChangeListener(this);
         }
     }
-
-
+    
+    
     /** Getter for property position.
      * @return Value of property position.
      */
     public double[] getPosition() {
         return cam.GetPosition();
     }
-
-
+    
+    
     /** Setter for property position.
      * @param position New value of property position.
      *
@@ -364,56 +364,56 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
     public void setPosition(double[] position) throws IllegalArgumentException {
 //        System.out.println("setPosition : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         double[] oldPosition = getPosition();
-
+        
         //vetoableChangeSupport.fireVetoableChange("position", oldPosition, position);
-
+        
         double oldViewUp = getViewUpAngle();
         Log.log("OldViewUpAngle="+getViewUpAngle(), DEBUG);
         cam.SetPosition(position[0], position[1], position[2]);
         cam.ComputeViewPlaneNormal();
-
+        
         Log.log("After Position="+getViewUpAngle(), DEBUG);
         // restore viewUp
         setViewUpAngle(oldViewUp);
         Log.log("After restoring="+getViewUpAngle(), DEBUG);
         Log.log("-------------------------------------", DEBUG);
-
+        
         resetClippingRange();
-
-
-
+        
+        
+        
         // no more need to avoid the case of parallel view up and camera view direction vectors
         // it is avoided in setDelta()
         //cam.SetViewUp(0, 0, 1);
-
+        
         //cam.OrthogonalizeViewUp();
         //Render();
 //        System.out.println("setPosition : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
         firePropertyChange ("position", oldPosition, position);
     }
-
-
+    
+    
     /** Set the position related to focal point */
     public void setRelativePosition(double[] position) throws IllegalArgumentException {
 //        System.out.println("setRelativePosition");
         setPosition(Vect.add(getFocalPoint(), position));
     }
-
-
+    
+    
     /** Set the position related to focal point */
     public double[] getRelativePosition() {
         return Vect.sub(getPosition(), getFocalPoint());
     }
-
-
+    
+    
     /** Getter for camera focalpoint position.
      * @return Value of property position.
      */
     public double[] getFocalPoint() {
         return cam.GetFocalPoint();
     }
-
-
+    
+    
     /** Setter for camera focalpoint position.
      * @param position New value of property position.
      *
@@ -421,35 +421,35 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
      */
     public void setFocalPoint(double[] position) throws IllegalArgumentException {
         double[] oldPosition = getFocalPoint();
-
+        
         //vetoableChangeSupport.fireVetoableChange("focalpoint", oldPosition, position);
-
+        
         cam.SetFocalPoint(position[0], position[1], position[2]);
         cam.ComputeViewPlaneNormal();
         resetClippingRange();
-
+        
         firePropertyChange ("focalpoint", oldPosition, position);
     }
-
-
+    
+    
     /** Is called by time-, CS-change-listeners.
      *
      * Somewhat misleading name. Automatically sets the camera position and (updates) the focal
      * point according to settings in this.viewFrom and this.viewTo.
-     */
+     */    
     // Change name?
     public void update() {
 //        System.out.println("update "+System.currentTimeMillis());
         final double radius = Vect.absv(Vect.sub(getPosition(), getFocalPoint()));
-
+        
         try {
             // update the Focal Point (specified by ViewTo)
             setFocalPoint(viewTo.getPosition());
-
+            
             // update camera position
-
+            
             switch (getViewFrom()) {
-                case VIEW_CUSTOM:
+                case VIEW_CUSTOM: 
                     break;
                 case VIEW_FROM_X:
                 case VIEW_FROM_Y:
@@ -471,26 +471,26 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
                     // and look always perpendicular to orbit
                     Sat sat = (Sat)viewTo;
                     double[] n = normalToOrbit(sat);
-
+                    
                     Trajectory tr = sat.getTrajectory();
                     double[] r = tr.get(getMjd()).get(getCS());
-
+                    
                     // we can view at the orbit plane from 2 sides.
                     // determine from which side we are looking now and choose it.
                     // r_cam - vector starting at sat to current position
                     double[] r_cam = Vect.sub(getPosition(), r);
-
+                    
                     // get Cos(alpha). - the angle between n and r_cam
                     // 0 < cos < 1  - camera is in n direction side (+)
                     // -1 < cos < 0 -  (-)
-
+                    
                     double cos_alpha = Vect.cosAngle(r_cam, n);
                     int sign;
                     if (cos_alpha >= -1  &&  cos_alpha < 0) sign = -1;
                     else sign = 1;
-
+                    
                     double[] cam_pos = Vect.add(r, Vect.multiply(n, radius * (double)sign));
-
+                    
                     // camera position
                     setPosition(cam_pos);
                     break;
@@ -500,17 +500,17 @@ public class Camera extends BasicObject implements CameraChangeListener, TimeCha
         }
     }
 
-
+    
     /** computes normal vector to orbit in specified point r */
 public double[] normalToOrbit(Sat sat) {
     // workaround extrem conditions
     Trajectory tr = sat.getTrajectory();
     double[] r = tr.get(getMjd()).get(getCS());
     TimeSet timeSet = getCore().getTimeSettings().getTimeSet();
-
+    
     int pos = timeSet.indexOf(getMjd());
     double[] timeMap = timeSet.getValues();
-
+    
     double mjd_a, mjd_b;
     if (pos == 0) {
         mjd_a = timeSet.get(2);
@@ -522,16 +522,16 @@ public double[] normalToOrbit(Sat sat) {
         mjd_a = timeSet.get(pos - 1);
         mjd_b = timeSet.get(pos + 1);
     }
-
+    
     double[] r_a = tr.get(mjd_a).get(getCS());;
     double[] r_b = tr.get(mjd_b).get(getCS());;
-
+    
     double[] a = Vect.sub(r_a, r);
     double[] b = Vect.sub(r_b, r);
-
+    
     // compute the normalized vector, orthogonal to a and b
     double[] n = Vect.crossn(a, b);
-
+    
     return n;
 }
 
@@ -544,7 +544,7 @@ public void reset() {
     // position to focal point) so that all of the actors can be seen."
     getRenderer().ResetCamera();
     setViewFrom(VIEW_CUSTOM);
-    setViewTo(focalPoint); // Equivalent to
+    setViewTo(focalPoint); // Equivalent to 
     firePropertyChange("position", null, null);
 }
 
@@ -579,9 +579,9 @@ public double getR() {
 
 
     /** Setter for property delta.
-     *
+     * 
      * delta = Angle in the spherical coordinates of relative camera position.
-     *
+     * 
      * @param delta New value of property delta.
      *
      * @throws IllegalArgumentException
@@ -602,9 +602,9 @@ public void setDelta(double delta) throws IllegalArgumentException {
 
 
     /** Getter for property delta.
-     *
+     * 
      * delta = Angle in the spherical coordinates of relative camera position.
-     *
+     * 
      * @return Value of property delta.
      */
 public double getDelta() {
@@ -635,13 +635,13 @@ public void setPhi(double phi) throws IllegalArgumentException {
         return Utils.rec2sph(getRelativePosition())[2];
     }
 
-
+    
     @Override
     public void coordinateSystemChanged(CoordinateSystemEvent evt) {
         update();
     }
 
-
+    
     // NOTE: Time changed may imply that the "target" (i.e. the intended focal
     // point) has changed, if it a CUSTOM target.
     @Override
@@ -650,7 +650,7 @@ public void setPhi(double phi) throws IllegalArgumentException {
         update();
     }
 
-
+    
     /** Setter for property viewUp.
      * @param viewUp New value of property viewUp.
      *
@@ -703,13 +703,13 @@ public CameraCustomizer getCustomizerWindow() {
      * @param viewFrom New value of property viewFrom.
      */
 public void setViewFrom(int viewFrom) throws IllegalArgumentException {
-//    System.out.println("setViewFrom("+view+")");
-
+//    System.out.println("setViewFrom("+view+")");    
+    
     // view == 0  means no special view - "Custom"
     final int oldView = this.viewFrom;
     this.viewFrom = viewFrom;
     Log.log("viewFrom : " + viewFrom + " oldViewFrom: " + oldView, 8);
-    if (viewFrom != VIEW_CUSTOM) {
+    if (viewFrom != VIEW_CUSTOM) { 
         update();
     }
     propertyChangeSupport.firePropertyChange ("viewFrom", new Integer (oldView), new Integer (viewFrom));
@@ -748,19 +748,19 @@ public void setViewTo(PositionSource viewTo) throws IllegalArgumentException {
             viewFromEditor.setValues(Utils.getIndexes(viewWithSatNames));
             viewFromEditor.setTags(viewWithSatNames);
         }
-
-    }
-
+        
+    } 
+    
     if (viewTo.equals(getCore().getEarth()) && !viewTo.equals(getCore().getEarth())) {
         // change R bounds in R Slider Editor
         rEditor.setMinimumValue(1.2);
     } else if (oldViewTo.equals(getCore().getEarth()) && !viewTo.equals(getCore().getEarth())) {
         // change R bounds in R Slider Editor
         rEditor.setMinimumValue(0.01);
-    }
-
+    } 
+    
     if (viewTo instanceof GroundStation) { // if view is to Groundbased object
-
+        
         setViewFrom(VIEW_CUSTOM);
         // if a ground object, view to this from up [  ).<---  ]
         double[] obj_pos = viewTo.getPosition();
@@ -769,7 +769,7 @@ public void setViewTo(PositionSource viewTo) throws IllegalArgumentException {
         double[] pos = Vect.multiply( obj_pos,  cam_radius / Vect.absv(obj_pos) );
         setPosition(pos);
     }
-
+    
     update();
     propertyChangeSupport.firePropertyChange ("viewTo", oldViewTo, viewTo);
 }
@@ -796,26 +796,26 @@ public void resetClippingRange() {
 public void cameraChanged(CameraEvent evt) {
 //    System.out.println("Camera change");
     resetClippingRange();
-
+    
     // this is not a good way to do..
     firePropertyChange("position", null, null);
-
+    
     if ((getViewFrom() >= VIEW_FROM_X) && (getViewFrom() <= VIEW_FROM_MINUS_Z)) {
         double[] view = views[getViewFrom()];
         double[] pos = getRelativePosition();
         for (int i=0; i<3; i++) {
             if (view[i] == 0) {
-
+                
                     if (Math.abs(pos[i]) > 0.005) {
                         //System.out.println("Set vievFrom=VIEW_CUSTOM because pos["+i+"]="+pos[i]);
                         setViewFrom(VIEW_CUSTOM);
                         break;
                     }
-
+                
             }
         }
     }
-
+    
     if ((getViewFrom() == VIEW_PERPENDICULAR_TO_ORBIT)) {
         Sat sat = (Sat)viewTo;
         double eps = 0.002;
@@ -826,7 +826,7 @@ public void cameraChanged(CameraEvent evt) {
                 setViewFrom(VIEW_CUSTOM);
         }
     }
-
+    
     if (!getViewTo().equals(focalPoint)) { // != "Custom"
         double[] foc = getFocalPoint();
         double[] obj_pos = viewTo.getPosition();
@@ -854,7 +854,7 @@ public PropertyChangeListener getViewToObjectsVisibilityChangeListener() {
 
 /** for north z>1. For south hem z<-1 */
 public void lookAtHemisphere(double z) {
-        setViewTo(getCore().getEarth());
+        setViewTo(getCore().getEarth()); 
         double[] z_axe = {0, 0, z};
         double[] up = { 1, 0, 0};
         Matrix3x3 m3x3 = getCore().getTrans(this.getMjd()).trans_matrix(getPolarCS(), getCS());
@@ -900,33 +900,33 @@ public int getProjection() {
  * @param projection New value of property projection.
  */
 public void setProjection(int projection) {
-//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));        
     final int oldProjection = this.projection;
     if (projection == oldProjection) {
-        return; // no change
+        return; // no change 
     }
     this.projection = projection;
     switch (projection) {
-        case PARALLEL_PROJECTION    :
+        case PARALLEL_PROJECTION    : 
             // derive scale from R
             double scale = getR()*Math.tan(Utils.toRadians(0.5*getViewAngle()));
             setParallelScale(scale);
 //            System.out.println("setProjection : scale = "+scale);
             setR(R_MAX); // move camera away ! This causes STRANGE clipping of objects!
-            cam.SetParallelProjection(1);
+            cam.SetParallelProjection(1); 
             break;
-        case PERSPECTIVE_PROJECTION :
+        case PERSPECTIVE_PROJECTION : 
             // derive R from scale
             double r = getParallelScale()/Math.tan(Utils.toRadians(0.5*getViewAngle()));
 //            System.out.println("setProjection : r = "+r);
             setR(r);
-            cam.SetParallelProjection(0);
+            cam.SetParallelProjection(0); 
             break;
         default: throw new IllegalArgumentException("Wrong projection ("+projection+")");
     }
      // 1 is on I hope
     propertyChangeSupport.firePropertyChange("projection", new Integer(oldProjection), new Integer(projection));
-//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));
+//    System.out.println("setProjection : cam.GetClippingRange()"+Arrays.toString(cam.GetClippingRange()));    
 }
 
 /** Getter for property parallelScale.
@@ -950,8 +950,8 @@ public void setParallelScale(double parallelScale) {
 
 
 /** Getter for viewUpAngle.
- * ViewUp angle is the angle between the camera view up vector
- * and the perpendicular to the direction of view component of Z axis (0,0,1)
+ * ViewUp angle is the angle between the camera view up vector 
+ * and the perpendicular to the direction of view component of Z axis (0,0,1) 
  * @return viewUpAngle in degrees.
  */
 public double getViewUpAngle() {
@@ -967,19 +967,19 @@ public double getViewUpAngle() {
     double[] e1 = Vect.norm(Zperp);
     // e2
     //double[] e2 = Vect.crossn(e3,e1);
-
+    
     double[] viewUp = cam.GetViewUp();
     Log.log("cam.GetViewUp()="+Vect.toString(viewUp), DEBUG);
     Log.log("Vect.dot(viewUp,e3)"+Vect.dot(viewUp,e3),DEBUG);
     // compute viewUp in e1-e2 plane
     double[] viewUp_e1e2 = Vect.sub(viewUp, Vect.multiply(e3,Vect.dot(viewUp,e3)));
     Log.log("viewUp_e1e2="+Vect.toString(viewUp_e1e2), DEBUG);
-
+    
     if (Vect.absv2(viewUp_e1e2) == 0) {
         if (Vect.dot(viewUp,e3) > 0) return 0;
         else return 180.;
     }
-
+    
     double angleRad = Vect.angleOf2vect(e1, viewUp_e1e2,viewDirection);
     Log.log("ViewUpAngleRad="+angleRad, DEBUG);
     // the result is in (-pi,pi) region, but wee need (0,360)
@@ -991,14 +991,14 @@ public double getViewUpAngle() {
 
 /** Setter for viewUpAngle (in degrees).
  * ViewUp angle is the angle between the camera view up vector
- * and the perpendicular to the direction of view component of Z axis (0,0,1)
+ * and the perpendicular to the direction of view component of Z axis (0,0,1) 
  * @param viewUpAngle (in degrees)
  */
 public void setViewUpAngle(double viewUpAngle) {
     double oldViewUpAngle = getViewUpAngle();
-
+    
     double angleRad = Utils.toRadians(viewUpAngle);
-
+    
     double[] Z = {0,0,1};
     double[] viewDirection = Vect.sub(cam.GetFocalPoint(),cam.GetPosition());
     // 3-rd basis vector
@@ -1009,12 +1009,12 @@ public void setViewUpAngle(double viewUpAngle) {
     double[] e1 = Vect.norm(Zperp);
     // e2
     double[] e2 = Vect.crossn(e3,e1);
-
+    
     double[] viewUp = Vect.add(Vect.multiply(e1,Math.cos(angleRad)),
                                Vect.multiply(e2,Math.sin(angleRad)));
-
+    
     cam.SetViewUp(viewUp[0],viewUp[1],viewUp[2]);
-
+    
     propertyChangeSupport.firePropertyChange("viewUpAngle", new Double(oldViewUpAngle), new Double(viewUpAngle));
 }
 
@@ -1045,22 +1045,22 @@ class ViewToObjects {
     protected Camera cam;
     /** Contains Camera FocalPoint, Earth, all visible Sats, GroundbasedStations */
     protected Vector visibleObjects = new Vector();
-
+    
     /** Constructor */
     ViewToObjects(Camera cam) {
         this.cam = cam;
         // add stationary objects
         visibleObjects.add(cam.focalPoint); // "Custom ViewTo"
-        visibleObjects.add(cam.getCore().getEarth());
+        visibleObjects.add(cam.getCore().getEarth()); 
         // take care about dynamic objects - Sats, GroundBasedStations
         cam.getCore().getSats().getChildren().addChildrenListener(satsChildrenListener);
         cam.getCore().getSats().getClusterSats().getChildren().addChildrenListener(satsChildrenListener);
-
+        
         cam.getCore().getGroundBasedStations().getChildren().addChildrenListener(groundbasedChildrenListener);
         //listenToAllGroundBasedStationsChildrenChanges(cam.getCore().getGroundBasedStations());
         //updateViewToComboBoxEditorList();
     }
-
+    
     /**
      * Starts listening to some property changes for all "visual children"
      * (recursively) of "root".
@@ -1068,15 +1068,15 @@ class ViewToObjects {
      */
     private void watchVisibilityOnAllPositionSourceObjectsIn(OVTObject root) {
         //Log.log("watchVisibilityOnAllPositionSourceObjectsIn("+root.getName()+")");
-
+        
         // register myself as a listener to "visible" property of each
         // visualobject which implements PositionSource interface
-
+        
         final Enumeration e = root.getVisualChildren().elements();
-
+        
         while (e.hasMoreElements()) {
             final VisualObject obj = (VisualObject) e.nextElement();
-
+            
             if (obj instanceof PositionSource) {
                 // listen to all visual objects "visibility" state
                 obj.addPropertyChangeListener("visible", objectVisibilityChangeListener);
@@ -1088,8 +1088,8 @@ class ViewToObjects {
             }
         }
     }
-
-
+    
+    
     private void listenToAllGroundBasedStationsChildrenChanges(GroundStations gbs) {
         //Log.log("listenToAllGroundBasedStationsChildrenChanges("+gbs.getName()+")");
         //Log.log("\t\t size="+gbs.getChildren().size());
@@ -1097,7 +1097,7 @@ class ViewToObjects {
         Enumeration e = gbs.getChildren().elements();
         while (e.hasMoreElements()) {
             Object obj = e.nextElement();
-            if (obj instanceof GroundStations)
+            if (obj instanceof GroundStations) 
                 listenToAllGroundBasedStationsChildrenChanges((GroundStations)obj);
         }
     }
@@ -1111,7 +1111,7 @@ class ViewToObjects {
     /*public Sat getSat(String name) {
         return (Sat)visibleObjects.get(name);
     }*/
-
+    
     public String[] getList() {
         //int n = visibleObjects.size();
         String[] list = new String[visibleObjects.size()];
@@ -1123,8 +1123,8 @@ class ViewToObjects {
             list[i++] = ((OVTObject)e.nextElement()).getName();
         return list;
     }
-
-
+    
+    
     public PropertyChangeListener objectNameChangeListener = new PropertyChangeListener() {
     /** If the object's name changes - update it in the list.
     */
@@ -1132,16 +1132,16 @@ class ViewToObjects {
             updateViewToComboBoxEditorList();
         }
     };
-
+    
     public final PropertyChangeListener objectVisibilityChangeListener = new PropertyChangeListener() {
-
+        
         /** If the object becomes visible - add it to the list of visible visual objects,
          * else - remove.
          */
         public void propertyChange(PropertyChangeEvent evt) {
             final VisualObject obj = (VisualObject) evt.getSource();
             final boolean visible = (Boolean) evt.getNewValue();
-
+            
             // if some sat comes visible - add it.
             if (visible) {
                 //System.out.println("Adding item -" + obj.getName());
@@ -1156,7 +1156,7 @@ class ViewToObjects {
                         );
                 }
                 visibleObjects.removeElement(obj);
-
+                
                 // if no sats left, and user was watching the sat
                 if (visibleObjects.size() == 0
                         &&  ViewToObjects.this.cam.getViewFrom() == ViewToObjects.this.cam.VIEW_PERPENDICULAR_TO_ORBIT) {
@@ -1167,7 +1167,7 @@ class ViewToObjects {
         }
     };
 
-
+    
     private ChildrenListener satsChildrenListener = new ChildrenListener() {
             /** fired when child was added */
             public void childAdded(ChildrenEvent evt) {
@@ -1186,13 +1186,13 @@ class ViewToObjects {
                 updateViewToComboBoxEditorList();
             }
         };
-
+    
     private ChildrenListener groundbasedChildrenListener = new ChildrenListener() {
             /** fired when child was added */
             public void childAdded(ChildrenEvent evt) {
                 if (evt.getChild() instanceof GroundStations) {
                     evt.getChild().getChildren().addChildrenListener(
-                        ViewToObjects.this.groundbasedChildrenListener
+                        ViewToObjects.this.groundbasedChildrenListener 
                     );
                 }
                 watchVisibilityOnAllPositionSourceObjectsIn(evt.getChild());

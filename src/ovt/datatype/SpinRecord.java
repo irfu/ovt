@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -48,7 +48,7 @@ public class SpinRecord{
       public static final double toRad=Math.PI/180.0;
       public static final int err=-1000000;     // Error code
       private boolean isInvalid=true;
-
+      
       public byte scid;            // S/C ID
       public char prerec;          // R (reconstituted) or P (predict)
       public double vsttimMjd=100; // start time (from J2000), UTC
@@ -63,27 +63,27 @@ public class SpinRecord{
       public double tpsi_2=0.0;    // spin axis tilt-first Euler angle around Zb, rad
       public double tpsi_1=0.0;    // spin axis tilt-second Euler angle around Yb, rad
       public double gentimMjd=-10; // generated time (from J2000), UTC
-
+      
       /*private byte idx[14][2]={    //indexes of fields pos. in string
         {0,2},{3,4},{5,25},{26,46},{47,53},{54,60},{61,70},
         {71,78},{79,84},{85,90},{92,96},{97,102},{103,108},{109,129}};*/
-
+      
       public SpinRecord(){
       }
-
+      
       public SpinRecord(String ss){
          //if(setRecord(ss)==false)
          //   System.err.println("SpinRecord: invalid string:\n"+ss);
       }
-
+      
       public boolean isInvalid(){
          return isInvalid;
       }
-
+      
       protected void isInvalid(boolean bb){
          this.isInvalid=bb;
       }
-
+      
       public boolean setRecord(String data){
         int tmp;
         String tmps;
@@ -146,7 +146,7 @@ public class SpinRecord{
         }
       }
 
-
+      
    //Convert time in CCSDS format (YYYY-MM-DDThh:mm:ssZ) to MJD (from 2000)
    // ...or (YYYY-MM-DDZ) ...
    public static double ccsds2mjd(String str){

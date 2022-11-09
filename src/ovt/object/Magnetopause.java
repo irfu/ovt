@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,15 +35,15 @@ Khotyaintsev
  *
  * Created on April 7, 2000, 2:37 PM
  */
-
+ 
 package ovt.object;
 
-/**
- *
+/** 
+ * 
  * Plots the magnetopause, keeps track on what it depends on.
  *
  * @author  ko
- * @version
+ * @version 
  */
 import ovt.*;
 import ovt.mag.*;
@@ -67,10 +67,10 @@ import java.awt.event.*;
 
 import javax.swing.*;
 
-public class Magnetopause extends SingleActorObject implements
-    TimeChangeListener, CoordinateSystemChangeListener,
+public class Magnetopause extends SingleActorObject implements 
+    TimeChangeListener, CoordinateSystemChangeListener, 
     MagPropsChangeListener, MenuItemsSource {
-
+  
   /** Holds value of property representation. */
   private int representation = RepresentationEditor.WIREFRAME;
   /** Holds value of property opacity. */
@@ -79,7 +79,7 @@ public class Magnetopause extends SingleActorObject implements
   /** Holds Characteristics of this object */
   private Characteristics characteristics = new Characteristics(-1);
 
-public Magnetopause(OVTCore core) {
+public Magnetopause(OVTCore core) { 
   super(core, "Magnetopause", "images/magnetopause.gif");
   Log.log("Magnetopause :: init ...", 3);
 }
@@ -87,78 +87,78 @@ public Magnetopause(OVTCore core) {
 
 protected void show() {
   super.show();
-  setRepresentation(getRepresentation());
+  setRepresentation(getRepresentation()); 
   rotate();
 }
 
 protected void validate() {
-
+    
 	// create actor
 	// Here we go!
 	Log.log("Recalculating Magnetopause ...", 5);
-
+        
 	//double[] gsm = new double[3];
 	//double[] rv = new double[3];
-
+	
 	final double thetaMax = 150*Const.D_TO_R;
         final int phiResolution = 50;
         final int thetaResolution = 60;
-
+	
 	double phi, theta, dPhi, dTheta, r;
 	double x, y, z;
-
+	
 	dPhi   = 2.*Math.PI/(phiResolution );
 	dTheta = thetaMax/(thetaResolution );
-
+	
 	vtkPoints points = new vtkPoints();
-
+        
         double swp = getMagProps().getSWP(getMjd());
         double bz = getMagProps().getIMF(getMjd())[2];
-
+        
         // save characteristics
         characteristics.setMjd(getMjd());
         characteristics.put(MagProps.SWP, swp);
         characteristics.put(MagProps.IMF_Z, bz);
-
+        
         double cosTheta, sinTheta, cosPhi, sinPhi;
-
+        
 	int i, j;
         int sizex = phiResolution + 1;
         int sizey = thetaResolution + 1;
-
+        
 	for (theta=0, i=0; i<sizey; theta+=dTheta, i++) {
           sinTheta = Math.sin(theta);
           cosTheta = Math.cos(theta);
 	  for (phi=0, j=0; j<sizex; phi+=dPhi, j++) {
             sinPhi = Math.sin(phi);
             cosPhi = Math.cos(phi);
-
+            
             r = Shue97.getR(cosTheta, swp, bz);
-
+            
             x = r * cosTheta;
             z = r * sinTheta * cosPhi;
             y = r * sinTheta * sinPhi;
             points.InsertNextPoint(x, y, z);
 	  }
 	}
-
+        
 	vtkStructuredGrid sgrid = new vtkStructuredGrid();
 			sgrid.SetDimensions(sizex, sizey,1);
 			sgrid.SetPoints(points);
-
+		
 	vtkStructuredGridGeometryFilter gfilter = new vtkStructuredGridGeometryFilter();
 			gfilter.SetInputData(sgrid);
 			gfilter.SetExtent(0,sizex,0,sizey,0,0);
-
+                        
 
 	vtkPolyDataMapper mapper = new vtkPolyDataMapper();
 			mapper.SetInputConnection(gfilter.GetOutputPort());
-
+		
         actor = new vtkActor();
         	actor.SetMapper(mapper);
         	float[] rgb = ovt.util.Utils.getRGB(getColor());
                 actor.GetProperty().SetColor(rgb[0], rgb[1], rgb[2]);
-                actor.GetProperty().SetOpacity(this.opacity);
+                actor.GetProperty().SetOpacity(this.opacity);		
         super.validate();
 }
 
@@ -169,7 +169,7 @@ public void update() {
 
 public void rotate() {
     Matrix3x3 m3x3 = getTrans(getMjd()).gsm_trans_matrix(getCS());
-    actor.SetUserMatrix(m3x3.getVTKMatrix());
+    actor.SetUserMatrix(m3x3.getVTKMatrix()); 
 }
 
 
@@ -267,12 +267,12 @@ public Descriptors getDescriptors() {
     if (descriptors == null) {
         descriptors = super.getDescriptors();
         try {
-
-            // representation property descriptor
+            
+            // representation property descriptor 
             BasicPropertyDescriptor pd = new BasicPropertyDescriptor("representation", this);
             pd.setDisplayName("Representation:");
-            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd,
-                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE},
+            MenuPropertyEditor representationEditor = new MenuPropertyEditor(pd, 
+                new int[]{ RepresentationEditor.WIREFRAME, RepresentationEditor.SURFACE}, 
                 new String[]{ "Wireframe", "Surface"}
             );
             // Render each time user changes time by means of gui
@@ -283,14 +283,14 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(representationEditor);
             descriptors.put(pd);
-            addPropertyChangeListener("representation", representationEditor);
-
+            addPropertyChangeListener("representation", representationEditor); 
+            
             // opacity
-
+            
             pd = new BasicPropertyDescriptor("opacity", this);
             pd.setLabel("Opacity");
             pd.setDisplayName("Magnetopause opacity");
-            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05,
+            SliderPropertyEditor sliderEditor = new SliderPropertyEditor(pd, 0., 1., 0.05, 
                 new double[]{0,.25,.5,.75,1}, new String[]{"0%","25%","50%","75%","100%"});
             addPropertyChangeListener("opacity", sliderEditor);
             sliderEditor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -300,7 +300,7 @@ public Descriptors getDescriptors() {
             });
             pd.setPropertyEditor(new WindowedPropertyEditor(sliderEditor, getCore().getXYZWin()));
             descriptors.put(pd);
-
+            
         } catch (IntrospectionException e2) {
             e2.printStackTrace();
             System.exit(-1);

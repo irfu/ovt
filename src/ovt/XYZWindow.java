@@ -112,9 +112,9 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
 
             /* NOTE: On Linux, System#loadLibrary will prefix the library name
              * with "lib" to find the filename (possibly plus library versioning).
-
+            
              * NOTE: Uncertain what native library "jawt" is for. Is presumably
-             * the "Java AWT" library that comes with java. If it is for "Java AWT",
+             * the "Java AWT" library that comes with java. If it is for "Java AWT", 
              * does not Java load it automatically then?!!
              */
             Log.log("Loading native library " + "ovt-" + OVTCore.VERSION, 0);
@@ -325,7 +325,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         // Set what the camera should look at initially, and what it should follow.
         core.getCamera().setViewTo(core.getEarth());
 
-        // 1) Set the camera's "ViewFrom" property, to give the
+        // 1) Set the camera's "ViewFrom" property, to give the 
         // camera position a good initial VALUE: View Earth from the X axis.
         // 2) Set the camera's "ViewFrom" property AGAIN, to give the camera position a
         // good (matter of taste) initial default BEHAVIOUR: Set the ViewFrom property to "Custom",
@@ -447,7 +447,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
      * @param arg Command-line arguments
      */
     public static void main(String[] arg) {
-        try {
+        try { 
             final XYZWindow XYZwin = new XYZWindow();
             XYZwin.start();
 
@@ -652,7 +652,7 @@ public class XYZWindow extends JFrame implements ActionListener, CoreSource {
         return sscwsSatList;
     }
 
-
+    
     /**
      * Function for deriving SSCSat name to be displayed in the GUI tree in a
      * standardized fashion (in one single location in the code). Useful for
