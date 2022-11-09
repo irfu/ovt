@@ -1,0 +1,14 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: "v4.2.0"
+    hooks:
+      - id: check-yaml
+      - id: check-symlinks
+      - id: check-merge-conflict
+      - id: trailing-whitespace
+        # trailing-whitespace may modify other files, e.g. *.c, *.h, *.txt
+        # (which are all possibly copied, and should not be modified), *.log,
+        # *.in, igrf.d, *.html, etc.
+        # NOTE: Copied Java file that should ideally not be modified.
+        # lib/sscWebServicesJaxWsSdk-2.2.10/WsExample.java
+        files: "(src|test)/.*\\.java"
