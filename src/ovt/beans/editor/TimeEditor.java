@@ -13,7 +13,7 @@ import java.beans.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class TimeEditor extends PropertyEditorSupport {
 
@@ -21,12 +21,12 @@ public class TimeEditor extends PropertyEditorSupport {
     public TimeEditor() {
     }
 
-    
+
     public String getAsText() {
         Time time = (Time)getValue();
         return time.toString();
     }
-    
+
     public void setAsText(String text) throws IllegalArgumentException {
         setValue(new Time(text));
     }

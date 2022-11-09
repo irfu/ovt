@@ -49,22 +49,22 @@ import javax.swing.border.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class Style extends Object {
-    
+
     /** Holds value of property menuFont. */
     private static Font menuFont = new Font("Arial", Font.PLAIN, 12);
-    
+
     /** Holds value of property sliderLablesFont. */
-    private static Font sliderLabelsFont = new Font("Verdana", Font.PLAIN, 10);  
-    
+    private static Font sliderLabelsFont = new Font("Verdana", Font.PLAIN, 10);
+
     private static Font dialogFont = new java.awt.Font ("Dialog", 0, 11);
-    
+
     private static Font labelFont = new java.awt.Font ("Arial", Font.PLAIN, 12);
-    
+
     private static final JTextField textField = new JTextField();
-    
+
     /** Creates new Style*/
     public Style() {
     }
@@ -72,42 +72,42 @@ public class Style extends Object {
     public static Font getTextFont() {
       return textField.getFont();
     }
-    
+
     /** Getter for property menuFont.
      * @return Value of property menuFont.
  */
     public static Font getMenuFont() {
         return menuFont;
     }
-    
+
     /** Setter for property menuFont.
      * @param menuFont New value of property menuFont.
  */
     public static void setMenuFont(Font font) {
         menuFont = font;
     }
-    
+
     /** Getter for property sliderLablesFont.
      * @return Value of property sliderLablesFont.
      */
     public static Font getSliderLabelsFont() {
         return sliderLabelsFont;
     }
-    
+
     /** Setter for property sliderLablesFont.
      * @param sliderLablesFont New value of property sliderLablesFont.
      */
     public static void setSliderLabelsFont(Font font) {
         sliderLabelsFont = font;
     }
-    
+
     /** Getter for property sliderLablesFont.
      * @return Value of property sliderLablesFont.
      */
     public static Font getLabelFont() {
         return labelFont;
     }
-    
+
     public static Font getDialogFont() {
         return dialogFont;
     }

@@ -6,7 +6,7 @@
  Version:   $Revision: 2.14 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -193,7 +193,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             if (orbitFile.isDirectory()) {
                 throw new IOException("File " + orbitFile + " is a directory");
             }
-            this.orbitFile = orbitFile; // set it first!! 
+            this.orbitFile = orbitFile; // set it first!!
 
             // Set spin data if spin file is available
             String tmps = orbitFile.getAbsolutePath();
@@ -357,7 +357,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
             double[] gse  = trans.gei2gse(gei);  // Transform gei to gse
             double[] sm   = trans.gsm2sm(gsm);   // Transform again.. .-)
             double[] geid = trans.gei2geid(gei);   // Transform again.. .-)
-            
+
             final TrajectoryPoint trp = new TrajectoryPoint(
                 mjd, gei, vei, geo, gsm, gse, sm, geid);
 
@@ -507,7 +507,7 @@ public abstract class Sat extends VisualObject implements CoordinateSystemChange
         valid = true;
     }
 
-// ----------------- Spin stuff -----------------------  
+// ----------------- Spin stuff -----------------------
 
     /**
      * @return spin vector in gei

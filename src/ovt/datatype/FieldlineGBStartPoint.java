@@ -41,32 +41,32 @@ package ovt.datatype;
 /**
  * Data type for {@link ovt.object.FieldlineMapper ovt.object.FieldlineMapper}.
  * @author  ko
- * @version 
+ * @version
  * @see ovt.object.FieldlineMapper#getStartPoints()
  */
 public class FieldlineGBStartPoint extends PolarCoord {
 
     private String id="no id";
-    
+
     /** Creates new FieldlineGBStartPoint */
     public FieldlineGBStartPoint() {
     }
-    
+
     /** Creates new FieldlineGBStartPoint */
     public FieldlineGBStartPoint(double lat, double lon) {
         super(lat, lon);
     }
-    
+
     /** Creates new FieldlineGBStartPoint */
     public FieldlineGBStartPoint(double lat, double lon, String id) {
         super(lat, lon);
         this.id = id;
     }
-    
+
     public String getID() {
         return id;
     }
-    
+
     /** Sets the ID of the point (for example : the name of the radar) */
     public void setID(String id) {
         this.id = id;

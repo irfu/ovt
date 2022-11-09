@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/object/Sats.java,v $
   Date:      $Date: 2003/09/28 17:52:51 $
   Version:   $Revision: 2.6 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 package ovt.object;
@@ -47,25 +47,25 @@ import javax.swing.*;
  * Class which somehow represents the instances of "Sat" (without the final "s")
  * which are in the GUI tree.
  */
-public class Sats extends BasicObject implements TimeChangeListener, 
+public class Sats extends BasicObject implements TimeChangeListener,
     CoordinateSystemChangeListener, MagPropsChangeListener, MenuItemsSource {
-    
+
     private final ClusterSats clusterSats;
-    
+
 //    private double minLaunchMjd = Double.MAX_VALUE;
 //    public static String satsConfigFile;
-    
+
     /** Holds value of property sat. */
     private Vector sats = new Vector();
-    
+
     //public boolean isInPlotList = false;
     //protected static boolean nothingIsShown = true;
-    
-    
+
+
     /** Constructor. Directory with Sat-data files is passed to it.
      * Set default satellites.
-     * 
-     * @param core 
+     *
+     * @param core
      */
     public Sats(OVTCore core) {
         super(core, "Satellites");
@@ -76,25 +76,25 @@ public class Sats extends BasicObject implements TimeChangeListener,
             exc.printStackTrace(System.err);
         }
 //        satsConfigFile = getCore().getConfSubdir() + "sats.conf";
-        
+
         clusterSats = new ClusterSats(this);
         addChild(clusterSats);
     }
-    
-    
+
+
     /*public Hashtable getVisibleSats() {
         Hashtable res = new Hashtable();
         Enumeration e = getChildren().elements();
         while (e.hasMoreElements()) {
             Object obj = e.nextElement();
             Sat sat = (Sat)obj;
-            
+
             if (sat.isVisible()) res.put(sat.getName(), sat);
         }
         return res;
     }*/
-    
-    
+
+
   /** Returns a hash table of all sats. */
     /*public Children getAllSats() {
         Children res = new Children(this);
@@ -116,8 +116,8 @@ public class Sats extends BasicObject implements TimeChangeListener,
         }
         return res;
     }*/
-    
-    
+
+
     public void timeChanged(TimeEvent evt) {
         Enumeration e = getChildren().elements();
         while (e.hasMoreElements()) {
@@ -128,11 +128,11 @@ public class Sats extends BasicObject implements TimeChangeListener,
             }
         }
     }
-    
+
     /** Tell all sats about cs change. */
     public void coordinateSystemChanged(CoordinateSystemEvent evt) {
         clusterSats.coordinateSystemChanged(evt);
-        
+
         Enumeration e = sats.elements();
         while (e.hasMoreElements()) {
             try {
@@ -142,10 +142,10 @@ public class Sats extends BasicObject implements TimeChangeListener,
             }
         }
     }
-    
+
     public void magPropsChanged(MagPropsEvent evt) {
         clusterSats.magPropsChanged(evt);
-        
+
         Enumeration e = sats.elements();
         while (e.hasMoreElements()) {
             try {
@@ -155,11 +155,11 @@ public class Sats extends BasicObject implements TimeChangeListener,
             }
         }
     }
-    
+
     public int getNumberOfSats() {
         return sats.size();
     }
-    
+
     public void setNumberOfSats(int size) {
         // remove all sats
         Enumeration e = sats.elements();
@@ -169,7 +169,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
         children.setSize(size + 1); // +1 because of clusterSats
         //addChild(clusterSats); - they are always on the first place
     }
-    
+
     /** Indexed getter for property sat.
      * @param index Index of the property.
      * @return Value of the property at <CODE>index</CODE>.
@@ -177,7 +177,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
     public Sat getSat(int index) {
         return (Sat) sats.get(index);
     }
-    
+
     /** Indexed setter for property sat.
      * @param index Index of the property.
      * @param sat New value of the property at <CODE>index</CODE>.
@@ -187,13 +187,13 @@ public class Sats extends BasicObject implements TimeChangeListener,
         sats.setElementAt(sat, index);
         children.setChildAt(index + 1, sat); // +1 because of clusterSats
     }
-    
+
     public void addSat(Sat sat) {
         sats.addElement(sat);
         addChild(sat);
         //children.fireChildAdded(sat);
     }
-    
+
     public void removeSat(Sat sat) {
         sat.dispose();
         //Log.log("Tot mem. before removing = "+Runtime.getRuntime().totalMemory());
@@ -204,8 +204,8 @@ public class Sats extends BasicObject implements TimeChangeListener,
         //Log.log("Tot mem. after garb. col = "+Runtime.getRuntime().totalMemory());
         //children.fireChildRemoved(sat);
     }
-    
-    
+
+
     /**
      * Method representing the action of adding a satellite (of any type: LTOF,
      * TLE, SSCWS) to the GUI tree panel, as if this action was triggered by a
@@ -246,7 +246,7 @@ public class Sats extends BasicObject implements TimeChangeListener,
     public void removeSatAction(Sat sat) {
         getCore().getSats().removeSat(sat);
         getCore().getSats().getChildren().fireChildRemoved(sat); // for TreePanel
-        
+
         // Remove camera from listeners of new satellite visibility. Needed?
         //sat.removePropertyChangeListener("visible", getCore().getCamera().getViewToObjectsVisibilityChangeListener());
 
@@ -259,23 +259,23 @@ public class Sats extends BasicObject implements TimeChangeListener,
          */
 //        getCore().Render();
     }
-    
-    
+
+
     /** Is run by XML parser to tell treePanel to update Satellites node */
     public void fireSatsChanged() {
         children.fireChildrenChanged();
     }
-    
+
     /** Used by XML. */
     public ClusterSats getClusterSats() { return clusterSats; }
-    
+
     @Override
     public JMenuItem[] getMenuItems() {
         final JMenuItem[] sats = getCore().getXYZWin().getXYZMenuBar().createSatsMenuItemList_LTOF_TLE();
         final JMenuItem[] res = new JMenuItem[sats.length + 2];
         res[0] = getCore().getXYZWin().getXYZMenuBar().createImportSatelliteMenuItem();
         res[1] = null; // separator
-        
+
         // Copy "sats" to "res" but with indices shifted (incremented) by 2.
         System.arraycopy(sats, 0, res, 2, sats.length);
         return res;
@@ -283,18 +283,18 @@ public class Sats extends BasicObject implements TimeChangeListener,
 }
 
 /*  -- just to remember how to use JOptionPane.showInputDialog
-  
+
 File[] files = new File(OVTCore.getOrbitDataSubdir()).listFiles( new FilenameFilter() {
                  public boolean accept(File dir, String file) {
                     return file.endsWith(".tle");
                  }
              });
              Vector satList = new Vector();
-             for (int i=0; i<files.length; i++) { 
+             for (int i=0; i<files.length; i++) {
                  String filename = files[i].getName();
                  String satName = filename.substring(0, filename.lastIndexOf('.'));
                  // add to the list if sat is not already added
-                 if (!getChildren().containsChild(satName)) satList.addElement(satName); 
+                 if (!getChildren().containsChild(satName)) satList.addElement(satName);
              }
              Object[] selectionValues = satList.toArray();
              String filename = (String)JOptionPane.showInputDialog(getCore().getXYZWin(), //Component parentComponent,
@@ -314,6 +314,6 @@ File[] files = new File(OVTCore.getOrbitDataSubdir()).listFiles( new FilenameFil
                 } catch (IOException e2) {
                     getCore().sendErrorMessage(e2);
                 }
-                
+
             }
  */

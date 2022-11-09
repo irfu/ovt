@@ -6,7 +6,7 @@
  Version:   $Revision: 1.00 $
 
 
- Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 

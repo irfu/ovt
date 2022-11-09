@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,18 +35,18 @@ Khotyaintsev
  *
  * Created on March 17, 2000, 3:13 PM
  */
- 
+
 package ovt.datatype;
 
 import ovt.mag.*;
 import ovt.interfaces.*;
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class MagPoint extends Object {
-  
+
   public double mjd;
   public double[] gsm;
   public double[] bv;
@@ -57,13 +57,13 @@ public class MagPoint extends Object {
     this.gsm = gsm;
     this.bv = bv;
   }
-  
+
   public MagPoint(double[] gsm, MagModel magModel, double mjd) {
     this.mjd = mjd;
     this.gsm = gsm;
     this.bv = magModel.bv(gsm, mjd);
   }
-  
+
   public Object clone() {
     return new MagPoint(gsm, bv, mjd);
   }

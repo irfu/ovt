@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on February 25, 2000, 9:28 AM
  */
- 
+
 package ovt.beans;
 
 import ovt.datatype.*;
@@ -44,32 +44,32 @@ import java.beans.*;
 
 import java.awt.*;
 
-/** 
+/**
  *
  * @author  mykola
- * @version 
+ * @version
  */
 public class MjdEditor extends TextFieldEditor {
-  
+
   /** Creates new MjdEditor */
  public MjdEditor(BasicPropertyDescriptor pd) {
     super(pd);
   }
-  
+
   public String getAsText() {
     double mjd = ((Double)getValue()).doubleValue();
     return Time.toString(mjd);
   }
-  
+
   // may be it is better to throw IllegalArgumentException ?
   // I'm not sure, that Mjd will path PropertyVetoException to setValue.
   public void setAsText(String s) throws PropertyVetoException {
     try {
-      if (s.equals(getAsText())) return; 
+      if (s.equals(getAsText())) return;
       setValue(new Double(new Time(s).getMjd()));
     } catch (IllegalArgumentException e2) {
       throw new PropertyVetoException("Time format : (yyyy-mm-dd hh:mm:ss)", null);
     }
   }
-  
+
 }

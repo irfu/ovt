@@ -17,13 +17,13 @@ public class Tsyganenko87 extends AbstractMagModel {
   public Tsyganenko87(MagProps magProps) {
     super(magProps);
   }
-  
+
   public double[] bv(double[] gsm, double mjd) {
     double[] b = new double[3];
     tsyganenko87JNI(gsm, magProps.getKPIndex(mjd), getSint(mjd), getCost(mjd), b);
     return b;
   }
-  
+
 
   protected static native void tsyganenko87JNI(double[] gsm, double kp, double sint, double cost, double[] bv);
 

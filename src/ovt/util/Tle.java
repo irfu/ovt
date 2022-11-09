@@ -6,7 +6,7 @@
   Version:   $Revision: 1.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -53,7 +53,7 @@ public class Tle {
 
    public Tle() {
    }
-   
+
    public Tle(String fn)throws IOException{
       try{
          init(fn);
@@ -65,13 +65,13 @@ public class Tle {
    public void init(String orbitTLEFile) throws IOException{
       double[] fstAndlstMjds=new double[2];
       filename= orbitTLEFile;
-      
+
       double rr[] =getFirstLastMjdPeriodSatNumber(new File(orbitTLEFile));
       firstMjd=rr[0];
       lastMjd=rr[1];
-     
+
    }
-   
+
 /*   public Tle(String line1,String line2){
       tleData=new TLERecord(line1,line2);
 //         throw new IOException("public Tle(String[] data): Wrong number of records.");
@@ -84,7 +84,7 @@ public class Tle {
    public double getLastMjd(){
       return lastMjd;
    }
-   
+
 
    public static double getLastMjd(String fname) throws IOException{
       try {
@@ -107,7 +107,7 @@ public class Tle {
       String str="";
       TLERecord tlerec = null;
       double lstMjd=-2000000.0, fstMjd=2000000.0, periodDays=-1, day;
-     
+
       try {
          inData=new BufferedReader(new FileReader(orbitTLEFile));
       } catch (FileNotFoundException e){
@@ -116,27 +116,27 @@ public class Tle {
 
       while(inData.ready()) {
          str=inData.readLine();
-         
+
          int code = TLERecord.identLine(str);
-         
-         if  ( code ==2  &&  periodDays <= 0 ) { 
+
+         if  ( code ==2  &&  periodDays <= 0 ) {
              if (tlerec.setLine(str)!=-1)  //  set the 2-nd line. It contains MeanMotion. Period is derived from it.
-                  periodDays = tlerec.getPeriodDays(); 
+                  periodDays = tlerec.getPeriodDays();
              else
                    System.err.println("WARNING: Bad data in TLE file "+orbitTLEFile+" ignored.");
             continue;
-         } 
-         
+         }
+
          if  ( code !=1) continue;               //Only 1st line!
-         
+
          tlerec = new TLERecord();
          try {
             if (tlerec.setLine(str)==-1) {
                //throw new IOException("Bad data in TLE file "+datafile);
                System.err.println("WARNING: Bad data in TLE file "+orbitTLEFile+" ignored.");
                continue;
-            } 
-             
+            }
+
          } catch (NumberFormatException e){
             e.printStackTrace();
             throw new IOException(""+orbitTLEFile+":\nInvalid TLE format in line: "+str);
@@ -161,19 +161,19 @@ public class Tle {
       GeiAndVei gv = Sgp4Sdp4.getSatPos(mjd, rec);
       return gv;
    }
-  
+
    //This temporary native function!!!
    public static native int getSatPosJNI(String filename, double mjd, double[] gei, double[] vei);
 //   static {
 //     System.loadLibrary("ovt2g");
 //   }
-  
+
    //Uses TLE data file filename
    public GeiAndVei getSatPos(double mjd) throws IOException{
 /*      double tsince=0.0;
       //GeiAndVei gv;
       TLERecord tlr=new TLERecord();
-      
+
       try{
          if(mjd<prevMjd || mjd>nextMjd)         // reading from file
             tlr=getTleDataFromFile(mjd);
@@ -190,7 +190,7 @@ public class Tle {
 
       return gv;
    }
-   
+
    //Modifies prev & next Data, reading from file filename
    public TLERecord getTleDataFromFile(double mjd) throws IOException{
       BufferedReader inData;
@@ -200,7 +200,7 @@ public class Tle {
       byte code;
       boolean found=false;
       double closestMjd=1000000.0,mjd2;
-      
+
       try {
          inData=new BufferedReader(new FileReader(filename));
       } catch (FileNotFoundException e){
@@ -209,7 +209,7 @@ public class Tle {
 
       while(inData.ready()  && found==false){
          tr1=tr2.cloneMe();
-         
+
          //Reading 1st line
          str1=inData.readLine();
          code=TLERecord.identLine(str1);
@@ -223,7 +223,7 @@ public class Tle {
          if(tr2.setLine(str2)==-1)continue;
 
          ++datacounter;
-         
+
          mjd2=Time.getMjd(tr2.epochYear,0,0,0,0,0)+tr2.epochDay;
 
          if(datacounter>1){
@@ -239,7 +239,7 @@ public class Tle {
          }
       }
       inData.close();
-      
+
       if(datacounter==0)
          throw new IOException("File "+filename+" is empty or invalid.");
 
@@ -256,7 +256,7 @@ public class Tle {
    }
 
 
-   public static void main(String ss[]){      
+   public static void main(String ss[]){
       GeiAndVei gv;
 
       //Test from data file
@@ -287,7 +287,7 @@ public class Tle {
 //       "2 11801  46.7916 230.4354 7318036  47.4722  10.4117  2.28537848   108");
         try {
           Tle testTle=new Tle("testFreja.tle");
-          
+
 //          double mjdx=11232.987084649969;
         double mjdx=16436.0,r=6371.3;
 //      double mjdx=0.0;

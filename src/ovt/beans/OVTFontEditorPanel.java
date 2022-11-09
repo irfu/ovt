@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -42,33 +42,33 @@ import javax.swing.border.*;
 /**
  *
  * @author  oleg
- * @version 
+ * @version
  */
 public class OVTFontEditorPanel extends JPanel {
 
     private OVTFont bean;
-    
+
     //private JTextArea taText;
-    
+
     //JCheckBox chBold, chItalic, chShadow;
-    
+
     //JComboBox cbFontSize, cbFontFamily, cbHorizJustification, cbVertJustification;    // Ok
-           
+
     /** Creates new OVTFontEditorPanel */
     public OVTFontEditorPanel(OVTFont font) {
         super();
         this.bean = font;  // bind with OVTFont object
-        
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBorder(new TitledBorder(new EtchedBorder(), "Font"));
 
         JPanel panel = new JPanel();
         panel.setLayout(new GridLayout(1,2,10,10));
-        
+
         panel.add(getComponent("fontFamily"));
         panel.add(getComponent("fontSize"));
         add(panel);
-        
+
         panel = new JPanel();
         panel.setLayout(new GridLayout(1,3,10,10));
 
@@ -83,7 +83,7 @@ public class OVTFontEditorPanel extends JPanel {
         BasicPropertyDescriptor desc = bean.getDescriptors().getDescriptor(propertyName);
         return (JComponent)((ComponentPropertyEditor)(desc.getPropertyEditor())).getComponent();
     }
-    
+
     /*
     private JPanel propertyEditor(String propertyName) {
         JPanel panel = new JPanel(false);   // doublebuffered = false

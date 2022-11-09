@@ -83,7 +83,7 @@ public class Sgp4Sdp4 {
     ayn=0,xlt=0,aynl=0,xll=0,axn=0,xn=0,beta=0,xl=0,e=0,a=0,tfour=0,tcube=0,
     delm=0,delomg=0,templ=0,tempe=0,tempa=0,xnode=0,tsq=0,xmp=0,omega=0,
     xnoddf=0,omgadf=0,xmdf=0,x=0,y=0,z=0,xdot=0,ydot=0,zdot=0;
-    
+
     //{ Recover original mean motion (xnodp) and semimajor axis (aodp) }
     //{ from input elements. }
     if (iflag!=0){
@@ -662,18 +662,18 @@ public class Sgp4Sdp4 {
 	    xndot = d2201 * Math.sin(x2omi + xli - g22)
 		+ d2211 * Math.sin(xli - g22) + d3210 *
 		Math.sin(xomi + xli - g32) + d3222 * Math.sin(-xomi + xli - g32)
-		+ d4410 * Math.sin(x2omi + x2li - g44) + d4422 * 
-		Math.sin(x2li - g44) + d5220 * Math.sin(xomi + xli - g52) 
-		+ d5232 * Math.sin(-xomi + xli - g52) + d5421 * 
-		Math.sin(xomi + x2li - g54) + d5433 * Math.sin(-xomi 
+		+ d4410 * Math.sin(x2omi + x2li - g44) + d4422 *
+		Math.sin(x2li - g44) + d5220 * Math.sin(xomi + xli - g52)
+		+ d5232 * Math.sin(-xomi + xli - g52) + d5421 *
+		Math.sin(xomi + x2li - g54) + d5433 * Math.sin(-xomi
 		+ x2li - g54);
 	    xnddt = d2201 * Math.cos(x2omi + xli - g22)
 		+ d2211 * Math.cos(xli - g22) + d3210 *
 		Math.cos(xomi + xli - g32) + d3222 * Math.cos(-xomi + xli - g32)
-		+ d5220 * Math.cos(xomi + xli - g52) + d5232 * 
-		Math.cos(-xomi + xli - g52) + (d4410 * 
-		Math.cos(x2omi + x2li - g44) + d4422 * Math.cos( x2li - g44) + 
-		d5421 * Math.cos(xomi + x2li - g54) + d5433 * 
+		+ d5220 * Math.cos(xomi + xli - g52) + d5232 *
+		Math.cos(-xomi + xli - g52) + (d4410 *
+		Math.cos(x2omi + x2li - g44) + d4422 * Math.cos( x2li - g44) +
+		d5421 * Math.cos(xomi + x2li - g54) + d5433 *
 		Math.cos(-xomi + x2li - g54)) * 2.0;
 	}
 	xldot = xni + xfact;
@@ -1200,7 +1200,7 @@ public class Sgp4Sdp4 {
 //    xnn=xn;
     tsince=t;
 //    Call_dpsec(xmdf,omgadf,xnode,em,xinc,xn,tsince);
-    
+
     a=Math.pow(xke/xn,tothrd)*tempa*tempa;
     e=em - tempe;
     xmam=xmdf + xnodp*templ;

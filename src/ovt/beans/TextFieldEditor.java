@@ -12,7 +12,7 @@ import java.awt.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class TextFieldEditor extends ComponentPropertyEditor {
 
@@ -20,7 +20,7 @@ public class TextFieldEditor extends ComponentPropertyEditor {
     public TextFieldEditor(BasicPropertyDescriptor pd) {
         super(pd);
     }
-    
+
   public Component getComponent() {
     if (component == null) {
       component = new TextFieldEditorPanel(this);
@@ -28,19 +28,19 @@ public class TextFieldEditor extends ComponentPropertyEditor {
     }
     return component;
   }
-  
+
 /** Getter for property editCompleteOnKey.
  * @return Value of property editCompleteOnKey.
  */
   public boolean isEditCompleteOnKey() {
       return ((TextFieldEditorPanel) getComponent()).isEditCompleteOnKey();
   }
-  
+
 /** Setter for property editCompleteOnKey.
  * @param editCompleteOnKey New value of property editCompleteOnKey.
  */
   public void setEditCompleteOnKey(boolean editCompleteOnKey) {
       ((TextFieldEditorPanel) getComponent()).setEditCompleteOnKey(editCompleteOnKey);
   }
-  
+
 }

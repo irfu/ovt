@@ -45,15 +45,15 @@ import java.util.regex.*;
  * Transforms ovt.datatype.Time into String and vice versa.
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class TimeFormat extends OVTObject {
     /** ISO time string format <CODE>yyyy-mm-ddTHH:MM:ss.wwwwwwZ</CODE>
      * as described in the CEF data file syntax
      * http://www.space-plasma.qmul.ac.uk/csds/welcome.html
      */
-    public final static int ISO		= 1; 
-    /** date format : <CODE>yyyy mm dd HH MM ss.wwwwww</CODE> 
+    public final static int ISO		= 1;
+    /** date format : <CODE>yyyy mm dd HH MM ss.wwwwww</CODE>
      * During parsing characters in between values are ignored
      *
      * Will parse, e.g. 2002-02-11 03:03:59 and 2002/02$11 03:03:59
@@ -66,11 +66,11 @@ public class TimeFormat extends OVTObject {
     /** ISDAT epoch format - the number of seconds since 1-Jan-1970 */
     public final static int SECS_SINCE_1970_01_01 = 4;
 
-    
+
     /** Holds value of dateFormat. By default {@link ISO_NONSTRICT}. */
     private int dateFormat = ISO_NONSTRICT;
-    
-    private DecimalFormat oo_format = new DecimalFormat("00");    
+
+    private DecimalFormat oo_format = new DecimalFormat("00");
     private DecimalFormat ss_wwwwww_format = new DecimalFormat("00.000000");
     private DecimalFormat secs_format = new DecimalFormat();
     private DecimalFormat days_format = new DecimalFormat();
@@ -86,11 +86,11 @@ public class TimeFormat extends OVTObject {
 	days_format.setGroupingUsed(false);
 	days_format.setDecimalFormatSymbols(symb);
     }
-    
+
     public String format(double mjd) {
     	return format(new ovt.datatype.Time(mjd));
     }
-    
+
     public String format(ovt.datatype.Time time) {
         String date = "", hours = "";
         switch (dateFormat) {
@@ -101,7 +101,7 @@ public class TimeFormat extends OVTObject {
 			oo_format.format(time.getHour())+":"+
 			oo_format.format(time.getMinutes())+":"+
 			ss_wwwwww_format.format(time.getSeconds())+"Z";
-		break; 
+		break;
 	    case ISO_NONSTRICT:
 	    	date = ""+time.getYear()+" "+
 			oo_format.format(time.getMonth())+" "+
@@ -113,25 +113,25 @@ public class TimeFormat extends OVTObject {
 	    case DAYS_SINCE_1950_01_01:
 	    	date = days_format.format(time.getMjd());
 		break;
-	    case SECS_SINCE_1970_01_01:	    
+	    case SECS_SINCE_1970_01_01:
 	    	date = ""+(time.getMjd()-Time.Y1970)*Time.SECONDS_IN_DAY;//secs_format.format(time.getMjd()*3600.*24.);
 		break;
-            
+
         }
         return date;
     }
-    
+
     public StringBuffer format(Object obj, StringBuffer buf, FieldPosition pos) {
         return new StringBuffer("a");
     }
-    
+
     /** Getter for property dateFormat.
      * @return Value of property dateFormat.
  */
     public int getDateFormat() {
         return dateFormat;
     }
-    
+
     public String getDateFormatString() {
         return getFormat(dateFormat);
     }
@@ -139,17 +139,17 @@ public class TimeFormat extends OVTObject {
      * @param dateFormat New value of property dateFormat.
  */
     public void setDateFormat(int dateFormat) throws IllegalArgumentException {
-        if (dateFormat != ISO  &&  
-		dateFormat != ISO_NONSTRICT  && 
-		dateFormat != DAYS_SINCE_1950_01_01 && 
+        if (dateFormat != ISO  &&
+		dateFormat != ISO_NONSTRICT  &&
+		dateFormat != DAYS_SINCE_1950_01_01 &&
 		dateFormat != SECS_SINCE_1970_01_01)
             throw new IllegalArgumentException("Invalid format type '"+ dateFormat +"'");
         int oldDateFormat = this.dateFormat;
         this.dateFormat = dateFormat;
         firePropertyChange ("dateFormat", new Integer (oldDateFormat), new Integer (dateFormat));
     }
-    
-    
+
+
     public static String getFormat(int type) {
         switch (type) {
             case ISO			: return "yyyy-mm-ddTHH:MM:ss.wwwwwwZ";
@@ -159,11 +159,11 @@ public class TimeFormat extends OVTObject {
         }
         throw new IllegalArgumentException("Invalid format type '"+ type +"'");
     }
-    
+
     public static int[] getDateFormats() {
         return new int[]{ ISO, ISO_NONSTRICT, DAYS_SINCE_1950_01_01, SECS_SINCE_1970_01_01 };
     }
-    
+
     public static String[] getDateFormatNames() {
         int[] formats = getDateFormats();
         String[] res = new String[formats.length];
@@ -171,18 +171,18 @@ public class TimeFormat extends OVTObject {
             res[i] = getFormat(formats[i]);
         return res;
     }
-    
+
     public DoubleAndInteger parseMjd(String str) throws NumberFormatException {
         TimeAndStringLength a = parse(str);
         return new DoubleAndInteger(a.time.getMjd(), a.length);
     }
-    
+
     public TimeAndStringLength parse(String str) throws NumberFormatException {
         int year=0, month=0, day=0, hour=0, mins=0;
 	double secs=0;
         int offset = 11;
         int length = -1;
-        
+
         switch (dateFormat) {
             case ISO:
                 year = Integer.valueOf(str.substring(0,4)).intValue();
@@ -201,7 +201,7 @@ public class TimeFormat extends OVTObject {
 	    	// select groups of digits in the form ddddd or dddd.ddd
 		// first are needed for year, month, day, hour, minute
 		// the second is needed for seconds
-	        Pattern pattern = Pattern.compile("(\\d+\\.\\d+)|(\\d+)");	
+	        Pattern pattern = Pattern.compile("(\\d+\\.\\d+)|(\\d+)");
 		Matcher matcher = pattern.matcher(str);
 		matcher.find();
 		year = Integer.valueOf(matcher.group()).intValue();
@@ -225,8 +225,8 @@ public class TimeFormat extends OVTObject {
             throw new NumberFormatException(ill_a_e.getMessage());
         }
     }
-    
-    
+
+
     /*public Time parse(StringBuffer str) throws NumberFormatException {
         int year=0, month=0, day=0, hour=0, mins=0, sec=0;
         try {
@@ -264,56 +264,56 @@ public class TimeFormat extends OVTObject {
             case SSSSS_SS:
                 StringTokenizer st3 = new StringTokenizer(str.substring(offset, str.length()));
                 sec = Integer.valueOf(st3.nextToken()).intValue();
-                break;    
+                break;
         }
         } catch ( NoSuchElementException e2) {
             throw new NumberFormatException(e2.getMessage());
         }
         return new Time(year, month, day, hour, mins, sec, 0);
     }*/
-    
+
     public static int guessDateFormat(String str) {
-        
+
         if (str.indexOf('-') == 4 && str.indexOf('-', str.indexOf('-')+1) == 7) {
             if (isInteger(str, 0, 4) && isInteger(str, 5, 7) && isInteger(str, 8, 10))
                 return ISO;
-            else 
+            else
                 throw new NumberFormatException("Wrong ISO format 'yyyy-mm-ddTHH:MM:ss.wwwwwwZ' ("+str+")");
         }
         if (str.indexOf(' ') == 4 && str.indexOf(' ', str.indexOf(' ')+1) == 7) {
             if (isInteger(str, 0, 4) && isInteger(str, 5, 7) && isInteger(str, 8, 10))
                 return ISO_NONSTRICT;
-            else 
+            else
                 throw new NumberFormatException("Wrong clean ISO format 'yyyy mm dd HH MM ss.wwwwww' ("+str+")");
         }
         throw new NumberFormatException("Wrong date format ("+str+")");
     }
-    
+
     /** Can distinguish hh:mm and hh:mm:ss formats
     public static int guessHoursFormat(String str) throws NumberFormatException {
         int semicIndex1 = str.indexOf(':');
         int semicIndex2 = str.indexOf(':', semicIndex1+1);
-        
+
         if (semicIndex1 == 2) { // could be hh:mm or hh:mm:ss
-            if (!isInteger(str, 0, 2)) 
+            if (!isInteger(str, 0, 2))
                 throw new NumberFormatException("Wrong hh format ("+str+")");
             if (!isInteger(str, 3, 5))
                 throw new NumberFormatException("Wrong mm format ("+str+")");
             if (semicIndex2 == 5) {
                 if (isInteger(str, 6, 8))
                     return HH_MM_SS;
-                else 
+                else
                     throw new NumberFormatException("Wrong ss format ("+str+")");
             } else return HH_MM;
-            
+
         }
         // left patterns: hh.hhhh and ssssss.ss
         // I don't know how to distinguish them..
         throw new NumberFormatException("Wrong time format ("+str+")");
-        
+
     }*/
-    
-    
+
+
     private static boolean isInteger(String str, int beginIndex, int endIndex) {
         try {
             new Integer(str.substring(beginIndex, endIndex));
@@ -322,10 +322,10 @@ public class TimeFormat extends OVTObject {
         } catch (IndexOutOfBoundsException e3) {
             return false;
         }
-        
+
         return true;
     }
-    
+
     private static boolean isDouble(String str, int beginIndex, int endIndex) {
         try {
             new Double(str.substring(beginIndex, endIndex));
@@ -336,12 +336,12 @@ public class TimeFormat extends OVTObject {
         }
         return true;
     }
-    
+
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
                 descriptors = new Descriptors();
-                
+
                 // date format
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("dateFormat", this);
                 pd.setDisplayName("Date format");
@@ -350,8 +350,8 @@ public class TimeFormat extends OVTObject {
                 pd.setPropertyEditor(editor);
                 addPropertyChangeListener("dateFormat", editor);
                 descriptors.put(pd);
-                
-                
+
+
             } catch (IntrospectionException e2) {
                 System.out.println(getClass().getName() + " -> " + e2.toString());
                 System.exit(0);
@@ -359,29 +359,29 @@ public class TimeFormat extends OVTObject {
         }
         return descriptors;
     }
-    
+
     public static void main(String[] args) {
 	//}
-		
+
         /*Time time = new Time("2001-02-03 10:00:36");
         TimeFormat tf = new TimeFormat();
         tf.setHoursFormat(tf.HH_HHHH);
-        
+
         int[] f = TimeFormat.guessDateAndHoursFormat(args[0]);
         System.out.println(TimeFormat.getFormat(f[0])+" "+TimeFormat.getFormat(f[1]));
         String str = "123456";
         System.out.println(str.substring(0, 2));*/
-	
+
     	Pattern pattern = Pattern.compile("(\\d+\\.\\d+)|(\\d+)");
-	
+
 	Matcher matcher = pattern.matcher("2004 02-03 13:00:55.66666 3.45");
-	
+
 	while(matcher.find()) {
 		System.out.println("I found the text \"" + matcher.group() +
 			"\" starting at index " + matcher.start() +
 			" and ending at index " + matcher.end() + ".");
 	}
-	
+
     }
 }
 

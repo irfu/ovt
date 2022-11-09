@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -42,38 +42,38 @@ import ovt.mag.*;
 import ovt.util.*;
 import ovt.interfaces.*;
 
-/** 
+/**
  * Abstract ancestor for magnetic field models.
  *
  * @author  Yuri Khotyaintsev
- * @version 
+ * @version
  */
 public abstract class AbstractMagModel implements MagModel {
-  
+
   protected MagProps magProps = null;
-  
+
   public AbstractMagModel(MagProps magProps) {
     this.magProps = magProps;
   }
-  
+
   // Unncessary?
   //@Override
   //public abstract double[] bv(double[] gsm, double mjd);
-  
+
   public Trans getTrans(double mjd) {
     return magProps.getTrans(mjd);
   }
-  
+
   public void setMagProps(MagProps magProps){
     this.magProps = magProps;
-  } 
+  }
 
   public double getSint(double mjd) {
     return magProps.getSint(mjd);
   }
- 
+
   public double getCost(double mjd) {
     return magProps.getCost(mjd);
-  } 
-  
+  }
+
 }

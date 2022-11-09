@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -41,7 +41,7 @@ import java.beans.*;
 /**
  * All constants were taken from vtkTextMapper.h
  * @author  Oleg
- * @version 
+ * @version
  *
  */
 public class OVTFont extends OVTObject {
@@ -65,30 +65,30 @@ public class OVTFont extends OVTObject {
     public OVTFont() {}
 
     private Descriptors descriptors = null;
-    
+
     /** Utility field used by bound properties. */
     private OVTPropertyChangeSupport propertyChangeSupport =  new OVTPropertyChangeSupport(this);
 
     /** Holds value of property bold. */
     private boolean bold = false;
-    
+
     /** Holds value of property italic. */
     private boolean italic = false;
-    
+
     /** Holds value of property shadow. */
     private boolean shadow = true;
-    
+
     /** Holds value of property fontSize. */
     private int fontSize = 12;
-    
+
     /** Holds value of property fontFamily. */
     private int fontFamily = ARIAL;
-    
+
     public Descriptors getDescriptors() {
         if (descriptors == null) {
             try {
                 descriptors = new Descriptors();
-                
+
             /* bold property descriptor */
                 BasicPropertyDescriptor pd = new BasicPropertyDescriptor("bold", this);
                 pd.setTextOnlyAccessible();
@@ -127,7 +127,7 @@ public class OVTFont extends OVTObject {
                 addPropertyChangeListener("fontSize", tfEditor);
                 pd.setPropertyEditor(tfEditor);
                 descriptors.put(pd);
-                
+
             /* fontFamilyValues property descriptor */
                 pd = new BasicPropertyDescriptor("fontFamily", this);
                 pd.setTextOnlyAccessible();
@@ -144,12 +144,12 @@ public class OVTFont extends OVTObject {
         }
         return descriptors;
     }
-    
+
     public int bold()   { return bold   ? 1 : 0; }
     public int italic() { return italic ? 1 : 0; }
     public int shadow() { return shadow ? 1 : 0; }
-    
-    
+
+
     /** Add a PropertyChangeListener to the listener list.
      * @param l The listener to add.
      */
@@ -176,7 +176,7 @@ public class OVTFont extends OVTObject {
     public boolean isBold() {
         return bold;
     }
-    
+
     /** Setter for property bold.
      * @param bold New value of property bold.
      */
@@ -185,14 +185,14 @@ public class OVTFont extends OVTObject {
         this.bold = bold;
         propertyChangeSupport.firePropertyChange ("bold", new Boolean (oldBold), new Boolean (bold));
     }
-    
+
     /** Getter for property italic.
      * @return Value of property italic.
      */
     public boolean isItalic() {
         return italic;
     }
-    
+
     /** Setter for property italic.
      * @param italic New value of property italic.
      */
@@ -201,14 +201,14 @@ public class OVTFont extends OVTObject {
         this.italic = italic;
         propertyChangeSupport.firePropertyChange ("italic", new Boolean (oldItalic), new Boolean (italic));
     }
-    
+
     /** Getter for property shadow.
      * @return Value of property shadow.
      */
     public boolean isShadow() {
         return shadow;
     }
-    
+
     /** Setter for property shadow.
      * @param shadow New value of property shadow.
      */
@@ -217,14 +217,14 @@ public class OVTFont extends OVTObject {
         this.shadow = shadow;
         propertyChangeSupport.firePropertyChange ("shadow", new Boolean (oldShadow), new Boolean (shadow));
     }
-    
+
     /** Getter for property fontSize.
      * @return Value of property fontSize.
      */
     public int getFontSize() {
         return fontSize;
     }
-    
+
     /** Setter for property fontSize.
      * @param fontSize New value of property fontSize.
      */
@@ -234,14 +234,14 @@ public class OVTFont extends OVTObject {
         this.fontSize = fontSize;
         propertyChangeSupport.firePropertyChange ("fontSize", new Integer (oldFontSize), new Integer (fontSize));
     }
-    
+
     /** Getter for property fontFamily.
      * @return Value of property fontFamily.
      */
     public int getFontFamily() {
         return fontFamily;
     }
-    
+
     /** Setter for property fontFamily.
      * @param fontFamily New value of property fontFamily.
      */

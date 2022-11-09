@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
  Program:   Orbit Visualization Tool
  Source:    $Source: /ovt/object/LTOFSat.java $
  Date:      $Date: 2015/09/15 12:00:00 $
  Version:   $Revision: 1.0 $
- 
- 
+
+
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
- 
+
  =========================================================================*/
 /*
  * Created on September 10, 2003, 4:14 PM
@@ -269,7 +269,7 @@ public class LTOFSat extends Sat {
             // rec.rDist = Absolute value of the reference Kepler orbit position vector (distance to origin).
             final double dmanom = (day - rec.epoch) / (rec.oMotin * Time.DAYS_IN_SECOND);  // Mean anomaly, counting since "rec.epoch". Unit: day/(day/rad)= rad
             final double arin = rec.smAxis / rec.rDist;                  // Unit: None
-            final double arm = (rec.rDist - rec.smAxis) / rec.smAxis;    // Unit: None      
+            final double arm = (rec.rDist - rec.smAxis) / rec.smAxis;    // Unit: None
             final double rvwam = (rec.Y[0] * rec.Y[3]
                     + rec.Y[1] * rec.Y[4]
                     + rec.Y[2] * rec.Y[5])
@@ -363,8 +363,8 @@ public class LTOFSat extends Sat {
      infoWindow.setObject(LTOFSat.this);
      infoWindow.setVisible(true);
      }
-     }); 
-     
+     });
+
      JMenuItem item1 = new JMenuItem("Orbit Monitor");
      item1.setFont(Style.getMenuFont());
      item1.setEnabled(isEnabled());

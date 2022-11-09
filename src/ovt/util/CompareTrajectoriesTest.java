@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
  Program:   Orbit Visualization Tool
  Source:    $Source: /ovt/util/SSCWSSat_CompareTrajectoriesTest.java $
  Date:      $Date: 2015/09/15 11:54: $
  Version:   $Revision: 1.0 $
- 
- 
+
+
  Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
- 
+
  Redistribution and use in source and binary forms, with or without
  modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
  written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
  copyright notice, this list of conditions and the following disclaimer.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
  IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
  IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
  INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
  OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
  Khotyaintsev, E. P. G. Johansson, F. Johansson
- 
+
  =========================================================================*/
 package ovt.util;
 
@@ -81,7 +81,7 @@ public class CompareTrajectoriesTest {
      */
 //    private static final boolean USE_SSCWS_DISK_CACHE = true;
     private static final boolean USE_SSCWS_DISK_CACHE = false;
-    
+
     private static final SSCWSLibraryImpl LIB = (SSCWSLibraryImpl) new SSCWSLibraryImpl();
 
 
@@ -292,11 +292,11 @@ public class CompareTrajectoriesTest {
          SUPER_LTOF_C4.CR.ltof : 2000-08-09 - 2020-01-01 - predicted from 2015-08-23
          polar.tle   : 1996-10-02 - 2004-03-09
          akebono.tle : 1989-02-27 - 1994-10-26
-        
+
          // The trajectory in "de1.tle" (or at least as OVT interprets it) is bad
          // around 1990-05-25, 00:00-01:00 (jumps backward).
          // Is then lagging behind the SSCWS orbit until ca 1990-06-01, 22:00.
-         de1         : 1989-10-05 - 1991-05-01   
+         de1         : 1989-10-05 - 1991-05-01
          --------
          Double_Star_1.ltof : 2004-01-01 - 2007-10-10
          : Predicted:
@@ -308,10 +308,10 @@ public class CompareTrajectoriesTest {
          ------------
          Double_Star_2.ltof : 2004-07-25 - 2008-09-02
          : Predicted:
-         : : 2005-04-07/08---08        
+         : : 2005-04-07/08---08
          : : 2005-04-28/29---29 (doy 118/119-119)
          : : 2005-10-10/11---12 (doy 283/284-285)
-         : : 2005-11-28/29---29 
+         : : 2005-11-28/29---29
          : : 2006-06-30/07-01---07-03
          : : 2006-10-05/06---2007-02-05
          : : 2007-08-02/03---2007-11-28

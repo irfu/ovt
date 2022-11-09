@@ -6,7 +6,7 @@
   Version:   $Revision: 2.7 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on den 9 april 2000, 17:03
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -50,23 +50,23 @@ import java.beans.*;
 
 import java.io.*;
 
-/** 
+/**
  *
  * @author  mykola
- * @version 
+ * @version
  */
-public class ClusterSats extends VisualObject implements TimeChangeListener, 
+public class ClusterSats extends VisualObject implements TimeChangeListener,
   CoordinateSystemChangeListener, MagPropsChangeListener, PropertyChangeListener {
 
   private ClusterSat sats[] = new ClusterSat[4];
-  
-  
+
+
 /** Holds value of property configurationWindowVisible. */
   private boolean configurationWindowVisible = false;
   protected ClusterConfigurationPanel configurationPanel;
   public String clusterConfOutFileName;
 
-  
+
   /** Creates new ClusterSats */
   public ClusterSats(Sats sats) {
     super(sats.getCore(), "Cluster", "images/cluster.gif", true);
@@ -79,19 +79,19 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
       pd.setDisplayName("Cluster Configuration");
       WindowPropertyEditor editor = new WindowPropertyEditor(pd, new String[]{"Show configuration", "Hide configuration"});
       editor.setModal(false);
-      
+
       if (!OVTCore.isServer()) {
         configurationPanel = new ClusterConfigurationPanel(this, editor);
         editor.setComponent(configurationPanel);
       }
-      
+
       pd.setPropertyEditor(editor);
       addPropertyChangeListener(editor);
       getDescriptors().put(pd);
     } catch (IntrospectionException exc) {}
-    
+
     System.out.println("Loading Cluster Satellites...");
-    
+
     // load sats
     for (int i=0; i<4; i++) {
         String satName = "Cluster "+(i+1);
@@ -114,8 +114,8 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
         }
     }
   }
-  
-  
+
+
   /** Legacy constructor */
   public void add(ClusterSat sat) {
     addPropertyChangeListener(sat);
@@ -127,8 +127,8 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     sats[sat.getSatNumber()-1] = sat;
     addChild(sat);
   }
-  
-  
+
+
   /** Returns ClusterSat by it's number 1..4 . Legacy method */
   public ClusterSat get(int number) {
     if (number>4 || number<1) {
@@ -136,15 +136,15 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     }
     return sats[number-1];
   }
-  
-  
+
+
   /** Returns ClusterSat by it's number 0..3 ;-) */
   public ClusterSat getClusterSat(int number) {
     if (number>3 || number<0) throw new ArrayIndexOutOfBoundsException("Invalid number of Cluster Satellites ("+number+"). Use numbers 0..3");
     return sats[number];
   }
-  
-  
+
+
   public void timeChanged(TimeEvent evt) {
     for (int i=0; i<4; i++) sats[i].timeChanged(evt);
     if (!OVTCore.isServer()) configurationPanel.timeChanged(evt);
@@ -155,8 +155,8 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
   public void magPropsChanged(MagPropsEvent evt) {
     for (int i=0; i<4; i++) sats[i].magPropsChanged(evt);
   }
-  
-  
+
+
   /** Getter for property configurationWindowVisible.
    * @return Value of property configurationWindowVisible.
    */
@@ -171,8 +171,8 @@ public class ClusterSats extends VisualObject implements TimeChangeListener,
     this.configurationWindowVisible = configurationWindowVisible;
     propertyChangeSupport.firePropertyChange ("configurationWindowVisible", oldConfigurationWindowVisible, configurationWindowVisible);
   }
-  
-  
+
+
   public void propertyChange(PropertyChangeEvent evt) {
     if (evt.getPropertyName().equals("enabled")) {
       boolean enabled = (Boolean)evt.getNewValue();

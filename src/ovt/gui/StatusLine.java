@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,28 +35,28 @@ Khotyaintsev
  *
  * Created on March 31, 2000, 3:34 PM
  */
- 
+
 package ovt.gui;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-/** 
+/**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class StatusLine extends JPanel {
 
   private static final int ONE_SECOND = 1000;
-    
+
   protected JLabel label;
   private String status = " idle ";
   private int progress = 0;
   //private JProgressBar progressBar;
   private ProgressMonitor progressMonitor;
   private Timer timer;
-  
+
   /** Creates new StatusLine */
   public StatusLine() {
     super();
@@ -67,22 +67,22 @@ public class StatusLine extends JPanel {
     label.setToolTipText("Satus line");
     label.setAlignmentX(LEFT_ALIGNMENT);
     add(label);
-    
+
 /*    progressBar = new JProgressBar(0, 100);
     progressBar.setValue(0);
     progressBar.setStringPainted(true);
     add(progressBar); */
-    
+
     setBorder(BorderFactory.createLoweredBevelBorder());
     //Create a timer.
     //timer = new Timer(ONE_SECOND/10, new TimerListener());
     //timer.start();
   }
-  
+
   public void setStatus(String status) {
     this.status = status;
   }
-    
+
   class TimerListener implements ActionListener {
         public void actionPerformed(ActionEvent evt) {
             if (progressMonitor.isCanceled()) { //|| task.done()) {
@@ -109,5 +109,5 @@ public class StatusLine extends JPanel {
 
             timer.start();
  }
-  
+
 }

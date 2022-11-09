@@ -177,7 +177,7 @@ public class CGMC {
 
   public static double MLT(double mltut, double ut){
 /* (comments from Weimer)
-C Next we can compute Corrected magnetic local time assuming that it changes linearly as 
+C Next we can compute Corrected magnetic local time assuming that it changes linearly as
 C the UTtime elapses from the UTMidnight
 C C_MLT=REAL_UT-UTMidnight
 C if C_MLT lt 0.0 then C_MLT=24.0+C_MLT
@@ -194,34 +194,34 @@ C UT==UTMidnight
 C Below is the NSSDC procedure - probably better
 C INPUT: geographic latitude and longitude(S[0], S[1]) of a given point (at a given altitude)
 C	 corrected magnetic latitude of this point (C[0])
-C	 (corrected) magnetic pole  geographic latitude and longitude at the  
-C         altitude of the point (P[0],P[1]) 
+C	 (corrected) magnetic pole  geographic latitude and longitude at the
+C         altitude of the point (P[0],P[1])
 C	 PLA,PLO can be computed from CORGEO with the input with CLA=-90.0 (south) or 90.0 (north)
 C 	 and CLO 360.0, and the appropriate RH (geocentric distance of the point)
 C OUTPUT is the UT hour of magnetic local midnight at the given corrected MLAT
 C  *********************************************************************
-C  Calculates the MLT midnight in UT hours 
+C  Calculates the MLT midnight in UT hours
 
-C  Definition of the MLT midnight (MLTMN) here is different from the 
-C  approach described elsewhere. This definition does not take into 
+C  Definition of the MLT midnight (MLTMN) here is different from the
+C  approach described elsewhere. This definition does not take into
 C  account the geomagnetic meridian of the subsolar point which causes
 C  seasonal variations of the MLTMN in UT time. The latter approach is
-C  perfectly applicable to the dipole or eccentric dipole magnetic 
-C  coordinates but it fails with the CGM coordinates because there are 
-C  forbidden areas near the geomagnetic equator where CGM coordinates 
-C  cannot be calculated by definition [e.g., Gustafsson et al., JATP, 
+C  perfectly applicable to the dipole or eccentric dipole magnetic
+C  coordinates but it fails with the CGM coordinates because there are
+C  forbidden areas near the geomagnetic equator where CGM coordinates
+C  cannot be calculated by definition [e.g., Gustafsson et al., JATP,
 C  54, 1609, 1992].
 
 C  In this code the MLT midnight is defined as location of a given point
-C  on (or above) the Earth's surface strictly behind the North (South) 
+C  on (or above) the Earth's surface strictly behind the North (South)
 C  CGM pole in such the Sun, the pole, and the point are lined up.
 
-C  This approach was originally proposed and coded by Boris Belov 
-C  sometime in the beginning of 1980s; here it is slightly edited by 
+C  This approach was originally proposed and coded by Boris Belov
+C  sometime in the beginning of 1980s; here it is slightly edited by
 C  Vladimir Papitashvili in February 1999.
 
 C  Ignore points which nearly coincide with the geographic or CGM poles
-C  within 0.01 degree in latitudes; this also takes care if SLA or CLA 
+C  within 0.01 degree in latitudes; this also takes care if SLA or CLA
 C  are dummy values (e.g., 999.99)
 */
     double sla = S[0], slo = S[1], cla = C[0], pla = P[0], plo = P[1];
@@ -261,7 +261,7 @@ C  are dummy values (e.g., 999.99)
        sp = 1.
        ss = 1.
       if(sign(sp,pla).ne.sign(ss,cla)) then
-        write(*,2) pla,cla 
+        write(*,2) pla,cla
    2    format(/
      +  'WARNING - The CGM pole PLA = ',f6.2,' and station CLAT = ',
      +  f6.2,' are not in the same hemisphere: MLTMN is incorrect!')
@@ -279,16 +279,16 @@ C  Solve the spherical triangle
                                        else
         CFT = 90. + abs(SLA)
       endif
-      
+
           CFT = CFT*RAD
       IF(CFT.LT.0.0000001) CFT=0.0000001
-      
+
         QT = SLO*RAD
          A = SIN(CFF)/SIN(CFT)
          Y = A*SIN(QQ) - SIN(QT)
          X = COS(QT) - A*COS(QQ)
         UT = ATAN2(Y,X)
-      
+
         IF(UT.LT.0.) UT = UT + TPI
        QQU = QQ + UT
        QTU = QT + UT
@@ -297,11 +297,11 @@ C  Solve the spherical triangle
         UT = UT/RAD
         UT = UT/15.
       IF(BP.LT.BT) GOTO 10
-      
+
         IF(UT.LT.12.) UT = UT + 12.
       IF(UT.GT.12.) UT = UT - 12.
-   
-  10  CONTINUE 
+
+  10  CONTINUE
 
       RETURN
       END

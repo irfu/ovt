@@ -14,16 +14,16 @@ import ovt.util.*;
  * Hold "activity" values for one point in time. Used to build tables.
  *
  * @author  yuri
- * @version 
+ * @version
  */
 public class MagActivityDataRecord {
-    
-    
+
+
     public double[] values;
-    
+
     /** Holds value of property time. */
     public ovt.datatype.Time time;
-    
+
     /** Constructor is for internal use only! Do not use it!
      * (Might possibly refer to that it is used by "XML" i.e.
      * the save/load settings feature.) */
@@ -34,7 +34,7 @@ public class MagActivityDataRecord {
         this.time = time;
         this.values = values;
     }
-    
+
     MagActivityDataRecord(double mjd, double[] values){
         this.time = new Time(mjd);
         this.values = values;
@@ -49,7 +49,7 @@ public class MagActivityDataRecord {
     public double[] getValues() {
         return values;
     }
-    
+
     /** Indexed setter for property valueAt.
  * @param index Index of the property.
  * @param valueAt New value of the property at <CODE>index</CODE>.
@@ -57,29 +57,29 @@ public class MagActivityDataRecord {
     public void setValues(double[] values) {
         this.values = values;
     }
-    
-    
+
+
     public Object get(int i) {
         if (i == 0) return time;
         else return new Double(values[i-1]);
     }
-    
-    
-    
-    
+
+
+
+
     public Object clone() {
         double[] newValues = new double[values.length];
         for (int i=0; i<values.length; i++) newValues[i] = values[i];
         return new MagActivityDataRecord((Time)time.clone(), newValues);
     }
-    
+
     /** Getter for property time.
  * @return Value of property time.
  */
     public ovt.datatype.Time getTime() {
         return time;
     }
-    
+
     /** Setter for property time.
  * @param time New value of property time.
  */

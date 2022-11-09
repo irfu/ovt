@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -39,7 +39,7 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 4:50 PM
  */
- 
+
 package ovt.object;
 
 import java.beans.*;
@@ -49,10 +49,10 @@ import ovt.event.*;
 import ovt.interfaces.*;
 
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class CoordinateSystem extends BasicObject {
 
@@ -66,7 +66,7 @@ public class CoordinateSystem extends BasicObject {
    * Note: Not to be confused with GEI epoch-of-date/mean-of-date.
    */
   public static final int GEI =  0;
-  
+
   /** <B>Geocentric Solar Magnetospheric</B><BR>
    * <B>X</B> - axis points toward the Sun<BR>
    * <B>Y</B> - axis is perpendicular to the Earth's magnetic dipole (<B>M</B>, pointing
@@ -76,16 +76,16 @@ public class CoordinateSystem extends BasicObject {
    *            <CODE>(<B>Z</B> = <B>X</B> x <B>Y</B>)</CODE>.
    */
   public static final int GSM =  1;
-  
+
   /** <B>Geocentric Solar Ecliptic</B><BR>
    * <B>X</B> - axis points toward the Sun<BR>
    * <B>Z</B> - axis points toward the ecliptic north pole<BR>
    * <B>Y</B> - axis points toward dusk, the direction that opposes planetary motion.
    */
   public static final int GSE =  2;
-  
+
   public static final int GSEQ = 3;
-  
+
   /** <B>Geographic</B><BR>
    * <B>X</B> - axis is in the Earth equatorial plane and passes through
    *            Greenwich meridian<BR>
@@ -94,9 +94,9 @@ public class CoordinateSystem extends BasicObject {
    *            <CODE>(<B>Y</B> = <B>Z</B> x <B>X</B>)</CODE>.
    */
   public static final int GEO =  4;
-  
+
   /** <B>Solar Magnetospheric</B><BR>
-   * <B>Z</B> - axis is along the magnetic dipole and points northward<BR> 
+   * <B>Z</B> - axis is along the magnetic dipole and points northward<BR>
    * <B>Y</B> - axis <CODE>(<B>Y</B> = <B>Z</B> x <B>SUN</B>)</CODE><BR>
    * <B>X</B> - axis completes the right-handed system
    *            <CODE>(<B>X</B> = <B>Y</B> x <B>Z</B>)</CODE><BR>
@@ -104,7 +104,7 @@ public class CoordinateSystem extends BasicObject {
    * the dipole tilt angle (positive toward the sun)
    */
   public static final int SM =   5;
-  
+
   /** <B>Corrected</B><BR>
    * <B>Magnetic Local Time</B><BR>
    * <B>Magnetic Latitude</B> Not used
@@ -125,23 +125,23 @@ public class CoordinateSystem extends BasicObject {
    */
   public static final int GEID = 9;
 
-  
+
   /** Holds value of property coordinateSystem. */
   private int coordinateSystem = GSM;
 
   /** Utility field used by bound properties. */
   private CoordinateSystemChangeSupport csChangeSupport = new CoordinateSystemChangeSupport (this);
-  
+
   /** Holds value of property polarCoordinateSystem. */
   private int polarCoordinateSystem = GEO;
-  
+
   /** Creates new CoordinateSystems */
   public CoordinateSystem(OVTCore core) {
     super(core, "CoordinateSystems");
     showInTree(false);
     setParent(core); // to have a full name "OVT.CoordinateSystems"
   }
-  
+
   public void addCoordinateSystemChangeListener (CoordinateSystemChangeListener listener) {
     csChangeSupport.addCoordinateSystemChangeListener (listener);
   }
@@ -149,28 +149,28 @@ public class CoordinateSystem extends BasicObject {
   public void removeCoordinateSystemChangeListener (CoordinateSystemChangeListener listener) {
     csChangeSupport.removeCoordinateSystemChangeListener (listener);
   }
-  
+
   /** Add a PropertyChangeListener to the listener list.
    * @param l The listener to add.
    */
   public void addPropertyChangeListener(java.beans.PropertyChangeListener l) {
     propertyChangeSupport.addPropertyChangeListener (l);
   }
-  
+
   /** Removes a PropertyChangeListener from the listener list. Doesn't work!
    * @param l The listener to remove.
    */
   public void removePropertyChangeListener(java.beans.PropertyChangeListener l) {
     propertyChangeSupport.removePropertyChangeListener (l);
   }
-  
+
   /** Getter for property coordinateSystem.
    * @return Value of property coordinateSystem.
    */
   public int getCoordinateSystem() {
     return coordinateSystem;
   }
-  
+
   /** Setter for property coordinateSystem.
    * @param coordinateSystem New value of property coordinateSystem.
    */
@@ -209,10 +209,10 @@ public class CoordinateSystem extends BasicObject {
   public String[] getCoordinateSystemNames() {
     int[] csl = getCoordinateSystemsList();
     String[] names = new String[csl.length];
-    for (int i=0; i<csl.length; i++) 
+    for (int i=0; i<csl.length; i++)
         names[i] = getCoordSystem(csl[i]);
     return names;
-  } 
+  }
 
   /** Determines which coordinate systems are available in the GUI (and maybe
    *  more).
@@ -227,11 +227,11 @@ public class CoordinateSystem extends BasicObject {
   public String[] getPolarCoordinateSystemNames() {
     int[] csl = getPolarCoordinateSystemsList();
     String[] names = new String[csl.length];
-    for (int i=0; i<csl.length; i++) 
+    for (int i=0; i<csl.length; i++)
         names[i] = getCoordSystem(csl[i]);
     return names;
   }
-  
+
 
   public int[] getPolarCoordinateSystemsList() {
     return new int[]{ SM, GEO};
@@ -259,7 +259,7 @@ public class CoordinateSystem extends BasicObject {
       these two coordinate systems are basically two close variants of the same
       idea for a coordinate system, I figure that not everyone is aware of the
       distinction between them (and as your original e-mail implies). Therefore
-      I am tempted to list them them both as "GEI" and then indicate the exact 
+      I am tempted to list them them both as "GEI" and then indicate the exact
       "variant" within brackets as below. This would indicate/hint to a novice
       that they are closely related and similar coordinate systems.
 
@@ -316,7 +316,7 @@ public class CoordinateSystem extends BasicObject {
         BasicPropertyDescriptor pd = new BasicPropertyDescriptor("coordinateSystem", this);
         pd.setDisplayName("Coordinate System");
         pd.setToolTipText("Space Coordinate System");
-        
+
         GUIPropertyEditor editor = new ComboBoxPropertyEditor(pd, getCoordinateSystemsList(), getCoordinateSystemNames());
         // Render each time user changes cs by means of gui
         editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -324,16 +324,16 @@ public class CoordinateSystem extends BasicObject {
             Render();
           }
         });
-        
+
         addPropertyChangeListener("coordinateSystem", editor);
         pd.setPropertyEditor(editor);
         descriptors.put(pd);
-        
+
         // ----- PolarCoordinateSystem
         pd = new BasicPropertyDescriptor("polarCoordinateSystem", this);
         pd.setDisplayName("Polar Coordinate System");
         pd.setToolTipText("The Coordinate System of the Earth Surface");
-        
+
         editor = new ComboBoxPropertyEditor(pd, getPolarCoordinateSystemsList(), getPolarCoordinateSystemNames());
         // Render each time user changes cs by means of gui
         editor.addGUIPropertyEditorListener(new GUIPropertyEditorListener() {
@@ -344,15 +344,15 @@ public class CoordinateSystem extends BasicObject {
         addPropertyChangeListener("polarCoordinateSystem", editor);
         pd.setPropertyEditor(editor);
         descriptors.put(pd);
-                
+
       } catch (IntrospectionException e2) {
         System.out.println(getClass().getName() + " -> " + e2.toString());
         System.exit(0);
       }
-      
-      
+
+
     }
     return descriptors;
   }
-  
+
 }

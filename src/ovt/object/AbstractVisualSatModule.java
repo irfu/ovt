@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 30, 2000, 4:03 PM
  */
- 
+
 package ovt.object;
 
 import ovt.*;
@@ -53,10 +53,10 @@ import java.util.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-/** 
+/**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class AbstractVisualSatModule extends AbstractSatModule {
 
@@ -65,22 +65,22 @@ public class AbstractVisualSatModule extends AbstractSatModule {
   public AbstractVisualSatModule(Sat sat, String name, String iconFilename) {
     super(sat, name, iconFilename);
   }
-  
+
   /** Creates new AbstractVisualSatModule */
   public AbstractVisualSatModule(Sat sat, String name) {
     super(sat, name);
   }
-  
+
   /** Creates new AbstractVisualSatModule
   public AbstractVisualSatModule(Sat sat) {
     super(sat);
   } */
-  
+
   protected vtkActor getActor() {
     return null;
   }
-  
-  
+
+
   protected void show() {
     if (canBeVisible() && !actorIsInRenderer()) getRenderer().AddActor(getActor());
   }
@@ -88,9 +88,9 @@ public class AbstractVisualSatModule extends AbstractSatModule {
   protected void hide() {
     if (actorIsInRenderer()) getRenderer().RemoveActor(getActor());
   }
-  
-  protected boolean actorIsInRenderer() { 
+
+  protected boolean actorIsInRenderer() {
     int positionInList = getRenderer().GetActors().IsItemPresent(getActor());
-    return (positionInList != 0); 
+    return (positionInList != 0);
   }
 }

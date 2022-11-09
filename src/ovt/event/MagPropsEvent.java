@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,30 +35,30 @@ Khotyaintsev
  *
  * Created on April 5, 2000, 6:36 PM
  */
- 
+
 package ovt.event;
 
 import java.beans.*;
 
-/** 
+/**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class MagPropsEvent extends javax.swing.event.ChangeEvent {
 
   private final int changed;
-  
+
   /** Creates new MagPropsEvent */
   public MagPropsEvent(Object source, int changed) {
     super(source);
     this.changed = changed;
   }
-  
+
   public int whatChanged() {
     return changed;
   }
-  
+
   public String toString() {
     return "source="+source+", whatChanged="+changed;
   }

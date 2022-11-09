@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -41,14 +41,14 @@ public class MagActivity implements Cloneable {
 /** KP Index */
    public double KPindex;
 
-/** Interplanetary magnetic field. It has 3 components: Bx, By, Bz */       
+/** Interplanetary magnetic field. It has 3 components: Bx, By, Bz */
    public double[] imf = {0, 0, 0};
 
 /** Solar wind pressue <code>0.5</code> to <code>10</code> nT */
-public double PSW = 4;       
+public double PSW = 4;
 
 /** DSTIndex.  Range from <code>-100</code> to <code>20</code>  nT */
-public double DSTindex = -40;  
+public double DSTindex = -40;
 
 /** Create the object */
 MagActivity() { }

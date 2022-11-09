@@ -72,34 +72,34 @@ public class GroundStationCustomizer extends JFrame
 implements CoreSource
 {
     private GroundStation groundStation;
-    
+
     /** Creates new GroundStationCustomizer */
     public GroundStationCustomizer(GroundStation gStation) {
         super();
 
         this.groundStation = gStation;
         setTitle("Ground station properties");
-        
+
         addWindowListener(new WindowAdapter() {
-          public void windowClosing(WindowEvent e) 
+          public void windowClosing(WindowEvent e)
           {
 //DBG*/     System.out.println("GroundStationCustomizer: Window closing");
             groundStation.setCustomizerVisible(false);
           }
         });
-        
+
         Container cont = getContentPane();
         cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
-        
+
         cont.add(propertyEditor("name"));
         cont.add(propertyEditor("type"));
         cont.add(propertyEditor("latitude"));
         cont.add(propertyEditor("longitude"));
-        
+
         // ------------------- close button -------------------
         JPanel panel = new JPanel();
         panel.setLayout(new FlowLayout(FlowLayout.CENTER));
-        
+
         JButton button = new JButton("    OK    ");
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
@@ -108,14 +108,14 @@ implements CoreSource
         });
         panel.add(button);
         cont.add(panel);
-        
+
         pack();
         setResizable(false);
 //        Point xyz_loc = getCore().getXYZWin().getLocation();
 //        setLocation(xyz_loc.x+16, xyz_loc.y+16);
         Utils.setInitialWindowPosition(this, getCore().getXYZWin());
     }
-    
+
     private JPanel propertyEditor(String propertyName) {
         JPanel panel = new JPanel(false);   // doublebuffered = false
         panel.setLayout(new FlowLayout(FlowLayout.RIGHT));

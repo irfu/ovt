@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,20 +35,20 @@ Khotyaintsev
  *
  * Created on March 4, 2000, 6:28 PM
  */
- 
+
 package ovt.datatype;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class MinutesAndSeconds {
 
   protected int mins = 0;
   protected int secs = 0;
   protected double in_days = 0;
-  
+
   /** Creates new MinutesAndSeconds */
   public MinutesAndSeconds(double in_days) throws IllegalArgumentException {
     if (in_days*24 > 1) throw new IllegalArgumentException("The value is larger than 1 hour.");
@@ -56,7 +56,7 @@ public class MinutesAndSeconds {
     mins = (int)(in_days*Time.MINUTES_IN_DAY);
     secs = (int)(in_days*Time.SECONDS_IN_DAY - mins*60);
   }
-  
+
   public MinutesAndSeconds(String text) throws IllegalArgumentException {
     // text format : "MM:SS"
     String errorMsg = "Time format: MM:SS";
@@ -64,41 +64,41 @@ public class MinutesAndSeconds {
     try {
       int m = Integer.valueOf(text.substring(0,2)).intValue();
       int s = Integer.valueOf(text.substring(3,5)).intValue();
-      
+
       if ((m > 60) || (s > 59)) throw new IllegalArgumentException(errorMsg);
       mins = m;
       secs = s;
       in_days = (double)mins/(double)Time.MINUTES_IN_DAY + (double)secs/(double)Time.SECONDS_IN_DAY;
     } catch (NumberFormatException e2) { throw new IllegalArgumentException(errorMsg);}
   }
-  
+
   public String toString() {
     return "" + ((mins<10)? "0" : "") + mins + ":" + ((secs<10)? "0" : "")+secs;
   }
-  
+
   public int getMins()
     { return mins; }
-    
+
   public int getSecs()
     { return secs; }
-  
+
   public double getInDays()
     { return in_days; }
-    
+
   public static double getInDays(String minAndSec) {
     MinutesAndSeconds m = new MinutesAndSeconds(minAndSec);
     return m.getInDays();
   }
-    
-  public static String toString(double in_days) throws IllegalArgumentException 
+
+  public static String toString(double in_days) throws IllegalArgumentException
     { return new MinutesAndSeconds(in_days).toString(); }
-    
-  
+
+
   /** Informal test code. */
   public static void main(String argv[]) {
       MinutesAndSeconds ms = new MinutesAndSeconds("54:01");
       //System.out.println(ms.toString()+" days: "+ms.getInDays());
-      
+
       MinutesAndSeconds ms2 = new MinutesAndSeconds(ms.getInDays());
       //System.out.println(ms2.toString());
   }

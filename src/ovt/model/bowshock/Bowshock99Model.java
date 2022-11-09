@@ -11,7 +11,7 @@
  * This is the OVT model of BowShock according to
  * (1) Farris et al, GRL, v. 18, p.1821, 1991, and
  * (2) Cairns et al., JGR, v.100, p.47, 1995.
- * 
+ *
  * NOTE: Uncertain what the "99" in the class name comes from. Note that the referenced
  * articles are NOT from 1999.
  */
@@ -56,7 +56,7 @@ public class Bowshock99Model {
      * Note e.g. that the value decreases toward a non-zero constant when
      * machNumber^2 --> infinity and is very constant except for very low machNumber.
      * /Erik P G Johansson 2015-10-09 (who did NOT write the function)
-     * 
+     *
      */
         return 19.0 * Math.pow(1.8 / swp, 0.1666666666666) * (1.0 + 1.1 * (machNumber * machNumber + 3.0) / (4.0 * machNumber * machNumber));
     }
@@ -130,7 +130,7 @@ public class Bowshock99Model {
         double k = getK(swp, machNumber);
         double x_shift = k * e / oe2;
         Ellipsoid el = new Ellipsoid(k / soe2, 1 - 1 / soe2);
-        
+
         // NOTE: Uses x as z coordinate since getMinDistance uses this as symmetry axis.
         return el.getMinDistance(gsm[1], gsm[2], gsm[0] + x_shift, eMax);
     }
@@ -213,7 +213,7 @@ public class Bowshock99Model {
      public double[] rotatedBS(double swp,double[] inXYZ){
      double[] outXYZ=new double[3];
      double teta,r,vabs1;
-      
+
      teta=Math.atan2(inXYZ[1],inXYZ[0]);
      r=getR(teta,swp);
      for(int i=0;i<3;++i)

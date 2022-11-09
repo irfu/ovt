@@ -35,7 +35,7 @@ public class IntHashtable extends Dictionary implements Cloneable
     /// The load factor for the hashtable.
     private float loadFactor;
 
-    /// Constructs a new, empty hashtable with the specified initial 
+    /// Constructs a new, empty hashtable with the specified initial
     // capacity and the specified load factor.
     // @param initialCapacity the initial number of buckets
     // @param loadFactor a number between 0.0 and 1.0, it defines
@@ -54,7 +54,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	threshold = (int) ( initialCapacity * loadFactor );
 	}
 
-    /// Constructs a new, empty hashtable with the specified initial 
+    /// Constructs a new, empty hashtable with the specified initial
     // capacity.
     // @param initialCapacity the initial number of buckets
     public IntHashtable( int initialCapacity )
@@ -70,7 +70,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	this( 101, 0.75f );
 	}
 
-    /// Returns the number of elements contained in the hashtable. 
+    /// Returns the number of elements contained in the hashtable.
     public int size()
 	{
 	return count;
@@ -89,7 +89,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	return new IntHashtableEnumerator( table, true );
 	}
 
-    /// Returns an enumeration of the elements. Use the Enumeration methods 
+    /// Returns an enumeration of the elements. Use the Enumeration methods
     // on the returned object to fetch the elements sequentially.
     // @see IntHashtable#keys
     public synchronized Enumeration elements()
@@ -100,7 +100,7 @@ public class IntHashtable extends Dictionary implements Cloneable
     /// Returns true if the specified object is an element of the hashtable.
     // This operation is more expensive than the containsKey() method.
     // @param value the value that we are looking for
-    // @exception NullPointerException If the value being searched 
+    // @exception NullPointerException If the value being searched
     // for is equal to null.
     // @see IntHashtable#containsKey
     public synchronized boolean contains( Object value )
@@ -135,7 +135,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	return false;
 	}
 
-    /** Gets the object associated with the specified key in the 
+    /** Gets the object associated with the specified key in the
      * hashtable.
      * @param key The specified key
      * @return The element for the key or null if the key
@@ -196,15 +196,15 @@ public class IntHashtable extends Dictionary implements Cloneable
 
     /// Puts the specified element into the hashtable, using the specified
     // key.  The element may be retrieved by doing a get() with the same key.
-    // The key and the element cannot be null. 
+    // The key and the element cannot be null.
     // @param key the specified key in the hashtable
     // @param value the specified element
-    // @exception NullPointerException If the value of the element 
+    // @exception NullPointerException If the value of the element
     // is equal to null.
     // @see IntHashtable#get
     // @return the old value of the key, or null if it did not have one.
     public synchronized Object put( int key, Object value ) {
-        
+
 	// Make sure the value is not null.
 	if ( value == null ) {
 	    throw new NullPointerException();
@@ -229,7 +229,7 @@ public class IntHashtable extends Dictionary implements Cloneable
 	    // Rehash the table if the threshold is exceeded.
 	    rehash();
 	    return put( key, value );
-	    } 
+	    }
 
 	// Creates the new entry.
 	IntHashtableEntry e = new IntHashtableEntry();
@@ -373,7 +373,7 @@ class IntHashtableEnumerator implements Enumeration
 	this.keys = keys;
 	this.index = table.length;
 	}
-	
+
     public boolean hasMoreElements()
 	{
 	if ( entry != null )

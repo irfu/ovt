@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,13 +35,13 @@ Khotyaintsev
  *
  * Created on March 23, 2000, 11:07 AM by ko
  */
- 
+
 package ovt.datatype;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class GeiAndVei extends Object {
   public double[] gei;

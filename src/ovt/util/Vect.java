@@ -6,7 +6,7 @@
   Version:   $Revision: 2.6 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -46,7 +46,7 @@ public class Vect {
       res[i] = vector1[i] + vector2[i];
     return res;
   }
-  
+
   //added by kono
   /** Result = vector1 - vector2 */
   public static double[] sub(double[] vector1, double[] vector2) {
@@ -55,7 +55,7 @@ public class Vect {
       res[i] = vector1[i] - vector2[i];
     return res;
   }
-  
+
   /** Returns the angle (radians) between two vectors in the range of 0 to pi.
    * Returns pi/2 if any of vectors has a zero size.
    */
@@ -67,8 +67,8 @@ public class Vect {
      //return Math.atan2(absv(v3),dotprd/abs1x2);
      return Math.acos(dot(v1, v2)/abs1x2);
   }
- 
-  
+
+
   /** Returns the angle between two vectors v1 and v2 in the range of -pi to pi.
    * The rotationAxis is used to determine if the angle
    * is negative or positive. It is not precise, it just indicates the positive angle
@@ -80,35 +80,35 @@ public class Vect {
    * @return the angle (radians) between two vectors v1 and v2 in the range of
    *         -pi to pi.
    */
-  public static double angleOf2vect(double[] v1, double[] v2, 
+  public static double angleOf2vect(double[] v1, double[] v2,
                                double[] rotationAxis){
      double abs1x2=absv(v1)*absv(v2);
      if(abs1x2==0.0)
         return 0.5*Math.PI;
      // factorize v2 to parallel and perpendicular components to v1
-     
+
      double[] e_par  = norm(v1);
      double v2_par_magnitude  = dot(v2,e_par);
-     
+
      double[] e3 = crossn(v1,v2);
-     
+
      double[] e_perp = crossn(e3,e_par);
-     
+
      double v2_perp_magnitude = dot(v2,e_perp);
-     
+
      // project basis vector e3 to rotation Axis (dot(.,.)), if projection < 0
      // it means that basis vector e3 was wrongly directed (it should be reverted)
      // one could revert it before or revert the result. We revert the result.
      if (dot(e3,rotationAxis) < 0) v2_perp_magnitude = -1*v2_perp_magnitude;
-     
+
      /*System.out.println("par="+v2_par_magnitude+" perp="+v2_perp_magnitude +
         " abs="+Math.sqrt(v2_par_magnitude*v2_par_magnitude +
         v2_perp_magnitude*v2_perp_magnitude));*/
-          
+
      return Math.atan2( v2_perp_magnitude, v2_par_magnitude );
   }
 
-  
+
   public static double cosAngle(double[] v1, double[] v2){
     double v3_2 = absv2(sub(v1, v2));
     double v1_2 = absv2(v1);
@@ -124,15 +124,15 @@ public class Vect {
       res[i] = vector[i] * v;
     return res;
   }
-  
-  
+
+
 /** Absolute value (magnitude) of 3-vector. */
 public static double absv(double vec[]) {
     double sum = 0;
 
     for (int i=0; i<3; i++)
         sum += vec[i]*vec[i];
-		
+
     return Math.sqrt(sum);
 }
 
@@ -156,14 +156,14 @@ public static double distance(double[] pos1, double[] pos2) {
 }
 
 
-    
+
 /** Square of absolute value of 3-vector. */
 public static double absv2(double vec[]) {
     double sum = 0;
 
     for (int i=0; i<3; i++)
         sum += vec[i]*vec[i];
-		
+
     return sum;
 }
 
@@ -202,7 +202,7 @@ public static double[] norm(double vec[]) {
 public static double  dot(double a[], double b[]) {
     double  ret_val = 0.0;
     for (int i=0; i<3; i++) {
-        ret_val += a[i] * b[i]; 
+        ret_val += a[i] * b[i];
     }
     return (ret_val);
 }
@@ -217,10 +217,10 @@ public static double  dot(double a[], double b[]) {
 
 /** Vector product c = a x b.
  */
-public static void cross(double a[], double b[], double c[]) {	
+public static void cross(double a[], double b[], double c[]) {
     c[0] = a[1] * b[2] - a[2] * b[1];
     c[1] = a[2] * b[0] - a[0] * b[2];
-    c[2] = a[0] * b[1] - a[1] * b[0];	
+    c[2] = a[0] * b[1] - a[1] * b[0];
 }
 
 
@@ -263,8 +263,8 @@ public static boolean equal(double[] vector1, double[] vector2) {
 
 /** Returns true if vectors are equal within the eps tolorance. */
 public static boolean equal(double[] vector1, double[] vector2, double eps) {
-    if ((Math.abs(vector1[0] - vector2[0]) < eps) && 
-        (Math.abs(vector1[1] - vector2[1]) < eps) && 
+    if ((Math.abs(vector1[0] - vector2[0]) < eps) &&
+        (Math.abs(vector1[1] - vector2[1]) < eps) &&
         (Math.abs(vector1[2] - vector2[2]) < eps)) return true;
     else return false;
 }

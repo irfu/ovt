@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,34 +35,34 @@ Khotyaintsev
  *
  * Created on March 24, 2000, 3:28 PM
  */
- 
+
 package ovt.mag;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 
 public class ModelTypes {
   protected int internal;
   protected int external;
-   
+
   /** Creates new ModelType */
   public ModelTypes(int internal,int external) {
     this.internal = internal;
     this.external = external;
   }
-  
+
   public ModelTypes(ModelTypes modelT) { //added by kono
     this.internal = modelT.getInternal();
     this.external = modelT.getExternal();
   }
-  
+
   public int getInternal() {
     return internal;
   }
-  
+
   public int getExternal() {
     return external;
   }

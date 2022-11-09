@@ -6,7 +6,7 @@
   Version:   $Revision: 2.4 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -46,11 +46,11 @@ public double fraction = -1;              /* are used to minimize roundoff probl
 public Julian(double mjd) {
 	Time time = new Time(mjd);
 	time.setTime(time.getYear(), time.getMonth(), time.getDay(), 0, 0, 0);
-	
+
 	double mj0 = time.getMjd();
-    
+
     integer = mj0 + J1950;
-    fraction = mjd-mj0; 
+    fraction = mjd-mj0;
 }
 
 /** NOTE: Odd construct: static function used to extract data variables data from instance. */
@@ -63,7 +63,7 @@ public double getMjd() {
 }
 
 
-/*------------------------------------------------------ 
+/*------------------------------------------------------
     FUNCTION:
        greenwich mean sideral time (radians)
        for modified julian day (mjd)

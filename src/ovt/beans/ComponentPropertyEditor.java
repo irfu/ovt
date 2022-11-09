@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,21 +35,21 @@ Khotyaintsev
  *
  * Created on March 7, 2000, 3:32 PM
  */
- 
+
 package ovt.beans;
 
 import java.beans.*;
 import java.awt.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class ComponentPropertyEditor extends GUIPropertyEditor {
 
   protected Component component = null;
-  
+
   /** Creates new ComponentPropertyEditor */
   public ComponentPropertyEditor(BasicPropertyDescriptor pd) {
     super(pd);
@@ -64,8 +64,8 @@ public class ComponentPropertyEditor extends GUIPropertyEditor {
   public ComponentPropertyEditor(BasicPropertyDescriptor pd, int[] values, String[] tags) {
     super(pd, values, tags);
   }
-  
-  
+
+
   /** If the editor needs custom editor it has to be returned here.
    *
    * @return GUI Editor
@@ -73,7 +73,7 @@ public class ComponentPropertyEditor extends GUIPropertyEditor {
   public Component getComponent() {
     return component;
   }
-  
+
   public void setComponent(Component comp) {
     component = comp;
     try {

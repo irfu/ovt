@@ -3,7 +3,7 @@ package ovt.object;
 import java.beans.*;
 
 public class GroundStationBeanInfo extends SimpleBeanInfo {
-    
+
 
     // Bean descriptor //GEN-FIRST:BeanDescriptor
     private static BeanDescriptor beanDescriptor = new BeanDescriptor  ( GroundStation.class , null );
@@ -13,12 +13,12 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     }
 
     static {//GEN-HEADEREND:BeanDescriptor
-        
+
         // Here you can add code for customizing the BeanDescriptor.
-        
+
 }//GEN-LAST:BeanDescriptor
-    
-    
+
+
     // Property identifiers //GEN-FIRST:Properties
     private static final int PROPERTY_visible = 0;
     private static final int PROPERTY_scale = 1;
@@ -29,7 +29,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     private static final int PROPERTY_color = 6;
     private static final int PROPERTY_type = 7;
 
-    // Property array 
+    // Property array
     private static PropertyDescriptor[] properties = new PropertyDescriptor[8];
 
     private static PropertyDescriptor[] getPdescriptor(){
@@ -48,11 +48,11 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
             properties[PROPERTY_type] = new PropertyDescriptor ( "type", GroundStation.class, "getType", "setType" );
         }
         catch( IntrospectionException e) {}//GEN-HEADEREND:Properties
-        
+
         // Here you can add code for customizing the properties array.
-        
+
 }//GEN-LAST:Properties
-    
+
     // EventSet identifiers//GEN-FIRST:Events
 
     // EventSet array
@@ -62,36 +62,36 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
         return eventSets;
     }
 //GEN-HEADEREND:Events
-        
+
         // Here you can add code for customizing the event sets array.
-        
+
   //GEN-LAST:Events
-    
+
     // Method identifiers //GEN-FIRST:Methods
 
-    // Method array 
+    // Method array
     private static MethodDescriptor[] methods = new MethodDescriptor[0];
 
     private static MethodDescriptor[] getMdescriptor(){
         return methods;
     }
 //GEN-HEADEREND:Methods
-        
+
         // Here you can add code for customizing the methods array.
-        
+
   //GEN-LAST:Methods
-    
-    
+
+
     private static final int defaultPropertyIndex = -1;//GEN-BEGIN:Idx
     private static final int defaultEventIndex = -1;//GEN-END:Idx
-    
-    
+
+
  //GEN-FIRST:Superclass
-    
+
     // Here you can add code for customizing the Superclass BeanInfo.
-    
+
  //GEN-LAST:Superclass
-    
+
     /**
      * Gets the bean's <code>BeanDescriptor</code>s.
      *
@@ -102,7 +102,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     public BeanDescriptor getBeanDescriptor() {
         return getBdescriptor();
     }
-    
+
     /**
      * Gets the bean's <code>PropertyDescriptor</code>s.
      *
@@ -118,7 +118,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     public PropertyDescriptor[] getPropertyDescriptors() {
         return getPdescriptor();
     }
-    
+
     /**
      * Gets the bean's <code>EventSetDescriptor</code>s.
      *
@@ -129,7 +129,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     public EventSetDescriptor[] getEventSetDescriptors() {
         return getEdescriptor();
     }
-    
+
     /**
      * Gets the bean's <code>MethodDescriptor</code>s.
      *
@@ -140,7 +140,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     public MethodDescriptor[] getMethodDescriptors() {
         return getMdescriptor();
     }
-    
+
     /**
      * A bean may have a "default" property that is the property that will
      * mostly commonly be initially chosen for update by human's who are
@@ -152,7 +152,7 @@ public class GroundStationBeanInfo extends SimpleBeanInfo {
     public int getDefaultPropertyIndex() {
         return defaultPropertyIndex;
     }
-    
+
     /**
      * A bean may have a "default" event that is the event that will
      * mostly commonly be used by human's when using the bean.

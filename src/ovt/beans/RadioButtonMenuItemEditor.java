@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 5, 2000, 7:21 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.gui.Style;
@@ -44,10 +44,10 @@ import java.beans.*;
 import javax.swing.*;
 import java.awt.event.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class RadioButtonMenuItemEditor extends MenuItemEditor {
 
@@ -56,7 +56,7 @@ public class RadioButtonMenuItemEditor extends MenuItemEditor {
   public RadioButtonMenuItemEditor(MenuPropertyEditor ed) {
     super(ed);
   }
-  
+
   public JMenuItem[] getMenuItems() {
     if (mItems == null) {
       // create menu items
@@ -74,11 +74,11 @@ public class RadioButtonMenuItemEditor extends MenuItemEditor {
         menuItem.setEnabled(getEditor().isEnabled());
         mItems[i] = menuItem;
       }
-      
+
     }
     return mItems;
   }
-  
+
   public void actionPerformed(ActionEvent ae) {
     try {
       JMenuItem mItem = (JMenuItem)(ae.getSource());
@@ -88,7 +88,7 @@ public class RadioButtonMenuItemEditor extends MenuItemEditor {
       System.out.println(getClass().getName() + "->" + e2);
     }
   }
-  
+
   public void propertyChange(PropertyChangeEvent event) {
     if (event.getPropertyName().equals(getEditor().getPropertyName())) {
       JMenuItem menuItem;
@@ -102,5 +102,5 @@ public class RadioButtonMenuItemEditor extends MenuItemEditor {
     }
     super.propertyChange(event);
   }
-  
+
 }

@@ -6,7 +6,7 @@
  Version:   $Revision: 1.00 $
 
 
- Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Copyright (c) 2000-2015 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev, Erik P. G. Johansson, Fredrik Johansson)
  All rights reserved.
 
@@ -45,7 +45,7 @@ import ovt.interfaces.TimeChangeListener;
  *
  * NOTE: Only works for instance methods, but not for static methods and not for
  * (instance/static) variables.
- * 
+ *
  * NOTE: Analogous with ovt.mag.MagPropsInterface.
  *
  * @author Erik P G Johansson, erik.johansson@irfu.se, IRF Uppsala, Sweden

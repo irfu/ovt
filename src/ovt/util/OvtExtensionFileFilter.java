@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -76,21 +76,21 @@ public boolean accept(File f) {
 	boolean accept = false;
 	String ext, name = f.getName();
 
-	//System.out.println(name);	
-	
+	//System.out.println(name);
+
 	if (f.isDirectory()) return true;
-	
+
 	if (allExtensions) return true;
-	
-	
+
+
 	Enumeration e = extensions.elements();
-	
+
 	while ((e.hasMoreElements()) && !accept) {
-		
+
 		ext = (String)e.nextElement();
-		
+
 		if (name.length() < ext.length()+2) return false;
-		
+
 		if (name.substring(name.length() - ext.length(), name.length()).equalsIgnoreCase(ext))
 			accept = true;
 	}

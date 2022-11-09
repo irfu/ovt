@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 5:23 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.event.*;
@@ -43,17 +43,17 @@ import ovt.interfaces.*;
 
 import java.util.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class CoordinateSystemChangeSupport extends Object {
 
   private Vector coordinateSystemChangeListeners = new Vector();
   private Object source = null;
 
-  
+
   /** Creates new CoordinateSystemsChangeSupport */
   public CoordinateSystemChangeSupport(Object source) {
     this.source = source;
@@ -71,7 +71,7 @@ public class CoordinateSystemChangeSupport extends Object {
     Enumeration e = coordinateSystemChangeListeners.elements();
     fireCoordinateSystemChange(evt, e);
   }
-  
+
   /** Deliver event evt to all elements of enumeration e */
   public static void fireCoordinateSystemChange(CoordinateSystemEvent evt, Enumeration e) {
     while (e.hasMoreElements()) {
@@ -82,14 +82,14 @@ public class CoordinateSystemChangeSupport extends Object {
       } catch (ClassCastException e2) {}
     }
   }
-  
+
   public void fireCoordinateSystemChange(int window, int old_cs, int new_cs) {
     CoordinateSystemEvent evt = new CoordinateSystemEvent(source, window, old_cs, new_cs);
     fireCoordinateSystemChange(evt);
   }
-  
+
   public boolean hasListener(CoordinateSystemChangeListener listener) {
     return coordinateSystemChangeListeners.contains(listener);
   }
-    
+
 }

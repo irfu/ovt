@@ -6,7 +6,7 @@
   Version:   $Revision: 2.5 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 22, 2000, 2:27 PM
  */
- 
+
 package ovt.beans;
 
 import ovt.*;
@@ -44,30 +44,30 @@ import ovt.interfaces.*;
 import java.beans.*;
 import java.util.*;
 import ovt.util.Log;
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public class OVTPropertyChangeSupport {
-  
+
   protected Object sourceBean;
   protected Vector propertyListeners = new Vector();
   /** Contains (propertyName), (Vector of propertylisteners) pairs*/
   protected Hashtable specificPropertyListeners = new Hashtable();
-  
+
   public OVTPropertyChangeSupport(Object sourceBean) {
     this.sourceBean = sourceBean;
   }
- 
+
   public void addPropertyChangeListener (PropertyChangeListener listener) {
     propertyListeners.addElement (listener);
   }
-  
+
   public void removePropertyChangeListener (PropertyChangeListener listener) {
     propertyListeners.removeElement (listener);
   }
-  
+
   public void removePropertyChangeListener (String propertyName, PropertyChangeListener listener) {
     Vector listeners = (Vector)specificPropertyListeners.get(propertyName);  // Returns null for non-existing propertyName.
     //if (listeners == null) {
@@ -75,7 +75,7 @@ public class OVTPropertyChangeSupport {
         listeners.remove(listener);
     }
   }
-  
+
   public void addPropertyChangeListener (String propertyName, PropertyChangeListener listener) {
     Vector listeners = (Vector)specificPropertyListeners.get(propertyName);
     if (listeners == null) {
@@ -86,13 +86,13 @@ public class OVTPropertyChangeSupport {
       listeners.addElement(listener);
     }
   }
-  
+
   public void firePropertyChange(PropertyChangeEvent evt) {
     deliverEvent(propertyListeners, evt);
     Vector listeners = (Vector)specificPropertyListeners.get(evt.getPropertyName());
     if (listeners != null) deliverEvent(listeners, evt);
   }
-  
+
   protected static void deliverEvent(Vector propertyListeners, PropertyChangeEvent evt) {
     Enumeration e = propertyListeners.elements();
     PropertyChangeListener propertyListener;
@@ -111,19 +111,19 @@ public class OVTPropertyChangeSupport {
       propertyListener.propertyChange(evt);
     }
   }
-  
+
   public void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
     PropertyChangeEvent evt = new PropertyChangeEvent(sourceBean, propertyName, oldValue, newValue);
     firePropertyChange(evt);
   }
-  
+
   public void removeAllPropertyChangeListeners() {
     propertyListeners.removeAllElements();
     specificPropertyListeners.clear();
   }
-  
+
   public String toString() {
     return "OVTPropertyChangeSupport has "+propertyListeners.size() + "listeners and "+specificPropertyListeners.size()+" listeners of specific property";
   }
-    
+
 }

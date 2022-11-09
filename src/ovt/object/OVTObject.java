@@ -1,33 +1,33 @@
 /*=========================================================================
- 
+
   Program:   Orbit Visualization Tool
   Source:    $Source: /stor/devel/ovt2g/ovt/object/OVTObject.java,v $
   Date:      $Date: 2003/09/28 17:52:50 $
   Version:   $Revision: 2.7 $
- 
- 
+
+
 Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
- 
+
 Redistribution and use in source and binary forms, with or without
 modification is permitted provided that the following conditions are met:
- 
+
  * No part of the software can be included in any commercial package without
 written consent from the OVT team.
- 
+
  * Redistributions of the source or binary code must retain the above
 copyright notice, this list of conditions and the following disclaimer.
- 
+
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS ``AS
 IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
 THE IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
 IN NO EVENT SHALL THE AUTHORS OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT OR
 INDIRECT DAMAGES  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE.
- 
+
 OVT Team (https://ovt.irfu.se)   K. Stasiewicz, M. Khotyaintsev, Y.
 Khotyaintsev
- 
+
 =========================================================================*/
 
 /*
@@ -51,14 +51,14 @@ import javax.swing.*;
  * The root class for all OVT objects. Many (but not all) instances of (subclasses of) this class
  * represent nodes in the "GUI tree" in the left panel (e.g. MagProps is a subclass but does not
  * represent a node in the "GUI tree").
- * 
+ *
  * @author  Mykola Khotyaintsev
  * @version
  */
 public class OVTObject implements NamedObject, OVTTreeNode,
             DescriptorsSource, Enableable {
-    
-    
+
+
   /** Holds value of property name. */
     protected String name = "no name";
   /** Holds value of property parent. */
@@ -81,19 +81,19 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     private boolean enabled = true;
   /** Holds value of property icon. */
     private ImageIcon icon = null;
-    
+
   /** Holds value of property showInTree. */
     private boolean showInTree = true;
-    
+
   /** Creates new OVTObject */
     public OVTObject() {
     }
-    
+
   /** Creates new OVTObject */
     public OVTObject(String name) {
         setName(name);
     }
-    
+
   /** Getter for property name.
    * @return Value of property name.
    */
@@ -108,29 +108,29 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         this.name = newValue;
         if (!oldValue.equals(newValue)) firePropertyChange("name", oldValue, newValue);
     }
-    
+
   /** Getter for property parent.
    * @return Value of property parent.
    */
     public OVTObject getParent() {
         return parent;
     }
-    
+
   /** Setter for property parent.
    * @param parent New value of property parent.
    */
     public void setParent(OVTObject parent) {
         this.parent = parent;
     }
-    
-    
+
+
   /** Add a PropertyChangeListener to the listener list.
    * @param l The listener to add.
    */
     public void addPropertyChangeListener(java.beans.PropertyChangeListener l) {
         propertyChangeSupport.addPropertyChangeListener (l);
     }
-    
+
   /** Add a PropertyChangeListener to the listener list.
    * this is valid for JDK 1.1
    * @param l The listener to add.
@@ -149,14 +149,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     public void removePropertyChangeListener(java.beans.PropertyChangeListener l) {
         propertyChangeSupport.removePropertyChangeListener (l);
     }
-    
+
   /** Removes a PropertyChangeListener from the listener list.
    * @param l The listener to remove.
    */
     public void removePropertyChangeListener(String property, java.beans.PropertyChangeListener l) {
         propertyChangeSupport.removePropertyChangeListener (property, l);
     }
-    
+
   /** Add a VetoableChangeListener to the listener list.
    * @param l The listener to add.
    */
@@ -169,14 +169,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     public void removeVetoableChangeListener(java.beans.VetoableChangeListener l) {
         vetoableChangeSupport.removeVetoableChangeListener (l);
     }
-    
+
   /** Fires property change
    *
    */
     protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
         propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
     }
-    
+
   /** Getter for property children.
    * @return Value of property children.
    */
@@ -187,29 +187,29 @@ public class OVTObject implements NamedObject, OVTTreeNode,
    * @param children New value of property children.
    *
    * @throws PropertyVetoException
-   
+
     public void setChildren(Children children) {
         Children oldChildren = this.children;
         this.children = children;
         propertyChangeSupport.firePropertyChange ("children", oldChildren, children);
     }*/
-    
-    
-    
+
+
+
   /** Getter for property descriptors.
    * @return Value of property descriptors.
    */
     public Descriptors getDescriptors() {
         return descriptors;
     }
-    
+
   /** Setter for property descriptors.
    * @param descriptors New value of property descriptors.
    */
     public void setDescriptors(Descriptors descriptors) {
         this.descriptors = descriptors;
     }
-    
+
     public boolean isValid() {
         return valid;
     }
@@ -219,7 +219,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     public void invalidate() {
         valid = false;
     }
-    
+
   /** Getter for property enabled.
    * @return Value of property enabled.
    */
@@ -234,8 +234,8 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         this.enabled = enabled;
         firePropertyChange("enabled", new Boolean(oldValue), new Boolean(enabled));
     }
-    
-    
+
+
   /** Getter for property icon.
    * @return Value of property icon.
    */
@@ -248,13 +248,13 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
     }
-    
-    
-    
+
+
+
     public boolean isLeaf() {
         return (getChildren() == null);
     }
-    
+
   /** Returns the number of levels above this node -- the distance from the
    * root to this node. If this node is the root, returns 0.
    * @return the number of levels above this node
@@ -267,7 +267,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
             p = p.getParent();
         return i;
     }
-    
+
   /** Returns the path from the root, to get to this node. */
     public OVTObject[] getPath() {
         int level = getLevel();
@@ -278,7 +278,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         }
         return path;
     }
-    
+
   /** Returns the path from the root, to get to this node. */
     public String[] getPathStringArray() {
         int level = getLevel();
@@ -290,7 +290,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         }
         return path;
     }
-    
+
   /** Returns the path from the root, to get to this node. */
     public String getPathString() {
         String[] path = getPathStringArray();
@@ -299,14 +299,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
             res += "." + path[i];
         return res;
     }
-    
+
     public static String path2String(String[] path) {
         String res = path[0];
         for (int i=1; i<path.length; i++)
             res+= path[i];
         return res;
     }
-    
+
     /** executes {@link ovt.datatype.Children#addChild(ovt.object.OVTObject) addChild()} method
      * of {@link #children this.children}.
      * <p>
@@ -316,22 +316,22 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         //if (children == null) children = new Children();
         //child.setParent(this);
         children.addChild(child);
-        
+
         // Presumably disabled because the caller should do this manually instead.
         // Better if caller can do all its changes first (e.g. add many children), and then "fire" once.
         //children.fireChildAdded(child);
     }
-    
+
     /** removes child from children and does not fire <CODE>children.fireChildRemoved(child)</CODE> !!!
     public void removeChild(OVTObject child) throws IllegalArgumentException { // by oleg
         if (child.getParent() != this) throw new IllegalArgumentException(getName() + " is not a child.");
         children.remove(child);
         //children.fireChildRemoved(child);
     }*/
-    
+
     /* It's not a good method
      everybody should implemment this by themselvs.
-     
+
     public void removeSelf() { // by oleg
         //DBG*    System.out.println("OVTObject::removeSelf()");
         OVTObject parent = this.getParent();
@@ -343,14 +343,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         parent.getChildren().remove(this);
         parent.getChildren().fireChildRemoved(this);
     } */
-    
-    /** 
-     * Destructor. 
-     * <li> disposes all WindowedPropertyEditors 
+
+    /**
+     * Destructor.
+     * <li> disposes all WindowedPropertyEditors
      * <li> removes all propertyListeners
      * <li> disposes all children (calls child.dispose() method)
      * <p>
-     * One has to redefine this method if the object has something to dispose 
+     * One has to redefine this method if the object has something to dispose
      * (like customizer) or unregister itself as a listener.
      * <p>
      * The purpose of this method is to remove all pointers to and from this object
@@ -375,14 +375,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         Enumeration e = children.elements();
         while (e.hasMoreElements()) ((OVTObject)e.nextElement()).dispose();
     }
-    
+
     /*
     public OVTObject getChild(String name) throws IllegalArgumentException {
         if (children == null) return null;
         OVTObject obj = children.get(name);
         return obj;
     }*/
-    
+
 /*
   public OVTObject getObject(String[] path) throws IllegalArgumentException {
     OVTObject o = this;
@@ -398,7 +398,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
     Log.log("Found object: " + o.getName(), 5);
     return o;
   }*/
-    
+
     public OVTObject getObject(String path) throws IllegalArgumentException {
         Log.log("Call to getObject with path '" + path + "'", 7);
         StringTokenizer st = new StringTokenizer(path, ".");
@@ -413,7 +413,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
             else throw new IllegalArgumentException("Object not found[1]: " + path);
         } else if (count > 0) {
             Log.log("count > 0 ", 9);
-            OVTObject o = this; OVTObject nextO;            
+            OVTObject o = this; OVTObject nextO;
             String child;
             while (st.hasMoreTokens()) {
                 child = st.nextToken();
@@ -435,13 +435,13 @@ public class OVTObject implements NamedObject, OVTTreeNode,
                 Log.log("current obj = " + o.getName(), 7);
             }
             return o;
-        } 
+        }
         else throw new IllegalArgumentException("Object not found[3]: " + path);
     }
-    
-    
-        
-    
+
+
+
+
 /** returns the PropertyDescriptor */
     public BasicPropertyDescriptor getPD(String propPath) throws IllegalArgumentException {
         Log.log("Call to getPD with path '" + propPath + "'", 5);
@@ -457,7 +457,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         }
         return pd;
     }
-    
+
 /*  public OVTObject getObject(String path) throws IllegalArgumentException {
     Log.log("Call to getObject with path '" + path + "'", 5);
     StringTokenizer st = new StringTokenizer(path, ".");
@@ -473,13 +473,13 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         OVTObject o = getChild(childName);
         return o.getObject(childPath);
     } else throw new IllegalArgumentException("Object '" + path + "' not found.!!???");
- 
+
   }*/
-    
-    
-    
-    
-    
+
+
+
+
+
 /** pathName should be MyName.ChildName.ChildsChildName....*/
   /** pathName should be MyName.ChildName.ChildsChildName....
    * private static Object getObject(String fullName, Object obj)
@@ -508,7 +508,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
    * return getObject(childsChildName, child);
    * }
    * }*/
-    
+
 /**
  * @return weather the object has to be shown in the tree while rendering it.
  */
@@ -516,34 +516,34 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         return showInTree;
     }
 /** Will not be used in future. because all objects in Children should be visible in a TreePanel.
- * If true - the object will to be shown in the {@link ovt.gui.TreePanel TreePanel}. 
+ * If true - the object will to be shown in the {@link ovt.gui.TreePanel TreePanel}.
  * @param showInTree New value of property showInTree.
  * @see ovt.gui.TreePanel
  */
     public void showInTree(boolean showInTree) {
         this.showInTree = showInTree;
     }
-    
-    
+
+
 /* *********************************
  *  Following methods needed for advanced show/hide (c) oleg
  */
-    
+
     /**
      * Visual child = child that is VisibleObject; Visible = isVisible.
      * "Children" here also refers to children of children (recursively).
-     * 
+     *
      * @return 0 - has no visual child;
      * 1 - has at least one visual child, but none is visible;
      * 2 - has at least one visible visual child.
      */
     public int hasVisualChildEx() {
-        
+
         final Children children = getChildren();
         if (children == null) {
             return 0;     // Has no visual child.
         }
-        
+
         // CASE: Has children.
         int rc = 0;
         final Enumeration e = children.elements();
@@ -558,36 +558,36 @@ public class OVTObject implements NamedObject, OVTTreeNode,
                 }
                 rc = 1; // no exception - has visual child
             } catch (ClassCastException e2) {}
-            
+
             final int rec_ret = child.hasVisualChildEx();  // NOTE: Recursive call.
             if (rc < rec_ret) {
                 rc = rec_ret;
             }
         }
-        
+
         //System.out.println("HasVisualChildEx returned " + rc);
         return rc;
     }
-    
+
     public Vector getVisualLeafs() {
         Vector v = new Vector();
         addVisualLeafs(v);
         return v;
     }
-    
+
     public Vector getVisibleLeafs() {
         Vector v = new Vector();
         addVisibleLeafs(v);
         return v;
     }
-    
-    
+
+
     public Vector getVisualChildren() {
         Vector v = new Vector();
         addVisualChildren(v);
         return v;
     }
-    
+
     private boolean addVisualLeafs(Vector v) {
         Children children = getChildren();
         if (children == null) return false;
@@ -604,7 +604,7 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         }
         return hasVisualChild;
     }
-    
+
     private boolean addVisibleLeafs(Vector v) {
         Children children = getChildren();
         if (children == null) return false;
@@ -622,14 +622,14 @@ public class OVTObject implements NamedObject, OVTTreeNode,
         }
         return hasVisualChild;
     }
-    
-    
+
+
     private void addVisualChildren(Vector v) {
         Children children = getChildren();
         if (children == null) {
             return;
         }
-        
+
         Enumeration e = children.elements();
         while(e.hasMoreElements()) {
             OVTObject obj = (OVTObject) e.nextElement();
@@ -639,5 +639,5 @@ public class OVTObject implements NamedObject, OVTTreeNode,
             obj.addVisualChildren(v);    // NOTE: Recursive call.
         }
     }
-    
+
 }

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -45,20 +45,20 @@ protected Image im;
 public TemporaryPrintWindow(String imageFileName) {
 
 	super("Print Preview");
-	
+
 	im = Toolkit.getDefaultToolkit().getImage(imageFileName);
 	//im = Toolkit.getDefaultToolkit().getImage("images/beach.gif");
-	
+
 	//setBounds(100,100,220,330);
-	
-	
+
+
 	setSize(500,500);
 	show();
 
 	//setSize(im.getWidth(this), im.getHeight(this));
-	System.out.println(imageFileName + ": Width = " + im.getWidth(this) + 
+	System.out.println(imageFileName + ": Width = " + im.getWidth(this) +
 					   "Height = " + im.getHeight(this));
-					   
+
 }
 
 public void paint(Graphics g) {

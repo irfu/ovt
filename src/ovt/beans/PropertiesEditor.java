@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -32,10 +32,10 @@ Khotyaintsev
 
 package ovt.beans;
 
-/** 
+/**
  *
  * @author  Yuri Khotyaintsev
- * @version 
+ * @version
  */
 public class PropertiesEditor extends MenuPropertyEditor {
 
@@ -44,18 +44,18 @@ public class PropertiesEditor extends MenuPropertyEditor {
     super(pd, MenuPropertyEditor.SWITCH);
     initialize(new String[]{"Properties ...", "hide"});
   }
-  
+
   /** Creates new PropertiesEditor with tags (showStr/hideStr) */
   public PropertiesEditor(BasicPropertyDescriptor pd, String showStr, String hideStr) {
     super(pd, MenuPropertyEditor.SWITCH);
     initialize(new String[]{showStr, hideStr});
   }
-  
+
   public PropertiesEditor(BasicPropertyDescriptor pd, int type) {
     super(pd, type);
     initialize(new String[]{"show", "hide"});
   }
-  
+
   protected void initialize(String[] tags) {
     setTags(tags);
     setValues(new Object[]{new Boolean(true), new Boolean(false)});

@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,18 +35,18 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 5:38 PM
  */
- 
+
 package ovt.interfaces;
 
 import ovt.event.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 public interface CoordinateSystemChangeListener {
 
   public void coordinateSystemChanged(CoordinateSystemEvent evt);
-  
+
 }

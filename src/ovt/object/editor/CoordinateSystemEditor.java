@@ -6,7 +6,7 @@
   Version:   $Revision: 2.3 $
 
 
-Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
 Yuri Khotyaintsev)
 All rights reserved.
 
@@ -35,7 +35,7 @@ Khotyaintsev
  *
  * Created on March 20, 2000, 6:24 PM
  */
- 
+
 package ovt.object.editor;
 
 import ovt.beans.*;
@@ -48,24 +48,24 @@ import java.awt.*;
 import javax.swing.*;
 import java.util.*;
 
-/** 
+/**
  *
  * @author  root
- * @version 
+ * @version
  */
 //SHould be removed! should extend ComboBoxEditor...
 public class CoordinateSystemEditor extends WindowPropertyEditor {
 
   private Component comp = null;
   private Component[] components = null;
-  
+
 
   /** Creates new CoordinateSystemEditor */
   public CoordinateSystemEditor(BasicPropertyDescriptor pd, int[] intValues) {
     super(pd);
     initialize(intValues);
   }
-  
+
 
   public Component getComponent() {
     if (comp == null) {
@@ -74,17 +74,17 @@ public class CoordinateSystemEditor extends WindowPropertyEditor {
     }
     return comp;
   }
-  
-  
+
+
   public void initialize(int[] intValues) {
     Object[] values = new Object[intValues.length];
     String[] tags = new String[intValues.length];
-    
+
     for (int i=0; i<intValues.length; i++) {
       values[i] = new Integer(intValues[i]);
       tags[i]   = CoordinateSystem.getCoordSystem(intValues[i]);
     }
-    
+
     setTags(tags);
     setValues(values);
     setModal(false);

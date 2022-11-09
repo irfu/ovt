@@ -56,20 +56,20 @@ import javax.swing.*;
 
 /**
  * Represents the window for customizing the displayed time interval.
- * 
+ *
  * NOTE: ovt.gui.TimeSettingsCustomizer seems to be an unused, alternate version of this class.
  *
  * @author  ko
- * @version 
+ * @version
  */
-public class TimeSettingsCustomizer extends CustomizerDialog 
+public class TimeSettingsCustomizer extends CustomizerDialog
     implements TimeChangeListener, WindowListener, PropertyChangeListener
 {
   private TimeSettings timeSettings;
   private JButton applyButton, okButton;
   private TimeSet timeSet;
   private TimeSetCustomizer timeSetCustomizer;
-  
+
   /** Creates new TimeSettingsCustomizer */
   public TimeSettingsCustomizer(TimeSettings ts) {
       super();
@@ -80,35 +80,35 @@ public class TimeSettingsCustomizer extends CustomizerDialog
       this.timeSettings = ts;
       timeSettings.addTimeChangeListener(this);
       timeSet = (TimeSet)timeSettings.getTimeSet().clone();
-      
+
       // make interior
-      
+
       Container cont = getContentPane();
       //cont.setBorder(BorderFactory.createEmptyBorder(5,10,0,10));
       cont.setLayout(new BoxLayout(cont, BoxLayout.Y_AXIS));
-      
+
       timeSetCustomizer = new TimeSetCustomizer();
       timeSetCustomizer.setObject(timeSet);
-      
+
       // listen if customier changes any of the values
-      // to enable apply button 
+      // to enable apply button
       PropertyChangeListener applyButtonStateUpdater = new PropertyChangeListener() {
         public void propertyChange(PropertyChangeEvent evt) {
             applyButton.setEnabled(valuesChanged());
         }
       };
-      
+
       timeSetCustomizer.addPropertyChangeListener("startMjd", applyButtonStateUpdater);
       timeSetCustomizer.addPropertyChangeListener("intervalMjd", applyButtonStateUpdater);
       timeSetCustomizer.addPropertyChangeListener("stepMjd", applyButtonStateUpdater);
-      
+
       cont.add(timeSetCustomizer);
       // ------------------- close, reset buttons ----------------
-      
+
       JPanel panel = new JPanel();
       //panel.setAlignmentX(LEFT_ALIGNMENT);
       panel.setLayout(new java.awt.GridLayout (1, 3, 10, 10));
-      
+
       JButton button = new JButton("Cancel");
       button.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -117,7 +117,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
           }
       });
       panel.add(button);
-      
+
       okButton = new JButton("OK");
       okButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -133,7 +133,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
           }
       });
       panel.add(okButton);
-      
+
       applyButton = new JButton("Apply");
       applyButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent evt) {
@@ -147,7 +147,7 @@ public class TimeSettingsCustomizer extends CustomizerDialog
               }
           }
       });
-      applyButton.setEnabled(false);      
+      applyButton.setEnabled(false);
       /** Make the button "default" so that pressing ENTER triggers the button.
        * NOTE: ENTER usually (in Windows applications in general) triggers the "OK"
        * button so it is not really intuitive. */
@@ -159,15 +159,15 @@ public class TimeSettingsCustomizer extends CustomizerDialog
        * button and "Apply" button since the modifier key can be constantly held
        * down.
        */
-      
+
       applyButton.setMnemonic(java.awt.event.KeyEvent.VK_ENTER);
       panel.add(applyButton);
-      
+
       cont.add(panel);
-      
+
       pack();
       setResizable(false);
-      
+
       // Center the window
       Utils.setInitialWindowPosition(this, null);
     }
@@ -178,7 +178,7 @@ private boolean valuesChanged() {
 }
 
 
-public void windowClosed(java.awt.event.WindowEvent p1) {    
+public void windowClosed(java.awt.event.WindowEvent p1) {
     //System.out.println("windowClosed");
 }
 
@@ -208,14 +208,14 @@ public void windowDeactivated(WindowEvent evt) {
 }
 
   /** Sets previous values */
-private void revert() { 
+private void revert() {
     timeSet = (TimeSet)timeSettings.getTimeSet().clone();
     timeSetCustomizer.setObject(timeSet);
     applyButton.setEnabled(false);
 }
 
 private void applyAction() throws IllegalArgumentException, SyncException {
-    
+
     timeSetCustomizer.sync();
     //Log.log("valuesChanged()="+valuesChanged());
     if (valuesChanged()) {

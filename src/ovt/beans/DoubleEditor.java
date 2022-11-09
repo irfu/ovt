@@ -12,12 +12,12 @@ import java.text.*;
 /**
  *
  * @author  ko
- * @version 
+ * @version
  */
 public class DoubleEditor extends TextFieldEditor {
-    
+
     private DecimalFormat format;
-    
+
     /** Creates new DoubleEditor */
     public DoubleEditor(BasicPropertyDescriptor pd, int precision) {
         super(pd);
@@ -26,7 +26,7 @@ public class DoubleEditor extends TextFieldEditor {
         //format.setPositivePrefix(" ");
         setPrecision(precision);
     }
-    
+
     public String getAsText() {
         double value = ((Double)getValue()).doubleValue();
         String s = format.format(value);
@@ -37,7 +37,7 @@ public class DoubleEditor extends TextFieldEditor {
         }
         return s;
     }
-    
+
     public void setAsText(String value) throws PropertyVetoException {
         //System.out.println("!!!!! value: [" + value + "]");
         Number n = format.parse(value, new ParsePosition(0));
@@ -47,8 +47,8 @@ public class DoubleEditor extends TextFieldEditor {
         if (format.format(dbl.doubleValue()).equals(getAsText())) return; // no change
         setValue(dbl);
     }
-    
-    
+
+
     /** Getter for property precision.
      * @return Value of property precision.
      */

@@ -45,24 +45,24 @@ import ovt.datatype.Children;
  * This event usually propagates from OVTObject.children to OVTNode which
  * will update the TreePanel (JTree).
  * @author  ko
- * @version 
+ * @version
  */
 public class ChildrenEvent extends java.util.EventObject {
 
     public static final int CHILD_ADDED      = 1;
     public static final int CHILD_REMOVED    = 2;
     public static final int CHILDREN_CHANGED = 3;
-    
+
     private int type;
     private OVTObject child;
-    
+
     /** Creates new ChildrenEvent with type <CODE>CHILDREN_CHANGED</CODE> */
     public ChildrenEvent(Children source) {
         super(source);
         type = CHILDREN_CHANGED;
     }
-    
-    /** Creates new ChildrenEvent with type <CODE>CHILDREN_CHANGED</CODE> 
+
+    /** Creates new ChildrenEvent with type <CODE>CHILDREN_CHANGED</CODE>
      *@param tyep can be <CODE>CHILD_ADDED</CODE> or <CODE>CHILD_REMOVED</CODE>
      *@param child the child being added/removed
      */
@@ -71,11 +71,11 @@ public class ChildrenEvent extends java.util.EventObject {
         this.type = type;
         this.child = child;
     }
-    
+
     public int getType() {
         return type;
     }
-    
+
     public OVTObject getChild() {
         return child;
     }

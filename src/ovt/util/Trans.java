@@ -34,7 +34,7 @@ Khotyaintsev, E. P. G. Johansson
 
 /**
  * Trans.java
- * 
+ *
  * Supplies functions for among other things coordinate transformations.
  * One possible source/reference for coordinate transformations is
  * "Space Physics Coordinate Transformations: A User Guide", M. A. Hapgood,
@@ -56,7 +56,7 @@ Khotyaintsev, E. P. G. Johansson
  * transformation matrices is done as
  *     yyy_zzz * xxx_yyy = xxx_zzz
  * .
- * 
+ *
  * Created on March 24, 2000, 1:18 PM
  */
 
@@ -83,7 +83,7 @@ public class Trans {
   /** Equals to 0 */
   public static final int MAGNETIC_DIPOLE  = 0;
   /** Equals to 1 */
-  public static final int ECCENTRIC_DIPOLE = 1; 
+  public static final int ECCENTRIC_DIPOLE = 1;
 
   // Eccentric dipole coordinates derived from IGRF model
   protected double[] Eccrr;
@@ -140,7 +140,7 @@ public class Trans {
     cost = Math.sqrt(1 - sint * sint);
 
     /* Coordinate conversion matrices between coordinate systems.
-    
+
      * NOTE: One of these coordinate transformation is technically redundant
      * since there are enough conversion matrices to represent a loop of
      * transformations GEO->GEID->GSM->GEO (there is one matrix too many).
@@ -291,7 +291,7 @@ public class Trans {
   * (1) a method-dependent coordinate system, to
   * (2) an arbitrary coordinate system (not all such methods).
   *************************************************************************** */
-  
+
   public Matrix3x3 gei_trans_matrix(int toCS) {
     switch (toCS) {
       case CoordinateSystem.SM  : return gei_sm_trans_matrix();
@@ -367,10 +367,10 @@ public class Trans {
   /**
    * Return coordinate transformation matrix between any two arbitrary
    * coordinate systems (CS).
-   * 
+   *
    * @param fromCS
    * @param toCS
-   * @return 
+   * @return
    */
   public Matrix3x3 trans_matrix(int fromCS, int toCS) {
     if (fromCS == toCS)
@@ -386,7 +386,7 @@ public class Trans {
     throw new IllegalArgumentException("Illegal argument toCS='"+toCS+"'");
   }
 
-  
+
   /* *******************************
    * GEO -> other coordinate systems
    * ******************************* */
@@ -402,7 +402,7 @@ public class Trans {
   public Matrix3x3 geo_gse_trans_matrix() {
     return gei_gse_trans_matrix().multiply(geo_gei_trans_matrix());
   }
-  
+
   public Matrix3x3 geo_sm_trans_matrix() {
     return sm_geo_trans_matrix().getInverse();
   }
@@ -423,7 +423,7 @@ public class Trans {
   public Matrix3x3 sm_gse_trans_matrix() {
     return gsm_gse_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
-  
+
   public Matrix3x3 sm_geo_trans_matrix() {
     return gsm_geo_trans_matrix().multiply(sm_gsm_trans_matrix());
   }
@@ -469,7 +469,7 @@ public class Trans {
   public Matrix3x3 gse_gei_trans_matrix() {
     return gei_gse_trans_matrix().getInverse();
   }
-  
+
   public Matrix3x3 gse_geo_trans_matrix() {
       return geo_gse_trans_matrix().getInverse();
   }
@@ -481,7 +481,7 @@ public class Trans {
   public Matrix3x3 gse_sm_trans_matrix() {
     return sm_gse_trans_matrix().getInverse();
   }
-  
+
   public Matrix3x3 gse_geid_trans_matrix() {
     return gei_geid_trans_matrix().multiply(gse_gei_trans_matrix());
   }
@@ -616,10 +616,10 @@ public class Trans {
    */
   public static Matrix3x3 geid_gse_trans_matrix(double mjd) {
     final double[][] geid_gse = new double[3][];
-    
+
     /* Normal vector to the ecliptic (in GEID).
      *
-     * ==> Earth's axial tilt: epsilon_OVT = arctan(0.398/0.917)) = 23.4620 degrees 
+     * ==> Earth's axial tilt: epsilon_OVT = arctan(0.398/0.917)) = 23.4620 degrees
      * Compare, Hapgood 1992 (complete reference above), eq (3) & eq between (4) and (5):
      *     epsilon = 23.439 - 0.013*((MJD-51544.5/36525.0))
      * J1950 : T_0 = -0.5 ==> epsilon = 23.4455 degrees
@@ -636,7 +636,7 @@ public class Trans {
        (2) the ecliptic north,
        according to Hapgood 1992.
        ------------------------------------------------------------------------
-       IMPLEMENTATION NOTE: This appears to be a minor improvement compared to 
+       IMPLEMENTATION NOTE: This appears to be a minor improvement compared to
        {   0.0, -0.398, 0.917 } when converting between GSE+GSM test coordinates
        (0.17 km better agreement).
        /Erik P G Johansson, 2022-06-10
@@ -647,7 +647,7 @@ public class Trans {
     double epsilon_rad = epsilon_deg * Math.PI / 180.0;
     // Ecliptic north in GEI epoch-of-date.
     final double ecliptic_north_geid[] = {0.0, -Math.sin(epsilon_rad), Math.cos(epsilon_rad)};
-    
+
     /* Can be interpreted as the three (orthonormal) coordinate vectors that
        define the GSE coordinate system, expressed in GEI.
        ==> geid_gse * v_geid = v_gse
@@ -847,7 +847,7 @@ public class Trans {
   /* ********************************************
    * Conversion methods for 1D vectors GEO<-->GMA
    ********************************************** */
-  
+
   /**
    * Transform geo(3) to gma(3).
    * flag=0 magnetic dipole (MAGNETIC_DIPOLE)
@@ -939,7 +939,7 @@ public class Trans {
     }
 
     Log.err("ovt.util.Trans.corrgma is strange!!! It changes models!");
-    
+
     double[] gsmx=trans.geo2gsm(geo);
     Fieldline fieldLine =
       Trace.traceline(magProps,mjdx,gsmx,0.0,10.0,0,magProps.getXlim(),Const.NPF);
@@ -949,7 +949,7 @@ public class Trans {
     r = Vect.absv(ft);
 
     if (isIGRF==false) magProps.setExternalModelType(currentExternalModel);
-      
+
 
     cos2 = (ft[0] * ft[0] + ft[1] * ft[1]) / (r * r);
 
@@ -1027,7 +1027,7 @@ public class Trans {
   }
   }*/
 
-  /** Returns [0] - Magnetic Latitude, 
+  /** Returns [0] - Magnetic Latitude,
    * [1] - Magnetic Local Time
    */
   public static double[] xyz2MlatMlt(double[] xyz) {
@@ -1039,7 +1039,7 @@ public class Trans {
     double cost = Math.sqrt(1-sint*sint);
 
     double theta = Math.asin(sint);
-    
+
     mlat = Utils.toDegrees(theta);
     // 12h : X, 18h : Y , 24(0)h : -X, 6h : -Y
     mlt = 12 + 12*Math.atan2(xyz[Y], xyz[X])/Math.PI;
@@ -1049,10 +1049,10 @@ public class Trans {
 
   /** Minimum altitude is 0. */
   public static double[] mlat_mlt2xyz(double mlat, double mlt, double alt_RE) {
-    return Utils.sph2rec(1.+alt_RE, mlat, 15.*(mlt-12.)); 
+    return Utils.sph2rec(1.+alt_RE, mlat, 15.*(mlt-12.));
   }
 
-  
+
 
   /** Returns [0] - Geographic Latitude, [1] - Geographic Longitude in degrees */
   public static double[] xyz2LatLon(double[] xyz) {
@@ -1060,38 +1060,38 @@ public class Trans {
     double irad = 180./Math.PI;
     double phi, delta;
     double radius = Math.sqrt (xyz[0] * xyz[0] + xyz[1] * xyz[1] + xyz[2] * xyz[2]);
-    
+
     if ((xyz[Y] == 0.) && (xyz[X] == 0.))
       phi = 0;
     else
       phi = irad * Math.atan2 (xyz[Y], xyz[X]);
-        
-        
+
+
     if (phi < 0.)
       phi = phi + 360.;
-    
+
     double arg = xyz[Z] / radius;
-        
+
     if (arg < 1.) {
       delta = irad * Math.asin (arg);
     } else {
       delta = 90.;
     }
-    
+
     return new double[]{ delta, phi };
   }
 
   /** Minimum altitude is 0. */
   public static double[] lat_lon2xyz(double lat, double lon, double alt_RE) {
-    return Utils.sph2rec(1.+alt_RE, lat, lon); 
+    return Utils.sph2rec(1.+alt_RE, lat, lon);
   }
-  
+
   public static void main(String[] args){
     double[] r = { -1, -1, 0};
     for (double mlt=0;mlt<=24;mlt+=1.) {
       double[] xyz = Trans.mlat_mlt2xyz(0, mlt, 0.);
       double[] res = Trans.xyz2MlatMlt(xyz);
-      System.out.println(""+(int)(mlt)+" -> "+res[0]+"deg, "+res[1]+"h");    
+      System.out.println(""+(int)(mlt)+" -> "+res[0]+"deg, "+res[1]+"h");
     }
   }
 

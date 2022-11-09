@@ -6,7 +6,7 @@
  Version:   $Revision: 2.4 $
 
 
- Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev, 
+ Copyright (c) 2000-2003 OVT Team (Kristof Stasiewicz, Mykola Khotyaintsev,
  Yuri Khotyaintsev)
  All rights reserved.
 
@@ -32,7 +32,7 @@
 
 /*
  $Id: test.java,v 2.4 2009/10/27 11:56:36 yuri Exp $
- $Source: /stor/devel/ovt2g/ovt/test.java,v $  
+ $Source: /stor/devel/ovt2g/ovt/test.java,v $
  */
 package ovt;
 
@@ -71,7 +71,7 @@ public class test {
         final boolean usePanel = false;
         final boolean windowResizable = true;
         SwingUtilities.invokeLater(new Runnable() {
-            public void run() {        
+            public void run() {
                 // create sphere geometry
                 vtkSphereSource sphere = new vtkSphereSource();
                 sphere.SetRadius(1.0);
